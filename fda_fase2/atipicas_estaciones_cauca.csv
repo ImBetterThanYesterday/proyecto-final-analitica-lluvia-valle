@@ -1,0 +1,10 @@
+STATION_ID,YEAR,cuenca,MBD,media_anual_mm,dia_max_exceso,tipo
+2620610101,1988,Cauca,0.0241,6481.0,267,por encima (más lluvia)
+2622100104,2000,Cauca,0.0344,5007.0,145,por encima (más lluvia)
+2620610103,1988,Cauca,0.0391,6152.0,304,por encima (más lluvia)
+2620610103,1990,Cauca,0.0636,6038.0,99,por encima (más lluvia)
+2622100104,1995,Cauca,0.0655,5454.0,304,por encima (más lluvia)
+2622100104,1988,Cauca,0.0709,5919.0,308,por encima (más lluvia)
+2612810108,1982,Cauca,0.103,4482.0,100,por encima (más lluvia)
+2622330106,1981,Cauca,0.1702,3942.0,142,por encima (más lluvia)
+2610400101,1982,Cauca,0.2249,3402.0,193,por encima (más lluvia)
