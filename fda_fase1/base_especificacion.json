@@ -1,0 +1,40 @@
+{
+  "rango": [
+    1,
+    365
+  ],
+  "orden": 4,
+  "K_estaciones": 6,
+  "K_satelite": 11,
+  "nodos_estaciones": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    122.33333333333333,
+    243.66666666666666,
+    365.0,
+    365.0,
+    365.0,
+    365.0
+  ],
+  "nodos_satelite": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    46.5,
+    92.0,
+    137.5,
+    183.0,
+    228.5,
+    274.0,
+    319.5,
+    365.0,
+    365.0,
+    365.0,
+    365.0
+  ],
+  "escala": "mm/dia (la raiz se aplica despues, en la fase 4)",
+  "dominio": "dia del año 1..365 (29-feb eliminado); péntadas en su día central"
+}
