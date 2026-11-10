@@ -4,15 +4,17 @@
     365
   ],
   "orden": 4,
-  "K_estaciones": 6,
+  "K_estaciones": 8,
   "K_satelite": 11,
   "nodos_estaciones": [
     1.0,
     1.0,
     1.0,
     1.0,
-    122.33333333333333,
-    243.66666666666666,
+    73.8,
+    146.6,
+    219.39999999999998,
+    292.2,
     365.0,
     365.0,
     365.0,
@@ -36,5 +38,5 @@
     365.0
   ],
   "escala": "mm/dia (la raiz se aplica despues, en la fase 4)",
-  "dominio": "dia del aÃ±o 1..365 (29-feb eliminado); pÃ©ntadas en su dÃ­a central"
+  "dominio": "dia del año 1..365 (29-feb eliminado); péntadas en su día central"
 }
