@@ -1,6 +1,17 @@
-# Proyecto final de Analítica de Datos 2026-2S: lluvia del Valle del Cauca (1981–2013)
+# Proyecto final de Analítica de Datos 2026-2S: lluvia del Valle del Cauca (1981–2003)
 
 Modelado funcional de la precipitación diaria de estaciones y de estimaciones satelitales pentadales (cada año en cada sitio es un dato funcional), comparación de fuentes con métodos funcionales y reconstrucción de la curva de estación a partir de la curva satelital con KAN, MLP, cabeza lineal (≈ regresión funcional) y decodificador FPCA.
+
+## Periodo y partición (fe de erratas del enunciado)
+
+| Conjunto | Años |
+|---|---|
+| Periodo del proyecto | 1981–2003 (antes 1981–2013) |
+| Entrenamiento | 1981–1995 |
+| Validación | 1996–2000 |
+| Prueba | 2001–2003, más las estaciones reservadas por el docente |
+
+Las decisiones del preprocesamiento que dependen de los datos (percentiles por estación, mínimo de años por estación, selección de K) se calculan solo con el periodo de entrenamiento. Las péntadas satelitales de 2004–2013 quedan fuera del análisis.
 
 ## Contenido
 

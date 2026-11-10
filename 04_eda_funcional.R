@@ -17,7 +17,12 @@ rm(list = ls())
 # setwd("ruta/a/proyecto3")
 dir_fig <- "fda_fase2/figuras_R"; dir.create(dir_fig, showWarnings = FALSE, recursive = TRUE)
 
-RANGO <- c(1, 365); ORDEN <- 4; K_EST <- 6; K_SAT <- 11     # ver fda_fase1/base_especificacion.json
+RANGO <- c(1, 365); ORDEN <- 4
+# K de cada fuente: se lee de la especificación guardada en la fase 1 (sin paquetes extra)
+spec  <- paste(readLines("fda_fase1/base_especificacion.json", warn = FALSE, encoding = "UTF-8"), collapse = "")
+K_EST <- as.integer(sub('.*"K_estaciones": *([0-9]+).*', "\\1", spec, useBytes = TRUE))
+K_SAT <- as.integer(sub('.*"K_satelite": *([0-9]+).*', "\\1", spec, useBytes = TRUE))
+cat("K estaciones =", K_EST, "| K satélite =", K_SAT, "\n")
 t <- 1:365
 
 #------------------------------------------------------------------------------------
