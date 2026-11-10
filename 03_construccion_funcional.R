@@ -105,8 +105,11 @@ criterios <- function(Ymat, t, Ks) {
                VCG = sum(n * rowSums(E^2) / (n - K)^2))
   }))
 }
-sel_est <- criterios(Y[completas, ], t_est, c(4:40, seq(45, 100, 5)))
-sel_sat <- criterios(X, t_sat, 4:40)
+# Selección de K solo con curvas de entrenamiento (1981-1995): sin fuga de información
+ent_est <- completas & est$YEAR <= 1995
+ent_sat <- sat$anio <= 1995
+sel_est <- criterios(Y[ent_est, ], t_est, c(4:40, seq(45, 100, 5)))
+sel_sat <- criterios(X[ent_sat, ], t_sat, 4:40)
 K_EST <- sel_est$K[which.min(sel_est$VCG)]; K_SAT <- sel_sat$K[which.min(sel_sat$VCG)]
 cat("K por VC  — estaciones:", sel_est$K[which.min(sel_est$VC)], "| satélite:", sel_sat$K[which.min(sel_sat$VC)], "\n")
 cat("K por VCG — estaciones:", K_EST, "| satélite:", K_SAT, "\n")
