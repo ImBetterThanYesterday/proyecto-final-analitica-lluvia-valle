@@ -20,10 +20,15 @@ Las decisiones del preprocesamiento que dependen de los datos (percentiles por e
 | `01_EDA_calidad_datos.ipynb` | EDA y auditoría de calidad de los datos crudos de estaciones |
 | `01b_valores_unicos.ipynb` | Valores únicos por variable, por estación y por año |
 | `02_datos_externos.ipynb` | ONI, CHIRPS v2, NASA POWER, códigos CNE/IDEAM |
-| `03_construccion_funcional.ipynb` / `.R` | Representación en B-splines (K por validación cruzada), Python y R |
-| `04_eda_funcional.ipynb` / `.R` | EDA funcional: media, covarianza, profundidad, boxplot funcional, atípicas |
-| `eda_fase0/`, `fda_fase1/`, `fda_fase2/` | Resultados (CSV, coeficientes, figuras) de cada fase |
+| `03_construccion_funcional.ipynb` / `.R` | Construcción de las curvas en B-splines programadas a mano: K por ECM/VC/VCG con entrenamiento, verificación de S, bandas punto a punto, matriz de Gram W, escala √ / log(1+P) y sensibilidad de K |
+| `04_eda_funcional.ipynb` / `.R` | EDA funcional: media, varianza, covarianza, derivadas y fechas de temporadas, profundidad FM/MBD, boxplot funcional, atípicas, cuenca y ENSO |
+| `eda_fase0/`, `fda_fase1/`, `fda_fase2/` | Resultados (CSV, coeficientes, figuras) de cada fase; las salidas de R están en `figuras_R/` y `tablas_R/` |
 | `datos_web/` | Datos externos descargados (ONI, CNE, CHIRPS v2, NASA POWER) |
+
+## Orden de ejecución
+
+1. Notebooks `01` → `02` → `03` → `04` (Python).
+2. Scripts `03_construccion_funcional.R` → `04_eda_funcional.R`, desde la raíz del repositorio. Usan solo R base (`splines` y `fda` únicamente para verificar). El de la fase 1 lee las curvas preparadas por el notebook 03 y construye sus propios coeficientes; el de la fase 2 trabaja con esos coeficientes de R y al final comprueba que K, coeficientes, matriz W, profundidades, fechas y atípicas coinciden con los de Python.
 
 ## Datos crudos (no incluidos)
 
@@ -31,4 +36,4 @@ Los archivos `P_1930_1979.xlsx`, `P_1980_1990.csv`, `P_1991_2003.csv` y `Imagene
 
 ## Estado
 
-Fases 0–2 listas. La fase 3 (emparejamiento estación–píxel) depende de la tabla de coordenadas y altitud de las estaciones, pendiente de confirmar con el profesor. La fase 4 (modelos) está por hacer.
+Fases 0–2 listas, en Python y en R. El satélite se trabaja solo en los 1 353 píxeles de tierra (los 90 de océano vienen rellenados). Para la fase 4 ya quedan la matriz de Gram W (`fda_fase1/matrices_gram.npz`) y los coeficientes en escala √ y log(1+P) (`fda_fase1/coeficientes_transformados.npz`). La fase 3 (emparejamiento estación–píxel) depende de la tabla de coordenadas y altitud de las estaciones, pendiente de confirmar con el profesor. La fase 4 (modelos) está por hacer.
