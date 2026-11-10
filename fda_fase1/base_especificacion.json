@@ -38,5 +38,8 @@
     365.0
   ],
   "escala": "mm/dia (la raiz se aplica despues, en la fase 4)",
-  "dominio": "dia del año 1..365 (29-feb eliminado); péntadas en su día central"
+  "dominio": "dia del aÃ±o 1..365 (29-feb eliminado); pÃ©ntadas en su dÃ­a central",
+  "satelite": "solo pixeles de tierra (mascara CHIRPS v2); n_tope200 = pentadas en el tope de 200 mm por curva",
+  "gram": "matrices_gram.npz (W_est, W_sat): W = integral de phi phi' por Gauss-Legendre",
+  "escala_modelo": "coeficientes_transformados.npz: curva recortada en 0, transformada (raiz o log1p) y reproyectada en la misma base"
 }
