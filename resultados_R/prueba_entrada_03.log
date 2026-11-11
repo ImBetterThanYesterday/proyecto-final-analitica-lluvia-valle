@@ -1,0 +1,118 @@
+Preparación lista. Ventana: 1981 a 2003 
+
+Datos que realmente entran en la construcción — 2 filas; mostrando hasta 6
+     fuente antes en_periodo excluidas_periodo
+ estaciones  4426       4426                 0
+   satelite 46176      33189             12987
+
+Cobertura: tener años no implica panel completo — 23 filas; mostrando hasta 6
+ anio curvas sitios sitios_sin_curva completas incompletas valores_faltantes
+ 1981    167    167               71       141          26               126
+ 1982    179    179               59       154          25               114
+ 1983    200    200               38       167          33               181
+ 1984    211    211               27       173          38               252
+ 1985    208    208               30       173          35               168
+ 1986    213    213               25       178          35               138
+
+Estaciones: primeras cinco observaciones — 4 filas; mostrando hasta 6
+ STATION_ID YEAR  1  2  3  4  5
+ 2610000102 1981  0  2  4  0  0
+ 2610000102 1982  3 10 12  0  0
+ 2610000102 1983  0  0  0  0 30
+ 2610000102 1984 12  1  0 10 44
+
+Satélite: primeras cinco observaciones — 4 filas; mostrando hasta 6
+ anio fila col t3.0 t8.0 t13.0 t18.0 t23.0
+ 1981    0   0  6.6 10.8   4.8  12.6   5.8
+ 1981    0   1  6.4 11.4   5.6  12.6   5.4
+ 1981    0   2  6.4 11.8   5.8  12.6   5.4
+ 1981    0   3  7.2 12.4   6.2  13.0   6.0
+  Figura guardada: resultados_R/observados_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/observados_satelite.pdf (sin visualización)
+
+estaciones mínimos; VCG decide — 3 filas; mostrando hasta 6
+ criterio   K        valor
+      ECM 100     79.94403
+       VC   6    122.48450
+      VCG   6 460892.76389
+  Figura guardada: resultados_R/criterio_ECM_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/criterio_VC_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/criterio_VCG_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/seleccion_K_estaciones.pdf (sin visualización)
+
+satelite mínimos; VCG decide — 3 filas; mostrando hasta 6
+ criterio  K        valor
+      ECM 40 5.507087e+00
+       VC 11 1.609700e+01
+      VCG 11 5.308831e+05
+  Figura guardada: resultados_R/criterio_ECM_satelite.pdf (sin visualización)
+  Figura guardada: resultados_R/criterio_VC_satelite.pdf (sin visualización)
+  Figura guardada: resultados_R/criterio_VCG_satelite.pdf (sin visualización)
+  Figura guardada: resultados_R/seleccion_K_satelite.pdf (sin visualización)
+
+Phi estaciones: una columna por función base — 365 filas; mostrando hasta 6
+ dia        X1         X2           X3           X4 X5 X6
+   1 1.0000000 0.00000000 0.0000000000 0.000000e+00  0  0
+   2 0.9754779 0.02442058 0.0001013767 9.330574e-08  0  0
+   3 0.9513601 0.04823571 0.0004034540 7.464459e-07  0  0
+   4 0.9276431 0.07145125 0.0009031529 2.519255e-06  0  0
+   5 0.9043235 0.09407309 0.0015973943 5.971567e-06  0  0
+   6 0.8813981 0.11610710 0.0024830990 1.166322e-05  0  0
+    simetria idempotencia        traza 
+4.163336e-17 1.665335e-16 2.664535e-15 
+  Figura guardada: resultados_R/bases_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/bases_satelite.pdf (sin visualización)
+[Construcción / estaciones] Selección de K por ECM, VC y VCG...
+[Construcción / estaciones] Ajuste MCO, controles H, residuos y banda...
+  Figura guardada: resultados_R/curva_banda_residuos_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/residual_estaciones.pdf (sin visualización)
+
+estaciones controles de S — 3 filas; mostrando hasta 6
+      control    error_max
+     simetria 5.551115e-17
+ idempotencia 4.302114e-16
+        traza 1.065814e-14
+estaciones : 4426 curvas; completas 3761 ; K VCG = 6 
+[Construcción / satelite] Selección de K por ECM, VC y VCG...
+[Construcción / satelite] Ajuste MCO, controles H, residuos y banda...
+  Figura guardada: resultados_R/curva_banda_residuos_satelite.pdf (sin visualización)
+  Figura guardada: resultados_R/residual_satelite.pdf (sin visualización)
+
+satelite controles de S — 3 filas; mostrando hasta 6
+      control    error_max
+     simetria 1.110223e-16
+ idempotencia 2.220446e-16
+        traza 3.552714e-15
+satelite : 33189 curvas; completas 33189 ; K VCG = 11 
+
+Coeficientes estaciones (no observaciones originales) — 4426 filas; mostrando hasta 6
+ STATION_ID YEAR        c1         c2        c3          c4       c5        c6
+ 2610000102 1981  3.946611  0.9895082 17.071377  -6.4198986 14.81004  3.422916
+ 2610000102 1982  2.054439  7.9418720 13.579051  -7.3882314 21.47526  2.195766
+ 2610000102 1983  1.651000 -2.5819441 24.850284 -16.9117878 23.31446  2.203890
+ 2610000102 1984 13.107039  6.3050054  8.158528   0.4779199 19.37805  0.190364
+ 2610000102 1985  7.196952  3.0413965  9.591136  -2.0756877 11.37392  2.259545
+ 2610000102 1986  4.977943  5.5837339 13.580871  -8.5074326 23.22620 -6.288980
+
+Coeficientes satélite — 33189 filas; mostrando hasta 6
+ anio fila col       c1       c2        c3        c4       c5       c6       c7
+ 1981    0   0 7.501771 8.533017 10.125641 10.176540 20.01978 17.54714 18.71648
+ 1981    0   1 7.757001 8.675526  9.846892 11.044839 19.68022 15.85812 18.30617
+ 1981    0   2 8.025838 8.209088 12.161334  9.021591 20.99503 13.81257 17.89689
+ 1981    0   3 8.670730 8.481016 14.776193  7.293789 22.10164 14.73641 17.56755
+ 1981    0   4 9.978015 8.433590 19.129178  4.183883 24.39812 16.21456 17.02217
+ 1981    0   5 9.685090 9.056121 20.872298  3.904208 24.26869 17.41689 16.77243
+       c8       c9      c10      c11
+ 21.73017 19.60654 14.75851 13.53122
+ 20.11520 20.57788 13.80823 13.94828
+ 19.29998 21.79480 12.84421 13.33163
+ 19.53613 25.81067 12.20702 15.24844
+ 20.53103 27.66931 12.56803 17.98076
+ 20.28433 28.27269 15.03208 19.60546
+
+cobertura.csv — 3 filas; mostrando hasta 6
+          fuente curvas desde hasta  K
+      estaciones   4426  1981  2003  6
+        satelite  33189  1981  2003 11
+ satelite_tierra  31119  1981  2003 11
+Máscara heredada aplicada sin utilizar coeficientes Python.
