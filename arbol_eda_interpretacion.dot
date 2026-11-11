@@ -1,0 +1,23 @@
+digraph decisiones {
+graph [rankdir=TB, bgcolor="white", pad="0.18", nodesep="0.22", ranksep="0.30", fontname="Arial", fontsize=11, labelloc=t];
+node [fontname="Arial", fontsize=11, style="filled,rounded", color="#546577", margin="0.13,0.10"];
+edge [fontname="Arial", fontsize=10, arrowsize=0.65, color="#526678"];
+label="EDA B · Asociación, derivadas e interpretación\nVerde: adoptado · Gris: alternativa · Naranja: pendiente · Rojo: insuficiente\nC: Construcción FDA · E: Análisis Exploratorio · T: t-Funcional";
+d0 [shape=diamond, fillcolor="#e8effa", label="¿Hay sitios y años\nemparejados entre fuentes?", group="tronco"];
+cross [shape=box, fillcolor="#eef0f4", label="Comparación funcional pareada\nDiferencias y correlación cruzada.\nMétodos de clase; fase posterior,\nno implementados sin metadatos.\nE: 313–323 y 406–438."];
+cov [shape=box, fillcolor="#e3f3eb", label="E03 · Covarianza por fuente\nAdoptada: Phi Sigma_coef Phi'.\nDiagonal = varianza; correlación\nno demuestra causalidad ni sesgo.\nE: 253–289.", group="tronco"];
+d1 [shape=diamond, fillcolor="#e8effa", label="¿La curva derivada representa\nprecipitación acumulada?", group="tronco"];
+ac [shape=box, fillcolor="#eef0f4", label="Derivada de acumulada\nSe interpreta como intensidad\nen la unidad temporal usada.\nEs el ejemplo de clase, pero no\nla escala actual en mm/día.\nE: 351–364."];
+rate [shape=box, fillcolor="#e3f3eb", label="E04 · Derivada de tasa mm/día\nAdoptada: Dphi por coeficientes.\nResultado en mm/día²:\ncambio de tasa, no acumulado.\nE: 351–364; adaptación de escala.", group="tronco"];
+d2 [shape=diamond, fillcolor="#e8effa", label="¿El marcador queda en el borde\no no puede identificarse?", group="tronco"];
+border [shape=box, fillcolor="#fff0d3", label="E04 · No dar fecha confiable\nFin_2=365 en 4.185/4.426 curvas.\nDeclarar limitación y estudiar\nregla y sensibilidad con clase.\nPendiente; no resuelto al dibujar."];
+inside [shape=box, fillcolor="#fff0d3", label="E04/E07 · Marcador candidato\nEstar dentro del año no lo valida.\nJustificar regla, revisar estabilidad\ny alcance climatológico.\nNo inferir sesgo ENSO sin pares.\nResponsabilidad del equipo."];
+d0 -> cross [label="Sí", weight=1];
+d0 -> cov [label="No", weight=100];
+cov -> d1 [label="Continuar", weight=100];
+d1 -> ac [label="Sí", weight=1];
+d1 -> rate [label="No", weight=100];
+rate -> d2 [label="Continuar", weight=100];
+d2 -> border [label="Sí", weight=1];
+d2 -> inside [label="No", weight=1];
+}
