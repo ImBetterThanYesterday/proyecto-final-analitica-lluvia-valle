@@ -1,0 +1,14 @@
+{
+  "estado": "OK",
+  "paginas": null,
+  "imagenes": 43,
+  "tablas": 16,
+  "trazabilidad": 38,
+  "manifiesto_sha256": "OK",
+  "proporciones_imagenes": "OK",
+  "figuras_exigidas_incluidas": "OK",
+  "cobertura_y_minimos_word_vs_csv": "OK",
+  "entradas_preservadas": "OK",
+  "pdf": "no_regenerado_sin_LibreOffice",
+  "instrucciones_script_secuencial": "OK"
+}

@@ -1,0 +1,23 @@
+R version 4.6.1 (2026-06-24)
+Platform: aarch64-apple-darwin23
+Running under: macOS Sonoma 14.5
+
+Matrix products: default
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Bogota
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] fds_2.0            Matrix_1.7-5       lattice_0.22-9     ks_1.15.3         
+ [5] splines_4.6.1      mclust_6.1.3       KernSmooth_2.23-26 rainbow_3.8       
+ [9] hdrcde_3.5.0       pcaPP_2.0-7        mvtnorm_1.4-2      fda_6.3.0         
+[13] grid_4.6.1         compiler_4.6.1     tools_4.6.1        cluster_2.1.8.2   
+[17] pracma_2.4.6       deSolve_1.42       colorspace_2.1-3   MASS_7.3-65       

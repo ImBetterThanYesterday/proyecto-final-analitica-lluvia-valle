@@ -1,0 +1,210 @@
+[EDA / estaciones] Media, dispersión, covarianza y derivada...
+
+estaciones momentos diarios antes de calcular profundidad — 365 filas; mostrando hasta 6
+ dia    media varianza       de       cv derivada_media
+   1 4.561903 43.74300 6.613849 1.449800    -0.02281992
+   2 4.539951 41.65357 6.453958 1.421592    -0.02108900
+   3 4.519716 39.69048 6.300038 1.393901    -0.01938535
+   4 4.501171 37.84743 6.152026 1.366761    -0.01770900
+   5 4.484289 36.11837 6.009856 1.340203    -0.01605993
+   6 4.469042 34.49746 5.873453 1.314253    -0.01443815
+  Figura guardada: resultados_R/media_estaciones.pdf (sin visualización)
+[EDA / satelite_tierra] Media, dispersión, covarianza y derivada...
+
+satelite_tierra momentos diarios antes de calcular profundidad — 365 filas; mostrando hasta 6
+ dia    media varianza       de        cv derivada_media
+   1 5.142496 15.08533 3.883984 0.7552721     0.12007390
+   2 5.258921 13.84895 3.721418 0.7076391     0.11281003
+   3 5.368185 12.93536 3.596576 0.6699798     0.10575264
+   4 5.470495 12.29118 3.505878 0.6408704     0.09890173
+   5 5.566057 11.86885 3.445120 0.6189517     0.09225729
+   6 5.655078 11.62620 3.409721 0.6029485     0.08581934
+  Figura guardada: resultados_R/media_satelite_tierra.pdf (sin visualización)
+error_media_est error_media_sat 
+   1.776357e-14    9.414691e-14 
+
+estaciones dispersión — 365 filas; mostrando hasta 6
+ dia varianza       de       cv
+   1 43.74300 6.613849 1.449800
+   2 41.65357 6.453958 1.421592
+   3 39.69048 6.300038 1.393901
+   4 37.84743 6.152026 1.366761
+   5 36.11837 6.009856 1.340203
+   6 34.49746 5.873453 1.314253
+  Figura guardada: resultados_R/varianza_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/de_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/cv_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/covarianza_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/correlacion_estaciones.pdf (sin visualización)
+
+satelite_tierra dispersión — 365 filas; mostrando hasta 6
+ dia varianza       de        cv
+   1 15.08533 3.883984 0.7552721
+   2 13.84895 3.721418 0.7076391
+   3 12.93536 3.596576 0.6699798
+   4 12.29118 3.505878 0.6408704
+   5 11.86885 3.445120 0.6189517
+   6 11.62620 3.409721 0.6029485
+  Figura guardada: resultados_R/varianza_satelite_tierra.pdf (sin visualización)
+  Figura guardada: resultados_R/de_satelite_tierra.pdf (sin visualización)
+  Figura guardada: resultados_R/cv_satelite_tierra.pdf (sin visualización)
+  Figura guardada: resultados_R/covarianza_satelite_tierra.pdf (sin visualización)
+  Figura guardada: resultados_R/correlacion_satelite_tierra.pdf (sin visualización)
+cor_dias_105_290_est cor_dias_105_290_sat 
+            0.808861             0.824418 
+
+estaciones cambio de tasa — 365 filas; mostrando hasta 6
+ dia    media derivada_media
+   1 4.561903    -0.02281992
+   2 4.539951    -0.02108900
+   3 4.519716    -0.01938535
+   4 4.501171    -0.01770900
+   5 4.484289    -0.01605993
+   6 4.469042    -0.01443815
+  Figura guardada: resultados_R/derivada_estaciones.pdf (sin visualización)
+
+satelite_tierra cambio de tasa — 365 filas; mostrando hasta 6
+ dia    media derivada_media
+   1 5.142496     0.12007390
+   2 5.258921     0.11281003
+   3 5.368185     0.10575264
+   4 5.470495     0.09890173
+   5 5.566057     0.09225729
+   6 5.655078     0.08581934
+  Figura guardada: resultados_R/derivada_satelite_tierra.pdf (sin visualización)
+[EDA / estaciones] Profundidades FM/MBD y boxplot funcional...
+
+estaciones resumen diario — 365 filas; mostrando hasta 6
+ dia    media varianza       de       cv derivada_media mediana_FM mediana_MBD
+   1 4.561903 43.74300 6.613849 1.449800    -0.02281992   3.644787    3.644787
+   2 4.539951 41.65357 6.453958 1.421592    -0.02108900   3.642004    3.642004
+   3 4.519716 39.69048 6.300038 1.393901    -0.01938535   3.640501    3.640501
+   4 4.501171 37.84743 6.152026 1.366761    -0.01770900   3.640255    3.640255
+   5 4.484289 36.11837 6.009856 1.340203    -0.01605993   3.641243    3.641243
+   6 4.469042 34.49746 5.873453 1.314253    -0.01443815   3.643439    3.643439
+ media_recortada_FM_25
+              3.387759
+              3.389401
+              3.392133
+              3.395934
+              3.400783
+              3.406660
+  Figura guardada: resultados_R/EDA_estaciones.pdf (sin visualización)
+
+estaciones profundidades por curva — 4426 filas; mostrando hasta 6
+ STATION_ID YEAR        FM       MBD atipica
+ 2610000102 1981 0.6022321 0.3916663   FALSE
+ 2610000102 1982 0.4713146 0.3372511   FALSE
+ 2610000102 1983 0.3740525 0.2760355   FALSE
+ 2610000102 1984 0.3836916 0.2891803   FALSE
+ 2610000102 1985 0.7572984 0.4596858   FALSE
+ 2610000102 1986 0.5286000 0.3626914   FALSE
+[EDA / satelite_tierra] Profundidades FM/MBD y boxplot funcional...
+
+satelite_tierra resumen diario — 365 filas; mostrando hasta 6
+ dia    media varianza       de        cv derivada_media mediana_FM mediana_MBD
+   1 5.142496 15.08533 3.883984 0.7552721     0.12007390   7.064011    3.103773
+   2 5.258921 13.84895 3.721418 0.7076391     0.11281003   6.980105    3.383682
+   3 5.368185 12.93536 3.596576 0.6699798     0.10575264   6.898284    3.644421
+   4 5.470495 12.29118 3.505878 0.6408704     0.09890173   6.818557    3.886560
+   5 5.566057 11.86885 3.445120 0.6189517     0.09225729   6.740931    4.110669
+   6 5.655078 11.62620 3.409721 0.6029485     0.08581934   6.665414    4.317318
+ media_recortada_FM_25
+              5.043875
+              5.152391
+              5.254402
+              5.350095
+              5.439659
+              5.523280
+  Figura guardada: resultados_R/EDA_satelite_tierra.pdf (sin visualización)
+
+satelite_tierra profundidades por curva — 31119 filas; mostrando hasta 6
+ anio fila col        FM       MBD atipica
+ 1981    0   3 0.2894129 0.2364977   FALSE
+ 1981    0   4 0.2326852 0.1901893   FALSE
+ 1981    0   5 0.2129499 0.1734410   FALSE
+ 1981    0   6 0.2292270 0.1844546   FALSE
+ 1981    0   7 0.2478732 0.1997141   FALSE
+ 1981    0   8 0.2688307 0.2143424   FALSE
+atipicas_estaciones   atipicas_satelite 
+                170                   0 
+  Figura guardada: resultados_R/boxplot_estaciones.pdf (sin visualización)
+estaciones : 170 atípicas; todas las curvas intervienen en profundidad.
+  Figura guardada: resultados_R/boxplot_satelite_tierra.pdf (sin visualización)
+satelite_tierra : 0 atípicas; todas las curvas intervienen en profundidad.
+
+atipicas_estaciones.csv — 170 filas; mostrando hasta 6
+ STATION_ID YEAR         FM        MBD
+ 2612810108 1982 0.17880148 0.13614040
+ 2620610101 1988 0.08366007 0.07937977
+ 2620610103 1988 0.10255836 0.09327705
+ 2620610103 1990 0.13601941 0.11552689
+ 2622100104 1988 0.15143022 0.12485706
+ 5300000201 1981 0.05786603 0.05513358
+Una curva atípica no se elimina ni se declara error de medición.
+[EDA / estaciones] Contexto por grupos y ONI anual...
+
+estaciones ONI tamaño de grupos — 3 filas; mostrando hasta 6
+   fase n_curvas
+ Neutro     2089
+   Niña     1176
+   Niño     1161
+  Figura guardada: resultados_R/ONI_estaciones.pdf (sin visualización)
+
+estaciones grupos tamaño de grupos — 2 filas; mostrando hasta 6
+        grupo n_curvas
+ otro_prefijo      570
+   prefijo_26     3856
+  Figura guardada: resultados_R/grupos_estaciones.pdf (sin visualización)
+  Figura guardada: resultados_R/contexto_estaciones.pdf (sin visualización)
+[EDA / satelite_tierra] Contexto por grupos y ONI anual...
+
+satelite_tierra ONI tamaño de grupos — 3 filas; mostrando hasta 6
+   fase n_curvas
+ Neutro    14883
+   Niña     8118
+   Niño     8118
+  Figura guardada: resultados_R/ONI_satelite_tierra.pdf (sin visualización)
+
+satelite_tierra grupos tamaño de grupos — 2 filas; mostrando hasta 6
+                      grupo n_curvas
+ longitud_mayor_igual_-76.8    19734
+       longitud_menor_-76.8    11385
+  Figura guardada: resultados_R/grupos_satelite_tierra.pdf (sin visualización)
+  Figura guardada: resultados_R/contexto_satelite_tierra.pdf (sin visualización)
+
+ONI anual heredado: no clasificación oficial de episodios — 23 filas; mostrando hasta 23
+ anio ONI_anual   fase
+ 1981     -0.25 Neutro
+ 1982      0.91   Niño
+ 1983      0.46 Neutro
+ 1984     -0.55   Niña
+ 1985     -0.58   Niña
+ 1986      0.27 Neutro
+ 1987      1.18   Niño
+ 1988     -0.89   Niña
+ 1989     -0.62   Niña
+ 1990      0.27 Neutro
+ 1991      0.65   Niño
+ 1992      0.61   Niño
+ 1993      0.36 Neutro
+ 1994      0.37 Neutro
+ 1995     -0.22 Neutro
+ 1996     -0.41 Neutro
+ 1997      1.14   Niño
+ 1998      0.04 Neutro
+ 1999     -1.08   Niña
+ 2000     -0.77   Niña
+ 2001     -0.29 Neutro
+ 2002      0.51   Niño
+ 2003      0.24 Neutro
+
+Diagnósticos finales; consulte también cobertura y limitaciones — 2 filas; mostrando hasta 6
+          fuente     n atipicas     minimo puntos_negativos dia_mayor_DE
+      estaciones  4426      170 -11.624358            24361          365
+ satelite_tierra 31119        0  -1.195546              408          310
+ cor_abril_octubre  error_media error_diagonal_cov verificacion_libreria
+          0.808861 4.440892e-14       2.415845e-13                    OK
+          0.824418 1.545430e-13       9.734435e-13                    OK
+Recorrido terminado. PNG/PDF/CSV en resultados_R/.
+ Word reproducible: python3 generar_informe_actual.py
