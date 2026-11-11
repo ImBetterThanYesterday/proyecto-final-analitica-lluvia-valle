@@ -1,0 +1,360 @@
+{
+  "fecha_utc": "2026-11-09T04:55:12.856587+00:00",
+  "alcance": "Recálculo desde matrices preparadas; no ejecución completa desde crudos. No se repite el contraste con scikit-fda: sus salidas guardadas son evidencia previa.",
+  "versiones": {
+    "python": "3.14.5",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "matplotlib": "3.11.2"
+  },
+  "estado": "COMPROBACIONES_OK_CON_PENDIENTES",
+  "conteos": {
+    "estaciones": 238,
+    "curvas_estaciones": 4426,
+    "curvas_completas": 3761,
+    "curvas_incompletas": 665,
+    "curvas_satelite": 46176,
+    "curvas_satelite_tierra": 43296,
+    "K_estaciones": 6,
+    "K_satelite": 11,
+    "condicion_maxima_con_huecos": 37.81647421425697,
+    "puntos_negativos_estaciones": 24361,
+    "minimo_estaciones_mm_dia": -11.62435803128146
+  },
+  "controles": [
+    {
+      "control": "R02: partición de la unidad",
+      "estado": "OK",
+      "error": 3.3306690738754696e-16,
+      "tolerancia": 1e-12,
+      "detalle": ""
+    },
+    {
+      "control": "R02: misma base en 03 y 04",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 1e-12,
+      "detalle": ""
+    },
+    {
+      "control": "R08: claves estaciones CSV/NPZ",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "R08: coeficientes CSV/NPZ",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R03/R06: reconstrucción de todas las curvas terrestres",
+      "estado": "OK",
+      "error": 8.952838470577262e-13,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "R05: S simétrica completa",
+      "estado": "OK",
+      "error": 2.7755575615628914e-17,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R05: S idempotente completa",
+      "estado": "OK",
+      "error": 1.5265566588595902e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R05: traza completa",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R07: EE no negativo y finito completa",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "R05: S simétrica incompleta",
+      "estado": "OK",
+      "error": 2.7755575615628914e-17,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R05: S idempotente incompleta",
+      "estado": "OK",
+      "error": 1.3183898417423734e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R05: traza incompleta",
+      "estado": "OK",
+      "error": 8.881784197001252e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R07: EE no negativo y finito incompleta",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "R04: VC atajo vs dejar uno fuera",
+      "estado": "OK",
+      "error": 4.263256414560601e-14,
+      "tolerancia": 1e-08,
+      "detalle": ""
+    },
+    {
+      "control": "R04: K estaciones coincide con mínimo VCG guardado",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": "Comprueba tabla exportada; no repite toda la búsqueda de K."
+    },
+    {
+      "control": "R04: K satelite coincide con mínimo VCG guardado",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": "Comprueba tabla exportada; no repite toda la búsqueda de K."
+    },
+    {
+      "control": "R08: claves satélite CSV/NPZ",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "R03: coeficientes satélite desde CSV redondeado",
+      "estado": "OK",
+      "error": 5.251038665221586e-06,
+      "tolerancia": 0.0001,
+      "detalle": "CSV a 5 decimales y coeficientes NPZ float32; tolerancia por serialización."
+    },
+    {
+      "control": "R05: S satélite idempotente",
+      "estado": "OK",
+      "error": 2.498001805406602e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "R05: traza satélite",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "E01: media por coeficientes vs curvas est",
+      "estado": "OK",
+      "error": 3.552713678800501e-14,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E01: media exportada est",
+      "estado": "OK",
+      "error": 1.9539925233402755e-14,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E02: DE exportada est",
+      "estado": "OK",
+      "error": 2.6645352591003757e-15,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E03: diagonal covarianza vs varianza est",
+      "estado": "OK",
+      "error": 1.2789769243681803e-13,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E04: derivada de media vs media de derivadas est",
+      "estado": "OK",
+      "error": 6.661338147750939e-16,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E01: media por coeficientes vs curvas sat",
+      "estado": "OK",
+      "error": 2.2737367544323206e-13,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E01: media exportada sat",
+      "estado": "OK",
+      "error": 3.552713678800501e-15,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E02: DE exportada sat",
+      "estado": "OK",
+      "error": 1.7763568394002505e-15,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E03: diagonal covarianza vs varianza sat",
+      "estado": "OK",
+      "error": 6.323830348264892e-13,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E04: derivada de media vs media de derivadas sat",
+      "estado": "OK",
+      "error": 3.608224830031759e-15,
+      "tolerancia": 1e-09,
+      "detalle": ""
+    },
+    {
+      "control": "E05: claves de profundidades",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "E05: FM de estaciones exportada",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "E05: MBD de estaciones exportada",
+      "estado": "OK",
+      "error": 1.6653345369377348e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "E06: atípicas identificadas por estación y año",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "E05: MBD vs definición por pares (curvas reales)",
+      "estado": "OK",
+      "error": 1.1102230246251565e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "E05: MBD vs definición por pares (empates)",
+      "estado": "OK",
+      "error": 1.1102230246251565e-16,
+      "tolerancia": 1e-10,
+      "detalle": ""
+    },
+    {
+      "control": "Trazabilidad: 15 IDs únicos",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "Trazabilidad: existe Script_AnalisisExploratorio.R",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "Trazabilidad: existe Script_ConstrucciÃ³n_FDA.R",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "Trazabilidad: existe Script_t-Funcional.R",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "Trazabilidad: existe AnalisisExploratorioDatosFuncionales.pdf",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    },
+    {
+      "control": "Integridad: datos y resultados previos intactos",
+      "estado": "OK",
+      "error": 0.0,
+      "tolerancia": 0,
+      "detalle": ""
+    }
+  ],
+  "pendientes": [
+    {
+      "id": "E04",
+      "estado": "PENDIENTE",
+      "motivo": "Validar regla adaptada de temporadas; fin_2 de borde no confiable",
+      "fin_2_dia365": 4185,
+      "fin_2_ausente": 165
+    },
+    {
+      "id": "E07",
+      "estado": "PENDIENTE",
+      "motivo": "Representatividad de 1981–2013 y sesgo pareado no demostrados"
+    },
+    {
+      "id": "R07",
+      "estado": "PENDIENTE",
+      "motivo": "Banda estacional heredada sin receta localizada en clase; banda sigma²I sí respaldada"
+    }
+  ],
+  "sha256_resultados_leidos": {
+    "fda_fase1/seleccion_K_satelite.csv": "173a14c98e5af7fc3683e56677ae077e43b6357f6e73bee1d29a4cd36dcb1c06",
+    "fda_fase1/coeficientes_estaciones.npz": "aad2351b652f1309f4cd82a9de4b81db1e35f7beaa068372a63f124c653bb19f",
+    "fda_fase1/curvas_estaciones_mm.csv.gz": "ce9f21c90b8a61cfe6ca79a01d87a814262ee2d39594149267206924a346e72e",
+    "fda_fase1/coeficientes_satelite.npz": "b85194f831f813e5cb6a7edd474dd428ed001d0fab909ba0a24683aed606e1f7",
+    "fda_fase1/base_especificacion.json": "952717a5063cd18e551235e09737c5d34e9c0318ee0dfbc179c6c458ee3e11e8",
+    "fda_fase1/coef_estaciones.csv": "6973f02d220a4c223bee94fb3450c2c95acafffd00f4a6ac626c0d78bf011ebd",
+    "fda_fase1/resumen_seleccion_K.csv": "0f49bdf3fda3bd52d2eeec46d7b46de576e82164b58259e5cb6b83080c30c995",
+    "fda_fase1/coef_estaciones_R.csv": "7ed8b5eb3fff3fd967a0f4f86cafd1b9185280192e329384024783699d980958",
+    "fda_fase1/curvas_satelite_mm.csv.gz": "a63f9322ed7a72ee03a1dbc75e48071b0970850e75a8f775edbdd89cbab18abf",
+    "fda_fase1/seleccion_K_estaciones.csv": "cb5b128d9dedd3cb6ae5a99b2eb0862d461855c065039a804ce3d9e3ffabfd9e",
+    "fda_fase2/fechas_temporadas.csv": "d5240ba2ce2357dd487fc9aed259e08bce4589651e53192635489f768f1859e2",
+    "fda_fase2/profundidad_anual_satelite.csv": "42a01ad7c251845c43c991eb0cdb0949c9249fe243d1151abe86d78800c14181",
+    "fda_fase2/atipicas_estaciones_cauca.csv": "29ca352c8b63b825312884e639bef76daf66a4d4abc5492562d2ec2b07da991d",
+    "fda_fase2/profundidad_y_fechas_estaciones.csv": "004b5b2c5f59f04bd9b513ca59cd1ad083a0cc3fb0512843650d4947b820d2ca",
+    "fda_fase2/coef_satelite_tierra.csv.gz": "4385c4c1761b6fc6e8b927929c5d4887d5ed9bbfb6a8946c8d567dca293252f8",
+    "fda_fase2/mbd_anual_satelite_python.csv": "ed05dc5d42c3d8c342b16df6b6357741d84b00f0211c7bd94679dad22a36ab07",
+    "fda_fase2/profundidad_anual_estaciones.csv": "a5a71ad87ff4669237e86833143c5a073fe916e25e8cfc638315c3f4ae63ca2d",
+    "fda_fase2/media_de_mediana.csv": "f3b13f4204d553177cdcbbb0cf8ed711c9be6ccbca754ddcc657b8afe79d10ae",
+    "fda_fase2/atipicas_todas_las_estaciones.csv": "0f96a78a11350850949b9542544ef5519e3ebc9a8bbca7cf5fd7559dbded6516"
+  }
+}

@@ -1,0 +1,338 @@
+[
+  {
+    "archivo": "diagrama_reconstruccion_funcional",
+    "titulo": "RECONSTRUCCIÓN A · Datos y familia de curvas",
+    "nodos": {
+      "d0": [
+        "decision",
+        "¿Están verificadas las unidades\ny el calendario del producto?"
+      ],
+      "p0": [
+        "pendiente",
+        "R01 · Procedencia pendiente\nSe encontró documentación CHIRPS,\npero no prueba identidad del TIFF.\nConversión actual: condicionada."
+      ],
+      "d1": [
+        "decision",
+        "¿El año tiene observaciones\npara cubrir todo su dominio?"
+      ],
+      "p1": [
+        "pendiente",
+        "R06 · No tratarlo como año completo\n2013: 24 de 72 archivos.\nSolicitar los 48 restantes; no\ninventar mayo–diciembre.\n1981–2012 sí: 72/año."
+      ],
+      "d2": [
+        "decision",
+        "¿Se impone y justifica\nun cierre periódico?"
+      ],
+      "a2": [
+        "alternativa",
+        "Fourier · Alternativa de clase\nPermite representación periódica.\nNo adoptada ni comparada aún;\nno se afirma que sea peor.\nC: ejercicio, línea 471."
+      ],
+      "d3": [
+        "decision",
+        "¿Se requieren derivadas\ncontinuas de la curva?"
+      ],
+      "a3": [
+        "alternativa",
+        "B-spline de orden 2\nLineal por tramos; pendiente\nconstante por tramos. No elegida\npara el análisis actual de derivadas.\nE: 354–364, comparación de órdenes."
+      ],
+      "ok": [
+        "elegida",
+        "R02 · B-spline de orden 4\nAdoptada: curva con derivadas\ncontinuas y antecedente de lluvia.\nPhi se programa manualmente.\nE: 101–113; PDF EDA p. 43."
+      ]
+    },
+    "aristas": [
+      [
+        "d0",
+        "d1",
+        "Sí"
+      ],
+      [
+        "d0",
+        "p0",
+        "No"
+      ],
+      [
+        "d1",
+        "d2",
+        "Sí"
+      ],
+      [
+        "d1",
+        "p1",
+        "No"
+      ],
+      [
+        "d2",
+        "a2",
+        "Sí"
+      ],
+      [
+        "d2",
+        "d3",
+        "No"
+      ],
+      [
+        "d3",
+        "ok",
+        "Sí"
+      ],
+      [
+        "d3",
+        "a3",
+        "No"
+      ]
+    ]
+  },
+  {
+    "archivo": "arbol_reconstruccion_ajuste",
+    "titulo": "RECONSTRUCCIÓN B · Ajuste, flexibilidad y huecos",
+    "nodos": {
+      "d0": [
+        "decision",
+        "¿Se adopta una base amplia\ny penalización de rugosidad?"
+      ],
+      "alt": [
+        "alternativa",
+        "Penalización con lambda por VCG\nAlternativa de clase pendiente\nde contraste; no se ha probado\nque supere al ajuste actual.\nGrados de libertad: tr(S_lambda).\nNo exigir S²=S. C: 421–473."
+      ],
+      "mco": [
+        "elegida",
+        "R03 · MCO con K variable\nBase actual: ajuste manual y\npropiedades de proyección claras.\nSe conserva, sin atribuirle\nsuperioridad sobre penalización.\nC: 83–105."
+      ],
+      "d1": [
+        "decision",
+        "¿Elegir K solo porque\nbaja el ECM de ajuste?"
+      ],
+      "noecm": [
+        "rechazada",
+        "No se elige ese criterio solo\nPremia el ajuste de los datos\nusados y puede sobreajustar.\nC: 304–305."
+      ],
+      "vcg": [
+        "elegida",
+        "R04 · Mostrar ECM, VC y VCG\nElegir por VCG: K=6 / K=11.\nResultados descriptivos existentes;\nrevisar sensibilidad de derivadas.\nC: 215–305."
+      ],
+      "d2": [
+        "decision",
+        "¿La curva tiene\nobservaciones faltantes?"
+      ],
+      "gap": [
+        "elegida",
+        "R05–R08 · Solo filas observadas\nPhi_o y y_o; comprobar rango y S_o.\nNo poner ceros ni inventar registros.\nBanda sigma²I condicionada;\nguardar coeficientes e IDs.\nT: 129–143; C: 350–387."
+      ],
+      "full": [
+        "elegida",
+        "R05–R08 · Usar toda la rejilla\nComprobar S²=S y tr(S)=K.\nResiduos y banda sigma²I puntual;\nno extender a bandas simultáneas.\nGuardar coeficientes e IDs.\nC: 95–105 y 350–387."
+      ]
+    },
+    "aristas": [
+      [
+        "d0",
+        "alt",
+        "Sí"
+      ],
+      [
+        "d0",
+        "mco",
+        "No"
+      ],
+      [
+        "mco",
+        "d1",
+        "Continuar"
+      ],
+      [
+        "d1",
+        "noecm",
+        "Sí"
+      ],
+      [
+        "d1",
+        "vcg",
+        "No"
+      ],
+      [
+        "vcg",
+        "d2",
+        "Continuar"
+      ],
+      [
+        "d2",
+        "gap",
+        "Sí"
+      ],
+      [
+        "d2",
+        "full",
+        "No"
+      ]
+    ]
+  },
+  {
+    "archivo": "diagrama_eda_funcional",
+    "titulo": "EDA A · Resumen, dispersión y centralidad",
+    "nodos": {
+      "d0": [
+        "decision",
+        "¿Basta presentar\nsolo una media funcional?"
+      ],
+      "solo": [
+        "rechazada",
+        "Media sola: insuficiente\nLa rúbrica también pide dispersión,\nFM, MBD y boxplot. No se omiten.\nWord: criterio 2."
+      ],
+      "res": [
+        "elegida",
+        "E01 · Media + resúmenes robustos\nMedia por coeficientes y librería.\nMediana y recortada describen\ncentralidad sin depender solo\nde valores grandes. E: 155–173,\n445–489; PDF pp. 20, 60."
+      ],
+      "d1": [
+        "decision",
+        "¿Queremos la DE exacta\nen la rejilla evaluada?"
+      ],
+      "std": [
+        "alternativa",
+        "std.fd: versión suavizada\nAlternativa mostrada en clase;\nno confundirla con la raíz directa\nde varianza ni declarar igualdad.\nE: 187–192; PDF p. 24."
+      ],
+      "de": [
+        "elegida",
+        "E02 · Raíz directa de varianza\nAdoptada para ambas fuentes.\nCV complementa: requiere media\ndistinta de cero; ±2DE no es IC.\nE: 180–196."
+      ],
+      "d2": [
+        "decision",
+        "¿La pregunta de centralidad\nse basa en bandas de curvas?"
+      ],
+      "mbd": [
+        "elegida",
+        "E05–E06 · MBD y boxplot\nAdoptados: región central 50 %,\nexpansión 1,5; empates inclusivos.\nAtípica no equivale a error.\nE: 493–518; PDF pp. 60–62."
+      ],
+      "fm": [
+        "elegida",
+        "E05 · FM como complemento\nCentralidad punto a punto;\nmediana y recortada adoptadas.\nModal: otra alternativa de clase\nno aplicada; no sustituye MBD\nexigida. E: 449–489."
+      ]
+    },
+    "aristas": [
+      [
+        "d0",
+        "solo",
+        "Sí"
+      ],
+      [
+        "d0",
+        "res",
+        "No"
+      ],
+      [
+        "res",
+        "d1",
+        "Continuar"
+      ],
+      [
+        "d1",
+        "de",
+        "Sí"
+      ],
+      [
+        "d1",
+        "std",
+        "No"
+      ],
+      [
+        "de",
+        "d2",
+        "Continuar"
+      ],
+      [
+        "d2",
+        "mbd",
+        "Sí"
+      ],
+      [
+        "d2",
+        "fm",
+        "No"
+      ]
+    ]
+  },
+  {
+    "archivo": "arbol_eda_interpretacion",
+    "titulo": "EDA B · Asociación, derivadas e interpretación",
+    "nodos": {
+      "d0": [
+        "decision",
+        "¿Hay sitios y años\nemparejados entre fuentes?"
+      ],
+      "cross": [
+        "alternativa",
+        "Comparación funcional pareada\nDiferencias y correlación cruzada.\nMétodos de clase; fase posterior,\nno implementados sin metadatos.\nE: 313–323 y 406–438."
+      ],
+      "cov": [
+        "elegida",
+        "E03 · Covarianza por fuente\nAdoptada: Phi Sigma_coef Phi'.\nDiagonal = varianza; correlación\nno demuestra causalidad ni sesgo.\nE: 253–289."
+      ],
+      "d1": [
+        "decision",
+        "¿La curva derivada representa\nprecipitación acumulada?"
+      ],
+      "ac": [
+        "alternativa",
+        "Derivada de acumulada\nSe interpreta como intensidad\nen la unidad temporal usada.\nEs el ejemplo de clase, pero no\nla escala actual en mm/día.\nE: 351–364."
+      ],
+      "rate": [
+        "elegida",
+        "E04 · Derivada de tasa mm/día\nAdoptada: Dphi por coeficientes.\nResultado en mm/día²:\ncambio de tasa, no acumulado.\nE: 351–364; adaptación de escala."
+      ],
+      "d2": [
+        "decision",
+        "¿El marcador queda en el borde\no no puede identificarse?"
+      ],
+      "border": [
+        "pendiente",
+        "E04 · No dar fecha confiable\nFin_2=365 en 4.185/4.426 curvas.\nDeclarar limitación y estudiar\nregla y sensibilidad con clase.\nPendiente; no resuelto al dibujar."
+      ],
+      "inside": [
+        "pendiente",
+        "E04/E07 · Marcador candidato\nEstar dentro del año no lo valida.\nJustificar regla, revisar estabilidad\ny alcance climatológico.\nNo inferir sesgo ENSO sin pares.\nResponsabilidad del equipo."
+      ]
+    },
+    "aristas": [
+      [
+        "d0",
+        "cross",
+        "Sí"
+      ],
+      [
+        "d0",
+        "cov",
+        "No"
+      ],
+      [
+        "cov",
+        "d1",
+        "Continuar"
+      ],
+      [
+        "d1",
+        "ac",
+        "Sí"
+      ],
+      [
+        "d1",
+        "rate",
+        "No"
+      ],
+      [
+        "rate",
+        "d2",
+        "Continuar"
+      ],
+      [
+        "d2",
+        "border",
+        "Sí"
+      ],
+      [
+        "d2",
+        "inside",
+        "No"
+      ]
+    ]
+  }
+]
