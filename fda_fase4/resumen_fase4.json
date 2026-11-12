@@ -1,0 +1,163 @@
+{
+  "pares": {
+    "entrenamiento": {
+      "pares": 1349,
+      "estaciones": 105
+    },
+    "prueba": {
+      "pares": 257,
+      "estaciones": 93
+    },
+    "validacion": {
+      "pares": 445,
+      "estaciones": 94
+    }
+  },
+  "estaciones_reservadas": "no entregadas por el docente",
+  "estandarizacion_altitud": {
+    "media_m": 1504.7264640474425,
+    "de_m": 562.4371419314878,
+    "fuente": "solo entrenamiento"
+  },
+  "FPCA": {
+    "M": 6,
+    "varianza_acumulada_M": 0.92852345765826,
+    "criterio": "menor M en [4,6] con >= 95 % de varianza (entrenamiento)"
+  },
+  "KAN_sintetica": {
+    "funcion": "exp(sin(pi x) + y^2) en [-1,1]^2",
+    "arquitectura": "[2,5,1], G=10",
+    "RMSE_prueba": 0.0009707739480112265,
+    "umbral": 0.01,
+    "cumple": true
+  },
+  "lambda_rugosidad": 10000.0,
+  "equivalencia_lineal": [
+    {
+      "semilla": 2026,
+      "max_abs_diferencia_sqrt_mm": 3.774758283725532e-15,
+      "umbral": 0.0001,
+      "cumple": true
+    },
+    {
+      "semilla": 2027,
+      "max_abs_diferencia_sqrt_mm": 3.9968028886505635e-15,
+      "umbral": 0.0001,
+      "cumple": true
+    },
+    {
+      "semilla": 2028,
+      "max_abs_diferencia_sqrt_mm": 3.552713678800501e-15,
+      "umbral": 0.0001,
+      "cumple": true
+    }
+  ],
+  "cabeza_elegida_por_validacion": "mlp",
+  "contraste_kan_vs_lineal": [
+    {
+      "cabeza": "kan",
+      "corr_beta_con_lineal": 0.6322347446982174,
+      "dif_rel_beta_L2": 0.7611994847105301,
+      "corr_efecto_altitud_con_lineal": -0.6767818289398435,
+      "corr_efecto_ONI_con_lineal": 0.8925169283838545,
+      "CV_jacobiano_z_medio": 1.3425324499572464,
+      "CV_jacobiano_altitud": 1.6884591533339905,
+      "CV_jacobiano_ONI": 0.7680594028648645
+    },
+    {
+      "cabeza": "mlp",
+      "corr_beta_con_lineal": 0.8634898333168156,
+      "dif_rel_beta_L2": 0.49587685319336866,
+      "corr_efecto_altitud_con_lineal": -0.5682842476216312,
+      "corr_efecto_ONI_con_lineal": 0.9792791009427432,
+      "CV_jacobiano_z_medio": 0.6178215300573556,
+      "CV_jacobiano_altitud": 2.4619482278800398,
+      "CV_jacobiano_ONI": 0.5688068736622928
+    },
+    {
+      "cabeza": "lineal",
+      "corr_beta_con_lineal": 1.0,
+      "dif_rel_beta_L2": 0.0,
+      "corr_efecto_altitud_con_lineal": 1.0,
+      "corr_efecto_ONI_con_lineal": 1.0,
+      "CV_jacobiano_z_medio": 1.836973285660299e-14,
+      "CV_jacobiano_altitud": 1.9568848305260567e-14,
+      "CV_jacobiano_ONI": 1.8847535646919565e-14
+    }
+  ],
+  "ajuste_simbolico": [
+    {
+      "activacion": "φ(z4 -> h1)",
+      "criterio": "mayor amplitud",
+      "forma": "a*tanh(b*x + c) + d",
+      "parametros": [
+        2.71068,
+        0.62094,
+        -1.458,
+        2.32721
+      ],
+      "R2": 0.9986611934246076,
+      "n_param": 4
+    },
+    {
+      "activacion": "φ(altitud -> h1)",
+      "criterio": "más no lineal",
+      "forma": "a*sin(b*x + c) + d",
+      "parametros": [
+        0.86871,
+        1.33594,
+        -0.34823,
+        0.39337
+      ],
+      "R2": 0.9967322782915862,
+      "n_param": 4
+    }
+  ],
+  "peores_casos_prueba": [
+    {
+      "STATION_ID": "2614100104",
+      "YEAR": 2001,
+      "fase": "Neutro",
+      "L2_rel": 1.8577246530594975,
+      "KGE": -1.3526981670454468,
+      "sesgo_pct": 204.67072798502184
+    },
+    {
+      "STATION_ID": "2612800104",
+      "YEAR": 2001,
+      "fase": "Neutro",
+      "L2_rel": 1.5871678735616659,
+      "KGE": -0.9868955195658599,
+      "sesgo_pct": 167.39240700871093
+    },
+    {
+      "STATION_ID": "2624700120",
+      "YEAR": 2001,
+      "fase": "Neutro",
+      "L2_rel": 1.4323197630109863,
+      "KGE": -0.6343221071621764,
+      "sesgo_pct": 146.43969255326422
+    },
+    {
+      "STATION_ID": "2612800104",
+      "YEAR": 2002,
+      "fase": "Niño",
+      "L2_rel": 1.220643448111699,
+      "KGE": -0.5873806544786749,
+      "sesgo_pct": 122.1909708903562
+    }
+  ],
+  "versiones": {
+    "python": "3.11.5",
+    "numpy": "2.4.6",
+    "pandas": "3.1.1",
+    "torch": "2.15.0+cpu",
+    "scipy": "1.17.1"
+  },
+  "semillas": [
+    2026,
+    2027,
+    2028
+  ],
+  "segundos": 270.0
+}
