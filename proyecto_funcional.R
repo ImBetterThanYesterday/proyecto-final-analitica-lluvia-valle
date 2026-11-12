@@ -7,7 +7,7 @@
 
 # PREPARACIÓN: ejecutar completa antes de los cálculos ----
 # Ruta fija de esta entrega: no depende de la carpeta que tenga abierta RStudio.
-CARPETA_PROYECTO <- "/Users/mariavalencia/Downloads/proyecto-final-analitica-lluvia-valle-main"
+CARPETA_PROYECTO <- "/Users/mariavalencia/Downloads/lluvia-valle-git"
 if (!dir.exists(file.path(CARPETA_PROYECTO, "fda_fase1"))) stop("No se encuentra la carpeta de datos del proyecto")
 setwd(CARPETA_PROYECTO)
 
