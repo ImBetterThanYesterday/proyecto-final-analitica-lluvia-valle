@@ -57,6 +57,12 @@ def reconcile(root: Path = ROOT, baseline_ref: str = "main") -> tuple[list[dict[
     flags = _flags_by_pair(root / "eda_fase0/dias_marcados.csv")
     selected_stations = _selected_stations(root / "eda_fase0/pares_estacion_anio_validos_preliminar.csv")
     baseline_stations = {s for s, _ in baseline}
+    # Años válidos por estación (P5 ok) con las banderas actuales: en entrenamiento (1981–1995) y en 1981–2003.
+    # main exigía P6 = ≥10 años válidos en 1981–2003 (usa validación y prueba);
+    # Jacobo exige P6 = ≥7 años válidos solo en entrenamiento (sin fuga).
+    validos = [(st, int(yr)) for (st, yr), r in coverage.items() if r.get("ok", "").lower() == "true"]
+    n_entren: Counter[str] = Counter(st for st, yr in validos if yr <= 1995)
+    n_total: Counter[str] = Counter(st for st, _ in validos)
     records: list[dict[str, str]] = []
     reasons: Counter[str] = Counter()
 
@@ -75,6 +81,7 @@ def reconcile(root: Path = ROOT, baseline_ref: str = "main") -> tuple[list[dict[
             reason = "no_aparece_en_cobertura_ni_banderas_revisar_P0_a_P4"
         reasons[reason] += 1
         records.append({"STATION_ID": station, "YEAR": year, "pertenece": "solo_main",
+                        "anios_validos_entren": n_entren[station], "anios_validos_1981_2003": n_total[station],
                         "diagnostico": reason, "flags_locales": ";".join(pair_flags),
                         "cobertura": row.get("cob", "") if row else "",
                         "hueco_max": row.get("hueco", "") if row else "",
@@ -82,10 +89,15 @@ def reconcile(root: Path = ROOT, baseline_ref: str = "main") -> tuple[list[dict[
 
     for station, year in sorted(jacobo - baseline):
         row = coverage.get((station, year))
-        reason = ("estacion_nueva_en_Jacobo_reconciliar_con_reglas_baseline"
-                  if station not in baseline_stations else "nuevo_anio_de_estacion_existente_reconciliar_con_reglas_baseline")
+        if station not in baseline_stations and n_entren[station] >= 7 and n_total[station] < 10:
+            reason = "P6_cambio_de_regla_entra_por_7_anios_en_entrenamiento_main_exigia_10_en_1981_2003"
+        elif station not in baseline_stations:
+            reason = "estacion_nueva_en_Jacobo_revisar"
+        else:
+            reason = "nuevo_anio_de_estacion_existente_revisar_P0_a_P5"
         reasons[reason] += 1
         records.append({"STATION_ID": station, "YEAR": year, "pertenece": "solo_jacobo",
+                        "anios_validos_entren": n_entren[station], "anios_validos_1981_2003": n_total[station],
                         "diagnostico": reason, "flags_locales": ";".join(sorted(flags.get((station, year), set()))),
                         "cobertura": row.get("cob", "") if row else "",
                         "hueco_max": row.get("hueco", "") if row else "",
@@ -109,7 +121,8 @@ def main() -> None:
     records, summary = reconcile()
     out = ROOT / "docs/diff_claves_estacion_main_jacobo.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
-    fields = ["STATION_ID", "YEAR", "pertenece", "diagnostico", "flags_locales", "cobertura", "hueco_max", "meses20"]
+    fields = ["STATION_ID", "YEAR", "pertenece", "diagnostico", "anios_validos_entren", "anios_validos_1981_2003",
+              "flags_locales", "cobertura", "hueco_max", "meses20"]
     with out.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields, lineterminator="\n")
         writer.writeheader(); writer.writerows(records)

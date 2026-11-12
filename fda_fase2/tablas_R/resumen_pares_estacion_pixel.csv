@@ -14,6 +14,6 @@
 "codigos_CVC_no_presentes_en_curvas",68
 "distancia_pixel_mediana_km",2.20113051763586
 "distancia_pixel_maxima_km",3.8929406161759
-"cvc_dta_comprobacion_ejecutada",1
-"cvc_dta_error_max_lon",3.81111328806583e-06
-"cvc_dta_error_max_lat",2.28722168316153e-07
+"cvc_dta_comprobacion_ejecutada",0
+"cvc_dta_error_max_lon",NA
+"cvc_dta_error_max_lat",NA
