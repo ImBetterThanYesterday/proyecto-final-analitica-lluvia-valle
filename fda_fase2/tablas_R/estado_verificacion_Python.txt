@@ -1,1 +1,1 @@
-PENDIENTE: no se contrastó con Python; la tabla guardada no declara FM_pdf y puede tener la convención anterior
+VERIFICADO: FM/MBD, fechas candidatas y claves de atípicas coinciden con notebook Python actualizado

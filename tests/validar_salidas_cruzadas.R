@@ -37,12 +37,33 @@ local({
 
   k_vcg <- as.integer(py_k[["K por VCG"]][1:2])
   k_r <- as.integer(c(ncol(r_est) - 2L, ncol(r_sat) - 3L))
-  stopifnot(identical(k_r, k_vcg), error_est < 1e-8, error_sat < 1e-8,
+  # El notebook ajusta el satélite con los valores float32 del TIFF; R, con curvas_satelite_mm.csv.gz
+  # (5 decimales). Cota exacta de ese redondeo: max_k sum_j |y2cMap_kj| * 5e-6. La igualdad con la misma
+  # entrada (< 1e-8) se prueba en tests/validar_salidas_cruzadas.py.
+  curvas <- read.csv(gzfile(file.path(dir, "curvas_satelite_mm.csv.gz")), check.names = FALSE, nrows = 1)
+  t_sat <- as.numeric(sub("^t", "", names(curvas)[-(1:3)]))
+  K_sat <- ncol(r_sat) - 3L; orden <- 4L; rango <- c(1, 365)
+  interiores <- seq(rango[1], rango[2], length.out = K_sat - orden + 2L)
+  tau <- c(rep(rango[1], orden), interiores[-c(1L, length(interiores))], rep(rango[2], orden))
+  B <- outer(t_sat, seq_len(length(tau) - 1L), function(x, j) (x >= tau[j]) & (x < tau[j + 1L])) * 1
+  B[t_sat == max(tau), max(which(diff(tau) > 0))] <- 1
+  for (m in 2:orden) {
+    S <- matrix(0, length(t_sat), length(tau) - m)
+    for (j in seq_len(ncol(S))) {
+      d1 <- tau[j + m - 1L] - tau[j]; d2 <- tau[j + m] - tau[j + 1L]
+      if (d1 > 0) S[, j] <- S[, j] + (t_sat - tau[j]) / d1 * B[, j]
+      if (d2 > 0) S[, j] <- S[, j] + (tau[j + m] - t_sat) / d2 * B[, j + 1L]
+    }
+    B <- S
+  }
+  mapa <- solve(crossprod(B), t(B))
+  cota_sat <- max(rowSums(abs(mapa))) * 5e-6
+  stopifnot(identical(k_r, k_vcg), error_est < 1e-8, error_sat <= cota_sat,
             error_w_est < 1e-8, error_w_sat < 1e-8)
   results <- data.frame(
     control = c("filas_estaciones", "filas_satelite", "error_coef_estaciones", "error_coef_satelite",
-                "K_VCG_estaciones", "K_VCG_satelite", "error_W_estaciones", "error_W_satelite"),
-    valor = c(nrow(r_est), nrow(r_sat), error_est, error_sat, k_r, error_w_est, error_w_sat)
+                "cota_redondeo_satelite", "K_VCG_estaciones", "K_VCG_satelite", "error_W_estaciones", "error_W_satelite"),
+    valor = c(nrow(r_est), nrow(r_sat), error_est, error_sat, cota_sat, k_r, error_w_est, error_w_sat)
   )
   dir.create(file.path("fda_fase1", "tablas_R"), showWarnings = FALSE, recursive = TRUE)
   write.csv(results, file.path("fda_fase1", "tablas_R", "validacion_cruzada_R_Python.csv"), row.names = FALSE)
