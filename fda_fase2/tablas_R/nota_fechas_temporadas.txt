@@ -1,0 +1,2 @@
+Las fechas inicio/pico/fin exportadas son candidatos exploratorios.
+Ventanas 60–200 y 230–365 y extremos de derivada; no validadas meteorológicamente ni como receta de clase.
