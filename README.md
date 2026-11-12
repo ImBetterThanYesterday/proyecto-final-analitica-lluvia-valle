@@ -60,3 +60,7 @@ Seguimiento detallado por criterio en `docs/SEGUIMIENTO_RUBRICA_JACOBO.md`.
 - **Fase 3.** 2.751 pares estación–año/píxel–año en 147 estaciones con coordenada CVC dentro de la malla (2.051 con altitud), verificados con la geotransformada del TIFF. Es cobertura parcial: 78 estaciones no tienen coordenada en el archivo CVC y 23 caen fuera de la malla.
 - **Fase 4.** Red funcional entrenada con los pares que tienen altitud (1.349 de entrenamiento, 445 de validación y 257 de prueba). En prueba (2001–2003), las tres cabezas mejoran a la curva satelital sin corregir en error L², KGE, sesgo anual y fecha de los picos (IC bootstrap del 95 % por estación). La KAN no supera a la cabeza lineal de forma significativa. La equivalencia de la cabeza lineal con la regresión funcional se verifica a 4e-15.
 - **Pendiente.** Estaciones reservadas (las debe entregar el docente), coordenadas faltantes, informe final y consolidación en un solo script R y uno Python.
+
+## Decisiones
+
+Todas las decisiones del proyecto, con su justificación y validación, están en [`DECISIONES.md`](DECISIONES.md). Las estaciones del Valle del Cauca con su ubicación verificada están en `datos_web/estaciones_valle_del_cauca.xlsx`.
