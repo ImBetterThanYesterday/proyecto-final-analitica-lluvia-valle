@@ -1,0 +1,1 @@
+PAREADO PARCIAL: 2751 pares estación-año en 147 estaciones CVC dentro de la malla; IC cluster bootstrap puntual, 1000 réplicas
