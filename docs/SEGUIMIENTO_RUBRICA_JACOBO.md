@@ -1,8 +1,8 @@
-# Seguimiento vivo de la rúbrica — rama de Jacobo
+# Seguimiento vivo de la rúbrica — integración Jacobo en rama María
 
 **Norma aplicada:** resumen autocontenido de la Fe de Erratas nueva: 1981–2003; entrenamiento 1981–1995, validación 1996–2000, prueba 2001–2003 más estaciones reservadas; construcción funcional manual, sin librerías funcionales. La rúbrica completa conserva los pesos 1=10 %, 2=15 %, 3=15 %, 4.1–4.5=45 %, 5=10 %, 6=5 %.
 
-**Rama de trabajo local:** `mejoras-rubrica-jacobo` desde la referencia local `origin/actualizacion_jacobo` (`cc8290b`). No se ejecutó `fetch`, no se subieron datos crudos y no se hizo commit/push.
+**Rama local actual:** `maria-eda-funcional-construccion-funcional`. El commit merge `1e6f00d` integra la rama local `mejoras-rubrica-jacobo` (commit `5efceb0`); se usó la referencia Jacobo ya cacheada, sin `fetch`. El merge es local y todavía no está publicado; no se agregaron archivos crudos.
 
 **Estados:** `PENDIENTE`, `EN PROGRESO`, `VERIFICADO`, `BLOQUEADO`. Un estado `VERIFICADO` exige una prueba/comando ejecutado y evidencia guardada; la existencia de código o salida vieja no basta.
 
@@ -33,9 +33,10 @@
 | 2026-11-11 | Pruebas de fuente | — → VERIFICADO | 9 tests Python, crosswalk/bootstrap R y `parse()` de scripts | Pruebas locales pasan; no prueban redes ni holdout. |
 | 2026-11-11 | EDA R/pares | EN PROGRESO → EN PROGRESO | `Rscript 04_eda_funcional.R` | EDA R y comparación parcial se ejecutan; fda y Python crosschecks quedan PENDIENTE explícito. |
 | 2026-11-11 | Ambiente Python/R | — → BLOQUEADO para rerun notebooks | Chequeo de módulos con `python3.13`; `requireNamespace()` en R | Python 3.13 tiene pandas/numpy/matplotlib, pero falta rasterio/SciPy/scikit-fda/openpyxl; R tiene readxl/haven/terra, pero no fda. No se instalaron dependencias externas. |
-| 2026-11-11 | Handoff de implementación | — → VERIFICADO | Pandoc + ZIP check de `INFORME_CAMBIOS_Y_ESTADO_RUBRICA_JACOBO.docx`; revisión de `PROMPT_IMPLEMENTAR_RUBRICA_JACOBO.md` | Word resume cambios/pendientes/pruebas para Claude; es contexto interno y no el informe final del criterio 5. No se hizo commit/push. |
-| 2026-11-11 | Paquete local de implementación | — → EN PROGRESO | `git status --short --branch`; `git diff --check` | Cambios y salidas quedan sin commit/push en `mejoras-rubrica-jacobo`; fuentes crudas y `.pkl` siguen ignorados. |
-| 2026-11-11 | Handoff Claude/Jacobo | — → VERIFICADO | `AUDITORIA_RUBRICA_RAMA_JACOBO.docx`; `INFORME_CAMBIOS_Y_ESTADO_RUBRICA_JACOBO.docx`; `PROMPT_IMPLEMENTAR_RUBRICA_JACOBO.md` | El DOCX de implementación resume preexistente vs nuevo, pruebas, bloqueos y próxima fase; no reemplaza el informe final de curso. |
+| 2026-11-11 | Handoff de implementación | — → VERIFICADO | Pandoc + ZIP check de `INFORME_CAMBIOS_Y_ESTADO_RUBRICA_JACOBO.docx`; revisión de `PROMPT_IMPLEMENTAR_RUBRICA_JACOBO.md` | Word resume cambios/pendientes/pruebas para Claude; es contexto interno y no el informe final del criterio 5. |
+| 2026-11-11 | Integración en rama María | — → VERIFICADO localmente | Merge `1e6f00d` (`mejoras-rubrica-jacobo` → `maria-eda-funcional-construccion-funcional`) | Se conservaron archivos previos de María y se eligieron los scripts completos 03/04 de Jacobo; `proyecto_funcional.R` queda como flujo integrado anterior. Merge aún no subido. |
+| 2026-11-11 | Handoff Claude/Jacobo | — → VERIFICADO | `AUDITORIA_RUBRICA_RAMA_JACOBO.docx`; `INFORME_CAMBIOS_Y_ESTADO_RUBRICA_JACOBO.docx`; `PROMPT_IMPLEMENTAR_RUBRICA_JACOBO.md` | Informe final de implementación resume preexistente vs nuevo, pruebas, bloqueos y próximo paso; no reemplaza el informe final de curso. |
+| 2026-11-11 | Informe posterior al merge | — → VERIFICADO localmente | `INFORME_FINAL_RAMA_MARIA_JACOBO.docx` validado con Pandoc y ZIP integrity | Resume merge 1e6f00d, estado de rúbrica y procedimiento de publicación; el remoto no se modificó. |
 
 ## Registro de ejecuciones
 
