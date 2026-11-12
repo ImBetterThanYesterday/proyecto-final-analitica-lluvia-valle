@@ -17,36 +17,46 @@ Las decisiones del preprocesamiento que dependen de los datos (percentiles por e
 
 | Archivo / carpeta | Qué contiene |
 |---|---|
-| `01_EDA_calidad_datos.ipynb` | EDA y auditoría de calidad de los datos crudos de estaciones |
+| `01_EDA_calidad_datos.ipynb` | EDA y auditoría de calidad de los datos crudos de estaciones; reglas de depuración P1–P6 |
 | `01b_valores_unicos.ipynb` | Valores únicos por variable, por estación y por año |
 | `02_datos_externos.ipynb` | ONI, CHIRPS v2, NASA POWER, códigos CNE/IDEAM |
 | `03_construccion_funcional.ipynb` / `.R` | Construcción de las curvas en B-splines programadas a mano: K por ECM/VC/VCG con entrenamiento, verificación de S, bandas punto a punto, matriz de Gram W, escala √ / log(1+P) y sensibilidad de K |
-| `04_eda_funcional.ipynb` / `.R` | EDA funcional: media, varianza, covarianza, derivadas y fechas de temporadas, profundidad FM/MBD, boxplot funcional, atípicas, cuenca y ENSO |
-| `eda_fase0/`, `fda_fase1/`, `fda_fase2/` | Resultados (CSV, coeficientes, figuras) de cada fase; las salidas de R están en `figuras_R/` y `tablas_R/` |
+| `04_eda_funcional.ipynb` / `.R` | EDA funcional: media, varianza, covarianza, derivadas y fechas candidatas de temporadas, profundidad FM/MBD, boxplot funcional, atípicas, cuenca y ENSO; en R, además, la comparación pareada estación–píxel |
+| `05_red_funcional.py` | Fase 4: red funcional (codificador con W, cabeza lineal/KAN/MLP, decodificador FPCA), ablación con 3 semillas, evaluación en prueba e interpretación |
+| `scripts/` | Cruce estación–píxel (`crear_pares_estacion_pixel.R`, `verificar_crosswalk_python.py`) y reconciliación de claves main↔Jacobo |
+| `tests/` | Pruebas: construcción manual, validación cruzada R↔Python, cruce estación–píxel, reconciliación de claves y red funcional |
+| `eda_fase0/`, `fda_fase1/`, `fda_fase2/`, `fda_fase4/` | Resultados (CSV, coeficientes, figuras) de cada fase; las salidas de R están en `figuras_R/` y `tablas_R/` |
+| `docs/SEGUIMIENTO_RUBRICA_JACOBO.md` | Matriz de cumplimiento de la rúbrica con evidencia, pruebas e historial |
 | `datos_web/` | Datos externos descargados (ONI, CNE, CHIRPS v2, NASA POWER) |
 
 ## Orden de ejecución
 
-1. En un entorno con las dependencias documentadas por los notebooks: `01_EDA_calidad_datos.ipynb` → `02_datos_externos.ipynb` → `03_construccion_funcional.ipynb` → `04_eda_funcional.ipynb`. El notebook 01 genera el cache local `eda_fase0/estaciones_crudas.pkl`; los resultados guardados de una ejecución anterior no sustituyen una reproducción limpia.
-2. Desde la raíz del repo: `Rscript 03_construccion_funcional.R` → `Rscript tests/test_construccion_manual.R` → `python3.13 tests/validar_salidas_cruzadas.py` → `Rscript scripts/crear_pares_estacion_pixel.R` → `Rscript 04_eda_funcional.R`. 04 escribe la diferencia pareada por día/curva, cross-covarianza/correlación y una banda bootstrap puntual remuestreando estaciones.
-3. Las pruebas unitarias de controles locales son `python3 -m unittest tests/test_rubrica_code.py tests/test_reconciliar_claves_estacion.py -v`, `Rscript tests/test_station_pixel_crosswalk.R` y `Rscript tests/test_station_pixel_statistics.R`. La comparación R/Python usa `coef_satelite_python.csv.gz` si el notebook 03 ya se reejecutó; si no, informa que utiliza como respaldo el NPZ Python guardado con coeficientes float32 y una tolerancia acorde a esa precisión.
+Todo desde la raíz del repositorio, con las versiones de `requirements.txt` (Python 3.11) y R 4.4 (readxl, terra, jsonlite; `fda` solo para verificar el EDA).
 
-La fase 1 no usa librerías funcionales para calcular Φ/MCO/K. Las comprobaciones independientes con `splines` y QR están en `tests/test_construccion_manual.R`. En el EDA las librerías están autorizadas para verificar media/profundidad; si falta `fda`, R genera los resultados descriptivos, registra `PENDIENTE` y no acredita el contraste de la rúbrica.
+1. Notebooks `01_EDA_calidad_datos` → `02_datos_externos` → `03_construccion_funcional` → `04_eda_funcional`. El 01 crea el cache local `eda_fase0/estaciones_crudas.pkl` desde los archivos fuente; el 03 escribe `fda_fase1/coef_satelite_python.csv.gz` para la comparación con R.
+2. `Rscript 03_construccion_funcional.R` → `Rscript tests/test_construccion_manual.R` → `python tests/validar_salidas_cruzadas.py` y `Rscript tests/validar_salidas_cruzadas.R`.
+3. `Rscript scripts/crear_pares_estacion_pixel.R` → `python scripts/verificar_crosswalk_python.py` → `Rscript 04_eda_funcional.R`.
+4. `python 05_red_funcional.py` (≈5 min en CPU).
+5. Pruebas: `python -m unittest tests/test_red_funcional.py tests/test_rubrica_code.py tests/test_reconciliar_claves_estacion.py`, `Rscript tests/test_station_pixel_crosswalk.R` y `Rscript tests/test_station_pixel_statistics.R`.
 
-### Flujo R activo y flujo integrado anterior
+La fase 1 no usa librerías funcionales para calcular Φ, MCO ni K; las comprobaciones con `splines` y QR están en `tests/test_construccion_manual.R`. En el EDA las librerías (scikit-fda, fda) se usan para verificar media, profundidades y boxplot. En la fase 4 se usa PyTorch, autorizada por el enunciado; la KAN se programa con la forma φ(x) = w_b·SiLU(x) + w_s·Σ c_i B_i(x).
 
-En esta rama, para continuar el trabajo de Jacobo, el flujo activo de las fases es `03_construccion_funcional.R` → `scripts/crear_pares_estacion_pixel.R` → `04_eda_funcional.R`. El `proyecto_funcional.R` y `resultados_R/` se conservan del flujo integrado anterior. Ese flujo parte de una población distinta (4.426 curvas/238 estaciones frente a 4.485/248 en los artefactos Jacobo); no mezclar sus K/resultados sin regenerarlos y reconciliar las claves. El informe y la matriz de seguimiento documentan esa divergencia.
+La comparación de coeficientes satelitales R↔Python se hace con la misma entrada (diferencia < 1e-8). El notebook ajusta con los valores float32 del TIFF y R con `curvas_satelite_mm.csv.gz` (5 decimales); esa diferencia se acota exactamente con la norma de y2cMap.
+
+### Flujo R anterior
+
+`proyecto_funcional.R` y `resultados_R/` se conservan del flujo integrado anterior, que parte de otra población (4.426 curvas/238 estaciones, K=6/11). El flujo activo es el de los archivos 03/04/05.
 
 ## Datos crudos (no incluidos)
 
-Los archivos fuente del curso se mantienen locales e ignorados por Git. En esta Mac están en la raíz: `P_1930_1979.xlsx`, `P_1980_1990.csv`, `P_1991_2003.csv`, `ImagenesSatelitePentadal.zip` y la carpeta extraída `ImagenesSatelitePentadal/`. También hay metadatos CVC y el catálogo de elevación (`CVC_Wheather_Stations_Long_Lat.csv/.dta`, `CatalogoEstacionesElevacion.xlsx`); no se deben subir como datos del repositorio.
-
-El cache `eda_fase0/estaciones_crudas.pkl` se regeneró localmente desde los tres archivos de estaciones (2.992.694 filas, 344 códigos, 1930–2003); está ignorado por Git. En la máquina de revisión, Python 3.13 tiene pandas/NumPy/Matplotlib pero no rasterio, SciPy ni scikit-fda; R tiene readxl/haven/terra, pero no fda. No se instalaron dependencias desde Internet. Por eso los notebooks completos y el contraste de librería siguen pendientes.
+Los archivos fuente del curso se mantienen locales e ignorados por Git y deben copiarse en la raíz: `P_1930_1979.xlsx`, `P_1980_1990.csv`, `P_1991_2003.csv`, `ImagenesSatelitePentadal.zip` (o la carpeta `ImagenesSatelitePentadal/`), y los metadatos `CVC_Wheather_Stations_Long_Lat.csv/.dta` y `CatalogoEstacionesElevacion.xlsx`.
 
 ## Estado
 
-Fases 0–2 tienen código; la construcción manual R se ejecutó sobre las matrices Jacobo (K=8/11) y pasó controles H, MCO, base, W y VCG/LOO. La población cambió respecto de main: 4.426/238 → 4.485/248; 4.360 claves comunes, 66 solo-main (10 P5 y 56 P6) y 125 solo-Jacobo de 15 estaciones nuevas. Se generó el diff auditable en `docs/diff_claves_estacion_main_jacobo.csv`.
+Seguimiento detallado por criterio en `docs/SEGUIMIENTO_RUBRICA_JACOBO.md`.
 
-La comparación estación–píxel usa el subconjunto CVC local: 170 IDs coinciden, 147 caen dentro de la malla y generan 2.751 pares estación–año/píxel–año; 105 de esas ubicaciones tienen altitud. Para esta muestra se calcularon diferencias estación menos satélite, covarianza/correlación cruzada, IC bootstrap puntual por conglomerados de estación y contraste descriptivo ONI. Es **cobertura parcial**, no un crosswalk completo ni una conclusión causal: 78 IDs Jacobo no tienen metadatos CVC, 23 puntos están fuera de la malla y 42 estaciones en malla no tienen altitud.
-
-La fase 4 aún no tiene KAN/MLP, ablación, evaluación de prueba ni interpretación de activaciones. La verificación EDA con fda/scikit-fda permanece PENDIENTE; los notebooks no se reejecutaron por las dependencias faltantes. El informe final y el anexo de IA también siguen pendientes. Seguimiento por criterio: `docs/SEGUIMIENTO_RUBRICA_JACOBO.md`.
+- **Fases 0–2.** Reproducidas desde los archivos fuente: el cache y las curvas regeneradas son idénticos a los versionados. K=8 (estaciones) y K=11 (satélite) elegidos solo con entrenamiento. R y Python coinciden en claves, K, coeficientes de ambas fuentes, W, profundidades, fechas y atípicas, y el EDA queda contrastado con scikit-fda y fda.
+- **Población.** Respecto de main (4.426 curvas/238 estaciones) cambia a 4.485/248. Las 191 claves distintas se explican por regla en `docs/diff_claves_estacion_main_jacobo.csv`: el mínimo de años (P6) ahora se cuenta solo en entrenamiento (≥7 años en 1981–1995, antes ≥10 en 1981–2003), y 10 claves salen por cobertura (P5) con las reglas relativas a cada estación.
+- **Fase 3.** 2.751 pares estación–año/píxel–año en 147 estaciones con coordenada CVC dentro de la malla (2.051 con altitud), verificados con la geotransformada del TIFF. Es cobertura parcial: 78 estaciones no tienen coordenada en el archivo CVC y 23 caen fuera de la malla.
+- **Fase 4.** Red funcional entrenada con los pares que tienen altitud (1.349 de entrenamiento, 445 de validación y 257 de prueba). En prueba (2001–2003), las tres cabezas mejoran a la curva satelital sin corregir en error L², KGE, sesgo anual y fecha de los picos (IC bootstrap del 95 % por estación). La KAN no supera a la cabeza lineal de forma significativa. La equivalencia de la cabeza lineal con la regresión funcional se verifica a 4e-15.
+- **Pendiente.** Estaciones reservadas (las debe entregar el docente), coordenadas faltantes, informe final y consolidación en un solo script R y uno Python.
