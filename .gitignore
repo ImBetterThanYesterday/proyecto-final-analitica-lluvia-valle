@@ -9,4 +9,8 @@ P_1980_1990.csv
 P_1991_2003.csv
 ImagenesSatelitePentadal/
 ImagenesSatelitePentadal.zip
+# Insumos originales locales (no distribuir desde Git)
+CatalogoEstacionesElevacion.xlsx
+CVC_Wheather_Stations_Long_Lat.csv
+CVC_Wheather_Stations_Long_Lat.dta
 .Rlib/
