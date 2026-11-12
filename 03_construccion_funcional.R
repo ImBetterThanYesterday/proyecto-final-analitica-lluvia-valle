@@ -10,7 +10,7 @@
 #   5. verificación de S (= H): simétrica, idempotente y traza = K
 #   6. sigma^2, covarianza residual y bandas de confianza punto a punto
 #   7. matriz de Gram W = integral de phi phi' por cuadratura (para la fase 4)
-#   8. comparación numérica con los resultados de Python
+#   8. exportación de evidencia R; la comparación Python/R corre en tests/validar_salidas_cruzadas.R
 #
 # Ejecutar de arriba abajo desde la carpeta raíz del repositorio (Source o Ctrl+Shift+Enter).
 # Entradas (las genera el notebook 03, carpeta fda_fase1/):
@@ -20,7 +20,6 @@
 # Salidas: fda_fase1/figuras_R/ (PDF), fda_fase1/tablas_R/ (CSV) y los coeficientes que lee 04_eda_funcional.R
 #####################################################################################
 
-rm(list = ls())
 # setwd("ruta/al/repositorio")          # descomentar si RStudio no abre en la raíz del repositorio
 if (!file.exists("fda_fase1/curvas_estaciones_mm.csv.gz"))
   stop("Ejecute desde la raíz del repositorio y corra antes el notebook 03 (genera fda_fase1/curvas_*_mm.csv.gz)")
@@ -158,12 +157,15 @@ figura("observados.pdf", function() {
 })
 
 #------------------------------------------------------------------------------------
-# 2. Base B-spline: verificación contra splines::splineDesign (solo comprobación)
+# 2. Controles algebraicos de la base manual (sin usar otra implementación)
 #------------------------------------------------------------------------------------
 for (K in c(6, 11, 17, 40)) {
-  ref <- splines::splineDesign(nodos(K), t_est, ord = ORDEN, outer.ok = TRUE)
-  cat(sprintf("K = %2d: max|Phi_propia - Phi_splines| = %.1e | suma de cada fila = 1: %s\n", K,
-              max(abs(base_bspline(t_est, K) - ref)), isTRUE(all.equal(rowSums(base_bspline(t_est, K)), rep(1, 365)))))
+  Phi_control <- base_bspline(t_est, K)
+  suma_filas <- rowSums(Phi_control)
+  stopifnot(all(is.finite(Phi_control)), min(Phi_control) >= -1e-12,
+            max(abs(suma_filas - 1)) < 1e-10)
+  cat(sprintf("K = %2d: Phi manual finita/no negativa; suma de filas entre %.12f y %.12f\n",
+              K, min(suma_filas), max(suma_filas)))
 }
 
 #------------------------------------------------------------------------------------
@@ -171,7 +173,6 @@ for (K in c(6, 11, 17, 40)) {
 #------------------------------------------------------------------------------------
 i_ej <- which(completas_est)[1]; y1 <- est$Y[i_ej, ]
 P17 <- base_bspline(t_est, 17); a17 <- ajuste_mco(y1, P17)
-cat("Coeficientes propios vs lsfit:", format(max(abs(a17$coef - lsfit(P17, y1, intercept = FALSE)$coef)), digits = 2), "\n")
 print(control_H(a17$H, 17))
 vc_atajo <- mean(((y1 - a17$H %*% y1) / (1 - diag(a17$H)))^2)
 pred <- sapply(1:365, function(j) P17[j, ] %*% solve(crossprod(P17[-j, ]), crossprod(P17[-j, ], y1[-j])))
@@ -337,21 +338,21 @@ gram <- function(K) {
   P <- base_bspline(tq, K); crossprod(P, wq * P)
 }
 W_est <- gram(K_EST); W_sat <- gram(K_SAT)
-for (d in list(list("estaciones", W_est, "gram_estaciones.csv"), list("satelite", W_sat, "gram_satelite.csv"))) {
-  W <- d[[2]]; W_py <- as.matrix(read.csv(file.path(DIR, d[[3]]), header = FALSE))
-  cat(sprintf("W %s: simétrica %.1e | autovalor mínimo %.3f | 1'W1 = %.8f (debe ser 364) | max|W_R - W_Python| = %.1e\n",
-              d[[1]], max(abs(W - t(W))), min(eigen(W, symmetric = TRUE)$values), sum(W), max(abs(W - W_py))))
+for (d in list(list("estaciones", W_est), list("satelite", W_sat))) {
+  W <- d[[2]]
+  controles_W <- c(simetria = max(abs(W - t(W))), autovalor_minimo = min(eigen(W, symmetric = TRUE)$values),
+                   integral_constante = abs(sum(W) - 364))
+  stopifnot(controles_W["simetria"] < 1e-10, controles_W["autovalor_minimo"] > 0,
+            controles_W["integral_constante"] < 1e-8)
+  cat(sprintf("W %s: simétrica %.1e | autovalor mínimo %.3f | 1'W1 = %.8f (debe ser 364)\n",
+              d[[1]], controles_W["simetria"], controles_W["autovalor_minimo"], sum(W)))
 }
+write.table(W_est, file.path(DIR, "gram_estaciones_R.csv"), sep = ",", row.names = FALSE, col.names = FALSE)
+write.table(W_sat, file.path(DIR, "gram_satelite_R.csv"), sep = ",", row.names = FALSE, col.names = FALSE)
 t_fino <- seq(1, 365, by = .01); x_fino <- as.vector(base_bspline(t_fino, K_EST) %*% e$coef[i_ej, ])
 cat(sprintf("c'Wc = %.4f | integral de x(t)^2 por trapecio fino = %.4f\n", drop(e$coef[i_ej, ] %*% W_est %*% e$coef[i_ej, ]),
             sum(diff(t_fino) * (head(x_fino, -1)^2 + tail(x_fino, -1)^2) / 2)))
 
-#------------------------------------------------------------------------------------
-# 8. Verificación cruzada con Python
-#------------------------------------------------------------------------------------
-py_coef <- as.matrix(read.csv(file.path(DIR, "coef_estaciones.csv"))[, -(1:2)])
-py_K    <- read.csv(file.path(DIR, "resumen_seleccion_K.csv"), check.names = FALSE)
-cat("max|coef_R - coef_Python| (estaciones):", format(max(abs(e$coef - py_coef)), digits = 3), "\n")
-cat("K por VCG — R:", K_EST, K_SAT, "| Python:", py_K[["K por VCG"]][1:2], "\n")
-stopifnot(K_EST == py_K[["K por VCG"]][1], K_SAT == py_K[["K por VCG"]][2], max(abs(e$coef - py_coef)) < 1e-8)
-cat("Construcción en R terminada. Figuras en", DIR_FIG, "y tablas en", DIR_TAB, "\n")
+cat("Construcción manual en R terminada. Para comparar coeficientes, K y W con Python, ejecutar:",
+    "Rscript tests/validar_salidas_cruzadas.R\n")
+cat("Figuras en", DIR_FIG, "y tablas en", DIR_TAB, "\n")
