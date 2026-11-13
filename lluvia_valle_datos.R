@@ -12,7 +12,7 @@
 #   6. Climatología y coherencia espacial
 #   7. Experimento de huecos: ¿cuánta falta de datos aguanta una curva?
 #   8. Depuración (reglas D-36) y dataset final
-#   9. Satélite: lectura, estructura y fuente (D-37)
+#   9. Satélite: lectura, estructura y fuente (D-43)
 #  10. Satélite: recorte al Valle, calendario de péntadas y mm/día
 #  11. Satélite: EDA
 #  12. Satélite frente a estaciones: emparejamiento, sesgo y años sospechosos
@@ -31,7 +31,7 @@
 #   datos_web/limites/deptos_valle_y_vecinos_DANE_2020.gpkg   límites DANE (MGN 2020)
 #   datos_web/oni_anual_fase.csv                  ONI anual (contexto ENSO)
 #   datos_curso/ImagenesSatelitePentadal/ppt*.tif satélite por péntadas (2 328 GeoTIFF)
-#   datos_web/chirp_v2_valle_muestra_7anios.bin   CHIRP v2.0 del CHC, para verificar la fuente (D-37)
+#   datos_web/chirp_v2_valle_muestra_7anios.bin   CHIRP v2.0 del CHC, para verificar la fuente (D-43)
 #   datos_web/chirps_v2_valle_1981_2013.bin       CHIRPS v2.0 del CHC, para verificar la fuente
 # Salidas (salidas_R_datos/)
 #   lluvia_valle_limpia.rds   dataset final de estaciones (ver sección 8)
@@ -108,8 +108,8 @@ finales <- finales[, .(codigo, nombre, municipio, lat, lon, altitud = alt, nivel
 # Univalle (2622320201) no tiene altitud en el Excel del curso ni en el CNE. Se
 # toma la de la estación del IDEAM en el mismo campus, "UNIVERSIDAD DEL VALLE - AUT"
 # (CNE 0026055120, 996 m, a 1,6 km). El SRTM en su coordenada da 977 m: 19 m de
-# diferencia, dentro del error típico del SRTM en Cali (mediana 15 m). D-40.
-finales[codigo == "2622320201", `:=`(altitud = 996, fuente_alt = "CNE IDEAM: estación 0026055120 del mismo campus (D-40)")]
+# diferencia, dentro del error típico del SRTM en Cali (mediana 15 m). D-46.
+finales[codigo == "2622320201", `:=`(altitud = 996, fuente_alt = "CNE IDEAM: estación 0026055120 del mismo campus (D-46)")]
 
 est <- merge(merge(cobertura_cruda, inventario, by = "codigo", all.x = TRUE), finales, by = "codigo", all = TRUE)
 est[is.na(dias_con_dato), `:=`(dias_con_dato = 0L, anios_con_dato = 0L)]
@@ -714,7 +714,7 @@ pix[, usar := en_valle | con_estacion]
 cat("Píxeles de la ventana:", nrow(pix), "| con centro dentro del Valle:", pix[en_valle == TRUE, .N],
     "| con estación y centro fuera:", pix[con_estacion & !en_valle, .N], "| se usan:", pix[usar == TRUE, .N], "\n")
 
-# Fuente (D-37): se compara con CHIRP v2.0 (solo infrarrojo) y con CHIRPS v2.0
+# Fuente (D-43): se compara con CHIRP v2.0 (solo infrarrojo) y con CHIRPS v2.0
 # (con estaciones), leídos del servidor del CHC para la misma ventana.
 leer_ref <- function(f_bin, f_claves) {
   cl <- readLines(f_claves, warn = FALSE); cl <- cl[nzchar(cl)]
@@ -740,7 +740,7 @@ cat("r del mapa medio: con CHIRP", round(cor(rowMeans(S_todo[, kk]), rowMeans(ch
     "| con CHIRPS", round(cor(rowMeans(S_todo[, kk]), rowMeans(chirps[, kk]), use = "complete.obs"), 3),
     "| píxeles sin dato en CHIRPS (mar):", sum(is.na(chirps[, 1])), "| tope de CHIRP:", round(max(chirp)), "\n")
 
-# QUÉ DICEN LOS DATOS (D-37)
+# QUÉ DICEN LOS DATOS (D-43)
 #   Malla de 0,05° (unos 5,5 km), 39 × 37 píxeles, enteros de 0 a 200 mm por
 #   péntada con tope en 200, sin faltantes, casi sin ceros y con datos sobre el mar.
 #   Se parece a CHIRP (solo infrarrojo) y no a CHIRPS (con estaciones): los

@@ -5,60 +5,62 @@ Se actualiza cada vez que se avanza.
 
 **Estados:** ✅ hecho y verificado · 🟡 a medias · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/` con la población vieja (248 estaciones) y hay que rehacerlo con las 176.
 
-**Última actualización:** 13-nov-2026.
+**Última actualización:** 13-nov-2026, después de unir el trabajo funcional de Jacobo y María.
 
 ## Resumen
 
 | Ítem | Peso | Estado | Qué falta |
 |---|---|---|---|
-| 1. Construcción de datos funcionales | 10 % | ♻️ | Rehacer con los datos preparados |
-| 2. EDA funcional | 15 % | ♻️ | Rehacer con los datos preparados |
-| 3. Comparación funcional por fuente | 15 % | 🟡 | El emparejamiento está; faltan las comparaciones funcionales |
-| 4.1 Preprocesamiento y selección | 6 % | ✅ | Solo decidir sobre los registros fuera del periodo |
-| 4.2 Red neuronal funcional | 10 % | ♻️ | Rehacer con los pares nuevos |
+| 1. Construcción de datos funcionales | 10 % | ✅ | Hecho en `funcional/11` (Jacobo): K = 8 / 11, S verificada, bandas |
+| 2. EDA funcional | 15 % | ✅ | Hecho en `funcional/12`; falta pulir la interpretación para el informe |
+| 3. Comparación funcional por fuente | 15 % | ✅ | Hecho en `funcional/10` y `13` |
+| 4.1 Preprocesamiento y selección | 6 % | ✅ | Solo decidir sobre los registros 1930–1979 (con el FPCA) |
+| 4.2 Red neuronal funcional | 10 % | 🟡 | La regresión de referencia está (`funcional/14`); falta la red en Python |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ♻️ | Rehacer |
-| 4.4 Evaluación | 8 % | ♻️ | Rehacer con la prueba 2001–2003 (ya no hay estaciones reservadas) |
+| 4.4 Evaluación | 8 % | 🟡 | Métricas e IC de la regresión de referencia hechos; falta para la red |
 | 4.5 Interpretación climatológica | 10 % | ♻️ | Rehacer |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
-| 6. Scripts R y Python | 5 % | 🟡 | El R de datos está; falta lo funcional en R y el único archivo Python |
+| 6. Scripts R y Python | 5 % | 🟡 | El R está en 6 archivos: hay que unirlos en uno (D-41); falta el Python |
 
 ## Antes de lo funcional: datos y EDA (lo que ya está)
 
 - ✅ **Estaciones del Valle:** 232 con coordenada, todas dentro del polígono del DANE (D-31 a D-35).
 - ✅ **EDA de los datos crudos de estaciones:** secciones 1–6 de `lluvia_valle_datos.R`.
 - ✅ **Depuración con reglas sacadas de los datos (D-36):** 176 estaciones y 3 326 pares estación–año.
-- ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-37), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
-- ✅ **EDA del satélite y comparación con las estaciones (D-38).**
+- ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-43), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
+- ✅ **EDA del satélite y comparación con las estaciones (D-44).**
 - ✅ **Datos preparados para la construcción funcional:** `salidas_R_datos/datos_preparados.rds`.
 - ✅ **Pruebas:** 26 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
 
-## 1. Construcción de datos funcionales (10 %)
+## 1. Construcción de datos funcionales (10 %) — `funcional/11_construccion_funcional.R`
 
-- ♻️ Matriz de la base Φ y coeficientes por mínimos cuadrados, paso a paso y sin librerías.
-- ♻️ Selección de K (o de λ) con ECM, VC y VCG: gráfica y valor elegido para cada fuente.
-- ♻️ Verificación numérica de la matriz de suavizado: S idempotente y tr(S) = K.
-- ♻️ Covarianza residual y bandas de confianza punto a punto.
-- 🟡 Curvas de ambas fuentes sobre el mismo dominio anual. Los datos ya están en el dominio 1–365 (estaciones por día, satélite por día central de la péntada); falta construir las curvas.
+- ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (`00_funciones.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
+- ✅ K por ECM, VC y VCG para cada fuente, solo con entrenamiento: K = 8 (estaciones) y K = 11 (satélite) (D-39).
+- ✅ S idempotente y tr(S) = K (error < 1e-14).
+- ✅ Covarianza residual y bandas punto a punto.
+- ✅ Ambas fuentes en el dominio 1–365 (péntadas en su día central).
+- 🟡 Días faltantes: el ajuste usa solo los días observados (sin imputar). Hay que escribirlo en el informe.
 - ⚠️ **Tope:** construir las curvas con librerías deja la nota en máximo 2.
 
-## 2. Análisis exploratorio funcional (15 %)
+## 2. Análisis exploratorio funcional (15 %) — `funcional/12_eda_funcional.R`
 
-- ♻️ Media funcional paso a paso y verificada contra la función de librería.
-- ♻️ Varianza y desviación estándar funcional.
-- ♻️ Covarianza y correlación funcional de cada fuente.
-- ♻️ Derivadas e interpretación del inicio y el fin de las temporadas de lluvia.
-- ♻️ Profundidad (Fraiman–Muniz y MBD) y boxplot funcional, con las atípicas por estación y año.
-- ⬜ Interpretación climatológica de cada resultado (régimen bimodal, orografía, ENSO).
-- ✅ **Tope de representatividad:** las 176 estaciones representan a las 220 (misma altitud mediana, lluvia parecida; sección 8). Hay que citarlo en el informe.
+- ✅ Media funcional paso a paso, verificada con `fda::mean.fd`.
+- ✅ Varianza y desviación estándar funcional.
+- ✅ Covarianza y correlación funcional de cada fuente.
+- ✅ Derivadas, inicio y fin de las temporadas de lluvia.
+- ✅ Profundidad (FM y MBD) y boxplot funcional, con las atípicas por estación y año (coinciden con `fda::fbplot`).
+- 🟡 Interpretación climatológica (régimen bimodal, orografía, ENSO): está en los comentarios del código; falta redactarla en el informe.
+- ✅ **Tope de representatividad:** las 176 estaciones representan a las 220 (sección 8 de `lluvia_valle_datos.R`).
 
-## 3. Comparación funcional por fuente (15 %)
+## 3. Comparación funcional por fuente (15 %) — `funcional/10` y `funcional/13`
 
-- ✅ Emparejamiento estación–píxel documentado: coordenadas, regla (el píxel que contiene la coordenada) y estaciones que comparten píxel (23 píxeles con más de una). Sección 12 y `tablas/12_pares_estacion_pixel.csv`.
-- ⬜ Curva de diferencia d(t) = estación − satélite con banda d̄(t) ± 2EE(t) e intervalos donde la banda no contiene el cero.
-- ⬜ Correlación cruzada funcional y su diagonal.
-- ⬜ Comparación de la covarianza de cada fuente.
-- 🟡 Comparación por altitud o subregión y por fase ENSO. El EDA ya muestra el efecto (D-38); falta hacerlo con las curvas.
-- 🟡 Interpretación climatológica del sesgo satelital. La base está en D-38: el satélite aplana el espacio y no capta los años Niño y Niña.
+- ✅ Emparejamiento estación–píxel documentado: 176 estaciones en 148 píxeles, 23 compartidos (D-38, D-44).
+- ✅ Curva de diferencia d(t) con banda ± 2EE e intervalos donde no contiene el cero.
+- ✅ Correlación cruzada funcional y su diagonal.
+- ✅ Comparación de las covarianzas.
+- ✅ Comparación por altitud, vertiente y fase ENSO.
+- 🟡 Interpretación del sesgo satelital: base en D-44 y en la sección 13; falta redactarla.
+- ⚠️ **Por acordar (P-4):** la comparación principal hoy excluye 1985, 1988 y 2000 (D-37/D-42); D-44 propone no excluirlos.
 
 ## 4.1 Preprocesamiento y selección de datos (6 %)
 
@@ -74,7 +76,7 @@ Se actualiza cada vez que se avanza.
 ## 4.2 Red neuronal funcional (10 %)
 
 - ♻️ Codificador con w_k(t) en B-splines y z = A W c, con la matriz de Gram por cuadratura (6 a 8 neuronas).
-- ✅ Datos de altitud de la estación (`$meta_estaciones`) y ONI del año (`$pares`) listos para z en `datos_preparados.rds`, con prueba automática. Univalle (`2622320201`) toma los 996 m de la estación del IDEAM en el mismo campus (D-40); falta agregarlos a z al construir la red.
+- ✅ Datos de altitud de la estación (`$meta_estaciones`) y ONI del año (`$pares`) listos para z en `datos_preparados.rds`, con prueba automática. Univalle (`2622320201`) toma los 996 m de la estación del IDEAM en el mismo campus (D-46); falta agregarlos a z al construir la red.
 - ♻️ Decodificador FPCA solo con entrenamiento; M (4 a 6) justificado y varianza explicada.
 - ♻️ Pérdida L² funcional con W y penalización de rugosidad; se modela sobre √P o log(1+P).
 - ♻️ Demostración y verificación numérica (≤ 1e-4) de que la cabeza lineal equivale a la regresión funcional.
@@ -112,7 +114,7 @@ Se actualiza cada vez que se avanza.
 
 - ⬜ PDF a una columna, máximo 20 páginas con referencias, con todos los integrantes.
 - ⬜ Cada tabla y figura numerada, titulada, citada e interpretada.
-- 🟡 Referencias para los métodos y las fuentes de datos. Las fuentes están en `DECISIONES.md`; el satélite necesita la cita de CHIRP (D-37).
+- 🟡 Referencias para los métodos y las fuentes de datos. Las fuentes están en `DECISIONES.md`; el satélite necesita la cita de CHIRP (D-43).
 - 🟡 Anexo en Word con la herramienta de IA y los prompts. **Hay que ir guardando los prompts.**
 - ⬜ Redacción propia.
 - ⚠️ No se acepta R Markdown, dos columnas ni solo Colab. IA no declarada: máximo 2.
@@ -138,4 +140,4 @@ Detalle en `DECISIONES.md`, §8.
 - ✅ P-1: los 21 sin ubicar se descartan.
 - P-12: fuentes externas (ONI, CNE, DANE).
 - ✅ P-13: solo el Valle del Cauca.
-- P-4: el año 2000 del satélite (ya no es urgente, D-38).
+- P-4: el año 2000 del satélite (ya no es urgente, D-44).

@@ -282,12 +282,12 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-1 | Los 21 códigos sin ubicar y los 35 con departamento inferido se descartan y no se usan. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
 | P-3 | No: se usa solo el satélite entregado, sin rellenar ni reemplazar con otra fuente (CHIRPS u otra). Los problemas del satélite se tratan con el modelo. Respuesta del profesor (13-nov-2026) | ✅ |
-| P-4 | ¿Cómo tratar el año 2000 del satélite, que cae en validación? Según D-38 no está dañado: es un año La Niña que el satélite subestima | 🟡 |
-| P-9 | Resuelta por el enunciado: el ONI del año y la altitud se agregan al vector z de la red | ✅ |
+| P-4 | ¿Qué hacer con 1985, 1988 y 2000 del satélite? D-37/D-42 (Jacobo) los dejan fuera del modelo; D-44 (Gus) muestra que no son archivos dañados sino años Niña que el satélite subestima, y que el profesor pidió no rellenar con otras fuentes. **Hay que acordarlo en equipo** | 🟡 |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
-| P-6 | Aplicar el filtro del Valle (167 estaciones) y el recorte del satélite en el flujo de la rama y rehacer las fases | Por hacer |
-| P-7 | Conectar las coordenadas verificadas al cruce estación–píxel de la rama | Por hacer |
-| P-8 | Confirmado: el satélite es CHIRP (D-37). Respuesta del profesor (13-nov-2026) | ✅ |
+| P-6 | Aplicar el filtro del Valle y el recorte del satélite y rehacer las fases | Resuelta (D-34, D-37 a D-40) |
+| P-7 | Conectar las coordenadas verificadas al cruce estación–píxel | Resuelta (D-38; confirmado en D-44) |
+| P-8 | Confirmado: el satélite es CHIRP (D-43). Respuesta del profesor (13-nov-2026) | ✅ |
+| P-9 | Resuelta por el enunciado: el ONI del año y la altitud se agregan al vector z de la red | ✅ |
 | P-10 | Ya no hay estaciones reservadas: cambió el plan del curso. La prueba es solo 2001–2003 con nuestras estaciones. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-11 | Ya no aplica: el CSV de predicciones era para las estaciones reservadas | ✅ |
 | P-12 | ¿Se aceptan las fuentes externas: ONI de la NOAA, altitudes y coordenadas del CNE del IDEAM, polígono del DANE? | ⬜ |
@@ -361,7 +361,74 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - **Todo el proceso está en un solo archivo, `lluvia_valle_datos.R`:** población, EDA, experimento de huecos, depuración y dataset final. Se corre desde la raíz del repositorio.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
 
-### D-37 · Fuente del satélite entregado: CHIRP (solo infrarrojo), versión anterior al 10-may-2013 ✅ (confirmado por el profesor)
+### D-37 · Satélite recortado al Valle, en mm/día y con los años defectuosos marcados (cierra D-03 y aplica D-15/D-16)
+- **Decisión:**
+  - Se usan los píxeles con centro dentro del polígono DANE del Valle (676 de 1 443), más los 5 píxeles de estaciones cercanas al borde: 681 píxeles × 23 años = 15 663 curvas.
+  - Cada péntada se divide por sus días reales (5, o de 3 a 6 en la última del mes) y se ubica en su día central del año de 365 días.
+  - 1985, 1988 y 2000 se marcan como defectuosos. Se conservan en el EDA y se excluyen de la elección de K, de la comparación principal y del modelo.
+- **Qué mostró el EDA** (`funcional/10_satelite_emparejamiento.R`):
+  - Esos tres años son los más secos del satélite en el Valle: 2 219, 2 302 y 2 374 mm, frente a ~2 730 de mediana.
+  - En los pares estación–píxel la diferencia se invierte en esos años: +336 mm/año a favor de la estación, frente a −83 en los demás.
+  - **Los tres son años Niña.** Con ellos, el satélite no muestra la señal de La Niña; sin ellos, la recupera: Niña 1 949 > neutro 1 892 > Niño 1 875 mm (sección 12).
+- **Tope de 200 mm/péntada:** 7,7 % de las curvas lo tocan alguna vez, todas en la vertiente Pacífica (al oeste de −76,8°).
+
+### D-38 · Emparejamiento estación–píxel: la celda que contiene la estación (cierra P-7)
+- **Regla:** cada estación se asigna a la celda del TIFF que contiene su coordenada de `estaciones_valle_finales.csv`.
+- **Resultado:** las 176 estaciones caen en 148 píxeles. 23 píxeles tienen de 2 a 4 estaciones (51 estaciones en total, 16 de ellas en Cali), que comparten la misma curva satelital. El centro del píxel queda a 2,2 km en mediana (máximo 3,9 km).
+- **Tablas:** `salidas_R_funcional/tablas/10_emparejamiento_estacion_pixel.csv` y `10_pixeles_compartidos.csv`.
+
+### D-39 · K = 8 (estaciones) y K = 11 (satélite), con las 176 del Valle (confirma D-29)
+- **Cómo se eligió:** ECM, VC y VCG con las curvas completas de entrenamiento: 1 899 de estación y 8 853 de satélite, sin 1985 ni 1988.
+- **Resultado:**
+  - VC y VCG coinciden en ambas fuentes.
+  - En estaciones la VC es plana entre K = 5 y 17.
+  - S es idempotente y tr(S) = K hasta 1e-14.
+- **Valores negativos:** 47 % de las curvas de estación baja de 0 en algún día, casi siempre poco (mediana del mínimo −0,07 mm/día). Ocurre en julio–agosto y en los bordes de la base no periódica, y se resuelve recortando en 0 antes de la raíz (D-23).
+
+### D-40 · Regresión funcional de referencia: FPCA con M = 5 y λ = 1e8, elegidos con validación
+- **Modelo:** en la escala raíz,
+
+  y(t) = μ(t) + α(t) + ∫β(s,t)x(s)ds + γ(t)·altitud + δ(t)·ONI,
+
+  con β(s,t) = Σ_m β_m(s)ψ_m(t).
+  - Las ψ_m y μ salen del FPCA de las estaciones, solo con entrenamiento.
+  - Cada β_m(s) se representa en la base del satélite, con penalización ∫β''².
+- **Elección de M y λ:** se eligen juntos con validación (1996–1999). El error deja de bajar desde M = 5, que explica el 91 % de la varianza; las componentes 6 a 8 tienen autovalores casi iguales, es decir, ruido.
+- **Verificación:** la predicción por la integral de β(s,t) y la predicción por puntajes FPCA difieren en 5e-15. La cabeza lineal de la red debe reproducir esta identidad.
+- **Prueba (2001–2003), frente al satélite sin corregir:**
+
+  | Métrica | Satélite | Regresión |
+  |---|---|---|
+  | RMSE L2 (mm/día) | 2,43 | 2,24 |
+  | KGE | 0,38 | 0,45 |
+  | Error en el pico de la 1.ª temporada (días) | 23 | 18 |
+
+  - La regresión mejora 60 % de las curvas, pero los intervalos se solapan.
+  - Sin el satélite (solo altitud y ONI), el RMSE es 2,61.
+  - En 2002 (Niño) el modelo corrige de más.
+- **Univalle:** antes salía por no tener altitud oficial (17 pares); desde D-46 entra con 996 m. Cifras actualizadas al volver a correr (13-nov-2026): 375 curvas de prueba de 137 estaciones.
+
+### D-41 · Organización del código funcional y paso a un solo archivo R (en curso)
+- **Organización mientras se desarrolla:** los módulos están en `funcional/`:
+  - `00_funciones.R` con las funciones comunes;
+  - las secciones 10 a 14, cada una con su script.
+  - Cada módulo lee el `.rds` del anterior desde `salidas_R_funcional/`, para no tener que correr todo cada vez.
+- **Para la entrega:**
+  - Se concatenan, después de `lluvia_valle_datos.R`, el contenido de `00_funciones.R` y luego las secciones 10 a 14, sin las líneas `source(...)`.
+  - Los `readRDS` intermedios pueden quedarse, porque leen lo que el mismo archivo acaba de guardar.
+  - Así queda un único `.R`, y el `.py` solo tiene la red (lee `salidas_R_funcional/para_python/`).
+- **Reemplaza:** `01_datos_y_construccion_funcional.R` y `02_EDA_funcional.R`. Su código (Cox–de Boor, MCO, criterios de K, controles de S, momentos y profundidades) quedó en las secciones 11 y 12, con el satélite agregado.
+- **Fecha y responsable:** 2026-11-13, Jacobo.
+
+### D-42 · Sin estaciones reservadas, años defectuosos fuera y un `.py` autosuficiente
+- **Estaciones reservadas:** no habrá. La prueba es 2001–2003 con las mismas estaciones; el informe no evalúa la generalización a estaciones nuevas.
+- **Años defectuosos del satélite:** 1985, 1988 y 2000 siguen fuera de la elección de K, la comparación principal y el modelo, mientras se revisan (P-4).
+- **Reparto R / Python:** el `.R` tiene la depuración, el EDA, la construcción funcional, el EDA funcional, la comparación y la regresión de referencia. El `.py` debe rehacer lo que necesita para la red: base B-spline, MCO, W, R, escala raíz y FPCA, a partir de las observaciones exportadas por R (lluvia diaria de la estación y péntadas del píxel de cada par). Los coeficientes calculados en R sirven solo para verificar que Python da lo mismo. Esto modifica D-41.
+- **Fecha y responsable:** 2026-11-13, Jacobo.
+
+> **Nota de la unión (13-nov-2026):** Jacobo (secciones funcionales) y Gus (datos) trabajaron en paralelo y ambos numeraron desde D-37. Se conservan D-37 a D-42 de Jacobo y las de Gus pasan a D-43 a D-46.
+
+### D-43 · Fuente del satélite entregado: CHIRP (solo infrarrojo), versión anterior al 10-may-2013 ✅ (confirmado por el profesor)
 - **Conclusión:** los 2 328 TIFF (`ppt198101` a `ppt201324`) son un recorte de **CHIRP**, el producto solo-satélite del Climate Hazards Group (UCSB/USGS), en una versión anterior a la que hoy publica el CHC. **No son CHIRPS** (no tienen la corrección con estaciones). Es una inferencia a partir de la evidencia; falta que el profesor la confirme (P-8).
 - **Evidencia en los archivos:**
   - Malla de 0,05°, 72 péntadas por año desde 1981 y la misma escala de píxel que los archivos del CHC (`0.0500000007450581`).
@@ -384,7 +451,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - Los 90 píxeles de mar se quitan con el recorte al polígono del Valle (D-03).
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
-### D-38 · EDA del satélite: qué acierta, qué no y los "años defectuosos" ✅ (revisa D-16)
+### D-44 · EDA del satélite: qué acierta, qué no y los "años defectuosos" ✅ (revisa D-16; choca con D-37 y D-42, ver P-4)
 - **Dónde está:** secciones 9–12 de `lluvia_valle_datos.R`. Salida: `salidas_R_datos/satelite_valle.rds`.
 - **Preparación:**
   - Se usan los 676 píxeles con centro dentro del polígono del Valle (D-03) y las 1 656 péntadas de 1981–2003.
@@ -411,7 +478,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - Santa Teresa (`2612810102`) tiene r = 0 con su píxel y la coordenada "a revisar": entra al análisis de sensibilidad.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
-### D-39 · Datos preparados para la construcción funcional, sin fuga y con pruebas ✅
+### D-45 · Datos preparados para la construcción funcional, sin fuga y con pruebas ✅
 - **Qué queda listo** (`lluvia_valle_datos.R`, secciones 13 y 14; salida `salidas_R_datos/datos_preparados.rds`):
   - `$estaciones$Y`: 3 326 curvas estación–año × 365 días, en mm/día, con `NA` en los faltantes (0,24 %).
   - `$satelite$X`: 15 663 curvas píxel–año × 72 péntadas, en mm/día, con `$satelite$t` = día central de cada péntada. Son 681 píxeles: los 676 del Valle y 5 que contienen una estación aunque su centro quede fuera del polígono.
@@ -436,12 +503,12 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - el p99 usa solo entrenamiento.
 - **Reproducibilidad:** dos corridas completas producen archivos `.rds` idénticos byte a byte.
 - **Pendientes que salen del enunciado:**
-  - El ONI y la altitud entran al modelo por enunciado (se agregan al vector z). Univalle (`2622320201`) no tenía altitud oficial: resuelto en D-40.
+  - El ONI y la altitud entran al modelo por enunciado (se agregan al vector z). Univalle (`2622320201`) no tenía altitud oficial: resuelto en D-46.
   - Falta decidir si se usan registros fuera del periodo (1930–1979) para estimar el FPCA.
 - **Control de la rúbrica:** `CONTROL_RUBRICA.md`.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
-### D-40 · Altitud de Univalle: 996 m, de la estación del IDEAM en el mismo campus ✅ (excepción a D-35)
+### D-46 · Altitud de Univalle: 996 m, de la estación del IDEAM en el mismo campus ✅ (excepción a D-35; revisa D-40, donde Univalle quedaba fuera)
 - **Problema:** la altitud entra al vector z de la red (enunciado), y Univalle (`2622320201`, 39 años de datos, en Cali) no tiene altitud ni en el Excel del curso ni en el CNE con su código.
 - **Decisión:** usar 996 m, la altitud oficial de la estación del IDEAM "UNIVERSIDAD DEL VALLE – AUT" (CNE `0026055120`, 3.378, −76.534), que está en el mismo campus, a 1,6 km. Esa estación abrió en 2006 y no aporta lluvia; solo se toma su altitud.
 - **Justificación:** sigue siendo una fuente oficial (D-35), no una estimación con SRTM. La alternativa, sacar a Univalle del modelo, perdería una estación con registro largo en Cali.
