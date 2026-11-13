@@ -282,10 +282,12 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-1 | Los 35 del Valle con departamento inferido se descartan (D-34). Siguen pendientes los 21 sin ubicar: 7 tienen candidata en el CNE, que se confirmaría con la lluvia de DHIME; para los otros 14 hay que pedir el catálogo a la CVC o al profesor | 🟡 |
 | P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
 | P-3 | ¿Podemos reemplazar el satélite entregado por CHIRPS? | 🟡 |
-| P-4 | ¿Cómo tratar el año 2000 (satélite defectuoso), que ahora cae en validación? | 🟡 |
+| P-4 | ¿Cómo tratar el año 2000 del satélite, que cae en validación? Según D-38 no está dañado: es un año La Niña que el satélite subestima | 🟡 |
+| P-9 | Resuelta por el enunciado: el ONI del año y la altitud se agregan al vector z de la red | ✅ |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
 | P-6 | Aplicar el filtro del Valle (167 estaciones) y el recorte del satélite en el flujo de la rama y rehacer las fases | Por hacer |
 | P-7 | Conectar las coordenadas verificadas al cruce estación–píxel de la rama | Por hacer |
+| P-8 | Confirmar con el profesor la fuente del satélite: según D-37 es una versión de CHIRP (solo infrarrojo) anterior al 10-may-2013 | 🟡 |
 
 ---
 
@@ -354,6 +356,85 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - **Copias en CSV:** `salidas_R_datos/tablas/8_marcas_limpieza.csv`, `8_anios_validez.csv` y `8_estaciones_incluidas.csv`.
   - **Todo el proceso está en un solo archivo, `lluvia_valle_datos.R`:** población, EDA, experimento de huecos, depuración y dataset final. Se corre desde la raíz del repositorio.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
+### D-37 · Fuente del satélite entregado: CHIRP (solo infrarrojo), versión anterior al 10-may-2013 🟡
+- **Conclusión:** los 2 328 TIFF (`ppt198101` a `ppt201324`) son un recorte de **CHIRP**, el producto solo-satélite del Climate Hazards Group (UCSB/USGS), en una versión anterior a la que hoy publica el CHC. **No son CHIRPS** (no tienen la corrección con estaciones). Es una inferencia a partir de la evidencia; falta que el profesor la confirme (P-8).
+- **Evidencia en los archivos:**
+  - Malla de 0,05°, 72 péntadas por año desde 1981 y la misma escala de píxel que los archivos del CHC (`0.0500000007450581`).
+  - 2 326 archivos creados el **6-may-2013** en unas 4 horas; la última péntada es la del 26–30 de abril de 2013. Los dos primeros (`ppt198101` y `ppt198102`) se volvieron a guardar el 13–14 de junio de 2013; sus valores no se distinguen del resto.
+  - Escritos con convenciones de ArcGIS: `GCS_WGS_1984`, bloques de 128×128, enteros de 16 bits y sin dato = −9999.
+  - Valores enteros de 0 a 200 mm por péntada, con **tope en 200** (8 196 valores, el 0,24 %). Casi nunca hay ceros (7 en 3,36 millones) y **hay datos sobre el mar**.
+- **Comparación número por número** (ventana del Valle leída del servidor del CHC, 7 años; `datos_web/chirp_v2_valle_muestra_7anios.bin`):
+
+  | Contra | r por péntada y píxel | r del mapa medio | Total anual frente al entregado | ¿Cubre el mar? | Tope |
+  |---|---|---|---|---|---|
+  | CHIRP v2.0 (solo satélite) | 0,84–0,92 | 0,996 | Igual (±2 %) en 1985, 1990, 2000 y 2012 | Sí | 250 |
+  | CHIRPS v2.0 (con estaciones) | 0,77–0,87 | 0,965 | El entregado es 10–26 % menor | No | — |
+
+  - Los archivos de CHIRP v2.0 de 1981–2012 que hoy están en el CHC se generaron el **10–11 de mayo de 2013**, cuatro días después de los nuestros. Por eso no coinciden valor a valor: los nuestros son de la corrida anterior.
+- **¿Fueron modificados?** No hay señal de alteración manual: no hay capas repetidas ni constantes, todos los archivos tienen el mismo formato y los totales anuales siguen a CHIRP. Lo que sí hubo es procesamiento: recorte a la ventana, redondeo a enteros y tope de 200 mm.
+- **Los años malos (D-16) vienen del producto, no de una modificación:** CHIRP v2.0 del CHC también da 1985 y 2000 secos (2 967 y 3 221 mm frente a 2 907 y 3 160 del entregado) y 1988 todavía más seco (2 327 mm). Las estaciones y CHIRPS dicen que esos años fueron normales o húmedos. Es un error del insumo infrarrojo que CHIRPS corrige con estaciones.
+- **Consecuencias:**
+  - El satélite es independiente de las estaciones, que es lo que necesita el proyecto (corregir el sesgo del satélite con las estaciones). Refuerza no reemplazarlo por CHIRPS (P-3, D-18).
+  - Hay que pasar de mm por péntada a mm/día (D-15) y tener presente el tope de 200 al interpretar extremos.
+  - Los 90 píxeles de mar se quitan con el recorte al polígono del Valle (D-03).
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-38 · EDA del satélite: qué acierta, qué no y los "años defectuosos" ✅ (revisa D-16)
+- **Dónde está:** secciones 9–12 de `lluvia_valle_datos.R`. Salida: `salidas_R_datos/satelite_valle.rds`.
+- **Preparación:**
+  - Se usan los 676 píxeles con centro dentro del polígono del Valle (D-03) y las 1 656 péntadas de 1981–2003.
+  - Cada péntada se divide por sus días reales para pasar a mm/día (D-15). Sin dividir, la 6.ª péntada de los meses de 31 días parece más lluviosa (49 mm frente a 37).
+  - Cada estación se empareja con el píxel que contiene su coordenada (P-7): las 176 caen dentro de la ventana, en 148 píxeles distintos; 23 píxeles tienen más de una estación.
+- **Qué dicen los datos:**
+  - **Aplana el espacio.** El satélite va de ~1 100 a ~6 200 mm/año y las estaciones de ~800 a ~12 100. Sobreestima donde llueve poco y subestima donde llueve mucho (r = −0,68 entre el sesgo y la lluvia de la estación).
+  - **Sigue poco a la estación péntada a péntada:** r ≈ 0,5 en conjunto y 0,42 de mediana por estación. Casi nunca marca cero; las estaciones, entre el 19 y el 26 % de las péntadas.
+  - **Acierta el clima medio, no las anomalías:**
+
+    | Componente | r satélite–estación |
+    |---|---|
+    | Dónde llueve más (media por estación) | 0,79 |
+    | Cuándo llueve en el año (ciclo medio) | 0,78 |
+    | Meses más o menos lluviosos de lo normal | 0,30 |
+    | Años más o menos lluviosos de lo normal | 0,25 |
+
+  - **La diferencia con las estaciones sigue al ENSO** (r = 0,74 con el ONI). El satélite se queda corto en La Niña y se pasa en El Niño. Su variación de un año a otro es la mitad (7 % frente a 14 %), y su relación con el ONI tiene el signo contrario al de las estaciones (+0,27 frente a −0,60).
+  - **Años que más se apartan:** 1988, 1984, 2000 y 1999 (todos La Niña; el satélite queda 19–26 puntos por debajo) y 1992 (El Niño; 29 puntos por encima).
+- **Cambio frente a D-16:** los años "defectuosos" no son archivos dañados. 1988 y 2000 son casos de este efecto sistemático, 1985 no se aparta especialmente de las estaciones (el satélite lo da seco y las estaciones también, algo menos) y faltaban 1984, 1992 y 1999. No hay razón para excluir años del entrenamiento: el modelo tiene que aprender justo esta corrección.
+- **Consecuencias para el modelo:**
+  - La curva del satélite aporta sobre todo el ciclo anual y la ubicación. Para corregir años Niño o Niña hace falta información que el satélite no trae: por eso el enunciado agrega el ONI del año al vector z de la red.
+  - P-4 pierde peso: 2000 no es un año dañado sino un año La Niña, y en validación sirve para medir ese efecto.
+  - Santa Teresa (`2612810102`) tiene r = 0 con su píxel y la coordenada "a revisar": entra al análisis de sensibilidad.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-39 · Datos preparados para la construcción funcional, sin fuga y con pruebas ✅
+- **Qué queda listo** (`lluvia_valle_datos.R`, secciones 13 y 14; salida `salidas_R_datos/datos_preparados.rds`):
+  - `$estaciones$Y`: 3 326 curvas estación–año × 365 días, en mm/día, con `NA` en los faltantes (0,24 %).
+  - `$satelite$X`: 15 663 curvas píxel–año × 72 péntadas, en mm/día, con `$satelite$t` = día central de cada péntada. Son 681 píxeles: los 676 del Valle y 5 que contienen una estación aunque su centro quede fuera del polígono.
+  - `$pares`: une cada curva de estación con la curva del satélite de su píxel y su año (2 278 en entrenamiento, 673 en validación y 375 en prueba).
+  - `$meta_estaciones`: coordenada, altitud, vertiente, lluvia anual y marcas para el análisis de sensibilidad (6 del cruce con el CNE, 12 con coordenada a revisar).
+- **Sin fuga de información (rúbrica 4.1):** el p99 de cada estación, que es el umbral de las reglas R2 y R3, ahora se calcula solo con 1981–1995. Antes usaba todo el registro. El resultado no cambió: siguen siendo los mismos 100 días marcados.
+- **Trazabilidad (rúbrica 4.1):** `tablas/8_trazabilidad.csv`.
+
+  | Paso | Estaciones | Pares estación–año |
+  |---|---|---|
+  | Crudo, 1981–2003 | 323 | 5 514 |
+  | Solo el Valle, con coordenada | 220 | 3 943 |
+  | Reglas R1 a R4 (solo cambian días) | 220 | 3 943 |
+  | R5: años válidos | 214 | 3 482 |
+  | R6: ≥7 años válidos en entrenamiento | 176 | 3 326 |
+
+- **Pruebas:** 24 comprobaciones automáticas dentro del script; si una falla, el script se detiene. Entre ellas:
+  - cada valor final es igual al del archivo crudo, releído de nuevo (1 211 103 valores);
+  - la matriz del satélite coincide con 12 TIFF releídos;
+  - cada estación cae dentro de su píxel;
+  - el p99 usa solo entrenamiento.
+- **Reproducibilidad:** dos corridas completas producen archivos `.rds` idénticos byte a byte.
+- **Pendientes que salen del enunciado:**
+  - El ONI y la altitud entran al modelo por enunciado (se agregan al vector z). Univalle (`2622320201`) no tiene altitud oficial y hay que resolverlo.
+  - Falta decidir si se usan registros fuera del periodo (1930–1979) para estimar el FPCA.
+- **Control de la rúbrica:** `CONTROL_RUBRICA.md`.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
 ## Fuentes
 

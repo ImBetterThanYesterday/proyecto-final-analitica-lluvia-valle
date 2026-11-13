@@ -10,9 +10,10 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 | Carpeta / archivo | Qué es |
 |---|---|
-| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos al dataset limpio: población, EDA, experimento de huecos, depuración y dataset final. |
-| `salidas_R_datos/` | Lo que produce ese archivo. Tiene `lluvia_valle_limpia.rds` (el dataset final), además de `tablas/` y `graficos/`. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-36), con su justificación, y preguntas para el profesor. |
+| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 24 pruebas automáticas. |
+| `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
+| `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
+| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-39), con su justificación, y preguntas para el profesor. |
 | `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
 | `datos_web/` | Fuentes externas: estaciones del Valle, límites del DANE, CNE, ONI, CHIRPS y NASA POWER. |
 | `datos_curso/` | **Datos crudos del curso. No se suben a git:** hay que copiarlos aquí (ver abajo). |
@@ -32,7 +33,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
    Rscript lluvia_valle_datos.R
    ```
 
-   Usa R 4.5 con data.table, ggplot2, readxl y sf. Tarda unos minutos.
+   Usa R 4.5 con data.table, ggplot2, readxl, sf y terra. Tarda unos minutos.
 
 ## Periodo y partición (fe de erratas)
 
@@ -44,7 +45,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 Las reglas que dependen de los datos se calculan solo con entrenamiento.
 
-## Por dónde vamos (12-nov-2026)
+## Por dónde vamos (13-nov-2026)
 
 | Paso | Estado |
 |---|---|
@@ -52,9 +53,10 @@ Las reglas que dependen de los datos se calculan solo con entrenamiento.
 | 2. EDA de los datos crudos | ✅ secciones 1–6 de `lluvia_valle_datos.R` |
 | 3. Reglas de depuración sacadas de los datos | ✅ experimento de huecos y reglas D-36 |
 | 4. Dataset limpio de estaciones | ✅ 176 estaciones y 3 326 estación-años válidos, en `lluvia_valle_limpia.rds` |
-| 5. Satélite: recortar al Valle, pasar a mm/día y revisar los años 1985, 1988 y 2000 | ⏳ siguiente |
-| 6. Emparejar cada estación con su píxel | ⏳ |
-| 7. Construcción funcional (B-splines propias; K por ECM/VC/VCG) con las 176 | ⏳ se reutiliza código del flujo anterior |
+| 5. Satélite: fuente, recorte al Valle, mm/día y EDA | ✅ es CHIRP solo-infrarrojo (D-37); acierta el clima medio pero no los años Niño/Niña (D-38) |
+| 6. Emparejar cada estación con su píxel | ✅ 176 estaciones en 148 píxeles (`satelite_valle.rds`) |
+| 6b. Datos preparados para lo funcional, con pruebas | ✅ `datos_preparados.rds`: 3 326 curvas de estación, 15 663 de satélite y sus pares (D-39) |
+| 7. Construcción funcional (B-splines propias; K por ECM/VC/VCG) con las 176 | ⏳ siguiente; se reutiliza código del flujo anterior |
 | 8. EDA funcional de cada fuente (media, varianza, profundidad, boxplot, ENSO) | ⏳ |
 | 9. Regresión funcional y red (KAN/MLP) | ⏳ se reutiliza `archivo_flujo_anterior/05_red_funcional.py` |
 | 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |
@@ -62,4 +64,5 @@ Las reglas que dependen de los datos se calculan solo con entrenamiento.
 **Abierto con el profesor** (ver `DECISIONES.md`, §8):
 - P-1: los 21 códigos sin ubicar;
 - P-3: si se puede usar CHIRPS;
-- P-4: qué hacer con el año 2000 del satélite, que cae en validación.
+- P-4: qué hacer con el año 2000 del satélite, que cae en validación;
+- P-8: confirmar que el satélite es CHIRP.

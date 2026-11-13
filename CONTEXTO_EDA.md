@@ -54,14 +54,19 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
   (1 derecha/este, 2 izquierda/oeste), 4 tramo de sur a norte, 5-6 cuenca, 7-8 tipo (01 pluviométrica/pluviográfica,
   02 climatológica, 03 evaporimétrica), 9-10 consecutivo.
 
+## 3b. Datos listos (13-nov-2026)
+
+`lluvia_valle_datos.R` deja `salidas_R_datos/datos_preparados.rds`: matriz de estaciones (3 326 × 365), matriz del satélite
+(15 663 × 72, mm/día) y los pares estación–píxel, con 24 pruebas automáticas (D-36 a D-39). El satélite es CHIRP solo-infrarrojo (D-37)
+y no capta los años Niño/Niña (D-38). El control de lo que pide el enunciado está en `CONTROL_RUBRICA.md`.
+
 ## 4. Qué sigue
 
 Ya están hechos: el filtro por años (D-36), la calidad de los datos (secciones 2–5 de `lluvia_valle_datos.R`) y la
 representatividad de las 176 estaciones incluidas (sección 8). Sigue:
 
-1. **Satélite:** recortar al polígono del Valle (`datos_web/limites/`, D-03), pasar a mm/día (D-15) y revisar los
-   años defectuosos 1985, 1988 y 2000 (D-16). El 2000 cae en validación: pregunta P-4.
-2. **Emparejar cada estación con su píxel** usando `lat`/`lon` (P-7).
+1. ~~Satélite: recorte, mm/día y EDA~~ — hecho (D-37, D-38).
+2. ~~Emparejar cada estación con su píxel~~ — hecho (D-39).
 3. **Construcción funcional** con las 176. Se reutilizan las funciones Cox–de Boor y MCO de
    `archivo_flujo_anterior/proyecto_funcional.R` y se vuelve a elegir K solo con entrenamiento.
 4. **EDA funcional por fuente:**

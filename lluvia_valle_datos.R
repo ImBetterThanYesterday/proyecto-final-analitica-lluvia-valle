@@ -1,5 +1,5 @@
 # =============================================================================
-# LLUVIA DEL VALLE DEL CAUCA 1981–2003 · ENTENDIMIENTO, DEPURACIÓN Y DATASET FINAL
+# LLUVIA DEL VALLE DEL CAUCA 1981–2003 · ENTENDIMIENTO, DEPURACIÓN Y DATASETS FINALES
 # =============================================================================
 # Un solo archivo, de arriba abajo, desde los datos crudos hasta el dataset limpio.
 #
@@ -12,7 +12,13 @@
 #   6. Climatología y coherencia espacial
 #   7. Experimento de huecos: ¿cuánta falta de datos aguanta una curva?
 #   8. Depuración (reglas D-36) y dataset final
-#   9. Resumen
+#   9. Satélite: lectura, estructura y fuente (D-37)
+#  10. Satélite: recorte al Valle, calendario de péntadas y mm/día
+#  11. Satélite: EDA
+#  12. Satélite frente a estaciones: emparejamiento, sesgo y años sospechosos
+#  13. Datos preparados para la construcción funcional (matrices y pares)
+#  14. Pruebas de los datos preparados
+#  15. Resumen
 #
 # Ejecutar desde la raíz del repositorio:  Rscript lluvia_valle_datos.R
 # (o abrirlo en RStudio con la raíz del repositorio como directorio de trabajo
@@ -24,12 +30,17 @@
 #   datos_web/estaciones_valle_del_cauca.xlsx     inventario de los 344 códigos (D-31/D-32)
 #   datos_web/limites/deptos_valle_y_vecinos_DANE_2020.gpkg   límites DANE (MGN 2020)
 #   datos_web/oni_anual_fase.csv                  ONI anual (contexto ENSO)
+#   datos_curso/ImagenesSatelitePentadal/ppt*.tif satélite por péntadas (2 328 GeoTIFF)
+#   datos_web/chirp_v2_valle_muestra_7anios.bin   CHIRP v2.0 del CHC, para verificar la fuente (D-37)
+#   datos_web/chirps_v2_valle_1981_2013.bin       CHIRPS v2.0 del CHC, para verificar la fuente
 # Salidas (salidas_R_datos/)
-#   lluvia_valle_limpia.rds   dataset final (ver sección 8)
+#   lluvia_valle_limpia.rds   dataset final de estaciones (ver sección 8)
+#   satelite_valle.rds        satélite recortado, en mm/día, y pares estación–píxel (sección 12)
+#   datos_preparados.rds      matrices listas para la construcción funcional (sección 13)
 #   tablas/*.csv              tablas de cada sección
 #   graficos/*.png            gráficos de cada sección
 #
-# Librerías: data.table, ggplot2, readxl, sf (EDA). La base B-spline del
+# Librerías: data.table, ggplot2, readxl, sf y terra (EDA). La base B-spline del
 # experimento de huecos se programa sin librerías (recursión de Cox–de Boor),
 # como pide el curso para la construcción funcional.
 # Decisiones y su justificación: DECISIONES.md (D-01 a D-36).
@@ -245,7 +256,14 @@ titulo("4. Valores")
 print(d[, .(dias = .N, pct_ceros = round(100 * mean(P == 0), 1), p50_lluvia = median(P[P > 0]),
             p90 = quantile(P[P > 0], .9), p99 = quantile(P[P > 0], .99), p999 = quantile(P[P > 0], .999), max = max(P))])
 
-p99 <- d[P > 0, .(p99 = quantile(P, .99), max = max(P), pct_ceros = 100 * mean(P == 0)), by = codigo]
+# El p99 de cada estación es un umbral de las reglas R2 y R3: se calcula SOLO con
+# entrenamiento (1981–1995) para no usar validación ni prueba (D-28). Si la
+# estación tiene menos de 100 días con lluvia en entrenamiento, se usa todo su registro.
+p99 <- d[, .(p99_todo = quantile(P[P > 0], .99), max = max(P), pct_ceros = 100 * mean(P == 0)), by = codigo]
+p99 <- d[P > 0 & anio <= 1995, .(p99 = quantile(P, .99), dias_lluvia_ent = .N), by = codigo][p99, on = "codigo"]
+p99[, p99 := fifelse(is.na(p99) | dias_lluvia_ent < 100, p99_todo, p99)]
+cat("Estaciones con p99 de entrenamiento:", p99[!is.na(dias_lluvia_ent) & dias_lluvia_ent >= 100, .N], "de", nrow(p99),
+    "| diferencia mediana con el p99 de todo el registro:", round(p99[, median(abs(p99 - p99_todo))], 1), "mm\n")
 p99 <- valle[, .(codigo, nombre, vertiente, altitud)][p99, on = "codigo"]
 p99[, razon_max_p99 := max / p99]
 tabla(p99, "4_valores_por_estacion")
@@ -607,6 +625,25 @@ por_est <- anios[, .(validos_ent = sum(valido & particion == "entrenamiento"),
 estaciones <- merge(valle, por_est, by = "codigo")[validos_ent >= ANIOS_MIN]
 diario <- diario_todo[anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0][codigo %in% estaciones$codigo]
 
+# Trazabilidad (rúbrica 4.1): estaciones y pares estación-año antes y después de cada paso
+cuenta <- function(x) x[, .(estaciones = uniqueN(codigo), pares_estacion_anio = uniqueN(paste(codigo, anio)), dias_con_dato = .N)]
+d_r2 <- d[!m_ext, on = .(codigo, fecha)]; d_r3 <- d_r2[!m_mes, on = .(codigo, fecha)]; d_r4 <- d_r3[!m_cero, on = .(codigo, fecha)]
+trazabilidad <- rbind(
+  data.table(paso = "0. Crudo: códigos con datos en 1981–2003", estaciones = nrow(cobertura_cruda),
+             pares_estacion_anio = sum(cobertura_cruda$anios_con_dato), dias_con_dato = sum(cobertura_cruda$dias_con_dato)),
+  data.table(paso = "1. Solo el Valle, con coordenada (D-34)", estaciones = nrow(valle),
+             pares_estacion_anio = sum(valle$anios_con_dato), dias_con_dato = sum(valle$dias_con_dato)),
+  cbind(paso = "2. R1: sin 29 de febrero", cuenta(d)),
+  cbind(paso = "3. R2: extremos sin respaldo a faltante", cuenta(d_r2)),
+  cbind(paso = "4. R3: totales mensuales en un día a faltante", cuenta(d_r3)),
+  cbind(paso = "5. R4: racha de ceros revisada a faltante", cuenta(d_r4)),
+  cbind(paso = "6. R5: años con ≥90 % de días y hueco ≤15", cuenta(diario_todo[!is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
+  cbind(paso = "7. R6: estaciones con ≥7 años válidos en entrenamiento", cuenta(diario[!is.na(P)])))
+trazabilidad[, `:=`(estaciones_que_salen = c(NA, -diff(estaciones)), pares_que_salen = c(NA, -diff(pares_estacion_anio)),
+                    dias_que_salen = c(NA, -diff(dias_con_dato)))]
+print(tabla(trazabilidad, "8_trazabilidad"))
+rm(d_r2, d_r3, d_r4)
+
 reglas <- c(
   R1 = "Dominio 1–365: se quita el 29 de febrero",
   R2 = "Extremo > 3·p99 y ≥150 mm sin vecina (≤25 km, ±1 día) que supere P/3 → faltante",
@@ -634,8 +671,440 @@ grafico(ggplot(valle, aes(lon, lat, colour = codigo %in% estaciones$codigo)) + g
         "8_mapa_incluidas", ancho = 7, alto = 7)
 
 
-# ---- 9. RESUMEN ---------------------------------------------------------------
-titulo("9. Resumen")
+# ---- 9. SATÉLITE: LECTURA, ESTRUCTURA Y FUENTE --------------------------------
+titulo("9. Satélite: lectura, estructura y fuente")
+# 2 328 GeoTIFF (ppt + año + péntada 01–72), uno por péntada de 1981 a abril de
+# 2013. Cada mes tiene 6 péntadas: días 1–5, 6–10, …, 21–25 y 26–fin de mes.
+if (!requireNamespace("terra", quietly = TRUE)) stop("Falta el paquete terra (lectura de los GeoTIFF)")
+arch_sat <- sort(list.files("datos_curso/ImagenesSatelitePentadal", "^ppt[0-9]{6}\\.tif$", full.names = TRUE))
+inv_sat <- data.table(archivo = arch_sat, anio = as.integer(substr(basename(arch_sat), 4, 7)),
+                      pentada = as.integer(substr(basename(arch_sat), 8, 9)))
+print(inv_sat[, .N, by = anio][, .(anios = .N, con_72_pentadas = sum(N == 72),
+                                   incompletos = paste(anio[N != 72], N[N != 72], sep = ": ", collapse = "; "))])
+r_sat <- terra::rast(inv_sat$archivo)
+print(r_sat[[1]])
+S_todo <- terra::values(r_sat, mat = TRUE)          # píxel (fila) × péntada (columna)
+storage.mode(S_todo) <- "double"
+estructura_sat <- data.table(
+  archivos = ncol(S_todo), pixeles = nrow(S_todo), filas = terra::nrow(r_sat), columnas = terra::ncol(r_sat),
+  resolucion_grados = terra::res(r_sat)[1], sin_dato = sum(is.na(S_todo)), minimo = min(S_todo), maximo = max(S_todo),
+  no_enteros = sum(S_todo != round(S_todo)), ceros = sum(S_todo == 0),
+  en_el_tope_200 = sum(S_todo == 200), pct_tope = round(100 * mean(S_todo == 200), 2))
+print(tabla(estructura_sat, "9_estructura_satelite"))
+
+grafico(ggplot(data.table(v = as.vector(S_todo))[, .N, by = v], aes(v, N)) + geom_col(width = 1) + scale_y_log10() +
+          labs(x = "mm por péntada", y = "Valores (log)", title = "Satélite: valores enteros de 0 a 200, con tope en 200",
+               subtitle = "La barra de 200 acumula todo lo que superaba el tope"),
+        "9_satelite_valores")
+
+# Píxeles: centro, y si caen dentro del polígono DANE del Valle (D-03)
+pix <- data.table(pixel = seq_len(nrow(S_todo)), terra::xyFromCell(r_sat, seq_len(nrow(S_todo))))
+setnames(pix, c("x", "y"), c("lon", "lat"))
+poly_valle <- deptos[deptos$shapeName == "Valle del Cauca", ]
+pix[, en_valle := lengths(suppressMessages(st_intersects(st_as_sf(pix, coords = c("lon", "lat"), crs = 4326), poly_valle))) > 0]
+# También se conservan los píxeles que contienen una estación incluida aunque su
+# centro quede fuera del polígono (estaciones cerca del borde del departamento)
+pix[, con_estacion := pixel %in% terra::cellFromXY(r_sat, as.matrix(estaciones[, .(lon, lat)]))]
+pix[, usar := en_valle | con_estacion]
+cat("Píxeles de la ventana:", nrow(pix), "| con centro dentro del Valle:", pix[en_valle == TRUE, .N],
+    "| con estación y centro fuera:", pix[con_estacion & !en_valle, .N], "| se usan:", pix[usar == TRUE, .N], "\n")
+
+# Fuente (D-37): se compara con CHIRP v2.0 (solo infrarrojo) y con CHIRPS v2.0
+# (con estaciones), leídos del servidor del CHC para la misma ventana.
+leer_ref <- function(f_bin, f_claves) {
+  cl <- readLines(f_claves, warn = FALSE); cl <- cl[nzchar(cl)]
+  M <- matrix(readBin(f_bin, "numeric", n = length(cl) * nrow(S_todo), size = 4, endian = "little"), nrow = nrow(S_todo))
+  M[M < -100] <- NA                                  # sin dato (mar en CHIRPS)
+  p <- do.call(rbind, strsplit(cl, ".", fixed = TRUE))
+  colnames(M) <- sprintf("%s%02d", p[, 1], (as.integer(p[, 2]) - 1L) * 6L + as.integer(p[, 3]))
+  M
+}
+colnames(S_todo) <- sprintf("%d%02d", inv_sat$anio, inv_sat$pentada)
+chirp  <- leer_ref("datos_web/chirp_v2_valle_muestra_7anios.bin", "datos_web/chirp_v2_valle_muestra_7anios_claves.txt")
+chirps <- leer_ref("datos_web/chirps_v2_valle_1981_2013.bin", "datos_web/chirps_v2_valle_1981_2013_claves.txt")
+kk <- Reduce(intersect, list(colnames(S_todo), colnames(chirp), colnames(chirps)))
+fuente <- rbindlist(lapply(split(kk, substr(kk, 1, 4)), function(k) {
+  e <- S_todo[, k]; a <- chirp[, k]; b <- chirps[, k]; ok <- !is.na(b)
+  data.table(anio = substr(k[1], 1, 4), pentadas = length(k),
+             r_con_CHIRP = round(cor(as.vector(e), as.vector(a)), 3), r_con_CHIRPS = round(cor(e[ok], b[ok]), 3),
+             mm_entregado = round(sum(e) / nrow(e)), mm_CHIRP = round(sum(a) / nrow(a)),
+             mm_entregado_tierra = round(sum(e[ok]) / sum(ok[, 1])), mm_CHIRPS_tierra = round(sum(b[ok]) / sum(ok[, 1])))
+}))
+print(tabla(fuente, "9_fuente_satelite"))
+cat("r del mapa medio: con CHIRP", round(cor(rowMeans(S_todo[, kk]), rowMeans(chirp[, kk])), 3),
+    "| con CHIRPS", round(cor(rowMeans(S_todo[, kk]), rowMeans(chirps[, kk]), use = "complete.obs"), 3),
+    "| píxeles sin dato en CHIRPS (mar):", sum(is.na(chirps[, 1])), "| tope de CHIRP:", round(max(chirp)), "\n")
+
+# QUÉ DICEN LOS DATOS (D-37)
+#   Malla de 0,05° (unos 5,5 km), 39 × 37 píxeles, enteros de 0 a 200 mm por
+#   péntada con tope en 200, sin faltantes, casi sin ceros y con datos sobre el mar.
+#   Se parece a CHIRP (solo infrarrojo) y no a CHIRPS (con estaciones): los
+#   archivos son del 6-may-2013, de una corrida de CHIRP anterior a la publicada.
+rm(chirp, chirps, r_sat); invisible(gc())
+
+
+# ---- 10. SATÉLITE: RECORTE AL VALLE, CALENDARIO Y UNIDADES ---------------------
+titulo("10. Satélite: recorte, calendario y unidades")
+# Calendario de péntadas en el dominio 1–365 (sin 29-feb). La 6.ª péntada de cada
+# mes va del 26 al fin de mes: 3 días en febrero (4 en bisiesto), 5 o 6 en el resto.
+dias_mes_nb <- c(31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L)
+cal <- CJ(anio = ANIOS, pentada = 1:72)
+cal[, `:=`(mes = (pentada - 1L) %/% 6L + 1L, p = (pentada - 1L) %% 6L + 1L)]
+cal[, dias_dominio := fifelse(p < 6L, 5L, dias_mes_nb[mes] - 25L)]
+cal[, dias_reales := dias_dominio + (p == 6L & mes == 2L & anio %% 4L == 0L)]
+cal[, dia_ini := c(0L, cumsum(dias_mes_nb))[mes] + (p - 1L) * 5L + 1L]
+cal[, dia_centro := dia_ini + (dias_dominio - 1) / 2]
+stopifnot(cal[, sum(dias_dominio), by = anio][, all(V1 == 365)])
+print(cal[anio == 1981, .N, by = .(dias = dias_dominio)][order(dias)])
+
+# Recorte: periodo 1981–2003 y píxeles dentro del Valle. Unidades: mm/día (D-15),
+# dividiendo cada péntada por sus días reales.
+cols <- sprintf("%d%02d", cal$anio, cal$pentada)
+stopifnot(all(cols %in% colnames(S_todo)))
+S <- S_todo[pix[usar == TRUE, pixel], cols]
+sat <- data.table(pixel = rep(pix[usar == TRUE, pixel], times = ncol(S)),
+                  anio = rep(cal$anio, each = nrow(S)), pentada = rep(cal$pentada, each = nrow(S)),
+                  mm_pentada = as.vector(S))
+sat <- cal[, .(anio, pentada, mes, dia_centro, dias_reales)][sat, on = .(anio, pentada)]
+sat[, mm_dia := mm_pentada / dias_reales]
+cat("Satélite recortado:", uniqueN(sat$pixel), "píxeles ×", nrow(cal), "péntadas =", nrow(sat), "valores\n")
+# Sin dividir, la 6.ª péntada de los meses de 31 días parece más lluviosa
+print(sat[, .(mm_pentada = round(mean(mm_pentada), 1), mm_dia = round(mean(mm_dia), 2)), by = .(dias = dias_reales)][order(dias)])
+
+
+# ---- 11. SATÉLITE: EDA ----------------------------------------------------------
+titulo("11. Satélite: EDA")
+sat_anual <- sat[, .(mm = sum(mm_pentada), pct_tope = 100 * mean(mm_pentada == 200)), by = .(pixel, anio)]
+sat_pix <- sat_anual[, .(mm_anual = mean(mm), cv = sd(mm) / mean(mm), pct_tope = mean(pct_tope)), by = pixel][pix, on = "pixel", nomatch = 0]
+tabla(sat_pix, "11_satelite_pixel")
+cat("Lluvia anual del satélite por píxel: de", round(min(sat_pix$mm_anual)), "a", round(max(sat_pix$mm_anual)),
+    "mm | estaciones incluidas: de", round(min(clim[codigo %in% estaciones$codigo, P_media])), "a",
+    round(max(clim[codigo %in% estaciones$codigo, P_media])), "mm\n")
+
+grafico(ggplot(sat_pix, aes(lon, lat, fill = mm_anual)) + geom_tile() +
+          geom_sf(data = poly_valle, inherit.aes = FALSE, fill = NA, colour = "black") +
+          geom_point(data = estaciones, aes(lon, lat), inherit.aes = FALSE, size = .6, colour = "white") +
+          scale_fill_viridis_c(name = "mm/año") + labs(title = "Satélite: lluvia media anual por píxel (1981–2003)",
+                                                       subtitle = "Puntos blancos: estaciones incluidas", x = NULL, y = NULL),
+        "11_satelite_mapa_anual", ancho = 7, alto = 7)
+grafico(ggplot(sat_pix, aes(lon, lat, fill = pct_tope)) + geom_tile() +
+          geom_sf(data = poly_valle, inherit.aes = FALSE, fill = NA, colour = "black") +
+          scale_fill_viridis_c(name = "% de péntadas\nen 200 mm", option = "magma") +
+          labs(title = "¿Dónde pega el tope de 200 mm?", x = NULL, y = NULL),
+        "11_satelite_mapa_tope", ancho = 7, alto = 7)
+
+# Ciclo anual (mm/día) por péntada, con la dispersión entre píxeles
+ciclo_sat <- sat[, .(mm_dia = mean(mm_dia)), by = .(pixel, pentada, dia_centro)]
+grafico(ggplot(ciclo_sat[, .(p10 = quantile(mm_dia, .1), p50 = median(mm_dia), p90 = quantile(mm_dia, .9)), by = dia_centro],
+               aes(dia_centro)) + geom_ribbon(aes(ymin = p10, ymax = p90), alpha = .25) + geom_line(aes(y = p50)) +
+          labs(x = "Día del año", y = "mm/día", title = "Satélite: ciclo anual medio",
+               subtitle = "Línea: mediana entre píxeles; banda: p10–p90"),
+        "11_satelite_ciclo")
+
+# Serie anual regional y ENSO
+sat_reg <- sat_anual[, .(mm = mean(mm), pct_tope = mean(pct_tope)), by = anio]
+sat_reg[, anom_pct := round(100 * (mm / mean(mm) - 1), 1)]
+sat_reg <- oni[sat_reg, on = "anio"]
+print(tabla(sat_reg, "11_satelite_anual")[, .(anio, mm = round(mm), anom_pct, pct_tope = round(pct_tope, 2), ONI_anual, fase)])
+cat("r entre ONI y la anomalía anual del satélite:", round(sat_reg[, cor(ONI_anual, anom_pct)], 2), "\n")
+grafico(ggplot(sat_reg, aes(anio, anom_pct, fill = fase)) + geom_col() +
+          labs(x = NULL, y = "% respecto a la media", title = "Satélite: anomalía anual regional y fase ENSO"),
+        "11_satelite_anomalia_anual")
+
+
+# ---- 12. SATÉLITE FRENTE A ESTACIONES --------------------------------------------
+titulo("12. Satélite frente a estaciones")
+# Emparejamiento (P-7): cada estación incluida con el píxel que contiene su coordenada
+ext_sat <- c(min(pix$lon) - 0.025, max(pix$lon) + 0.025, min(pix$lat) - 0.025, max(pix$lat) + 0.025)
+col_px <- floor((estaciones$lon - ext_sat[1]) / 0.05) + 1L
+fil_px <- floor((ext_sat[4] - estaciones$lat) / 0.05) + 1L
+ncol_sat <- uniqueN(pix$lon); nfil_sat <- uniqueN(pix$lat)
+dentro <- col_px >= 1 & col_px <= ncol_sat & fil_px >= 1 & fil_px <= nfil_sat
+pares <- data.table(codigo = estaciones$codigo, pixel = ifelse(dentro, (fil_px - 1L) * ncol_sat + col_px, NA_integer_))
+pares <- pix[, .(pixel, lon_px = lon, lat_px = lat, en_valle)][pares, on = "pixel"]
+pares <- estaciones[, .(codigo, nombre, lon, lat, altitud, vertiente, nivel_c, revisar)][pares, on = "codigo"]
+pares[, km_al_centro := round(dist_km(lat, lon, lat_px, lon_px), 2)]
+stopifnot(pares[!is.na(pixel), all(abs(lon - lon_px) <= 0.0251 & abs(lat - lat_px) <= 0.0251)])
+cat("Estaciones incluidas:", nrow(pares), "| fuera de la ventana del satélite:", pares[is.na(pixel), .N],
+    "| en píxel con centro fuera del polígono:", pares[!is.na(pixel) & en_valle == FALSE, .N],
+    "| píxeles distintos usados:", pares[!is.na(pixel), uniqueN(pixel)],
+    "| píxeles con más de una estación:", pares[!is.na(pixel), .N, by = pixel][N > 1, .N], "\n")
+if (pares[is.na(pixel), .N]) print(pares[is.na(pixel), .(codigo, nombre, lon, lat)])
+tabla(pares, "12_pares_estacion_pixel")
+
+# Estaciones a péntadas: solo péntadas con todos sus días observados
+est_d <- diario[!is.na(P), .(codigo, anio, mes = month(fecha), dm = mday(fecha), P)]
+est_d[, pentada := (mes - 1L) * 6L + pmin((dm - 1L) %/% 5L, 5L) + 1L]
+est_pen <- est_d[, .(mm_est = sum(P), n = .N), by = .(codigo, anio, pentada)]
+est_pen <- cal[, .(anio, pentada, dias_dominio, dias_reales, dia_centro)][est_pen, on = .(anio, pentada)][n == dias_dominio]
+# Píxel de cada estación (también si el centro del píxel queda fuera del polígono)
+S_par <- S_todo[, cols]
+cmp <- pares[!is.na(pixel), .(codigo, pixel)][est_pen, on = "codigo", nomatch = 0]
+cmp[, mm_sat := S_par[cbind(pixel, match(sprintf("%d%02d", anio, pentada), cols))]]
+cmp[, particion := PARTICION(anio)]
+cat("Pares estación-péntada comparables:", nrow(cmp), "de", uniqueN(cmp$codigo), "estaciones\n")
+
+# ¿Qué tan bien sigue el satélite a la estación, péntada a péntada?
+print(cmp[, .(pares = .N, r = round(cor(mm_sat, mm_est), 2), mm_sat = round(mean(mm_sat), 1), mm_est = round(mean(mm_est), 1),
+              sesgo_pct = round(100 * (sum(mm_sat) / sum(mm_est) - 1)), pct_est_cero = round(100 * mean(mm_est == 0), 1),
+              pct_sat_cero = round(100 * mean(mm_sat == 0), 2), pct_est_sobre_200 = round(100 * mean(mm_est > 200), 2)), by = particion])
+grafico(ggplot(cmp, aes(mm_est, mm_sat)) + geom_bin2d(bins = 60) + geom_abline(colour = "red") +
+          scale_fill_viridis_c(trans = "log10", name = "péntadas") + coord_cartesian(xlim = c(0, 400)) +
+          labs(x = "Estación (mm por péntada)", y = "Satélite (mm por péntada)",
+               title = "Satélite frente a estación, péntada a péntada", subtitle = "Línea roja: igualdad"),
+        "12_satelite_vs_estacion")
+
+# Por estación: correlación y sesgo; ¿de qué dependen?
+por_est_sat <- cmp[, .(pentadas = .N, r = cor(mm_sat, mm_est), sesgo = sum(mm_sat) / sum(mm_est),
+                       mm_anual_est = mean(mm_est / dias_reales) * 365, mm_anual_sat = mean(mm_sat / dias_reales) * 365), by = codigo]
+por_est_sat <- pares[, .(codigo, nombre, altitud, vertiente, revisar, nivel_c)][por_est_sat, on = "codigo"]
+tabla(por_est_sat, "12_satelite_por_estacion")
+print(por_est_sat[, .(estaciones = .N, r_mediana = round(median(r), 2), r_p10 = round(quantile(r, .1), 2),
+                      sesgo_mediano = round(median(sesgo), 2), sobreestima = sum(sesgo > 1.25), subestima = sum(sesgo < 0.8)), by = vertiente])
+cat("r entre el sesgo y la lluvia anual de la estación (log):", round(por_est_sat[, cor(log(sesgo), log(mm_anual_est))], 2), "\n")
+print(por_est_sat[order(r)][1:8, .(codigo, nombre, vertiente, r = round(r, 2), sesgo = round(sesgo, 2), mm_anual_est = round(mm_anual_est), revisar)])
+grafico(ggplot(por_est_sat, aes(mm_anual_est, mm_anual_sat, colour = vertiente)) + geom_point() + geom_abline() +
+          scale_x_log10() + scale_y_log10() +
+          labs(x = "Estación (mm/año, log)", y = "Satélite en su píxel (mm/año, log)",
+               title = "El satélite aplana: sobreestima donde llueve poco y subestima donde llueve mucho"),
+        "12_sesgo_por_estacion")
+grafico(ggplot(por_est_sat, aes(r, fill = vertiente)) + geom_histogram(bins = 30) +
+          labs(x = "r entre satélite y estación (péntadas)", y = "Estaciones", title = "Correlación por estación"),
+        "12_correlacion_por_estacion")
+
+# Ciclo anual: satélite y estación en los mismos pares
+ciclo_cmp <- cmp[, .(`Estación` = mean(mm_est / dias_reales), `Satélite` = mean(mm_sat / dias_reales)), by = .(dia_centro)]
+grafico(ggplot(melt(ciclo_cmp, id.vars = "dia_centro"), aes(dia_centro, value, colour = variable)) + geom_line() +
+          labs(x = "Día del año", y = "mm/día", colour = NULL, title = "Ciclo anual medio en los pares estación–píxel"),
+        "12_ciclo_satelite_estacion")
+
+# Por año: ¿hay años en que el satélite se aparta de las estaciones? (D-16)
+# Anomalía de cada par respecto a su propia media, con las mismas péntadas en las dos fuentes.
+an_par <- cmp[, .(sat = mean(mm_sat), est = mean(mm_est), n = .N), by = .(codigo, anio)][n >= 60]
+an_par[, `:=`(a_sat = sat / mean(sat) - 1, a_est = est / mean(est) - 1), by = codigo]
+an_cmp <- an_par[, .(estaciones = .N, anom_sat_pct = round(100 * median(a_sat), 1), anom_est_pct = round(100 * median(a_est), 1),
+                     r_espacial = round(cor(sat, est), 2)), by = anio][order(anio)]
+an_cmp[, dif := anom_sat_pct - anom_est_pct]
+an_cmp[, z := round((dif - median(dif)) / mad(dif), 1)]
+an_cmp[, se_aparta := abs(z) > 2.5]
+an_cmp <- oni[an_cmp, on = "anio"]
+an_cmp[, particion := PARTICION(anio)]
+print(tabla(an_cmp, "12_satelite_vs_estaciones_anual"))
+cat("r entre las anomalías anuales del satélite y de las estaciones:", round(an_cmp[, cor(anom_sat_pct, anom_est_pct)], 2),
+    "| desviación estándar: satélite", round(sd(an_cmp$anom_sat_pct), 1), "%, estaciones", round(sd(an_cmp$anom_est_pct), 1), "%\n")
+# ¿De qué depende la diferencia? El satélite se queda corto en La Niña y se pasa en El Niño
+cat("r con el ONI: estaciones", round(an_cmp[, cor(ONI_anual, anom_est_pct)], 2), "| satélite", round(an_cmp[, cor(ONI_anual, anom_sat_pct)], 2),
+    "| diferencia satélite − estaciones", round(an_cmp[, cor(ONI_anual, dif)], 2), "\n")
+print(an_cmp[order(dif), .(anio, fase, ONI_anual, anom_sat_pct, anom_est_pct, dif, z)][c(1:5, (.N - 4):.N)])
+grafico(ggplot(an_cmp, aes(ONI_anual, dif)) + geom_text(aes(label = anio, colour = fase), size = 3.2) +
+          geom_smooth(method = "lm", formula = y ~ x, se = FALSE, colour = "grey50", linewidth = .5) +
+          labs(x = "ONI anual", y = "Anomalía del satélite − anomalía de las estaciones (puntos %)",
+               title = "El satélite se queda corto en La Niña y se pasa en El Niño"),
+        "12_diferencia_vs_ONI")
+
+# ¿De dónde sale lo que el satélite sí acierta? Se separan tres componentes
+cmp[, mes := (pentada - 1L) %/% 6L + 1L]
+comp_mes <- cmp[, .(sat = mean(mm_sat), est = mean(mm_est)), by = .(codigo, anio, mes)]
+comp_mes[, `:=`(a_sat = sat - mean(sat), a_est = est - mean(est)), by = .(codigo, mes)]
+comp_ciclo <- cmp[, .(sat = mean(mm_sat), est = mean(mm_est)), by = .(codigo, pentada)][, .(r = cor(sat, est)), by = codigo]
+comp_esp <- cmp[, .(sat = mean(mm_sat), est = mean(mm_est)), by = codigo]
+aciertos <- data.table(
+  componente = c("Dónde llueve más (media por estación)", "Cuándo llueve en el año (ciclo medio, mediana entre estaciones)",
+                 "Meses más o menos lluviosos de lo normal (anomalías)", "Años más o menos lluviosos de lo normal (regional)"),
+  r = round(c(cor(comp_esp$sat, comp_esp$est), median(comp_ciclo$r), comp_mes[, cor(a_sat, a_est)],
+              an_cmp[, cor(anom_sat_pct, anom_est_pct)]), 2))
+print(tabla(aciertos, "12_que_acierta_el_satelite"))
+grafico(ggplot(melt(an_cmp[, .(anio, `Satélite` = anom_sat_pct, Estaciones = anom_est_pct)], id.vars = "anio"),
+               aes(anio, value, colour = variable)) + geom_line() + geom_point() +
+          geom_vline(xintercept = an_cmp[se_aparta == TRUE, anio], linetype = 3) +
+          geom_vline(xintercept = c(1995.5, 2000.5), colour = "red", linetype = 2) +
+          labs(x = NULL, y = "Anomalía anual (%, mediana de los pares)", colour = NULL,
+               title = "Años en que el satélite se aparta de las estaciones",
+               subtitle = "Punteado: años que más se apartan; rojo: límites de entrenamiento, validación y prueba"),
+        "12_anomalia_anual_satelite_estaciones")
+# ¿En qué meses falla el satélite en los años que más se apartan?
+if (an_cmp[se_aparta == TRUE, .N]) {
+  mes_sosp <- cmp[anio %in% an_cmp[se_aparta == TRUE, anio], .(sat = sum(mm_sat), est = sum(mm_est)), by = .(anio, mes = (pentada - 1L) %/% 6L + 1L)]
+  mes_ref <- cmp[!anio %in% an_cmp[se_aparta == TRUE, anio], .(razon_normal = sum(mm_sat) / sum(mm_est)), by = .(mes = (pentada - 1L) %/% 6L + 1L)]
+  mes_sosp <- mes_ref[mes_sosp, on = "mes"][, razon := round(sat / est / razon_normal, 2)]
+  cat("Satélite/estación por mes en los años que más se apartan, relativo al resto (1 = igual que siempre):\n")
+  print(dcast(mes_sosp, anio ~ mes, value.var = "razon"))
+}
+
+# QUÉ DICEN LOS DATOS (secciones 10–12)
+#   - 676 píxeles con centro dentro del Valle. Las 176 estaciones caen en 148
+#     píxeles distintos; 23 píxeles tienen más de una estación.
+#   - El satélite aplana el espacio: va de ~1 100 a ~6 200 mm/año y las estaciones
+#     de ~800 a ~12 100. Sobreestima donde llueve poco y subestima donde llueve mucho.
+#   - Péntada a péntada sigue poco a la estación (r ≈ 0,5; mediana por estación 0,42)
+#     y casi nunca marca cero (las estaciones, el 20–25 % de las péntadas).
+#   - Acierta el clima medio (dónde y cuándo llueve, r ≈ 0,8) pero no las anomalías
+#     (r ≈ 0,3 mensual y 0,25 anual). Su variación de un año a otro es la mitad.
+#   - La diferencia con las estaciones sigue al ENSO (r = 0,74 con el ONI): se queda
+#     corto en La Niña (1984, 1988, 1999, 2000) y se pasa en El Niño (1992). Los
+#     "años defectuosos" de D-16 son en realidad este efecto, no archivos dañados.
+#   - Santa Teresa (2612810102) tiene r = 0 con su píxel y la coordenada "a revisar".
+
+saveRDS(list(pentadal = sat, pixeles = pix, calendario = cal, pares = pares, pares_pentada = cmp,
+             anual = an_cmp, por_estacion = por_est_sat, que_acierta = aciertos),
+        file.path(SALIDA, "satelite_valle.rds"), compress = "xz")
+rm(S_todo, S_par, est_d); invisible(gc())
+
+
+# ---- 13. DATOS PREPARADOS PARA LA CONSTRUCCIÓN FUNCIONAL ------------------------
+titulo("13. Datos preparados")
+# Todo lo que necesita la construcción funcional, ya en forma de matriz:
+#   estaciones  Y: estación-año × día (1–365), mm/día, NA = faltante
+#   satélite    X: píxel-año × péntada (1–72), mm/día, sin faltantes; t = día central
+#   pares       fila de Y ↔ fila de X (el píxel de la estación, el mismo año)
+
+# Estaciones
+id_est <- unique(diario[, .(codigo, anio, particion)])
+setkey(id_est, codigo, anio)
+Yw <- dcast(diario, codigo + anio ~ dia, value.var = "P")
+stopifnot(identical(Yw$codigo, id_est$codigo), identical(Yw$anio, id_est$anio), identical(names(Yw)[-(1:2)], as.character(1:365)))
+Y <- as.matrix(Yw[, -(1:2)]); dimnames(Y) <- list(paste(id_est$codigo, id_est$anio, sep = "_"), 1:365); rm(Yw)
+id_est <- anios[, .(codigo, anio, n_obs, hueco_max)][id_est, on = .(codigo, anio)]
+id_est[, fila := .I]
+
+# Satélite
+id_sat <- unique(sat[, .(pixel, anio)]); setkey(id_sat, pixel, anio)
+Xw <- dcast(sat, pixel + anio ~ pentada, value.var = "mm_dia")
+stopifnot(identical(Xw$pixel, id_sat$pixel), identical(Xw$anio, id_sat$anio))
+X <- as.matrix(Xw[, -(1:2)]); dimnames(X) <- list(paste(id_sat$pixel, id_sat$anio, sep = "_"), 1:72); rm(Xw)
+id_sat[, `:=`(particion = PARTICION(anio), fila = .I)]
+t_sat <- cal[anio == ANIOS[1], dia_centro]
+stopifnot(cal[, uniqueN(dia_centro), by = pentada][, all(V1 == 1)])   # el mismo día central todos los años
+
+# Pares estación-año ↔ píxel-año
+pares_fun <- pares[, .(codigo, pixel)][id_est[, .(codigo, anio, particion, fila_est = fila)], on = "codigo"]
+pares_fun <- id_sat[, .(pixel, anio, fila_sat = fila)][pares_fun, on = .(pixel, anio)]
+stopifnot(!anyNA(pares_fun$fila_sat))
+
+# Metadatos de las estaciones, con las marcas para el análisis de sensibilidad
+meta_est <- por_est_sat[, .(codigo, r_satelite = round(r, 3), sesgo_satelite = round(sesgo, 3))][
+  pares[, .(codigo, nombre, lon, lat, altitud, vertiente, pixel, km_al_centro,
+            cruce_CNE = nivel_c == "Cruce con CNE", coordenada_a_revisar = revisar != "")], on = "codigo"]
+meta_est <- por_est[, .(codigo, validos_ent, validos_val, validos_pru)][meta_est, on = "codigo"]
+meta_est <- clim[, .(codigo, mm_anual = round(P_media))][meta_est, on = "codigo"]
+
+preparados <- list(
+  estaciones = list(Y = Y, id = id_est, t = 1:365, unidades = "mm/día; NA = día faltante"),
+  satelite   = list(X = X, id = id_sat, t = t_sat, dias = cal[anio == ANIOS[1], dias_dominio], unidades = "mm/día; t = día central de la péntada"),
+  pares = pares_fun, meta_estaciones = meta_est, pixeles = pix[usar == TRUE],
+  particion = c(entrenamiento = "1981–1995", validacion = "1996–2000", prueba = "2001–2003"),
+  reglas = reglas)
+saveRDS(preparados, file.path(SALIDA, "datos_preparados.rds"), compress = "xz")
+tabla(meta_est, "13_meta_estaciones"); tabla(id_est, "13_id_estacion_anio")
+
+print(rbind(
+  id_est[, .(fuente = "Estaciones (curvas estación-año)", curvas = .N, sitios = uniqueN(codigo)), by = particion],
+  id_sat[, .(fuente = "Satélite (curvas píxel-año)", curvas = .N, sitios = uniqueN(pixel)), by = particion],
+  pares_fun[, .(fuente = "Pares estación-año ↔ píxel-año", curvas = .N, sitios = uniqueN(codigo)), by = particion]))
+cat("Y:", nrow(Y), "×", ncol(Y), "| faltantes:", sum(is.na(Y)), "(", round(100 * mean(is.na(Y)), 2), "% )",
+    "\nX:", nrow(X), "×", ncol(X), "| faltantes:", sum(is.na(X)), "\n")
+cat("Marcas de sensibilidad: cruce CNE", meta_est[cruce_CNE == TRUE, .N], "| coordenada a revisar", meta_est[coordenada_a_revisar == TRUE, .N],
+    "| sin altitud", meta_est[is.na(altitud), .N], "\n")
+
+# Vista de las curvas crudas que entran a la construcción funcional
+set.seed(7); ej <- sample(id_est[particion == "entrenamiento", fila], 4)
+ej_dt <- rbindlist(lapply(ej, function(i) {
+  j <- pares_fun[fila_est == i, fila_sat]
+  rbind(data.table(curva = rownames(Y)[i], fuente = "Estación (diaria)", t = 1:365, v = Y[i, ]),
+        data.table(curva = rownames(Y)[i], fuente = "Satélite (péntada)", t = t_sat, v = X[j, ]))
+}))
+grafico(ggplot(ej_dt, aes(t, v, colour = fuente)) + geom_line(alpha = .8) + facet_wrap(~curva, scales = "free_y") +
+          labs(x = "Día del año", y = "mm/día", colour = NULL, title = "Ejemplos de pares estación-año y su píxel",
+               subtitle = "Así entran los datos a la construcción funcional"),
+        "13_ejemplos_pares", alto = 6)
+
+
+# ---- 14. PRUEBAS -----------------------------------------------------------------
+titulo("14. Pruebas")
+# Comprobaciones independientes de los datos preparados. Si alguna falla, el script se detiene.
+pruebas <- list()
+prueba <- function(nombre, ok, detalle = "") {
+  pruebas[[length(pruebas) + 1L]] <<- data.table(prueba = nombre, resultado = ifelse(isTRUE(ok), "OK", "FALLA"), detalle = as.character(detalle))
+}
+
+# -- Población
+prueba("Las 232 del Valle caen dentro del polígono DANE", est[grupo == "Valle del Cauca", .N == 232 && all(depto_geo == "Valle del Cauca")])
+prueba("Ninguna estación final es del Cauca ni está sin ubicar", all(id_est$codigo %in% est[grupo == "Valle del Cauca", codigo]))
+prueba("Las incluidas tienen coordenada", !anyNA(meta_est[, .(lon, lat)]))
+
+# -- Periodo y partición
+prueba("Solo años 1981–2003", all(id_est$anio %in% ANIOS) && all(id_sat$anio %in% ANIOS))
+prueba("Partición correcta por año", id_est[, all((particion == "entrenamiento") == (anio <= 1995) & (particion == "prueba") == (anio >= 2001))])
+prueba("Cada estación tiene ≥7 años válidos en entrenamiento", id_est[particion == "entrenamiento", .N, by = codigo][, .N == uniqueN(id_est$codigo) && min(N) >= ANIOS_MIN],
+       paste("mínimo:", id_est[particion == "entrenamiento", .N, by = codigo][, min(N)]))
+
+# -- Estaciones: reglas recalculadas desde la matriz
+n_obs_Y <- rowSums(!is.na(Y)); hueco_Y <- apply(!is.na(Y), 1, hueco_mas_largo)
+prueba("Cada curva tiene ≥90 % de días", all(n_obs_Y >= COB_MIN * 365), paste("mínimo:", min(n_obs_Y)))
+prueba("Ninguna curva tiene un hueco > 15 días", all(hueco_Y <= HUECO_MAX), paste("máximo:", max(hueco_Y)))
+prueba("Sin duplicados estación-año", !anyDuplicated(id_est[, .(codigo, anio)]))
+prueba("Valores entre 0 y el máximo crudo", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= estructura$maximo, paste("máximo:", max(Y, na.rm = TRUE)))
+
+# -- Estaciones: contra los archivos crudos, leídos de nuevo
+crudo2 <- rbind(fread("datos_curso/P_1980_1990.csv"), fread("datos_curso/P_1991_2003.csv"))
+crudo2 <- crudo2[YEAR %in% ANIOS & !(MONTH == 2 & DAY == 29), .(codigo = as.character(STATION_ID), anio = YEAR, mes = MONTH, dm = DAY, P_crudo = as.numeric(VALUE))]
+crudo2[, dia := c(0L, cumsum(dias_mes_nb))[mes] + dm]
+crudo2 <- id_est[, .(codigo, anio, fila)][crudo2, on = .(codigo, anio), nomatch = 0]
+crudo2[, P_final := Y[cbind(fila, dia)]]
+m2 <- marcas[, .(codigo, anio = year(fecha), mes = month(fecha), dm = mday(fecha), marcado = TRUE)]
+crudo2 <- m2[crudo2, on = .(codigo, anio, mes, dm)]
+prueba("Cada valor final es igual al crudo (salvo los marcados)", crudo2[is.na(marcado), all(!is.na(P_final) & P_final == P_crudo)],
+       paste(crudo2[is.na(marcado), .N], "valores comparados"))
+prueba("Los días marcados quedaron como faltante", crudo2[marcado == TRUE, all(is.na(P_final))], paste(crudo2[marcado == TRUE, .N], "marcados dentro de años válidos"))
+prueba("Todo faltante de la matriz es un día ausente en el crudo o marcado", sum(!is.na(Y)) == crudo2[is.na(marcado), .N],
+       paste("observados:", sum(!is.na(Y))))
+rm(crudo2)
+
+prueba("La trazabilidad termina en los datos preparados", trazabilidad[.N, estaciones == uniqueN(id_est$codigo) && pares_estacion_anio == nrow(Y) && dias_con_dato == sum(!is.na(Y))])
+
+# -- Umbrales sin fuga
+p99_chk <- d[P > 0 & anio <= 1995, .(p = quantile(P, .99), n = .N), by = codigo][n >= 100]
+prueba("El p99 de las reglas usa solo entrenamiento", p99[p99_chk, on = "codigo", all(abs(p99 - p) < 1e-9)], paste(nrow(p99_chk), "estaciones"))
+
+# -- Satélite
+prueba("Satélite sin faltantes y no negativo", !anyNA(X) && min(X) >= 0)
+prueba("72 péntadas que suman 365 días", length(t_sat) == 72 && sum(preparados$satelite$dias) == 365 && all(diff(t_sat) > 0))
+prueba("mm/día × días reales = mm de la péntada (enteros)", sat[, all(abs(mm_dia * dias_reales - round(mm_dia * dias_reales)) < 1e-9)])
+# contra los TIFF, leídos de nuevo
+set.seed(11); chk <- inv_sat[anio %in% ANIOS][sample(.N, 12)]
+ok_tif <- vapply(seq_len(nrow(chk)), function(i) {
+  v <- terra::values(terra::rast(chk$archivo[i]))[, 1]
+  dr <- cal[anio == chk$anio[i] & pentada == chk$pentada[i], dias_reales]
+  f <- id_sat[anio == chk$anio[i]]
+  all(abs(X[f$fila, chk$pentada[i]] * dr - v[f$pixel]) < 1e-9)
+}, TRUE)
+prueba("La matriz del satélite coincide con 12 TIFF releídos", all(ok_tif))
+prueba("Todos los píxeles del Valle están", all(pix[en_valle == TRUE, pixel] %in% id_sat$pixel), paste(uniqueN(id_sat$pixel), "píxeles"))
+
+# -- Pares
+prueba("Cada estación cae dentro de su píxel", meta_est[pix, on = "pixel", nomatch = 0][, all(abs(lon - i.lon) <= 0.0251 & abs(lat - i.lat) <= 0.0251)],
+       paste("distancia máxima al centro:", max(meta_est$km_al_centro), "km"))
+prueba("Cada par une el mismo año y el píxel de la estación",
+       all(id_sat$anio[pares_fun$fila_sat] == id_est$anio[pares_fun$fila_est]) &&
+       all(id_sat$pixel[pares_fun$fila_sat] == meta_est[match(id_est$codigo[pares_fun$fila_est], codigo), pixel]))
+prueba("Hay un par por cada curva de estación", nrow(pares_fun) == nrow(Y) && !anyDuplicated(pares_fun$fila_est))
+
+# -- Agregación a péntadas
+comp <- which(n_obs_Y == 365)[1:50]
+ok_pen <- vapply(comp, function(i) {
+  tot <- est_pen[codigo == id_est$codigo[i] & anio == id_est$anio[i], sum(mm_est)]
+  abs(tot - sum(Y[i, ])) < 1e-6
+}, TRUE)
+prueba("En años completos, la suma por péntadas = la suma diaria", all(ok_pen), "50 curvas")
+
+pruebas <- rbindlist(pruebas)
+print(tabla(pruebas, "14_pruebas"), right = FALSE)
+if (any(pruebas$resultado != "OK")) stop("Hay pruebas que fallan: revisar la tabla anterior")
+cat("\nTodas las pruebas pasan (", nrow(pruebas), ").\n")
+
+
+# ---- 15. RESUMEN --------------------------------------------------------------
+titulo("15. Resumen")
 cat("Días pasados a faltante:", nrow(marcas), "\n")
 cat("Años válidos:", anios[valido == TRUE, .N], "de", nrow(anios), "\n")
 print(anios[, .(validos = sum(valido), total = .N), by = particion])
@@ -649,4 +1118,14 @@ cat("\nDataset final:", file.path(SALIDA, "lluvia_valle_limpia.rds"), "\n",
     "  $diario_todo  las", nrow(valle), "estaciones y todos sus años, ya depurados\n",
     "  $anios        validez de cada estación-año  |  $estaciones  metadatos de las incluidas\n",
     "  $marcas       días pasados a faltante y por qué  |  $reglas  texto de las reglas\n")
+cat("\nSatélite:", file.path(SALIDA, "satelite_valle.rds"), "\n",
+    "  $pentadal       ", uniqueN(sat$pixel), "píxeles del Valle ×", nrow(cal), "péntadas, en mm por péntada y mm/día\n",
+    "  $pixeles, $calendario   centro de cada píxel y días de cada péntada\n",
+    "  $pares          estación ↔ píxel (", pares[!is.na(pixel), .N], "estaciones en", pares[!is.na(pixel), uniqueN(pixel)], "píxeles )\n",
+    "  $pares_pentada  estación y satélite en las mismas péntadas  |  $anual, $por_estacion, $que_acierta\n")
+cat("\nDatos preparados:", file.path(SALIDA, "datos_preparados.rds"), "\n",
+    "  $estaciones$Y   ", nrow(Y), "curvas estación-año × 365 días (mm/día, NA = faltante); $estaciones$id las identifica\n",
+    "  $satelite$X     ", nrow(X), "curvas píxel-año × 72 péntadas (mm/día); $satelite$t = día central\n",
+    "  $pares          fila de Y ↔ fila de X  |  $meta_estaciones, $pixeles, $particion, $reglas\n",
+    "  Pruebas:", nrow(pruebas), "de", nrow(pruebas), "pasan\n")
 writeLines(capture.output(sessionInfo()), file.path(SALIDA, "sessionInfo.txt"))
