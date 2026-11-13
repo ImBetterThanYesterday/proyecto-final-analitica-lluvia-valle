@@ -282,10 +282,10 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-1 | Los 35 del Valle con departamento inferido se descartan (D-34). Siguen pendientes los 21 sin ubicar: 7 tienen candidata en el CNE, que se confirmaría con la lluvia de DHIME; para los otros 14 hay que pedir el catálogo a la CVC o al profesor | 🟡 |
 | P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
 | P-3 | ¿Podemos reemplazar el satélite entregado por CHIRPS? | 🟡 |
-| P-4 | ¿Cómo tratar el año 2000 (satélite defectuoso), que ahora cae en validación? | 🟡 |
+| P-4 | ¿Cómo tratar el año 2000 (satélite defectuoso), que ahora cae en validación? Por ahora 1985, 1988 y 2000 quedan fuera del modelo (D-42); falta revisar el efecto de perder 2 de los 6 años Niña de entrenamiento | 🟡 |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
-| P-6 | Aplicar el filtro del Valle (167 estaciones) y el recorte del satélite en el flujo de la rama y rehacer las fases | Por hacer |
-| P-7 | Conectar las coordenadas verificadas al cruce estación–píxel de la rama | Por hacer |
+| P-6 | Aplicar el filtro del Valle y el recorte del satélite y rehacer las fases | Resuelta (D-34, D-37 a D-40) |
+| P-7 | Conectar las coordenadas verificadas al cruce estación–píxel | Resuelta (D-38) |
 
 ---
 
@@ -354,6 +354,71 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - **Copias en CSV:** `salidas_R_datos/tablas/8_marcas_limpieza.csv`, `8_anios_validez.csv` y `8_estaciones_incluidas.csv`.
   - **Todo el proceso está en un solo archivo, `lluvia_valle_datos.R`:** población, EDA, experimento de huecos, depuración y dataset final. Se corre desde la raíz del repositorio.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
+### D-37 · Satélite recortado al Valle, en mm/día y con los años defectuosos marcados (cierra D-03 y aplica D-15/D-16)
+- **Decisión:**
+  - Se usan los píxeles con centro dentro del polígono DANE del Valle (676 de 1 443), más los 5 píxeles de estaciones cercanas al borde: 681 píxeles × 23 años = 15 663 curvas.
+  - Cada péntada se divide por sus días reales (5, o de 3 a 6 en la última del mes) y se ubica en su día central del año de 365 días.
+  - 1985, 1988 y 2000 se marcan como defectuosos. Se conservan en el EDA y se excluyen de la elección de K, de la comparación principal y del modelo.
+- **Qué mostró el EDA** (`funcional/10_satelite_emparejamiento.R`):
+  - Esos tres años son los más secos del satélite en el Valle: 2 219, 2 302 y 2 374 mm, frente a ~2 730 de mediana.
+  - En los pares estación–píxel la diferencia se invierte en esos años: +336 mm/año a favor de la estación, frente a −83 en los demás.
+  - **Los tres son años Niña.** Con ellos, el satélite no muestra la señal de La Niña; sin ellos, la recupera: Niña 1 949 > neutro 1 892 > Niño 1 875 mm (sección 12).
+- **Tope de 200 mm/péntada:** 7,7 % de las curvas lo tocan alguna vez, todas en la vertiente Pacífica (al oeste de −76,8°).
+
+### D-38 · Emparejamiento estación–píxel: la celda que contiene la estación (cierra P-7)
+- **Regla:** cada estación se asigna a la celda del TIFF que contiene su coordenada de `estaciones_valle_finales.csv`.
+- **Resultado:** las 176 estaciones caen en 148 píxeles. 23 píxeles tienen de 2 a 4 estaciones (51 estaciones en total, 16 de ellas en Cali), que comparten la misma curva satelital. El centro del píxel queda a 2,2 km en mediana (máximo 3,9 km).
+- **Tablas:** `salidas_R_funcional/tablas/10_emparejamiento_estacion_pixel.csv` y `10_pixeles_compartidos.csv`.
+
+### D-39 · K = 8 (estaciones) y K = 11 (satélite), con las 176 del Valle (confirma D-29)
+- **Cómo se eligió:** ECM, VC y VCG con las curvas completas de entrenamiento: 1 899 de estación y 8 853 de satélite, sin 1985 ni 1988.
+- **Resultado:**
+  - VC y VCG coinciden en ambas fuentes.
+  - En estaciones la VC es plana entre K = 5 y 17.
+  - S es idempotente y tr(S) = K hasta 1e-14.
+- **Valores negativos:** 47 % de las curvas de estación baja de 0 en algún día, casi siempre poco (mediana del mínimo −0,07 mm/día). Ocurre en julio–agosto y en los bordes de la base no periódica, y se resuelve recortando en 0 antes de la raíz (D-23).
+
+### D-40 · Regresión funcional de referencia: FPCA con M = 5 y λ = 1e8, elegidos con validación
+- **Modelo:** en la escala raíz,
+
+  y(t) = μ(t) + α(t) + ∫β(s,t)x(s)ds + γ(t)·altitud + δ(t)·ONI,
+
+  con β(s,t) = Σ_m β_m(s)ψ_m(t).
+  - Las ψ_m y μ salen del FPCA de las estaciones, solo con entrenamiento.
+  - Cada β_m(s) se representa en la base del satélite, con penalización ∫β''².
+- **Elección de M y λ:** se eligen juntos con validación (1996–1999). El error deja de bajar desde M = 5, que explica el 91 % de la varianza; las componentes 6 a 8 tienen autovalores casi iguales, es decir, ruido.
+- **Verificación:** la predicción por la integral de β(s,t) y la predicción por puntajes FPCA difieren en 5e-15. La cabeza lineal de la red debe reproducir esta identidad.
+- **Prueba (2001–2003), frente al satélite sin corregir:**
+
+  | Métrica | Satélite | Regresión |
+  |---|---|---|
+  | RMSE L2 (mm/día) | 2,44 | 2,25 |
+  | KGE | 0,38 | 0,45 |
+  | Error en el pico de la 1.ª temporada (días) | 23 | 18 |
+
+  - La regresión mejora 59 % de las curvas, pero los intervalos se solapan.
+  - Sin el satélite (solo altitud y ONI), el RMSE es 2,61.
+  - En 2002 (Niño) el modelo corrige de más.
+- **Fuera del modelo:** Univalle sale porque no tiene altitud oficial (D-35, 17 pares).
+
+### D-41 · Organización del código funcional y paso a un solo archivo R (en curso)
+- **Organización mientras se desarrolla:** los módulos están en `funcional/`:
+  - `00_funciones.R` con las funciones comunes;
+  - las secciones 10 a 14, cada una con su script.
+  - Cada módulo lee el `.rds` del anterior desde `salidas_R_funcional/`, para no tener que correr todo cada vez.
+- **Para la entrega:**
+  - Se concatenan, después de `lluvia_valle_datos.R`, el contenido de `00_funciones.R` y luego las secciones 10 a 14, sin las líneas `source(...)`.
+  - Los `readRDS` intermedios pueden quedarse, porque leen lo que el mismo archivo acaba de guardar.
+  - Así queda un único `.R`, y el `.py` solo tiene la red (lee `salidas_R_funcional/para_python/`).
+- **Reemplaza:** `01_datos_y_construccion_funcional.R` y `02_EDA_funcional.R`. Su código (Cox–de Boor, MCO, criterios de K, controles de S, momentos y profundidades) quedó en las secciones 11 y 12, con el satélite agregado.
+- **Fecha y responsable:** 2026-11-13, Jacobo.
+
+### D-42 · Sin estaciones reservadas, años defectuosos fuera y un `.py` autosuficiente
+- **Estaciones reservadas:** no habrá. La prueba es 2001–2003 con las mismas estaciones; el informe no evalúa la generalización a estaciones nuevas.
+- **Años defectuosos del satélite:** 1985, 1988 y 2000 siguen fuera de la elección de K, la comparación principal y el modelo, mientras se revisan (P-4).
+- **Reparto R / Python:** el `.R` tiene la depuración, el EDA, la construcción funcional, el EDA funcional, la comparación y la regresión de referencia. El `.py` debe rehacer lo que necesita para la red: base B-spline, MCO, W, R, escala raíz y FPCA, a partir de las observaciones exportadas por R (lluvia diaria de la estación y péntadas del píxel de cada par). Los coeficientes calculados en R sirven solo para verificar que Python da lo mismo. Esto modifica D-41.
+- **Fecha y responsable:** 2026-11-13, Jacobo.
 
 ## Fuentes
 

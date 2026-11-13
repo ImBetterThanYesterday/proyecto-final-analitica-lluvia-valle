@@ -1,0 +1,10 @@
+modelo,anio,fase,curvas,RMSE_L2,KGE,sesgo_anual_mm
+Regresión funcional,2001,Neutro,124,2.36,0.43,1
+Satélite sin corregir,2001,Neutro,124,2.63,0.38,128
+Solo altitud y ONI,2001,Neutro,124,2.91,0.27,73
+Regresión funcional,2002,Niño,122,2.1,0.59,-392
+Satélite sin corregir,2002,Niño,122,2.3,0.55,183
+Solo altitud y ONI,2002,Niño,122,2.31,0.55,-80
+Regresión funcional,2003,Neutro,126,2,0.6,133
+Satélite sin corregir,2003,Neutro,126,2.12,0.58,134
+Solo altitud y ONI,2003,Neutro,126,2.3,0.55,-140
