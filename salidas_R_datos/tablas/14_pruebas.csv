@@ -2,6 +2,7 @@ prueba,resultado,detalle
 Las 232 del Valle caen dentro del polígono DANE,OK,""
 Ninguna estación final es del Cauca ni está sin ubicar,OK,""
 Las incluidas tienen coordenada,OK,""
+Las incluidas tienen altitud (entra al vector z),OK,Univalle: 996 m
 Solo años 1981–2003,OK,""
 Partición correcta por año,OK,""
 Cada estación tiene ≥7 años válidos en entrenamiento,OK,mínimo: 8
@@ -22,4 +23,5 @@ Todos los píxeles del Valle están,OK,681 píxeles
 Cada estación cae dentro de su píxel,OK,distancia máxima al centro: 3.89 km
 Cada par une el mismo año y el píxel de la estación,OK,""
 Hay un par por cada curva de estación,OK,""
+Cada par tiene el ONI de su año (entra al vector z),OK,23 años
 "En años completos, la suma por péntadas = la suma diaria",OK,50 curvas

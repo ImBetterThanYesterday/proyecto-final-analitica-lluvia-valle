@@ -279,15 +279,19 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 
 | # | Pregunta / pendiente | Estado |
 |---|---|---|
-| P-1 | Los 35 del Valle con departamento inferido se descartan (D-34). Siguen pendientes los 21 sin ubicar: 7 tienen candidata en el CNE, que se confirmaría con la lluvia de DHIME; para los otros 14 hay que pedir el catálogo a la CVC o al profesor | 🟡 |
+| P-1 | Los 21 códigos sin ubicar y los 35 con departamento inferido se descartan y no se usan. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
-| P-3 | ¿Podemos reemplazar el satélite entregado por CHIRPS? | 🟡 |
+| P-3 | No: se usa solo el satélite entregado, sin rellenar ni reemplazar con otra fuente (CHIRPS u otra). Los problemas del satélite se tratan con el modelo. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-4 | ¿Cómo tratar el año 2000 del satélite, que cae en validación? Según D-38 no está dañado: es un año La Niña que el satélite subestima | 🟡 |
 | P-9 | Resuelta por el enunciado: el ONI del año y la altitud se agregan al vector z de la red | ✅ |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
 | P-6 | Aplicar el filtro del Valle (167 estaciones) y el recorte del satélite en el flujo de la rama y rehacer las fases | Por hacer |
 | P-7 | Conectar las coordenadas verificadas al cruce estación–píxel de la rama | Por hacer |
-| P-8 | Confirmar con el profesor la fuente del satélite: según D-37 es una versión de CHIRP (solo infrarrojo) anterior al 10-may-2013 | 🟡 |
+| P-8 | Confirmado: el satélite es CHIRP (D-37). Respuesta del profesor (13-nov-2026) | ✅ |
+| P-10 | Ya no hay estaciones reservadas: cambió el plan del curso. La prueba es solo 2001–2003 con nuestras estaciones. Respuesta del profesor (13-nov-2026) | ✅ |
+| P-11 | Ya no aplica: el CSV de predicciones era para las estaciones reservadas | ✅ |
+| P-12 | ¿Se aceptan las fuentes externas: ONI de la NOAA, altitudes y coordenadas del CNE del IDEAM, polígono del DANE? | ⬜ |
+| P-13 | Confirmado: solo estaciones dentro del Valle del Cauca. Respuesta del profesor (13-nov-2026) | ✅ |
 
 ---
 
@@ -357,7 +361,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - **Todo el proceso está en un solo archivo, `lluvia_valle_datos.R`:** población, EDA, experimento de huecos, depuración y dataset final. Se corre desde la raíz del repositorio.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
 
-### D-37 · Fuente del satélite entregado: CHIRP (solo infrarrojo), versión anterior al 10-may-2013 🟡
+### D-37 · Fuente del satélite entregado: CHIRP (solo infrarrojo), versión anterior al 10-may-2013 ✅ (confirmado por el profesor)
 - **Conclusión:** los 2 328 TIFF (`ppt198101` a `ppt201324`) son un recorte de **CHIRP**, el producto solo-satélite del Climate Hazards Group (UCSB/USGS), en una versión anterior a la que hoy publica el CHC. **No son CHIRPS** (no tienen la corrección con estaciones). Es una inferencia a partir de la evidencia; falta que el profesor la confirme (P-8).
 - **Evidencia en los archivos:**
   - Malla de 0,05°, 72 péntadas por año desde 1981 y la misma escala de píxel que los archivos del CHC (`0.0500000007450581`).
@@ -412,6 +416,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - `$estaciones$Y`: 3 326 curvas estación–año × 365 días, en mm/día, con `NA` en los faltantes (0,24 %).
   - `$satelite$X`: 15 663 curvas píxel–año × 72 péntadas, en mm/día, con `$satelite$t` = día central de cada péntada. Son 681 píxeles: los 676 del Valle y 5 que contienen una estación aunque su centro quede fuera del polígono.
   - `$pares`: une cada curva de estación con la curva del satélite de su píxel y su año (2 278 en entrenamiento, 673 en validación y 375 en prueba).
+    Incluye el ONI anual y la fase ENSO de cada año (NOAA CPC, D-19), que van al vector z junto con la altitud de `$meta_estaciones`.
   - `$meta_estaciones`: coordenada, altitud, vertiente, lluvia anual y marcas para el análisis de sensibilidad (6 del cruce con el CNE, 12 con coordenada a revisar).
 - **Sin fuga de información (rúbrica 4.1):** el p99 de cada estación, que es el umbral de las reglas R2 y R3, ahora se calcula solo con 1981–1995. Antes usaba todo el registro. El resultado no cambió: siguen siendo los mismos 100 días marcados.
 - **Trazabilidad (rúbrica 4.1):** `tablas/8_trazabilidad.csv`.
@@ -424,16 +429,27 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   | R5: años válidos | 214 | 3 482 |
   | R6: ≥7 años válidos en entrenamiento | 176 | 3 326 |
 
-- **Pruebas:** 24 comprobaciones automáticas dentro del script; si una falla, el script se detiene. Entre ellas:
+- **Pruebas:** 26 comprobaciones automáticas dentro del script; si una falla, el script se detiene. Entre ellas:
   - cada valor final es igual al del archivo crudo, releído de nuevo (1 211 103 valores);
   - la matriz del satélite coincide con 12 TIFF releídos;
   - cada estación cae dentro de su píxel;
   - el p99 usa solo entrenamiento.
 - **Reproducibilidad:** dos corridas completas producen archivos `.rds` idénticos byte a byte.
 - **Pendientes que salen del enunciado:**
-  - El ONI y la altitud entran al modelo por enunciado (se agregan al vector z). Univalle (`2622320201`) no tiene altitud oficial y hay que resolverlo.
+  - El ONI y la altitud entran al modelo por enunciado (se agregan al vector z). Univalle (`2622320201`) no tenía altitud oficial: resuelto en D-40.
   - Falta decidir si se usan registros fuera del periodo (1930–1979) para estimar el FPCA.
 - **Control de la rúbrica:** `CONTROL_RUBRICA.md`.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-40 · Altitud de Univalle: 996 m, de la estación del IDEAM en el mismo campus ✅ (excepción a D-35)
+- **Problema:** la altitud entra al vector z de la red (enunciado), y Univalle (`2622320201`, 39 años de datos, en Cali) no tiene altitud ni en el Excel del curso ni en el CNE con su código.
+- **Decisión:** usar 996 m, la altitud oficial de la estación del IDEAM "UNIVERSIDAD DEL VALLE – AUT" (CNE `0026055120`, 3.378, −76.534), que está en el mismo campus, a 1,6 km. Esa estación abrió en 2006 y no aporta lluvia; solo se toma su altitud.
+- **Justificación:** sigue siendo una fuente oficial (D-35), no una estimación con SRTM. La alternativa, sacar a Univalle del modelo, perdería una estación con registro largo en Cali.
+- **Cómo se validó:**
+  - El SRTM en la coordenada de la CVC da 977 m: 19 m de diferencia. En las 28 estaciones a menos de 15 km, el SRTM difiere de la altitud oficial 15 m en mediana, así que la diferencia es normal.
+  - Las vecinas son coherentes: Edificio CVC, a 4,8 km, está a 985 m.
+  - Prueba automática nueva: todas las estaciones incluidas tienen altitud.
+- **Dónde:** sección 1 de `lluvia_valle_datos.R` (columna `fuente_alt`). El CSV de `datos_web/` no se modifica.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
 ## Fuentes

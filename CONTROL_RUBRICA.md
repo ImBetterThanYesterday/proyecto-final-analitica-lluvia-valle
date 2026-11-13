@@ -17,7 +17,7 @@ Se actualiza cada vez que se avanza.
 | 4.1 Preprocesamiento y selección | 6 % | ✅ | Solo decidir sobre los registros fuera del periodo |
 | 4.2 Red neuronal funcional | 10 % | ♻️ | Rehacer con los pares nuevos |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ♻️ | Rehacer |
-| 4.4 Evaluación | 8 % | ♻️ | Rehacer; faltan las estaciones reservadas del profesor |
+| 4.4 Evaluación | 8 % | ♻️ | Rehacer con la prueba 2001–2003 (ya no hay estaciones reservadas) |
 | 4.5 Interpretación climatológica | 10 % | ♻️ | Rehacer |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
 | 6. Scripts R y Python | 5 % | 🟡 | El R de datos está; falta lo funcional en R y el único archivo Python |
@@ -27,10 +27,10 @@ Se actualiza cada vez que se avanza.
 - ✅ **Estaciones del Valle:** 232 con coordenada, todas dentro del polígono del DANE (D-31 a D-35).
 - ✅ **EDA de los datos crudos de estaciones:** secciones 1–6 de `lluvia_valle_datos.R`.
 - ✅ **Depuración con reglas sacadas de los datos (D-36):** 176 estaciones y 3 326 pares estación–año.
-- ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-37). Falta que el profesor lo confirme (P-8).
+- ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-37), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
 - ✅ **EDA del satélite y comparación con las estaciones (D-38).**
 - ✅ **Datos preparados para la construcción funcional:** `salidas_R_datos/datos_preparados.rds`.
-- ✅ **Pruebas:** 24 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
+- ✅ **Pruebas:** 26 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
 
 ## 1. Construcción de datos funcionales (10 %)
 
@@ -74,7 +74,7 @@ Se actualiza cada vez que se avanza.
 ## 4.2 Red neuronal funcional (10 %)
 
 - ♻️ Codificador con w_k(t) en B-splines y z = A W c, con la matriz de Gram por cuadratura (6 a 8 neuronas).
-- 🟡 Altitud de la estación y ONI del año agregados a z. Los datos están en `datos_preparados.rds`, pero **Univalle (`2622320201`) no tiene altitud oficial**: hay que resolverlo.
+- ✅ Datos de altitud de la estación (`$meta_estaciones`) y ONI del año (`$pares`) listos para z en `datos_preparados.rds`, con prueba automática. Univalle (`2622320201`) toma los 996 m de la estación del IDEAM en el mismo campus (D-40); falta agregarlos a z al construir la red.
 - ♻️ Decodificador FPCA solo con entrenamiento; M (4 a 6) justificado y varianza explicada.
 - ♻️ Pérdida L² funcional con W y penalización de rugosidad; se modela sobre √P o log(1+P).
 - ♻️ Demostración y verificación numérica (≤ 1e-4) de que la cabeza lineal equivale a la regresión funcional.
@@ -93,12 +93,11 @@ Se actualiza cada vez que se avanza.
 ## 4.4 Evaluación (8 %)
 
 - ✅ Partición 1981–1995 / 1996–2000 / 2001–2003 aplicada en los datos preparados.
-- ⬜ Estaciones reservadas por el docente: **no las tenemos todavía**.
+- ✅ Estaciones reservadas por el docente: **ya no van** (el profesor cambió el plan). La prueba es 2001–2003.
 - ♻️ Comparación contra la curva satelital sin corregir.
 - ♻️ Las cuatro métricas: error L² relativo, KGE, sesgo del acumulado anual y error en la fecha de los dos picos.
 - ♻️ IC bootstrap del 95 % (≥ 1000 remuestreos) y prueba de Wilcoxon pareada por estación.
 - 🟡 Resultados por fase ENSO con el ONI y su fuente citada. El ONI está en `datos_web/`; falta aplicarlo a los resultados.
-- ⬜ Predicciones de las estaciones reservadas en CSV (`station_id, year, day, value_mm`), antes de la sustentación.
 
 ## 4.5 Interpretación climatológica (10 %)
 
@@ -133,8 +132,10 @@ Se actualiza cada vez que se avanza.
 
 ## Pendientes con el profesor
 
-- P-1: los 21 códigos sin ubicar.
-- P-3: si se puede usar CHIRPS en lugar del satélite entregado (la recomendación es no).
-- P-4: el año 2000 del satélite en validación (según D-38 no está dañado).
-- P-8: confirmar que el satélite es CHIRP.
-- Estaciones reservadas: cuándo y cómo las entrega.
+Detalle en `DECISIONES.md`, §8.
+
+- ✅ P-8 y P-3: el satélite es CHIRP y se usa solo el entregado.
+- ✅ P-1: los 21 sin ubicar se descartan.
+- P-12: fuentes externas (ONI, CNE, DANE).
+- ✅ P-13: solo el Valle del Cauca.
+- P-4: el año 2000 del satélite (ya no es urgente, D-38).

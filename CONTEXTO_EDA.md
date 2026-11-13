@@ -15,8 +15,8 @@ B-spline, EDA funcional y regresión función a función / red (KAN/MLP).
 ## 2. Normas que mandan (no negociables)
 
 - **Fe de erratas** (`Proyecto_Final_Analitica_FeErratas.docx`): periodo **1981–2003**.
-  Partición: entrenamiento 1981–1995, validación 1996–2000, prueba 2001–2003, más las estaciones
-  que reserva el profesor. Sin fuga de información (D-28).
+  Partición: entrenamiento 1981–1995, validación 1996–2000, prueba 2001–2003
+  (el profesor ya no reserva estaciones). Sin fuga de información (D-28).
 - **Solo métodos vistos en clase.** La construcción funcional (base Φ, MCO, selección de K con ECM/VC/VCG,
   verificación de S) se programa **sin librerías**. El EDA **sí** permite librerías.
 - **Entrega:** un único archivo R y un único archivo Python, separados del informe. El código de datos vigente
@@ -45,7 +45,7 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
 - Inventario completo de los 344 códigos (Valle, Cauca, sin ubicar, con niveles de evidencia):
   `datos_web/estaciones_valle_del_cauca.xlsx`.
 - **Fuera del análisis:** 35 del Valle con departamento inferido y sin coordenadas (descartadas, D-34),
-  56 del Cauca (fuera del área) y 21 sin ubicar (pendientes, P-1).
+  56 del Cauca (fuera del área) y 21 sin ubicar (descartados, P-1).
 - Las 6 del cruce con el CNE (Palmira ICA, Aeropuerto Bonilla Aragón, Central Castilla, Manuel M. Mallarino,
   Cent. Admo. La Unión, El Queremal) se incluyen, pero el **análisis de sensibilidad** debe correrse con y sin ellas.
 - Coordenadas "a revisar": no se corrigen sin una segunda fuente. Caso más claro: Cajones `2612200105`
@@ -57,7 +57,7 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
 ## 3b. Datos listos (13-nov-2026)
 
 `lluvia_valle_datos.R` deja `salidas_R_datos/datos_preparados.rds`: matriz de estaciones (3 326 × 365), matriz del satélite
-(15 663 × 72, mm/día) y los pares estación–píxel, con 24 pruebas automáticas (D-36 a D-39). El satélite es CHIRP solo-infrarrojo (D-37)
+(15 663 × 72, mm/día) y los pares estación–píxel, con 26 pruebas automáticas (D-36 a D-39). El satélite es CHIRP solo-infrarrojo (D-37)
 y no capta los años Niño/Niña (D-38). El control de lo que pide el enunciado está en `CONTROL_RUBRICA.md`.
 
 ## 4. Qué sigue
@@ -77,8 +77,8 @@ representatividad de las 176 estaciones incluidas (sección 8). Sigue:
 
 ## 5. Preguntas abiertas para el profesor (ver `DECISIONES.md`, sección 8)
 
-- P-1: catálogo o coordenadas de los 21 códigos sin ubicar.
-- P-3: ¿se puede reemplazar el satélite entregado por CHIRPS?
+- ✅ P-1: los 21 códigos sin ubicar se descartan.
+- ✅ P-3: se usa solo el satélite entregado (CHIRP, confirmado), sin rellenar con otra fuente.
 - P-4: ¿cómo tratar el año 2000 (satélite defectuoso) que cae en validación?
 
 ## 6. Organización del repositorio

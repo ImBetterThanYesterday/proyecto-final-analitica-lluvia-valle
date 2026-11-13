@@ -10,7 +10,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 | Carpeta / archivo | Qué es |
 |---|---|
-| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 24 pruebas automáticas. |
+| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 26 pruebas automáticas. |
 | `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
 | `DECISIONES.md` | Bitácora de decisiones (D-01 a D-39), con su justificación, y preguntas para el profesor. |
@@ -41,7 +41,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 |---|---|
 | Entrenamiento | 1981–1995 |
 | Validación | 1996–2000 |
-| Prueba | 2001–2003, más las estaciones que reserve el profesor |
+| Prueba | 2001–2003 (el profesor ya no reserva estaciones) |
 
 Las reglas que dependen de los datos se calculan solo con entrenamiento.
 
@@ -62,7 +62,7 @@ Las reglas que dependen de los datos se calculan solo con entrenamiento.
 | 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |
 
 **Abierto con el profesor** (ver `DECISIONES.md`, §8):
-- P-1: los 21 códigos sin ubicar;
-- P-3: si se puede usar CHIRPS;
+- ✅ P-1: los 21 códigos sin ubicar se descartan;
+- ✅ P-3: no se usa CHIRPS ni otra fuente; solo el satélite entregado;
 - P-4: qué hacer con el año 2000 del satélite, que cae en validación;
-- P-8: confirmar que el satélite es CHIRP.
+- ✅ P-8: el satélite es CHIRP (confirmado).

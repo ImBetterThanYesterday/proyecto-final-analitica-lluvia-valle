@@ -105,6 +105,11 @@ inventario <- inventario[, .(codigo = format(inventario[[1]], scientific = FALSE
 
 finales <- fread("datos_web/estaciones_valle_finales.csv", encoding = "UTF-8", colClasses = list(character = "codigo"))
 finales <- finales[, .(codigo, nombre, municipio, lat, lon, altitud = alt, nivel_c, fuente, fuente_alt, srtm, revisar)]
+# Univalle (2622320201) no tiene altitud en el Excel del curso ni en el CNE. Se
+# toma la de la estación del IDEAM en el mismo campus, "UNIVERSIDAD DEL VALLE - AUT"
+# (CNE 0026055120, 996 m, a 1,6 km). El SRTM en su coordenada da 977 m: 19 m de
+# diferencia, dentro del error típico del SRTM en Cali (mediana 15 m). D-40.
+finales[codigo == "2622320201", `:=`(altitud = 996, fuente_alt = "CNE IDEAM: estación 0026055120 del mismo campus (D-40)")]
 
 est <- merge(merge(cobertura_cruda, inventario, by = "codigo", all.x = TRUE), finales, by = "codigo", all = TRUE)
 est[is.na(dias_con_dato), `:=`(dias_con_dato = 0L, anios_con_dato = 0L)]
@@ -980,6 +985,10 @@ stopifnot(cal[, uniqueN(dia_centro), by = pentada][, all(V1 == 1)])   # el mismo
 pares_fun <- pares[, .(codigo, pixel)][id_est[, .(codigo, anio, particion, fila_est = fila)], on = "codigo"]
 pares_fun <- id_sat[, .(pixel, anio, fila_sat = fila)][pares_fun, on = .(pixel, anio)]
 stopifnot(!anyNA(pares_fun$fila_sat))
+# ONI del año (NOAA CPC, D-19): el enunciado lo agrega al vector z de la red, junto con la altitud
+# (que está en meta_estaciones)
+pares_fun <- oni[, .(anio, ONI = ONI_anual, fase_enso = fase)][pares_fun, on = "anio"]
+setcolorder(pares_fun, c("codigo", "anio", "particion", "pixel", "fila_est", "fila_sat", "ONI", "fase_enso")); setorder(pares_fun, fila_est)
 
 # Metadatos de las estaciones, con las marcas para el análisis de sensibilidad
 meta_est <- por_est_sat[, .(codigo, r_satelite = round(r, 3), sesgo_satelite = round(sesgo, 3))][
@@ -1031,6 +1040,7 @@ prueba <- function(nombre, ok, detalle = "") {
 prueba("Las 232 del Valle caen dentro del polígono DANE", est[grupo == "Valle del Cauca", .N == 232 && all(depto_geo == "Valle del Cauca")])
 prueba("Ninguna estación final es del Cauca ni está sin ubicar", all(id_est$codigo %in% est[grupo == "Valle del Cauca", codigo]))
 prueba("Las incluidas tienen coordenada", !anyNA(meta_est[, .(lon, lat)]))
+prueba("Las incluidas tienen altitud (entra al vector z)", !anyNA(meta_est$altitud), paste("Univalle:", meta_est[codigo == "2622320201", altitud], "m"))
 
 # -- Periodo y partición
 prueba("Solo años 1981–2003", all(id_est$anio %in% ANIOS) && all(id_sat$anio %in% ANIOS))
@@ -1088,6 +1098,7 @@ prueba("Cada par une el mismo año y el píxel de la estación",
        all(id_sat$anio[pares_fun$fila_sat] == id_est$anio[pares_fun$fila_est]) &&
        all(id_sat$pixel[pares_fun$fila_sat] == meta_est[match(id_est$codigo[pares_fun$fila_est], codigo), pixel]))
 prueba("Hay un par por cada curva de estación", nrow(pares_fun) == nrow(Y) && !anyDuplicated(pares_fun$fila_est))
+prueba("Cada par tiene el ONI de su año (entra al vector z)", !anyNA(pares_fun$ONI) && pares_fun[oni, on = "anio", nomatch = 0][, all(ONI == ONI_anual)], paste(uniqueN(pares_fun$anio), "años"))
 
 # -- Agregación a péntadas
 comp <- which(n_obs_Y == 365)[1:50]
