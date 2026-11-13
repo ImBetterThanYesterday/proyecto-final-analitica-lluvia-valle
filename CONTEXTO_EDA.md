@@ -74,7 +74,13 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
 - P-3: ¿se puede reemplazar el satélite entregado por CHIRPS?
 - P-4: ¿cómo tratar el año 2000 (satélite defectuoso) que cae en validación?
 
-## 6. Archivos sin commit en la rama (al 12-nov-2026)
+## 6. Código de datos (al 12-nov-2026)
+
+Todo el entendimiento de los datos, la depuración y el dataset final están en **`lluvia_valle_datos.R`**,
+en la raíz. Se corre de arriba abajo y deja `salidas_R_datos/lluvia_valle_limpia.rds`, más las tablas y los gráficos.
+Las reglas están en D-36.
+
+## 7. Archivos sin commit en la rama (histórico)
 
 `DECISIONES.md`, `CONTEXTO_EDA.md`, `datos_web/estaciones_valle_del_cauca.xlsx`,
 `datos_web/estaciones_valle_finales.{csv,xlsx}`, `datos_web/cne_valle_cauca_completo.csv`,

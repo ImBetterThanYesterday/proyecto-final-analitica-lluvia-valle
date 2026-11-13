@@ -318,15 +318,15 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
 
 ### D-36 · Reglas de depuración sacadas del EDA de las 232 ✅
-- **Población:** de las 232 (D-34), **220 tienen datos en 1981–2003**; las 12 restantes solo tienen datos fuera del periodo. Las 232 caen dentro del polígono DANE del Valle (`analisis_R/01_estaciones_valle.R`).
-- **Qué dicen los datos** (`analisis_R/02_eda_valle_crudo.html`):
+- **Población:** de las 232 (D-34), **220 tienen datos en 1981–2003**; las 12 restantes solo tienen datos fuera del periodo. Las 232 caen dentro del polígono DANE del Valle (`lluvia_valle_datos.R`, sección 1).
+- **Qué dicen los datos** (`lluvia_valle_datos.R`, secciones 2–6):
   - Un faltante es una fila ausente. No hay `NA`, negativos, duplicados ni el valor imposible. Hay 5 144 valores con decimales: vienen de estaciones climatológicas (tipo 02), que leen a 0,1 mm. No son error.
   - La cobertura es bimodal: el 81 % de los estación-años tiene ≥99 % de días. Los huecos internos son el 2,7 % de la rejilla, con mediana de 3 días.
   - Hay 5 días >3·p99 y ≥150 mm, y las vecinas a ≤25 km registran como máximo 78 mm: Pardo 600, Heraclio Uribe 503, La Cascada 421, Costa Rica 283 y Venecia 283.
   - Hay 19 meses con un solo día de lluvia y ese valor supera el p99. Son posibles totales mensuales anotados en un día.
   - De 918 rachas de ceros de ≥30 días, solo 6 tienen vecinas lloviendo (≥40 %): 5 de Loboguerrero (cañón seco del Dagua) y 1 de La Despensa. El contraste por vertiente de D-12 sobremarcaba.
   - No hay años copiados entre estaciones.
-- **Experimento de huecos** (`analisis_R/03_experimento_huecos.html`):
+- **Experimento de huecos** (`lluvia_valle_datos.R`, sección 7):
   - Se borran días de años completos y se mide cuánto cambia la curva B-spline, en unidades de la variabilidad interanual de la estación.
   - Un hueco continuo de 15 días mueve la curva 0,12; uno de 30 días, 0,23; uno de 60 días, 0,48 (K=8).
   - Con máscaras reales, el hueco más largo explica el error mejor que el % de cobertura: R² 0,58 frente a 0,46.
@@ -342,16 +342,17 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Precisión de las reglas 3 y 4 (implementación):**
   - Un extremo pasa a faltante si ninguna vecina a ≤25 km supera P/3 ese día, el anterior o el siguiente.
   - Un mes sospechoso pasa entero a faltante si tiene menos de la mitad de sus días observados o si las vecinas llovieron en ≥40 % de sus días. Si el total se anotó en un día, los ceros del resto del mes también son falsos.
-- **Confirmada por Gus el 2026-11-12. Resultado** (`analisis_R/05_limpieza.R`):
+- **Confirmada por Gus el 2026-11-12. Resultado** (`lluvia_valle_datos.R`, sección 8):
   - **Días pasados a faltante:** 100. Son 5 extremos, 62 días de 13 meses (de los 19 sospechosos; en los otros 6 las vecinas también estaban secas) y 33 días de la racha de Loboguerrero. Casi todos caen en años que ya eran inválidos por sus huecos.
   - **Años válidos:** 3 482 de 3 943 (2 361 en entrenamiento, 722 en validación y 399 en prueba).
   - **Estaciones incluidas: 176.** Son 170 con ubicación oficial y 6 del CNE; 12 tienen la coordenada "a revisar". De ellas, 147 tienen algún año válido en validación, 137 en prueba y 136 en ambos.
-  - **Conjunto final:** `analisis_R/salidas/lluvia_valle_limpia.rds`, con 3 326 estación-años (2 278, 673 y 375 por partición) y 1 213 990 días, de los cuales 2 887 faltan dentro de años válidos.
+  - **Conjunto final:** `salidas_R_datos/lluvia_valle_limpia.rds`, con 3 326 estación-años (2 278, 673 y 375 por partición) y 1 213 990 días, de los cuales 2 887 faltan dentro de años válidos.
   - **El `.rds` trae:**
     - `$diario`: solo incluidas y años válidos;
     - `$diario_todo`: las 220 estaciones;
     - `$anios`, `$estaciones`, `$marcas` y `$reglas`.
-  - **Copias en CSV:** `marcas_limpieza.csv`, `anios_validez.csv` y `estaciones_incluidas.csv`.
+  - **Copias en CSV:** `salidas_R_datos/tablas/8_marcas_limpieza.csv`, `8_anios_validez.csv` y `8_estaciones_incluidas.csv`.
+  - **Todo el proceso está en un solo archivo, `lluvia_valle_datos.R`:** población, EDA, experimento de huecos, depuración y dataset final. Se corre desde la raíz del repositorio.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
 
 ## Fuentes
