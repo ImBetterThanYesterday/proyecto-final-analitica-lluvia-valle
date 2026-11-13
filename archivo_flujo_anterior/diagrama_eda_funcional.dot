@@ -1,0 +1,23 @@
+digraph decisiones {
+graph [rankdir=TB, bgcolor="white", pad="0.18", nodesep="0.22", ranksep="0.30", fontname="Arial", fontsize=11, labelloc=t];
+node [fontname="Arial", fontsize=11, style="filled,rounded", color="#546577", margin="0.13,0.10"];
+edge [fontname="Arial", fontsize=10, arrowsize=0.65, color="#526678"];
+label="EDA A · Resumen, dispersión y centralidad\nVerde: adoptado · Gris: alternativa · Naranja: pendiente · Rojo: insuficiente\nC: Construcción FDA · E: Análisis Exploratorio · T: t-Funcional";
+d0 [shape=diamond, fillcolor="#e8effa", label="¿Basta presentar\nsolo una media funcional?", group="tronco"];
+solo [shape=box, fillcolor="#fbe5e6", label="Media sola: insuficiente\nLa rúbrica también pide dispersión,\nFM, MBD y boxplot. No se omiten.\nWord: criterio 2."];
+res [shape=box, fillcolor="#e3f3eb", label="E01 · Media + resúmenes robustos\nMedia por coeficientes y librería.\nMediana y recortada describen\ncentralidad sin depender solo\nde valores grandes. E: 155–173,\n445–489; PDF pp. 20, 60.", group="tronco"];
+d1 [shape=diamond, fillcolor="#e8effa", label="¿Queremos la DE exacta\nen la rejilla evaluada?", group="tronco"];
+std [shape=box, fillcolor="#eef0f4", label="std.fd: versión suavizada\nAlternativa mostrada en clase;\nno confundirla con la raíz directa\nde varianza ni declarar igualdad.\nE: 187–192; PDF p. 24."];
+de [shape=box, fillcolor="#e3f3eb", label="E02 · Raíz directa de varianza\nAdoptada para ambas fuentes.\nCV complementa: requiere media\ndistinta de cero; ±2DE no es IC.\nE: 180–196.", group="tronco"];
+d2 [shape=diamond, fillcolor="#e8effa", label="¿La pregunta de centralidad\nse basa en bandas de curvas?", group="tronco"];
+mbd [shape=box, fillcolor="#e3f3eb", label="E05–E06 · MBD y boxplot\nAdoptados: región central 50 %,\nexpansión 1,5; empates inclusivos.\nAtípica no equivale a error.\nE: 493–518; PDF pp. 60–62."];
+fm [shape=box, fillcolor="#e3f3eb", label="E05 · FM como complemento\nCentralidad punto a punto;\nmediana y recortada adoptadas.\nModal: otra alternativa de clase\nno aplicada; no sustituye MBD\nexigida. E: 449–489."];
+d0 -> solo [label="Sí", weight=1];
+d0 -> res [label="No", weight=100];
+res -> d1 [label="Continuar", weight=100];
+d1 -> de [label="Sí", weight=100];
+d1 -> std [label="No", weight=1];
+de -> d2 [label="Continuar", weight=100];
+d2 -> mbd [label="Sí", weight=1];
+d2 -> fm [label="No", weight=1];
+}

@@ -1,0 +1,4 @@
+cabeza,arquitectura,param_cabeza,param_total,dif_rel_kan_mlp
+lineal,Linear(10->6),66,154,0.0078125
+kan,"KAN[10,4,6], G=5, cúbica",640,728,0.0078125
+mlp,"MLP[10,37,6], SiLU",635,723,0.0078125

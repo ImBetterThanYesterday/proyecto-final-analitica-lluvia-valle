@@ -1,0 +1,23 @@
+digraph decisiones {
+graph [rankdir=TB, bgcolor="white", pad="0.18", nodesep="0.22", ranksep="0.30", fontname="Arial", fontsize=11, labelloc=t];
+node [fontname="Arial", fontsize=11, style="filled,rounded", color="#546577", margin="0.13,0.10"];
+edge [fontname="Arial", fontsize=10, arrowsize=0.65, color="#526678"];
+label="RECONSTRUCCIÓN A · Datos y familia de curvas\nVerde: adoptado · Gris: alternativa · Naranja: pendiente · Rojo: insuficiente\nC: Construcción FDA · E: Análisis Exploratorio · T: t-Funcional";
+d0 [shape=diamond, fillcolor="#e8effa", label="¿Están verificadas las unidades\ny el calendario del producto?", group="tronco"];
+p0 [shape=box, fillcolor="#fff0d3", label="R01 · Procedencia pendiente\nSe encontró documentación CHIRPS,\npero no prueba identidad del TIFF.\nConversión actual: condicionada."];
+d1 [shape=diamond, fillcolor="#e8effa", label="¿El año tiene observaciones\npara cubrir todo su dominio?", group="tronco"];
+p1 [shape=box, fillcolor="#fff0d3", label="R06 · No tratarlo como año completo\n2013: 24 de 72 archivos.\nSolicitar los 48 restantes; no\ninventar mayo–diciembre.\n1981–2012 sí: 72/año."];
+d2 [shape=diamond, fillcolor="#e8effa", label="¿Se impone y justifica\nun cierre periódico?", group="tronco"];
+a2 [shape=box, fillcolor="#eef0f4", label="Fourier · Alternativa de clase\nPermite representación periódica.\nNo adoptada ni comparada aún;\nno se afirma que sea peor.\nC: ejercicio, línea 471."];
+d3 [shape=diamond, fillcolor="#e8effa", label="¿Se requieren derivadas\ncontinuas de la curva?", group="tronco"];
+a3 [shape=box, fillcolor="#eef0f4", label="B-spline de orden 2\nLineal por tramos; pendiente\nconstante por tramos. No elegida\npara el análisis actual de derivadas.\nE: 354–364, comparación de órdenes."];
+ok [shape=box, fillcolor="#e3f3eb", label="R02 · B-spline de orden 4\nAdoptada: curva con derivadas\ncontinuas y antecedente de lluvia.\nPhi se programa manualmente.\nE: 101–113; PDF EDA p. 43."];
+d0 -> d1 [label="Sí", weight=100];
+d0 -> p0 [label="No", weight=1];
+d1 -> d2 [label="Sí", weight=100];
+d1 -> p1 [label="No", weight=1];
+d2 -> a2 [label="Sí", weight=1];
+d2 -> d3 [label="No", weight=100];
+d3 -> ok [label="Sí", weight=1];
+d3 -> a3 [label="No", weight=1];
+}

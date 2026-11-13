@@ -1,0 +1,23 @@
+digraph decisiones {
+graph [rankdir=TB, bgcolor="white", pad="0.18", nodesep="0.22", ranksep="0.30", fontname="Arial", fontsize=11, labelloc=t];
+node [fontname="Arial", fontsize=11, style="filled,rounded", color="#546577", margin="0.13,0.10"];
+edge [fontname="Arial", fontsize=10, arrowsize=0.65, color="#526678"];
+label="RECONSTRUCCIÓN B · Ajuste, flexibilidad y huecos\nVerde: adoptado · Gris: alternativa · Naranja: pendiente · Rojo: insuficiente\nC: Construcción FDA · E: Análisis Exploratorio · T: t-Funcional";
+d0 [shape=diamond, fillcolor="#e8effa", label="¿Se adopta una base amplia\ny penalización de rugosidad?", group="tronco"];
+alt [shape=box, fillcolor="#eef0f4", label="Penalización con lambda por VCG\nAlternativa de clase pendiente\nde contraste; no se ha probado\nque supere al ajuste actual.\nGrados de libertad: tr(S_lambda).\nNo exigir S²=S. C: 421–473."];
+mco [shape=box, fillcolor="#e3f3eb", label="R03 · MCO con K variable\nBase actual: ajuste manual y\npropiedades de proyección claras.\nSe conserva, sin atribuirle\nsuperioridad sobre penalización.\nC: 83–105.", group="tronco"];
+d1 [shape=diamond, fillcolor="#e8effa", label="¿Elegir K solo porque\nbaja el ECM de ajuste?", group="tronco"];
+noecm [shape=box, fillcolor="#fbe5e6", label="No se elige ese criterio solo\nPremia el ajuste de los datos\nusados y puede sobreajustar.\nC: 304–305."];
+vcg [shape=box, fillcolor="#e3f3eb", label="R04 · Mostrar ECM, VC y VCG\nElegir por VCG: K=6 / K=11.\nResultados descriptivos existentes;\nrevisar sensibilidad de derivadas.\nC: 215–305.", group="tronco"];
+d2 [shape=diamond, fillcolor="#e8effa", label="¿La curva tiene\nobservaciones faltantes?", group="tronco"];
+gap [shape=box, fillcolor="#e3f3eb", label="R05–R08 · Solo filas observadas\nPhi_o y y_o; comprobar rango y S_o.\nNo poner ceros ni inventar registros.\nBanda sigma²I condicionada;\nguardar coeficientes e IDs.\nT: 129–143; C: 350–387."];
+full [shape=box, fillcolor="#e3f3eb", label="R05–R08 · Usar toda la rejilla\nComprobar S²=S y tr(S)=K.\nResiduos y banda sigma²I puntual;\nno extender a bandas simultáneas.\nGuardar coeficientes e IDs.\nC: 95–105 y 350–387."];
+d0 -> alt [label="Sí", weight=1];
+d0 -> mco [label="No", weight=100];
+mco -> d1 [label="Continuar", weight=100];
+d1 -> noecm [label="Sí", weight=1];
+d1 -> vcg [label="No", weight=100];
+vcg -> d2 [label="Continuar", weight=100];
+d2 -> gap [label="Sí", weight=1];
+d2 -> full [label="No", weight=1];
+}

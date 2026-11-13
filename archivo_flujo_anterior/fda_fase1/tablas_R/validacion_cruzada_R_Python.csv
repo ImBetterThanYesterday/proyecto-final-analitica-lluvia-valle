@@ -1,0 +1,10 @@
+"control","valor"
+"filas_estaciones",4485
+"filas_satelite",31119
+"error_coef_estaciones",6.99440505513849e-13
+"error_coef_satelite",3.5874939001701e-06
+"cota_redondeo_satelite",2.87174337697598e-05
+"K_VCG_estaciones",8
+"K_VCG_satelite",11
+"error_W_estaciones",3.32995853113971e-11
+"error_W_satelite",4.44000392008093e-11
