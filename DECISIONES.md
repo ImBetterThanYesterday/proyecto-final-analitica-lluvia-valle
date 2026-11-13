@@ -244,12 +244,43 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 
 ---
 
+### D-31 · Inventario completo de los 344 códigos y fuentes oficiales por código ✅
+- **Qué se hizo:** se sacaron los códigos únicos (`STATION_ID`) de los tres archivos de lluvia: P_1930_1979 (264), P_1980_1990 (302) y P_1991_2003 (284) → **344 códigos únicos**. Se cruzaron con el CSV de lat/lon del curso (208 están) y el Excel de altitudes (186 están); 84 no están en ninguno.
+- **Búsqueda por código en fuentes oficiales** (usan el mismo código de 10 dígitos):
+  1. Catálogo de estaciones de la CVC en datos.gov.co (`kfsz-ija2`): 60 de los 136 sin coordenadas.
+  2. Registros de estaciones automáticas de la CVC en datos.gov.co (`avya-p282`): `2612710202` = **CENICAÑA** (Florida).
+  3. Geoportal GeoCVC, capa `Externos/Hidroclimatologia_Sec_Gestion_riesgo`: `2622320201` = **UNIVALLE** (Cali, 970 m, desde 1965).
+  4. GeoCVC `Cambio_Climatico/Red_Hidroclimatologica` (250 estaciones): usa la codificación nueva, sin coincidencias.
+  5. CNE del IDEAM: usa códigos propios; sirve para confirmar por nombre, no por código.
+  6. Búsqueda web de los códigos: sin resultados útiles.
+- **Resultado:** 272 códigos con ubicación oficial (226 Valle, 46 Cauca). Cenicaña y Univalle entran a "Estaciones Valle" como seguras → **164 estaciones del Valle con datos válidos 1981–2003 (3 133 pares)**.
+- **Los 72 sin ninguna fuente** se clasificaron con dos pistas independientes:
+  - **Cuenca por código:** los primeros 8 (o 7) dígitos identifican la cuenca; si todas las estaciones oficiales de esa cuenca están en municipios de un solo departamento, se asigna ese. No aplica a los prefijos del cauce principal del río Cauca (`2610000`, `2620000`), que cruzan varios departamentos. Ojo: `5300900` es Argelia **del Cauca** (río Hondo), no Argelia del Valle.
+  - **Vecinas:** a qué estaciones ubicadas se parece su lluvia mensual (anomalías de log(1+P), 1930–2003). Validado con las 226 ubicadas que tienen datos suficientes: acierta el departamento en 214 de 226 (95 %).
+  - **Resultado:** 41 Valle (30 con las dos pistas de acuerdo, 11 con una sola), 10 Cauca, 21 sin evidencia suficiente o con pistas contradictorias. Detalle en la hoja "Inventario 344 códigos" de `datos_web/estaciones_valle_del_cauca.xlsx`.
+- **Uso propuesto:** las 22 del Valle inferidas que tienen años válidos pueden entrar al EDA y al FPCA (no necesitan ubicación), marcadas como "Valle por inferencia". No entran al emparejamiento con el satélite hasta tener coordenadas (pedirlas a la CVC o al profesor).
+
+### D-32 · Estructura del código, recuperación por cruce con el CNE y uso de la pista de vecinas ✅
+- **Orden de trabajo:** primero se completa nombre, latitud y longitud de los 344 códigos y se filtra por departamento (Valle). **No se filtra por años válidos en esta etapa**: ese filtro va en el EDA, con su justificación.
+- **Qué significa el código (10 dígitos, codificación antigua de la CVC):** 1-2 zona hidrográfica (26 Cauca, 53 Pacífico, 54 San Juan); 3 margen del río Cauca (1 derecha/este, 2 izquierda/oeste); 4 tramo de sur a norte; 5-6 cuenca; 7-8 tipo de estación (01 pluviométrica/pluviográfica, 02 climatológica, 03 evaporimétrica, 04 limnigráfica); 9-10 consecutivo.
+  - **Fuente:** el sistema de codificación de unidades hidrográficas que describe la CVC en el POMCA del río La Vieja (cap. 6), basado en la zonificación del IDEAM (área, zona, margen, cuencas numeradas de sur a norte).
+  - **Comprobación con datos oficiales:** el dígito de margen coincide con el lado del río en 211 de 229 estaciones; las latitudes suben en orden con el dígito de tramo; los dígitos 7-8 coinciden con el tipo registrado en el catálogo CVC.
+  - **Consecuencia:** el CSV de coordenadas del curso es el catálogo de la red pluviométrica (solo PM/PG = 01); por eso faltaban las climatológicas y evaporimétricas (02/03).
+- **Recuperación por cruce con el CNE del IDEAM (1 228 estaciones de Valle y Cauca):** para cada código sin ubicación se buscaron estaciones del CNE que cumplan todo: miden lluvia; tipo compatible con los dígitos 7-8; operaban durante los años de datos del código; a ≤ 40 km de las estaciones oficiales de su cuenca (dígitos 1-6); no corresponden ya a otro código nuestro. Se identifica solo si además: el año de instalación coincide con el primer año de datos (±1), hay pocas candidatas compatibles, está a ≤ 15 km de su cuenca, ninguna otra estación nuestra apunta a la misma, y la lluvia es coherente con el sitio (ver abajo).
+  - **Identificadas (7, todas del Valle):** 2612700202 = PALMIRA ICA (1930); 2612700203 = AEROPUERTO ALFONSO BONILLA ARAGÓN (1971); 2612710201 = CENTRAL CASTILLA, Pradera (1961); 2624000301 = MANUEL M. MALLARINO, Trujillo (1969); 2624700202 = CENT. ADMO. LA UNIÓN (1967); 5301400105 = ALTO ANCHICAYÁ (1967; verificar que no duplique a 5301400108); 5301420201 = EL QUEREMAL, Dagua (1966).
+  - **Candidatas sin asignar (41):** hay una estación compatible pero no única o con evidencia débil; quedan anotadas en la columna "Candidata del CNE" para revisión manual, sin coordenadas asignadas.
+- **Pista 2 (lluvia de vecinas): cómo se usa y cómo nos cubrimos.**
+  - **Fundamento:** la lluvia está espacialmente correlacionada (las estaciones cercanas se parecen más); es el principio de las pruebas de homogeneidad y control de calidad con estaciones de referencia.
+  - **Límites conocidos:** la orografía puede hacer que dos estaciones cercanas lluevan distinto (y lejanas parecido); no distingue bien a menos de ~10 km; falla cerca de los límites entre departamentos; en el Pacífico la red es dispersa y la correlación es baja.
+  - **Reglas para cubrirnos:** (1) nunca se usa sola para dar coordenadas, solo como verificación o para el departamento; (2) se validó antes de usarla: acierta el departamento en 214 de 226 estaciones con ubicación oficial (95 %), y ese error se reporta; (3) se exige que coincida con otra pista independiente (código o CNE); (4) cada estación queda etiquetada con su nivel de evidencia; (5) en el EDA se corre un análisis de sensibilidad con y sin las estaciones de nivel 3.
+- **Resultado (344 códigos):** Valle 267 (226 ubicación oficial + 7 identificadas por CNE + 34 solo departamento inferido); Cauca 56; desconocido 21. Hojas "Inventario 344 códigos" y "Valle (sin filtrar años)" de `datos_web/estaciones_valle_del_cauca.xlsx`.
+
 ## 8. Pendientes y preguntas al profesor
 
 | # | Pregunta / pendiente | Estado |
 |---|---|---|
-| P-1 | ¿Tiene ubicación de las 39 estaciones que solo tienen código? ¿Las dejamos fuera? | 🟡 |
-| P-2 | ¿Acepta altitud del modelo de elevación (SRTM) cuando falta? | 🟡 |
+| P-1 | Los 35 del Valle con departamento inferido se descartan (D-34). Siguen pendientes los 21 sin ubicar: 7 tienen candidata en el CNE, que se confirmaría con la lluvia de DHIME; para los otros 14 hay que pedir el catálogo a la CVC o al profesor | 🟡 |
+| P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
 | P-3 | ¿Podemos reemplazar el satélite entregado por CHIRPS? | 🟡 |
 | P-4 | ¿Cómo tratar el año 2000 (satélite defectuoso), que ahora cae en validación? | 🟡 |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
@@ -258,6 +289,71 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 
 ---
 
+### D-33 · Alto Anchicayá, altitudes y coordenadas a revisar ✅
+- **Decisión:** `5301400108` (ALTO - ANCHICAYA) y `5301400105` son estaciones distintas. El punto del CNE `0053100050` (3.5333, -76.8667, 630 m) se asocia al nombre y a la altitud (650 m) de `5301400108`, no a `5301400105`. Por eso `5301400105` pasa a nivel 3 (departamento inferido por cuenca 530140, sin coordenadas). La coordenada del CSV de `5301400108` queda marcada "a revisar" y no se corrige sin confirmación.
+- **Justificación:** r mensual 0.85, menos de 1 % de meses idénticos y 24 % más lluvia en `5301400105`, así que no es un duplicado. El terreno SRTM es 403 m en el punto del CSV, 643 m en el del CNE, y la altitud registrada es 650 m.
+- **Cómo se validó:** SRTM 30 m frente a la altitud oficial en 169 estaciones: diferencia mediana de 46 m, P75 133 m, P90 387 m. Se marcan 22 con diferencia mayor de 300 m (puede ser error de SRTM en terreno quebrado o coordenada corrida) en la columna "Coordenada a revisar".
+- **Altitud faltante:** el Excel del curso trae altitud solo en 163 de las 232 (corregido en D-34; antes se contaban 169 por una etiqueta mal puesta en las 6 del cruce con el CNE) estaciones del Valle con coordenadas. 50 se completaron con el CNE (misma estación) y 13 con SRTM, marcadas como estimadas en "Fuente de la altitud".
+- **Regla de la pista de vecinas (95 %, 214 de 226):** valida solo el método de asignar departamento. No confirma la ubicación de ninguna estación concreta. Esas estaciones quedan en nivel 3.
+- **Resultado:** Valle sin filtrar años = 267 estaciones (232 con coordenadas, 35 solo con departamento). Archivo: `estaciones_valle_del_cauca.xlsx`.
+- **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
+### D-34 · Conjunto final de estaciones del Valle y método de la altitud ✅
+- **Decisión:** el análisis usa **232 estaciones**: las 226 con ubicación oficial y las 6 identificadas por cruce con el CNE. Se descartan las 35 del Valle con departamento inferido (no hay coordenada exacta que rescatar) y las 21 sin ubicar. Las 56 del Cauca siguen excluidas (D-31). Todavía no se filtra por años: eso se hace en el EDA.
+- **Por qué se incluyen las 6 del cruce:** el año de inicio de los datos coincide con el año de instalación del CNE (diferencia de 0 o 1 años), el tipo coincide, están a 3–9 km de la cuenca que indica el código y son estaciones únicas y conocidas (Palmira ICA, Aeropuerto Alfonso Bonilla Aragón, Central Castilla, Manuel M. Mallarino, Cent. Admo. La Unión, El Queremal). El CNE redondea al minuto (±1 km), muy por debajo del píxel satelital (~5 km). Van marcadas como "Cruce con CNE" para el análisis de sensibilidad (con y sin ellas).
+- **Altitud (orden de prioridad):**
+  1. Excel del curso (`CatalogoEstacionesElevacion.xlsx`): 163 estaciones.
+  2. CNE del IDEAM, cuando es la misma estación: 56 (50 oficiales + las 6 del cruce). Validación: en las 139 estaciones que están en ambas fuentes, la altitud es igual (diferencia mediana 0 m).
+  3. Terreno SRTM 30 m en la coordenada (OpenTopoData), marcada como estimada: 13. Validación frente a la altitud oficial en 169 estaciones: diferencia mediana 46 m, P75 133 m, P90 387 m.
+- **Control de coordenadas:** si la altitud difiere más de 300 m del terreno SRTM, la coordenada queda "a revisar" (22 estaciones). No se corrige sin una segunda fuente. Cotejo con el estudio pluviométrico de Palmira 2020: sus coordenadas CVC coinciden a 40 m con las del curso, así que vienen de la misma base y no confirman nada de forma independiente. Para La Sirena (`2612810203`), ese estudio da un punto a 3,6 km del nuestro, pero ahí el terreno está a 3.473 m frente a los 2.605 m registrados. Nuestro punto (GPS del POT del Nima, terreno a 2.674 m) es el coherente y se mantiene.
+- **Resultado:** `estaciones_valle_finales.xlsx` / `.csv` (232 filas). El inventario completo sigue en `estaciones_valle_del_cauca.xlsx`.
+- **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
+### D-35 · La altitud solo sale de fuentes oficiales; SRTM queda solo como control ✅
+- **Decisión:** no se estima ninguna altitud con SRTM. El orden es: (1) Excel del curso, 163 estaciones; (2) CNE del IDEAM, 65 estaciones. Las 4 sin altitud oficial (Univalle, Los Llaneros, La Rosita, La Esperanza) quedan vacías. SRTM se usa solo para controlar coordenadas: si la altitud oficial difiere más de 300 m del terreno, la coordenada se marca "a revisar".
+- **Cambio frente a D-34:** 9 de las 13 que se habían estimado con SRTM sí están en el CNE, con su propio código. Se identificaron por nombre, municipio igual o vecino, año de instalación compatible y altitud coherente con el terreno: Los Cuervos 2.620, Las Veraneras 1.440, Lloreda 930, La Cristalina 1.490, Venecia 1.532, Yurumanguí 21, La Siberia 1.017, San Fernando 990 y Cajones 2.472 m. La Esperanza no se asigna porque las del CNE están a 26–32 km.
+- **Cajones (`2612200105`):** en la coordenada del CSV el terreno está a 3.970 m; en la del CNE (3.226417, -76.140806), a 2.388 m, coherente con su altitud de 2.472 m. La coordenada del CSV probablemente está mal; queda marcada con la del CNE como alternativa. Ahora son 23 coordenadas a revisar.
+- **Qué es SRTM:** un modelo de elevación del terreno medido por radar desde el transbordador espacial de la NASA (año 2000), con celdas de 30 m. Se consulta en OpenTopoData con la latitud y la longitud.
+- **Resultado:** `estaciones_valle_finales.xlsx` / `.csv` (232 estaciones). Resuelve P-2.
+- **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
+### D-36 · Reglas de depuración sacadas del EDA de las 232 ✅
+- **Población:** de las 232 (D-34), **220 tienen datos en 1981–2003**; las 12 restantes solo tienen datos fuera del periodo. Las 232 caen dentro del polígono DANE del Valle (`analisis_R/01_estaciones_valle.R`).
+- **Qué dicen los datos** (`analisis_R/02_eda_valle_crudo.html`):
+  - Un faltante es una fila ausente. No hay `NA`, negativos, duplicados ni el valor imposible. Hay 5 144 valores con decimales: vienen de estaciones climatológicas (tipo 02), que leen a 0,1 mm. No son error.
+  - La cobertura es bimodal: el 81 % de los estación-años tiene ≥99 % de días. Los huecos internos son el 2,7 % de la rejilla, con mediana de 3 días.
+  - Hay 5 días >3·p99 y ≥150 mm, y las vecinas a ≤25 km registran como máximo 78 mm: Pardo 600, Heraclio Uribe 503, La Cascada 421, Costa Rica 283 y Venecia 283.
+  - Hay 19 meses con un solo día de lluvia y ese valor supera el p99. Son posibles totales mensuales anotados en un día.
+  - De 918 rachas de ceros de ≥30 días, solo 6 tienen vecinas lloviendo (≥40 %): 5 de Loboguerrero (cañón seco del Dagua) y 1 de La Despensa. El contraste por vertiente de D-12 sobremarcaba.
+  - No hay años copiados entre estaciones.
+- **Experimento de huecos** (`analisis_R/03_experimento_huecos.html`):
+  - Se borran días de años completos y se mide cuánto cambia la curva B-spline, en unidades de la variabilidad interanual de la estación.
+  - Un hueco continuo de 15 días mueve la curva 0,12; uno de 30 días, 0,23; uno de 60 días, 0,48 (K=8).
+  - Con máscaras reales, el hueco más largo explica el error mejor que el % de cobertura: R² 0,58 frente a 0,46.
+- **Reglas propuestas:**
+  1. Un año es válido si tiene ≥90 % de días y ningún hueco mayor de 15 días. Con 30 días, el p99 del error pasa de 0,64 a 0,95 y solo se ganan 2 estaciones (D-11 pedía ≤30).
+  2. Una estación entra si tiene ≥7 años válidos en entrenamiento: quedan **176 estaciones**, entre ellas las 6 del CNE y 12 con coordenada a revisar.
+  3. Los 5 extremos sin respaldo de vecinas pasan a faltante.
+  4. Los totales mensuales en un día pasan a faltante si el mes está casi vacío; si el mes está completo, deciden las vecinas.
+  5. Las rachas de ceros no se borran por regla. Las 6 se revisaron a mano:
+     - **Loboguerrero, oct–nov de 1995, pasa a faltante.** Es temporada de lluvias: la estación suele llover el 41 % de esos días, y Dagua, a 12 km en el mismo cañón, tuvo 12 días con lluvia (83 mm).
+     - **Las otras 5 se mantienen.** La Despensa (ene–feb 1996) y Loboguerrero (1982, 1982–83, 1989 y 1991) caen en temporada seca o en El Niño, y la vecina del mismo cañón también estuvo casi seca.
+  6. No se imputa (D-13).
+- **Precisión de las reglas 3 y 4 (implementación):**
+  - Un extremo pasa a faltante si ninguna vecina a ≤25 km supera P/3 ese día, el anterior o el siguiente.
+  - Un mes sospechoso pasa entero a faltante si tiene menos de la mitad de sus días observados o si las vecinas llovieron en ≥40 % de sus días. Si el total se anotó en un día, los ceros del resto del mes también son falsos.
+- **Confirmada por Gus el 2026-11-12. Resultado** (`analisis_R/05_limpieza.R`):
+  - **Días pasados a faltante:** 100. Son 5 extremos, 62 días de 13 meses (de los 19 sospechosos; en los otros 6 las vecinas también estaban secas) y 33 días de la racha de Loboguerrero. Casi todos caen en años que ya eran inválidos por sus huecos.
+  - **Años válidos:** 3 482 de 3 943 (2 361 en entrenamiento, 722 en validación y 399 en prueba).
+  - **Estaciones incluidas: 176.** Son 170 con ubicación oficial y 6 del CNE; 12 tienen la coordenada "a revisar". De ellas, 147 tienen algún año válido en validación, 137 en prueba y 136 en ambos.
+  - **Conjunto final:** `analisis_R/salidas/lluvia_valle_limpia.rds`, con 3 326 estación-años (2 278, 673 y 375 por partición) y 1 213 990 días, de los cuales 2 887 faltan dentro de años válidos.
+  - **El `.rds` trae:**
+    - `$diario`: solo incluidas y años válidos;
+    - `$diario_todo`: las 220 estaciones;
+    - `$anios`, `$estaciones`, `$marcas` y `$reglas`.
+  - **Copias en CSV:** `marcas_limpieza.csv`, `anios_validez.csv` y `estaciones_incluidas.csv`.
+- **Fecha y responsable:** 2026-11-12, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.
@@ -265,6 +361,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - Catálogo de estaciones hidroclimatológicas de la CVC (datos.gov.co, kfsz-ija2): https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Cat-logo-de-estaciones-hidroclimatol-gicas-de-la-CVC/kfsz-ija2 — copia local: `datos_web/cvc_catalogo_datosgov_kfsz-ija2.csv`.
 - Catálogo Nacional de Estaciones del IDEAM (datos.gov.co, hp9r-jxuu): https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Cat-logo-Nacional-de-Estaciones-del-IDEAM/hp9r-jxuu — copia local: `datos_web/CNE_IDEAM_dominio_satelite.csv`.
 - Plan de manejo PNR del Nima, POT de Palmira (GPS de La Sirena, págs. 44–45): https://www.palmira.gov.co/planeacion/wp-content/uploads/pot/potmoderno/PM%20PNR%20DEL%20%20NIMA.pdf
+- Estudio pluviométrico de Palmira 2020: https://palmira.gov.co/wp-content/uploads/2021/11/Estudio_Pluviometrico_Palmira_V07.pdf
 - Elevación SRTM 30 m vía OpenTopoData: https://api.opentopodata.org (ejemplo: `/v1/srtm30m?locations=3.52242,-76.104246`).
 - Sistemas de coordenadas: https://epsg.io/3115 y https://epsg.io/9377
 - ONI (NOAA CPC): https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
