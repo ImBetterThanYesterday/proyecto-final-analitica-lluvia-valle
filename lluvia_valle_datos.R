@@ -19,11 +19,11 @@
 #  y pulsar Source). Tarda unos minutos, sobre todo la sección 7.
 #
 # Entradas
-#   P_1980_1990.csv, P_1991_2003.csv              lluvia diaria (STATION_ID, YEAR, MONTH, DAY, VALUE)
+#   datos_curso/P_1980_1990.csv, P_1991_2003.csv  lluvia diaria (STATION_ID, YEAR, MONTH, DAY, VALUE)
 #   datos_web/estaciones_valle_finales.csv        las 232 estaciones del Valle (D-34/D-35)
 #   datos_web/estaciones_valle_del_cauca.xlsx     inventario de los 344 códigos (D-31/D-32)
 #   datos_web/limites/deptos_valle_y_vecinos_DANE_2020.gpkg   límites DANE (MGN 2020)
-#   eda_fase0/oni_anual_fase.csv                  ONI anual (contexto ENSO)
+#   datos_web/oni_anual_fase.csv                  ONI anual (contexto ENSO)
 # Salidas (salidas_R_datos/)
 #   lluvia_valle_limpia.rds   dataset final (ver sección 8)
 #   tablas/*.csv              tablas de cada sección
@@ -47,7 +47,7 @@ sf_use_s2(FALSE)
 theme_set(theme_minimal(base_size = 11))
 set.seed(20261112)
 
-if (!file.exists("P_1991_2003.csv")) stop("Ejecute el script desde la raíz del repositorio")
+if (!file.exists("datos_curso/P_1991_2003.csv")) stop("Ejecute desde la raíz del repositorio y copie los datos del curso en datos_curso/")
 
 ANIOS       <- 1981:2003                    # fe de erratas
 PARTICION   <- function(anio) fcase(anio <= 1995, "entrenamiento", anio <= 2000, "validación", default = "prueba")
@@ -82,7 +82,7 @@ titulo("1. Población")
 # oficial y 6 identificadas por cruce con el CNE del IDEAM (D-34). La altitud
 # solo sale de fuentes oficiales (D-35).
 
-crudo <- rbind(fread("P_1980_1990.csv"), fread("P_1991_2003.csv"))
+crudo <- rbind(fread("datos_curso/P_1980_1990.csv"), fread("datos_curso/P_1991_2003.csv"))
 crudo[, codigo := as.character(STATION_ID)][, STATION_ID := NULL]
 crudo <- crudo[YEAR %in% ANIOS]
 cobertura_cruda <- crudo[, .(dias_con_dato = .N, anio_ini = min(YEAR), anio_fin = max(YEAR),
@@ -380,7 +380,7 @@ grafico(ggplot(men, aes(factor(mes), P)) + geom_boxplot(outlier.size = .5) + fac
           labs(x = "Mes", y = "mm/día", title = "Ciclo anual: bimodal en la vertiente del Cauca"),
         "6_ciclo_anual")
 
-oni <- fread("eda_fase0/oni_anual_fase.csv")
+oni <- fread("datos_web/oni_anual_fase.csv")
 reg <- anual[valle[, .(codigo, vertiente)], on = "codigo", nomatch = 0]
 reg[, anom := P_anual / clim$P_media[match(codigo, clim$codigo)] - 1]
 reg <- reg[, .(anom = median(anom)), by = .(vertiente, anio)]
