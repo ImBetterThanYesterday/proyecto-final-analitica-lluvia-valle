@@ -4,12 +4,5 @@
 __pycache__/
 .ipynb_checkpoints/
 *.pkl
-# Datos crudos entregados por el curso (se descargan del aula; ~100 MB)
-P_1930_1979.xlsx
-P_1980_1990.csv
-P_1991_2003.csv
-ImagenesSatelitePentadal/
-ImagenesSatelitePentadal.zip
-CatalogoEstacionesElevacion.xlsx
-CVC_Wheather_Stations_Long_Lat.csv
-CVC_Wheather_Stations_Long_Lat.dta
+# Datos crudos entregados por el curso (se descargan del aula; ~100 MB): van en datos_curso/
+datos_curso/
