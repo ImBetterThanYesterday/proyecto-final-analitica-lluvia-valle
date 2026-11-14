@@ -19,7 +19,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 4.4 Evaluación | 8 % | ✅ | Sección 7 del funcional (D-54), con fase ENSO. Solo falta confirmar con el profesor el CSV de estaciones reservadas |
 | 4.5 Interpretación climatológica | 10 % | ✅ | Sección 8 del funcional (D-55); falta redactarla en el informe |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
-| 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno; el Python |
+| 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno para la entrega; el Python ya es un solo archivo |
 
 Lo que falta: el informe (10 %), el anexo de IA, unir los dos R y las decisiones abiertas (P-16, P-19, estaciones reservadas).
 
@@ -168,8 +168,8 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 |---|---|
 | Un único R y un único Python | 🟡 Hoy hay dos R (datos y funcional); se pegan uno tras otro para la entrega (D-48). Python: `lluvia_valle_red.py` (un solo archivo) |
 | Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 13 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
-| Solo procedimientos de clase; librerías extra solo donde se permite | 🟡 Construcción sin librerías; en Python solo PyTorch (pykan permitido) |
-| Cada tabla y figura del informe ubicable en el código | 🟡 Prefijos `2_`…`15_` (datos), `F1_`…`F6_` (funcional) y `P1_`…`P6_` (Python) |
+| Solo procedimientos de clase; librerías extra solo donde se permite | ✅ Construcción sin librerías; regresión contrastada con los métodos de clase (D-53); Python solo con PyTorch (+ numpy/pandas para leer y escribir) (D-54) |
+| Cada tabla y figura del informe ubicable en el código | ✅ Prefijos `2_`…`15_` (datos), `F1_`…`F8_` (funcional) y `P1_`…`P6_` (Python); falta citarlas en el informe |
 
 ## Plan para cerrar (en orden)
 
