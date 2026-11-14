@@ -4,7 +4,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 
 **Estados:** ✅ hecho y verificado en el código · 🟡 hecho, falta redactarlo o un detalle · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/05_red_funcional.py` con los insumos viejos (248 estaciones) y hay que reconectarlo a `salidas_R_funcional/para_python/`.
 
-**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 12 pruebas.
+**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53).
 
 ## Resumen
 
@@ -22,6 +22,32 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno; el Python |
 
 Lo que pesa más y falta: 4.5 (10 %), el informe (10 %) y cerrar 4.4 por fase ENSO.
+
+## Auditoría: ¿se hace como en clase? (14-nov)
+
+Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se pueden usar los scripts, procedimientos y metodologías vistos en clase. Las librerías adicionales se permiten en los apartados mencionados." El apartado de la red (4.2–4.5) dice: "Librerías permitidas en este apartado: PyTorch y pykan".
+
+`material_clase/` es todo R: `fda` y `fda.usc` (EDA y regresión), `fdANOVA` (ANOVA funcional) y el taller de repaso, que hace cada modelo paso a paso en R base y lo contrasta con `fda`/`fda.usc`. No hay material de redes: por eso la red va en Python con PyTorch, que es lo que el enunciado permite.
+
+| Parte | Cómo se hizo en clase | Cómo lo hacemos | Estado |
+|---|---|---|---|
+| Lenguaje | R para todo lo funcional; Python solo para la red (enunciado) | R (datos, construcción, EDA, comparación, regresión) y Python solo para la red | ✅ |
+| Construcción | B-splines paso a paso, ECM/VC/VCG (taller, ej. 1–2); bandas punto a punto (ej. 3) | Igual, sin librerías; `splines` solo para verificar | ✅ |
+| Media, varianza, covarianza, correlación | Paso a paso y contraste con `fda::mean.fd`, `var.fd` (ej. 4) | Paso a paso; media verificada con `fda::mean.fd` | ✅ |
+| Profundidad y boxplot funcional | `fda.usc` (`depth.FM`, …) y `fda::fbplot` | FM y MBD propios; MBD y atípicas verificadas con `fbplot`. **FM no verificada con `fda.usc::depth.FM`** | 🟡 |
+| Inferencia por grupos (ENSO, altitud, fuente) | `fda::tperm.fd` (t funcional) y `fdANOVA` | Bandas ± 2EE (lo pide la rúbrica) y tablas por grupo; **sin prueba t ni ANOVA funcional de clase** | 🟡 recomendado |
+| Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
+| Red (codificador, cabezas) | No se vio; el enunciado permite PyTorch y pykan | PyTorch; KAN programada con la fórmula del enunciado y verificada con una función sintética | ✅ |
+| Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` para leer y escribir, **`scipy` (Wilcoxon) y `matplotlib`** | 🟡 riesgo |
+| Métricas, bootstrap, Wilcoxon, ENSO de la red | — | En Python (`scipy`) | 🟡 mejor en R |
+
+### Qué cambiar para quedar 100 % dentro de la regla
+
+1. **Python solo entrena y exporta.** `lluvia_valle_red.py` deja las predicciones (coeficientes √P por curva y cabeza/semilla), las w_k(t) y las activaciones de la KAN en CSV. Las métricas, el bootstrap, Wilcoxon (`wilcox.test` de R base), la tabla por fase ENSO y las gráficas de 4.5 se hacen en R con las mismas funciones ya verificadas de la sección 5. Así desaparecen `scipy` y `matplotlib`, y las tres cabezas se evalúan exactamente igual que la regresión.
+2. ~~Contrastar la regresión con la de clase~~ — hecho (sección 5.5b, D-53).
+3. **Verificar FM con `fda.usc::depth.FM`** (instalar `fda.usc`).
+4. **Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`)** para satélite frente a estación y para ENSO y altitud.
+5. **KAN:** se puede dejar la nuestra (cumple la forma del enunciado y la prueba sintética) o contrastarla con `pykan`. Decisión del equipo; `pykan` facilita el ajuste simbólico de 4.5.
 
 ## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
@@ -141,7 +167,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Lo que pide la rúbrica | Estado |
 |---|---|
 | Un único R y un único Python | 🟡 Hoy hay dos R (datos y funcional); se pegan uno tras otro para la entrega (D-48). Python: `lluvia_valle_red.py` (un solo archivo) |
-| Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 12 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
+| Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 13 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
 | Solo procedimientos de clase; librerías extra solo donde se permite | 🟡 Construcción sin librerías; en Python solo PyTorch (pykan permitido) |
 | Cada tabla y figura del informe ubicable en el código | 🟡 Prefijos `2_`…`15_` (datos), `F1_`…`F6_` (funcional) y `P1_`…`P6_` (Python) |
 

@@ -609,6 +609,14 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Falta:** interpretación 4.5 (w_k(t), activaciones de la KAN, ajuste simbólico, peores casos) y las métricas por fase ENSO para las tres cabezas (4.4).
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
+### D-53 · La regresión funcional contrastada con los dos métodos de clase ✅ (regla "solo métodos vistos en clase")
+- **Problema:** nuestra regresión (puntajes FPCA de la estación sobre ∫φ_j(s)X(s)ds con penalización de rugosidad) es el modelo integral, pero en clase se ajustó de otras formas: el taller de repaso (ejercicio 10, paso 3) regresa los puntajes de Y sobre los puntajes de X, y el ejercicio 9 usa `fda.usc::fregre.basis.fr()`.
+- **Prueba** (sección 5.5b de `lluvia_valle_funcional.R`; tablas `F5_contraste_seleccion_validacion.csv`, `F5_contraste_metodos_clase.csv`, `F5_contraste_pareado.csv`): las tres versiones con las mismas curvas √P, el mismo FPCA de la estación (M = 6) y parámetros elegidos en validación (taller: l = 4 componentes de X; fregre: λs = λt = 1e10). Como `fregre.basis.fr` no admite altitud ni ONI, se comparan también sin ellas.
+- **Resultado en prueba:** L² relativo 0,43–0,44 en todas (satélite 0,51); las diferencias de L² no excluyen el 0. La nuestra sube el KGE unos 0,03 frente a las dos de clase (IC que excluyen el 0). La B del taller coincide con `lm()` (verificación que pide el propio taller).
+- **Decisión:** se mantiene nuestra regresión como referencia (y como cabeza lineal de la red): es el modelo integral de clase y frente a sus dos versiones de clase da el mismo error y mejor KGE. Altitud y ONI se dejan: en prueba no cambian nada, en validación bajan el RMSE de 2,42 a 2,29 mm/día.
+- **Requisito nuevo:** el script carga `fda` y `fda.usc` (`install.packages("fda.usc")` si falta). Ahora tiene 13 pruebas.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.

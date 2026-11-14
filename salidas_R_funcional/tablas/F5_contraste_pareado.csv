@@ -1,0 +1,11 @@
+comparacion,metrica,diferencia,ic_inf,ic_sup,p_wilcoxon,ic_excluye_0
+Nuestra regresión (con altitud y ONI) − Taller PC (con altitud y ONI),l2_rel,-0.0063,-0.0188,0.0076,0.37,FALSE
+Nuestra regresión (con altitud y ONI) − Taller PC (con altitud y ONI),kge,0.0285,0.011,0.0446,1.7e-05,TRUE
+Nuestra regresión (sin altitud ni ONI) − Taller PC (sin altitud ni ONI),l2_rel,-0.0088,-0.0189,0.0018,0.013,FALSE
+Nuestra regresión (sin altitud ni ONI) − Taller PC (sin altitud ni ONI),kge,0.0317,0.0165,0.0454,7.4e-09,TRUE
+Nuestra regresión (sin altitud ni ONI) − fda.usc fregre.basis.fr (sin altitud ni ONI),l2_rel,-0.0041,-0.0097,0.0016,0.2,FALSE
+Nuestra regresión (sin altitud ni ONI) − fda.usc fregre.basis.fr (sin altitud ni ONI),kge,0.0313,0.0224,0.0404,1.6e-10,TRUE
+Taller PC (sin altitud ni ONI) − fda.usc fregre.basis.fr (sin altitud ni ONI),l2_rel,0.0047,-0.0023,0.0114,0.02,FALSE
+Taller PC (sin altitud ni ONI) − fda.usc fregre.basis.fr (sin altitud ni ONI),kge,-4e-04,-0.0103,0.0095,0.55,FALSE
+Nuestra regresión (con altitud y ONI) − Nuestra regresión (sin altitud ni ONI),l2_rel,0.0036,-0.0027,0.0097,0.011,FALSE
+Nuestra regresión (con altitud y ONI) − Nuestra regresión (sin altitud ni ONI),kge,-0.003,-0.0121,0.0058,0.16,FALSE

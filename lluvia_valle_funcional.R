@@ -43,6 +43,8 @@ if (!isTRUE(l10n_info()$`UTF-8`)) {
 suppressPackageStartupMessages({
   library(data.table)
   library(ggplot2)
+  library(fda)        # herramientas de clase: verificación (media, fbplot) y bases del contraste 5.5b
+  library(fda.usc)    # herramientas de clase: fdata y fregre.basis.fr (contraste 5.5b)
 })
 theme_set(theme_minimal(base_size = 11))
 
@@ -1329,6 +1331,105 @@ print(tabla_f(por_fase, "F5_metricas_por_fase_ENSO"))
 por_anio_pru <- metricas_curva[, .(curvas = .N, L2_relativo = round(mean(l2_rel), 3), KGE = round(mean(kge), 2), sesgo_anual_pct = round(mean(sesgo_pct), 1)), by = .(anio, fase, modelo)]
 print(tabla_f(por_anio_pru[order(anio, modelo)], "F5_metricas_prueba_por_anio"))
 
+titulo("5.5b Contraste con los métodos de regresión vistos en clase")
+# La regla del curso: solo métodos vistos en clase. Nuestra regresión (puntajes FPCA de la
+# estación sobre ∫φ_j(s)X(s)ds con penalización de rugosidad) es el modelo integral
+# funcional-funcional, pero en clase se ajustó de otras dos formas:
+#   (a) Taller de repaso, ejercicio 10, paso 3 (Wang et al., 2016): FPCA también de X y
+#       regresión de los puntajes de Y sobre los l primeros puntajes de X, B = (ΞᵀΞ)⁻¹ΞᵀH.
+#   (b) Taller, ejercicio 9: fda.usc::fregre.basis.fr(), superficie β(s,t) en base tensorial
+#       con penalizaciones lambda.s y lambda.t.
+# Se ajustan las tres con las mismas curvas √P, el mismo FPCA de la estación (M) y la misma
+# regla: parámetros (l, λ_s, λ_t) elegidos con el RMSE de VALIDACIÓN. fregre.basis.fr no
+# admite covariables escalares, así que la comparación justa es sin altitud ni ONI; la del
+# taller se hace con y sin ellas. Se comparan en prueba con las mismas métricas y bootstrap.
+iE_c <- which(ent); iV_c <- which(val)
+H_c <- S_todos[, 1:M, drop = FALSE]
+curva_de_puntajes <- function(Sc) sweep(Sc %*% t(Phi_e %*% psi_c[, 1:M, drop = FALSE]), 2, drop(Phi_e %*% mu_c), "+")
+rmse_val_c <- function(R) mean(rmse_l2(a_mm(R[iV_c, , drop = FALSE]), iV_c))
+extras_c <- cbind((pares$altitud - alt_m) / alt_s, pares$ONI_anual)
+
+# (a) FPCA del satélite (solo entrenamiento) y regresión puntajes sobre puntajes
+ev_s <- eigen(W_s, symmetric = TRUE)
+W12_s <- ev_s$vectors %*% diag(sqrt(ev_s$values)) %*% t(ev_s$vectors); Wm12_s <- ev_s$vectors %*% diag(1 / sqrt(ev_s$values)) %*% t(ev_s$vectors)
+mu_x <- colMeans(rs$coef[ent, ])
+eg_x <- eigen(W12_s %*% (crossprod(sweep(rs$coef[ent, ], 2, mu_x)) / (sum(ent) - 1)) %*% W12_s, symmetric = TRUE)
+psi_x <- Wm12_s %*% eg_x$vectors
+Xi <- sweep(rs$coef, 2, mu_x) %*% W_s %*% psi_x                      # puntajes de X en todas las curvas
+ajuste_taller <- function(l, con_extras) {
+  Z <- cbind(1, Xi[, seq_len(l), drop = FALSE], if (con_extras) extras_c)
+  B <- solve(crossprod(Z[iE_c, ]), crossprod(Z[iE_c, ], H_c[iE_c, ]))
+  list(B = B, Z = Z, R = curva_de_puntajes(Z %*% B))
+}
+sel_taller <- rbindlist(lapply(c(TRUE, FALSE), function(ce) rbindlist(lapply(seq_len(K_s), function(l)
+  data.table(metodo = "taller PC", con_altitud_ONI = ce, l = l, rmse_validacion = rmse_val_c(ajuste_taller(l, ce)$R))))))
+l_con <- sel_taller[con_altitud_ONI == TRUE][which.min(rmse_validacion), l]
+l_sin <- sel_taller[con_altitud_ONI == FALSE][which.min(rmse_validacion), l]
+# El taller dice "lm() solo para verificar": la B de mínimos cuadrados debe ser la de lm()
+aj_t <- ajuste_taller(l_con, TRUE)
+dif_lm_taller <- max(abs(aj_t$B - coef(lm(H_c[iE_c, ] ~ aj_t$Z[iE_c, -1]))))
+
+# Nuestra regresión sin altitud ni ONI (λ elegido igual, en validación)
+ajuste_nuestra_sin <- function(l) {
+  Z <- cbind(1, Zx); P <- matrix(0, ncol(Z), ncol(Z)); P[-1, -1] <- R_s
+  curva_de_puntajes(Z %*% solve(crossprod(Z[iE_c, ]) + l * P, crossprod(Z[iE_c, ], H_c[iE_c, ])))
+}
+sel_nuestra <- data.table(metodo = "nuestra", con_altitud_ONI = FALSE, lambda = lambdas, rmse_validacion = sapply(lambdas, function(l) rmse_val_c(ajuste_nuestra_sin(l))))
+LAMBDA_SIN <- sel_nuestra[which.min(rmse_validacion), lambda]
+
+# (b) fda.usc::fregre.basis.fr con las mismas bases B-spline (nodos equiespaciados, como las nuestras)
+X_fd <- fdata(rs$coef %*% t(Phi_s), argvals = T_DIA); Y_fd <- fdata(re$coef %*% t(Phi_e), argvals = T_DIA)
+base_s_fda <- create.bspline.basis(RANGO, K_s); base_t_fda <- create.bspline.basis(RANGO, K_e)
+ajuste_fr <- function(ls, lt) fregre.basis.fr(X_fd[iE_c], Y_fd[iE_c], basis.s = base_s_fda, basis.t = base_t_fda, lambda.s = ls, lambda.t = lt)
+rej_fr <- CJ(lambda_s = 10^seq(-2, 14, 2), lambda_t = 10^c(2, 6, 10, 14))
+sel_fr <- rej_fr[, .(metodo = "fregre.basis.fr", con_altitud_ONI = FALSE, rmse_validacion = rmse_val_c(predict(ajuste_fr(lambda_s, lambda_t), X_fd)$data)), by = .(lambda_s, lambda_t)]
+mejor_fr <- sel_fr[which.min(rmse_validacion)]
+fit_fr <- ajuste_fr(mejor_fr$lambda_s, mejor_fr$lambda_t)
+stopifnot(mejor_fr$lambda_s < max(rej_fr$lambda_s))   # el óptimo no queda en el borde de la rejilla
+tabla_f(rbindlist(list(sel_taller, sel_nuestra, sel_fr), fill = TRUE), "F5_contraste_seleccion_validacion")
+
+modelos_clase <- list(
+  `Satélite sin corregir` = X_mm[i_pru, ],
+  `Nuestra regresión (con altitud y ONI)` = a_mm(pred_puntajes),
+  `Taller PC (con altitud y ONI)` = a_mm(aj_t$R[i_pru, ]),
+  `Nuestra regresión (sin altitud ni ONI)` = a_mm(ajuste_nuestra_sin(LAMBDA_SIN)[i_pru, ]),
+  `Taller PC (sin altitud ni ONI)` = a_mm(ajuste_taller(l_sin, FALSE)$R[i_pru, ]),
+  `fda.usc fregre.basis.fr (sin altitud ni ONI)` = a_mm(predict(fit_fr, X_fd[i_pru])$data))
+mc_clase <- rbindlist(lapply(names(modelos_clase), function(nm) metricas_de(modelos_clase[[nm]], i_pru, nm)))
+contraste <- mc_clase[, resumir(.SD), by = modelo]
+contraste[, parametros := c("", sprintf("M = %d, λ = %.1e", M, LAMBDA), sprintf("M = %d, l = %d", M, l_con),
+                            sprintf("M = %d, λ = %.1e", M, LAMBDA_SIN), sprintf("M = %d, l = %d", M, l_sin),
+                            sprintf("λs = %.0e, λt = %.0e", mejor_fr$lambda_s, mejor_fr$lambda_t))]
+print(tabla_f(contraste, "F5_contraste_metodos_clase"))
+
+# Diferencias pareadas por estación (IC 95 % bootstrap y Wilcoxon), mismas reglas que 5.5
+pe_c <- mc_clase[, .(l2_rel = mean(l2_rel), kge = mean(kge)), by = .(modelo, codigo)]
+dif_par <- function(a, b, v) {
+  x <- pe_c[modelo == a][order(codigo)][[v]]; y <- pe_c[modelo == b][order(codigo)][[v]]; d <- x - y
+  q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
+  data.table(comparacion = paste(a, "−", b), metrica = v, diferencia = round(mean(d), 4), ic_inf = round(q[1], 4), ic_sup = round(q[2], 4),
+             p_wilcoxon = signif(wilcox.test(x, y, paired = TRUE)$p.value, 2), ic_excluye_0 = q[1] > 0 | q[2] < 0)
+}
+pares_clase <- list(c("Nuestra regresión (con altitud y ONI)", "Taller PC (con altitud y ONI)"),
+                    c("Nuestra regresión (sin altitud ni ONI)", "Taller PC (sin altitud ni ONI)"),
+                    c("Nuestra regresión (sin altitud ni ONI)", "fda.usc fregre.basis.fr (sin altitud ni ONI)"),
+                    c("Taller PC (sin altitud ni ONI)", "fda.usc fregre.basis.fr (sin altitud ni ONI)"),
+                    c("Nuestra regresión (con altitud y ONI)", "Nuestra regresión (sin altitud ni ONI)"))
+contraste_par <- rbindlist(lapply(pares_clase, function(p) rbind(dif_par(p[1], p[2], "l2_rel"), dif_par(p[1], p[2], "kge"))))
+print(tabla_f(contraste_par, "F5_contraste_pareado"))
+
+# QUÉ DICEN LOS DATOS (5.5b)
+#   Los tres métodos de clase llegan a lo mismo en error: en prueba el L² relativo queda
+#   entre 0,43 y 0,44 en todos (satélite sin corregir 0,51), y las diferencias de L² entre
+#   nuestra regresión y la del taller no excluyen el 0. Donde sí hay diferencia es en el
+#   KGE: la nuestra lo sube unos 0,03 frente a la del taller y frente a fregre.basis.fr
+#   (IC que excluyen el 0), porque la penalización de rugosidad conserva mejor la forma y la
+#   amplitud de la curva que truncar X en l = 4 componentes. Conclusión: nuestra regresión
+#   no es un método aparte; es el modelo integral de clase, y frente a sus dos versiones de
+#   clase da el mismo error y mejor KGE. Altitud y ONI no cambian la prueba (IC con el 0;
+#   2001-2003 no tiene años Niña), pero en validación bajan el RMSE de 2,42 a 2,29 mm/día,
+#   por eso se dejan (y la red los usa).
+
 titulo("5.6 Sensibilidad: ¿qué pasa si se quitan 1985, 1988 y 2000?")
 # No se quitan (D-47). Esta sección solo mide cuánto cambia la prueba si el modelo
 # NO viera esos años: mismo FPCA y mismo M; lambda se vuelve a elegir en validación sin 2000.
@@ -1486,7 +1587,9 @@ pruebas <- list(
     no_fuga_K && all(no_fuga_ent < 1e-10) && no_fuga_sel,
   "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)" = dif_equiv <= 1e-4,
   "La reconstrucción en mm no es negativa" = min(modelos[["Regresión funcional"]]) >= 0,
-  "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000
+  "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000,
+  "Contraste con los métodos de clase: la B del taller es la de lm() y λ de fregre.basis.fr no queda en el borde" =
+    dif_lm_taller < 1e-8 && mejor_fr$lambda_s < max(rej_fr$lambda_s)
 )
 res_pruebas <- data.table(prueba = names(pruebas), pasa = unlist(pruebas))
 print(tabla_f(res_pruebas, "F6_pruebas"))

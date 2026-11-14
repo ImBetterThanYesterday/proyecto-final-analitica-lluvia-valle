@@ -58,6 +58,10 @@ Archivo nuevo en Python. Lee solo `salidas_R_funcional/para_python/`.
 
 **Resultado en prueba (2001–2003):** L² relativo satélite 0,513 → lineal 0,440, KAN 0,434, MLP 0,420. El MLP supera a la lineal por poco; la KAN no se distingue de la lineal en L² ni KGE, pero reduce el sesgo. La no linealidad se ve más en validación (que tiene el Niño de 1997 y las Niñas de 1999 y 2000) que en prueba.
 
+### 5. Regresión contrastada con los métodos de clase — sección 5.5b del funcional (D-53)
+
+El enunciado exige usar solo métodos vistos en clase. Nuestra regresión se comparó con las dos versiones de clase del modelo integral: la del taller de repaso (ejercicio 10, paso 3: puntajes de Y sobre puntajes de X) y `fda.usc::fregre.basis.fr()` (ejercicio 9). Con parámetros elegidos en validación, en prueba las tres dan el mismo L² relativo (0,43–0,44) y la nuestra tiene mejor KGE (+0,03, IC que excluye el 0). Se mantiene la nuestra. El script ahora usa `fda` y `fda.usc` y tiene **13 pruebas**. En la Mac hay que instalar `fda.usc` una vez: `Rscript -e 'install.packages("fda.usc", repos = "https://cloud.r-project.org")'`.
+
 ### Qué sigue
 
 1. 4.5: graficar las w_k(t) y las activaciones de la KAN, ajuste simbólico y peores casos.
@@ -69,6 +73,6 @@ Archivo nuevo en Python. Lee solo `salidas_R_funcional/para_python/`.
 
 ```bash
 Rscript lluvia_valle_datos.R        # ~5 min, 27 pruebas (necesita datos_curso/)
-Rscript lluvia_valle_funcional.R    # ~1 min, 12 pruebas
+Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc)
 python lluvia_valle_red.py          # ~15 min, 14 pruebas (pip install torch numpy pandas scipy matplotlib)
 ```
