@@ -1,0 +1,9 @@
+agrupacion,grupo,pares,estaciones,P_estacion,P_satelite,sesgo_mm_anio,cociente,dias_banda_sin_cero,r_diagonal_media
+vertiente,Cauca (interandina),2530,150,1546,1704,-157,1.1,316,0.39
+vertiente,Pacífico,350,26,3059,2902,345,0.95,17,0.75
+banda_altitud,< 1200 m,1161,74,1796,1913,-20,1.07,73,0.76
+banda_altitud,> 2000 m,280,17,1596,1514,76,0.95,92,0.24
+banda_altitud,1200-2000 m,1439,85,1702,1864,-168,1.1,261,0.33
+fase,Neutro,1559,176,1732,1848,-77,1.07,202,0.64
+fase,Niña,458,175,2003,1895,163,0.95,101,0.61
+fase,Niño,863,176,1580,1829,-228,1.16,272,0.6

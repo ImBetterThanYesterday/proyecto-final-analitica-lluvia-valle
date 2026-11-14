@@ -1,0 +1,27 @@
+prueba,resultado,detalle
+Las 232 del Valle caen dentro del polígono DANE,OK,""
+Ninguna estación final es del Cauca ni está sin ubicar,OK,""
+Las incluidas tienen coordenada,OK,""
+Las incluidas tienen altitud (entra al vector z),OK,Univalle: 996 m
+Solo años 1981–2003,OK,""
+Partición correcta por año,OK,""
+Cada estación tiene ≥7 años válidos en entrenamiento,OK,mínimo: 8
+Cada curva tiene ≥90 % de días,OK,mínimo: 329
+Ninguna curva tiene un hueco > 15 días,OK,máximo: 15
+Sin duplicados estación-año,OK,""
+Valores entre 0 y el máximo crudo,OK,máximo: 560
+Cada valor final es igual al crudo (salvo los marcados),OK,1211103 valores comparados
+Los días marcados quedaron como faltante,OK,2 marcados dentro de años válidos
+Todo faltante de la matriz es un día ausente en el crudo o marcado,OK,observados: 1211103
+La trazabilidad termina en los datos preparados,OK,""
+El p99 de las reglas usa solo entrenamiento,OK,210 estaciones
+Satélite sin faltantes y no negativo,OK,""
+72 péntadas que suman 365 días,OK,""
+mm/día × días reales = mm de la péntada (enteros),OK,""
+La matriz del satélite coincide con 12 TIFF releídos,OK,""
+Todos los píxeles del Valle están,OK,681 píxeles
+Cada estación cae dentro de su píxel,OK,distancia máxima al centro: 3.89 km
+Cada par une el mismo año y el píxel de la estación,OK,""
+Hay un par por cada curva de estación,OK,""
+Cada par tiene el ONI de su año (entra al vector z),OK,23 años
+"En años completos, la suma por péntadas = la suma diaria",OK,50 curvas
