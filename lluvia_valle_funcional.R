@@ -1703,3 +1703,180 @@ if (!file.exists(ARCH_PRED)) {
 #   La no linealidad del sesgo existe, pero depende de la fase: lo que KAN y MLP aprenden ayuda
 #   en años secos (Niño) y estorba en años húmedos (Niña). Con solo 3 años de prueba y ninguno
 #   Niña, la ventaja global de las no lineales es pequeña y no se puede generalizar.
+
+titulo("8. Interpretación de la red (rúbrica 4.5)")
+# Se grafica y se lee lo que aprendió la red. Python solo exporta números (pesos del codificador,
+# de la cabeza lineal y activaciones de la primera capa de la KAN en el rango de los datos);
+# todo el análisis se hace aquí. Se usa la semilla 2026 para las figuras y las tres semillas
+# para ver qué tan estable es cada lectura.
+ARCH_INT <- file.path("salidas_python", c("pesos_codificador.csv", "cabeza_lineal_pesos.csv", "kan_activaciones_capa1.csv", "kan_importancia_aristas.csv"))
+if (!all(file.exists(ARCH_INT)) || !exists("mc_prom")) {
+  cat("Faltan las salidas de lluvia_valle_red.py → la sección 8 se omite.\n")
+} else {
+  SEM <- 2026L
+  meses <- data.table(dia = c(1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335), mes = c("E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"))
+  cod <- fread(ARCH_INT[1]); lin <- fread(ARCH_INT[2]); act <- fread(ARCH_INT[3]); imp <- fread(ARCH_INT[4])
+
+  # ---- 8.1 Las w_k(s): qué ventana del año mira cada neurona ----------------------------------
+  # w_k(s) = Σ_j a_kj φ_j(s) con la base del satélite. La escala de w_k no importa (z se
+  # estandariza), así que se normaliza a max|w_k| = 1. La "ventana" son los días con |w_k| ≥ 0,5.
+  segmentos <- function(dias) {
+    if (!length(dias)) return("")
+    corte <- c(0, which(diff(dias) > 1), length(dias))
+    paste(sapply(seq_len(length(corte) - 1), function(k) paste(fecha_dia(dias[corte[k] + 1]), "a", fecha_dia(dias[corte[k + 1]]))), collapse = "; ")
+  }
+  W_k <- cod[, {
+    w <- drop(Phi_s %*% unlist(.SD)); w_n <- w / max(abs(w))
+    .(dia = T_DIA, w = w, w_norm = w_n)
+  }, by = .(cabeza, semilla, neurona), .SDcols = paste0("a", seq_len(K_s))]
+  ventanas <- W_k[, .(dia_max_abs = which.max(abs(w_norm)), signo_en_max = sign(w_norm[which.max(abs(w_norm))]),
+                     ventana = segmentos(dia[abs(w_norm) >= .5]), dias_en_ventana = sum(abs(w_norm) >= .5)), by = .(cabeza, semilla, neurona)]
+  ventanas[, fecha_max := fecha_dia(dia_max_abs)]
+  tabla_f(ventanas, "F8_ventanas_w_k")
+  grafico_f(ggplot(W_k[semilla == SEM], aes(dia, w_norm, colour = cabeza)) + geom_hline(yintercept = 0, colour = "grey60") + geom_hline(yintercept = c(-.5, .5), linetype = 3, colour = "grey60") +
+              geom_line(linewidth = .7) + facet_wrap(~ paste("neurona", neurona), ncol = 4) +
+              scale_x_continuous(breaks = meses$dia, labels = meses$mes) +
+              labs(x = "día del año del satélite (s)", y = "w_k(s) normalizada", colour = "cabeza",
+                   title = "Pesos del codificador w_k(s): qué parte del año del satélite usa cada neurona (semilla 2026)",
+                   subtitle = "Ventana = días con |w_k| ≥ 0,5 (líneas punteadas)"), "F8_pesos_w_k", ancho = 12, alto = 6)
+
+  # ---- 8.2 Cabeza lineal: su β(s,t) frente a la regresión de R y el peso de cada entrada -----
+  # La red lineal es la regresión funcional (sección 3 de Python): β(s,t) = Σ_k w_k(s) Σ_m (B_mk/σ_k) ψ_m(t).
+  Bl <- dcast(lin[semilla == SEM & entrada != "sesgo"], componente ~ entrada, value.var = "peso")
+  ent_nom <- c(paste0("z", 1:8), "altitud", "ONI")
+  Bm <- as.matrix(Bl[order(componente), ..ent_nom])                     # M × 10
+  cl <- cod[cabeza == "lineal" & semilla == SEM][order(neurona)]
+  A_lin <- as.matrix(cl[, paste0("a", seq_len(K_s)), with = FALSE])
+  BETA_red <- Phi_s %*% t(A_lin) %*% diag(1 / cl$de_z) %*% t(Bm[, 1:8]) %*% t(psi_t)
+  cor_beta <- cor(as.vector(BETA_red), as.vector(BETA))
+  # Estabilidad: la β(s,t) de cada semilla frente a la de R y entre semillas. Las neuronas sueltas no
+  # son identificables (con cabeza lineal solo importa el espacio que generan las w_k: se pueden
+  # rotar sin cambiar la predicción), pero β(s,t), que es lo que predice, sí debe ser estable.
+  beta_de <- function(s) {
+    B_s <- as.matrix(dcast(lin[semilla == s & entrada != "sesgo"], componente ~ entrada, value.var = "peso")[order(componente), ..ent_nom])
+    c_s <- cod[cabeza == "lineal" & semilla == s][order(neurona)]
+    Phi_s %*% t(as.matrix(c_s[, paste0("a", seq_len(K_s)), with = FALSE])) %*% diag(1 / c_s$de_z) %*% t(B_s[, 1:8]) %*% t(psi_t)
+  }
+  betas <- lapply(sort(unique(lin$semilla)), beta_de)
+  estab_beta <- data.table(semilla = sort(unique(lin$semilla)), cor_con_regresion_R = sapply(betas, function(b) cor(as.vector(b), as.vector(BETA))),
+                           cor_con_semilla_2026 = sapply(betas, function(b) cor(as.vector(b), as.vector(betas[[1]]))))
+  print(tabla_f(estab_beta, "F8_estabilidad_beta_lineal"))
+  cat(sprintf("β(s,t) de la red lineal (semilla %d) frente a la de la regresión de R: correlación %.3f\n", SEM, cor_beta))
+  grafico_base("F8_beta_red_vs_regresion", function() {
+    par(mfrow = c(1, 2)); lim <- max(abs(c(BETA, BETA_red))) * c(-1, 1)
+    image(T_DIA, T_DIA, BETA, zlim = lim, col = hcl.colors(64, "Blue-Red 3"), xlab = "s: día del satélite", ylab = "t: día de la estación", main = "Regresión funcional (R)")
+    image(T_DIA, T_DIA, BETA_red, zlim = lim, col = hcl.colors(64, "Blue-Red 3"), xlab = "s: día del satélite", ylab = "t: día de la estación",
+          main = sprintf("Red con cabeza lineal (correlación %.2f)", cor_beta))
+  }, ancho = 12, alto = 5)
+  # Importancia de cada entrada en la cabeza lineal: norma L² del cambio en la curva √P cuando la
+  # entrada sube 1 DE, ||Σ_m B_mi ψ_m(t)||; en la KAN: Σ_j DE de φ_ij(x) sobre entrenamiento.
+  imp_lin <- rbindlist(lapply(unique(lin$semilla), function(s) {
+    Bs <- as.matrix(dcast(lin[semilla == s & entrada != "sesgo"], componente ~ entrada, value.var = "peso")[order(componente), ..ent_nom])
+    data.table(semilla = s, entrada = ent_nom, importancia = sqrt(colSums((psi_t %*% Bs)^2) / 365))
+  }))
+  imp_kan <- imp[, .(importancia = sum(de_phi_entrenamiento)), by = .(semilla, entrada)]
+  importancia <- merge(imp_lin[, .(imp_lineal_media = mean(importancia), imp_lineal_DE = sd(importancia)), by = entrada],
+                       imp_kan[, .(imp_kan_media = mean(importancia), imp_kan_DE = sd(importancia)), by = entrada], by = "entrada")
+  importancia[, `:=`(rango_lineal = frank(-imp_lineal_media), rango_kan = frank(-imp_kan_media))]
+  importancia <- merge(importancia, ventanas[semilla == SEM & cabeza == "lineal", .(entrada = paste0("z", neurona), ventana_lineal = ventana)], by = "entrada", all.x = TRUE)
+  importancia <- merge(importancia, ventanas[semilla == SEM & cabeza == "kan", .(entrada = paste0("z", neurona), ventana_kan = ventana)], by = "entrada", all.x = TRUE)
+  setorder(importancia, rango_kan)
+  print(tabla_f(importancia, "F8_importancia_entradas"))
+
+  # ---- 8.3 Activaciones de la primera capa de la KAN en el rango de los datos ------------------
+  # No linealidad de cada arista = 1 − R² de una recta ajustada a φ_ij(x) en el rango p1–p99.
+  aristas <- act[, .(no_linealidad = 1 - summary(lm(phi ~ x))$r.squared, rango_phi = diff(range(phi))), by = .(semilla, entrada, oculta)]
+  aristas <- merge(aristas, imp, by = c("semilla", "entrada", "oculta"))
+  tabla_f(aristas, "F8_kan_aristas")
+  a_sem <- aristas[semilla == SEM]
+  grafico_f(ggplot(merge(act[semilla == SEM], a_sem[, .(entrada, oculta, de_phi_entrenamiento)], by = c("entrada", "oculta")),
+                   aes(x, phi, colour = de_phi_entrenamiento)) + geom_line(linewidth = .8) +
+              facet_grid(factor(paste("oculta", oculta)) ~ factor(entrada, levels = ent_nom), scales = "free") +
+              scale_colour_viridis_c(name = "importancia\n(DE de φ)") +
+              labs(x = "entrada estandarizada (rango p1–p99 de entrenamiento)", y = "φ(x)",
+                   title = "Activaciones de la primera capa de la KAN (semilla 2026): cada panel es una arista entrada → neurona oculta"),
+            "F8_kan_activaciones", ancho = 15, alto = 7)
+
+  # ---- 8.4 Ajuste simbólico de las activaciones más importantes --------------------------------
+  # Candidatas de menor a mayor complejidad; se elige la más simple con R² ≥ 0,99.
+  candidatas <- list(
+    lineal = list(f = phi ~ x, ini = NULL),
+    cuadratica = list(f = phi ~ x + I(x^2), ini = NULL),
+    exponencial = list(f = phi ~ a + b * exp(c * x), ini = list(c(a = 0, b = 1, c = .5), c(a = 0, b = -1, c = -.5), c(a = 0, b = 1, c = -.5))),
+    tanh = list(f = phi ~ a + b * tanh(c * x + d), ini = list(c(a = 0, b = 1, c = 1, d = 0), c(a = 0, b = -1, c = 1, d = 0), c(a = 0, b = 1, c = 3, d = 1))),
+    cubica = list(f = phi ~ x + I(x^2) + I(x^3), ini = NULL),
+    seno = list(f = phi ~ a + b * sin(c * x + d), ini = list(c(a = 0, b = 1, c = 1, d = 0), c(a = 0, b = 1, c = 2, d = 1))))
+  ajusta <- function(d, nom) {
+    cand <- candidatas[[nom]]
+    m <- if (is.null(cand$ini)) lm(cand$f, d) else {
+      fits <- lapply(cand$ini, function(s0) tryCatch(suppressWarnings(nls(cand$f, d, start = s0, control = nls.control(maxiter = 500, warnOnly = TRUE))), error = function(e) NULL))
+      fits <- Filter(Negate(is.null), fits); if (!length(fits)) return(NULL); fits[[which.min(sapply(fits, deviance))]] }
+    r2 <- 1 - sum(residuals(m)^2) / sum((d$phi - mean(d$phi))^2)
+    data.table(forma = nom, R2 = r2, coeficientes = paste(sprintf("%s = %.3f", names(coef(m)), coef(m)), collapse = ", "))
+  }
+  top <- a_sem[order(-de_phi_entrenamiento)][1:4]
+  simbolico <- rbindlist(lapply(seq_len(nrow(top)), function(k) {
+    d <- act[semilla == SEM & entrada == top$entrada[k] & oculta == top$oculta[k]]
+    r <- rbindlist(lapply(names(candidatas), function(nm) ajusta(d, nm)))
+    r[, `:=`(entrada = top$entrada[k], oculta = top$oculta[k], importancia = top$de_phi_entrenamiento[k], elegida = FALSE)]
+    r[which(R2 >= .99)[1], elegida := TRUE]
+    if (!any(r$elegida)) r[which.max(R2), elegida := TRUE]
+    r
+  }))
+  setcolorder(simbolico, c("entrada", "oculta", "importancia", "forma", "R2", "elegida"))
+  print(tabla_f(simbolico[, R2 := round(R2, 4)], "F8_ajuste_simbolico"))
+
+  # ---- 8.5 Peores casos en prueba ----------------------------------------------------------------
+  # Curvas de prueba con mayor error L² relativo medio entre las tres cabezas (promedio de semillas).
+  peor <- mc_prom[particion == "prueba" & modelo %in% c("lineal", "kan", "mlp"), .(l2_cabezas = mean(l2_rel)), by = .(codigo, anio, fase)][order(-l2_cabezas)][1:6]
+  peor <- merge(peor, est[, .(codigo, nombre, vertiente, altitud)], by = "codigo")[order(-l2_cabezas)]
+  peor[, fila := sapply(seq_len(.N), function(k) which(pares$codigo == codigo[k] & pares$anio == anio[k]))]
+  peor[, `:=`(P_anual_obs = rowSums(Y_mm[fila, , drop = FALSE]), P_anual_sat = rowSums(X_mm[fila, , drop = FALSE]))]
+  curva_cabeza <- function(cab, f) colMeans(do.call(rbind, lapply(split(pr[modelo == cab & fila == f], by = "semilla"), function(d) a_mm(as.matrix(d[, ..cols_c]) %*% t(Phi_e)))))
+  peor[, P_anual_kan := sapply(fila, function(f) sum(curva_cabeza("kan", f)))]
+  print(tabla_f(peor[, .(codigo, nombre, anio, fase, vertiente, altitud, l2_cabezas = round(l2_cabezas, 2),
+                         P_anual_obs = round(P_anual_obs), P_anual_sat = round(P_anual_sat), P_anual_kan = round(P_anual_kan))], "F8_peores_casos"))
+  dib <- rbindlist(lapply(seq_len(nrow(peor)), function(k) {
+    f <- peor$fila[k]; et <- sprintf("%s %d (%s, %s, %.0f m)", peor$nombre[k], peor$anio[k], peor$fase[k], peor$vertiente[k], peor$altitud[k])
+    rbind(data.table(caso = et, dia = T_DIA, serie = "estación", mm = Y_mm[f, ]), data.table(caso = et, dia = T_DIA, serie = "satélite", mm = X_mm[f, ]),
+          rbindlist(lapply(c("lineal", "kan", "mlp"), function(cb) data.table(caso = et, dia = T_DIA, serie = cb, mm = curva_cabeza(cb, f)))))
+  }))
+  grafico_f(ggplot(dib, aes(dia, mm, colour = serie, linewidth = serie == "estación")) + geom_line() + facet_wrap(~ caso, ncol = 2, scales = "free_y") +
+              scale_linewidth_manual(values = c(.5, 1.1), guide = "none") + scale_x_continuous(breaks = meses$dia, labels = meses$mes) +
+              labs(x = NULL, y = "mm/día", colour = NULL, title = "Los seis peores casos de prueba (mayor error L² relativo de las tres cabezas)"),
+            "F8_peores_casos", ancho = 12, alto = 9)
+}
+
+# QUÉ DICEN LOS DATOS (sección 8, rúbrica 4.5) — semilla 2026, con la estabilidad entre semillas
+#   w_k(s) (F8_pesos_w_k.png, F8_ventanas_w_k.csv):
+#     - Cabeza lineal: las w_k son casi rectas (λ_w = 1e8 las suaviza mucho) y cada una pesa el año
+#       entero con una tendencia. Una neurona suelta no se puede interpretar: con cabeza lineal solo
+#       importa el espacio que generan las 8 w_k (se pueden rotar sin cambiar la predicción), y por
+#       eso la importancia de cada neurona cambia mucho entre semillas. Lo que sí es estable es β(s,t):
+#       correlación 0,98-0,99 entre semillas y 0,81-0,86 con la regresión de R (F8_estabilidad_beta_lineal.csv).
+#     - KAN y MLP (λ_w 1e6-1e7): las w_k contrastan temporadas del régimen bimodal: la 1.ª temporada
+#       de lluvias (mar-may) frente a la 2.ª (oct-nov) (neuronas 3 y 6), la temporada seca de
+#       mitad de año (jun-ago) frente a la de fin de año (neurona 8), comienzo de año frente a
+#       julio-agosto (neurona 5). Es decir, miran la FORMA del año del satélite, no solo su total.
+#   Cabeza lineal frente a regresión (F8_beta_red_vs_regresion.png): la β(s,t) de la red tiene la
+#     misma estructura que la de R (correlación 0,81) pero más suave en s.
+#   Activaciones de la KAN (F8_kan_activaciones.png, F8_kan_aristas.csv):
+#     - Las cuatro aristas más importantes (z6, z1, z4 → oculta 3; z6 → oculta 1) son de SATURACIÓN:
+#       tanh con R² 0,992-0,997 (F8_ajuste_simbolico.csv; z6→3 queda mejor como cuadrática). Cuando el
+#       satélite marca mucha lluvia en esa ventana, la corrección deja de crecer: es la forma de un
+#       sesgo que aumenta con la intensidad (el satélite sobrestima más en los meses más lluviosos).
+#     - La entrada más no lineal es la ALTITUD (1 − R² de una recta: 0,72 en la mediana de sus
+#       aristas; el resto entre 0,14 y 0,36). Su efecto no es monótono: cambia de sentido hacia la
+#       media (≈ 1 400 m) y crece fuerte por encima de +2 DE (≈ 2 500 m). Es coherente con la
+#       orografía andina, donde la lluvia no aumenta sin fin con la altura (hay un máximo a altitudes
+#       medias en las vertientes). La cabeza lineal casi no usa la altitud (importancia 0,04 de 0,56
+#       máx.): ese efecto solo aparece cuando se permite la no linealidad.
+#     - El ONI entra casi monótono y suave (crece y satura): más ONI (Niño) → la corrección cambia
+#       en un sentido estable; coherente con que la ventaja de KAN/MLP sea mayor en años Niño (sección 7).
+#   Peores casos (F8_peores_casos.png/.csv): las seis curvas con más error son estaciones que
+#   registran muy poca lluvia (500-830 mm al año) donde el satélite marca 1 000-2 400 mm: el fondo
+#   seco del valle del Cauca (Guacarí, La Despensa, Aují, 990-1 555 m) y dos estaciones de la cuenca
+#   del Dagua (Loboguerrero, Puerto Nuevo; 700-990 m), una zona más seca que la vertiente Pacífica
+#   que la rodea. El píxel de 5 km promedia laderas más lluviosas y ninguna cabeza puede bajar tanto
+#   desde la curva del satélite: el límite es de representatividad del píxel, no del modelo. Varias
+#   de esas curvas caen a 0 al final de diciembre (borde de la base con días faltantes).

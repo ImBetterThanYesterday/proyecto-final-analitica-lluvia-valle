@@ -625,6 +625,18 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Resultado:** el mismo de D-52 (prueba: L² 0,440 / 0,434 / 0,420), ahora con IC y por fase ENSO (`F7_metricas_por_fase_ENSO.csv`): en años Niño (1997, 2002) KAN y MLP son las mejores; en años Niña (1999-2000) la lineal es la mejor y las no lineales sobrestiman (+14 % KAN, +7 % MLP). La no linealidad depende de la fase ENSO.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
+### D-55 · Interpretación de la red (rúbrica 4.5) en R ✅
+- **Qué se hizo** (sección 8 de `lluvia_valle_funcional.R`; Python solo exporta pesos de la cabeza lineal, activaciones de la primera capa de la KAN en el rango p1–p99 de entrenamiento y los modelos guardados en `salidas_python/modelos/`):
+  - w_k(s) de las tres cabezas con su ventana del año (|w_k| ≥ 0,5): `F8_pesos_w_k.png`, `F8_ventanas_w_k.csv`.
+  - β(s,t) de la red lineal frente a la regresión de R y su estabilidad entre semillas: `F8_beta_red_vs_regresion.png`, `F8_estabilidad_beta_lineal.csv`.
+  - Importancia de cada entrada en la cabeza lineal (norma del efecto en la curva) y en la KAN (Σ DE de φ): `F8_importancia_entradas.csv`.
+  - Activaciones de la KAN y su no linealidad (1 − R² de una recta): `F8_kan_activaciones.png`, `F8_kan_aristas.csv`.
+  - Ajuste simbólico de las 4 activaciones más importantes (lineal, cuadrática, exponencial, tanh, cúbica, seno; la más simple con R² ≥ 0,99): `F8_ajuste_simbolico.csv`.
+  - Los seis peores casos de prueba con sus curvas: `F8_peores_casos.png/.csv`.
+- **Por qué así:** la importancia de cada neurona por separado no es estable entre semillas (con cabeza lineal las w_k se pueden rotar sin cambiar la predicción); por eso se interpreta la β(s,t) completa (estable: correlación 0,98–0,99 entre semillas) y, en la KAN, las aristas con sus formas.
+- **Lectura:** la cabeza lineal usa w_k casi rectas; KAN y MLP usan w_k que contrastan las temporadas del régimen bimodal. Las activaciones importantes de la KAN son de saturación (tanh, R² 0,992–0,997): la corrección deja de crecer cuando el satélite marca mucha lluvia. La entrada más no lineal es la altitud (efecto no monótono, coherente con la orografía andina); la cabeza lineal casi no la usa. El ONI entra casi monótono. Los peores casos son estaciones secas (500–830 mm/año) del fondo del valle del Cauca y de la cuenca del Dagua donde el satélite marca 1 000–2 400 mm: es un límite de representatividad del píxel.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.

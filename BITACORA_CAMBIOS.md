@@ -66,9 +66,13 @@ El enunciado exige usar solo métodos vistos en clase. Nuestra regresión se com
 
 El apartado de la red solo permite PyTorch y pykan. `lluvia_valle_red.py` ya no usa `scipy` ni `matplotlib`: entrena, verifica y exporta las predicciones (`salidas_python/predicciones_coef_raiz.csv`) y los pesos del codificador. La sección 7 nueva de `lluvia_valle_funcional.R` calcula las métricas, los IC, Wilcoxon y la tabla por fase ENSO con las mismas funciones de la regresión. Hallazgo: en años Niño (1997, 2002) KAN y MLP son mejores; en años Niña (1999-2000) la lineal es la mejor y las no lineales sobrestiman. Las tablas viejas de Python con métricas (`P1_regresion_R_reproducida`, `P5_ablacion_media_DE_semillas`, `P5_comparaciones_pareadas_prueba`, `P5_metricas_por_curva`) se reemplazan por las `F7_` de R.
 
+### 7. Interpretación de la red (4.5) — sección 8 del funcional (D-55)
+
+Python exporta además los pesos de la cabeza lineal, las activaciones de la primera capa de la KAN y los modelos (`salidas_python/modelos/`); los resultados no cambian (mismas predicciones, byte a byte). La sección 8 de R grafica las w_k, compara la β(s,t) de la red con la de la regresión, mide la importancia y la no linealidad de cada entrada, hace el ajuste simbólico y muestra los peores casos. Lo principal: KAN y MLP miran contrastes entre temporadas; la corrección satura (tanh) cuando el satélite marca mucha lluvia; la altitud es la entrada más no lineal; los peores casos son estaciones secas (fondo del valle del Cauca y cuenca del Dagua) que el píxel no representa.
+
 ### Qué sigue
 
-1. 4.5: graficar las w_k(t) y las activaciones de la KAN, ajuste simbólico y peores casos.
+1. ~~4.5~~ — hecho (D-55).
 2. ~~4.4 por fase ENSO~~ — hecho (D-54).
 3. Decisiones abiertas: P-16 (ONI anual), P-19 (1930–1979) y confirmar con el profesor el CSV de estaciones reservadas.
 4. Unir los dos R en uno para la entrega; informe PDF; anexo de IA con los prompts.
@@ -79,5 +83,5 @@ El apartado de la red solo permite PyTorch y pykan. `lluvia_valle_red.py` ya no 
 Rscript lluvia_valle_datos.R        # ~5 min, 27 pruebas (necesita datos_curso/)
 Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc); deja para_python/
 python lluvia_valle_red.py          # ~15 min, 13 pruebas (pip install torch numpy pandas)
-Rscript lluvia_valle_funcional.R    # otra vez: la sección 7 evalúa la red (5 pruebas más)
+Rscript lluvia_valle_funcional.R    # otra vez: secciones 7 (evaluación, 5 pruebas más) y 8 (interpretación)
 ```

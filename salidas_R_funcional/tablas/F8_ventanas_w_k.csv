@@ -1,0 +1,73 @@
+cabeza,semilla,neurona,dia_max_abs,signo_en_max,ventana,dias_en_ventana,fecha_max
+lineal,2026,1,1,1,01-Jan a 31-Dec,365,01-Jan
+lineal,2026,2,1,-1,01-Jan a 19-Apr; 04-Nov a 31-Dec,167,01-Jan
+lineal,2026,3,1,1,01-Jan a 16-Apr,106,01-Jan
+lineal,2026,4,365,1,19-Mar a 31-Dec,288,31-Dec
+lineal,2026,5,365,-1,01-Jan a 31-Dec,365,31-Dec
+lineal,2026,6,365,1,01-Jan a 02-May; 04-Oct a 31-Dec,211,31-Dec
+lineal,2026,7,365,1,01-Jan a 27-Mar; 30-Oct a 31-Dec,149,31-Dec
+lineal,2026,8,365,-1,29-May a 31-Dec,217,31-Dec
+lineal,2027,1,365,1,22-Feb a 31-Dec,313,31-Dec
+lineal,2027,2,365,-1,01-Jan a 17-Apr; 09-Oct a 31-Dec,191,31-Dec
+lineal,2027,3,365,1,01-Jan a 10-Mar; 02-Nov a 31-Dec,129,31-Dec
+lineal,2027,4,365,-1,01-Jan a 03-May; 20-Oct a 31-Dec,196,31-Dec
+lineal,2027,5,365,-1,01-Jan a 31-Dec,365,31-Dec
+lineal,2027,6,1,-1,01-Jan a 18-Apr,108,01-Jan
+lineal,2027,7,1,-1,01-Jan a 31-Dec,365,01-Jan
+lineal,2027,8,1,1,01-Jan a 31-Dec,365,01-Jan
+lineal,2028,1,365,1,01-Jan a 09-Mar; 31-Oct a 31-Dec,130,31-Dec
+lineal,2028,2,1,1,01-Jan a 19-Jun,170,01-Jan
+lineal,2028,3,28,1,01-Jan a 26-Nov,330,28-Jan
+lineal,2028,4,365,1,01-Jan a 02-May; 08-Oct a 31-Dec,207,31-Dec
+lineal,2028,5,365,1,01-Jan a 31-Dec,365,31-Dec
+lineal,2028,6,365,1,09-May a 31-Dec,237,31-Dec
+lineal,2028,7,365,1,01-Jan a 15-Apr; 26-Oct a 31-Dec,172,31-Dec
+lineal,2028,8,365,1,09-Sep a 31-Dec,114,31-Dec
+kan,2026,1,365,1,09-Apr a 12-Jul; 27-Nov a 31-Dec,130,31-Dec
+kan,2026,2,229,1,10-Mar a 17-Apr; 16-Jun a 22-Oct,168,17-Aug
+kan,2026,3,100,1,27-Jan a 15-Jul; 19-Sep a 28-Oct,210,10-Apr
+kan,2026,4,271,1,11-Mar a 29-Dec,294,28-Sep
+kan,2026,5,188,-1,01-Jan a 09-Apr; 20-May a 11-Sep,214,07-Jul
+kan,2026,6,289,1,31-Mar a 11-Jun; 05-Sep a 27-Nov,157,16-Oct
+kan,2026,7,74,-1,24-Jan a 30-May,127,15-Mar
+kan,2026,8,145,-1,05-Mar a 22-Aug; 04-Nov a 31-Dec,229,25-May
+kan,2027,1,92,-1,20-Feb a 14-May; 01-Oct a 31-Dec,176,02-Apr
+kan,2027,2,280,-1,04-Apr a 06-Jul; 29-Aug a 24-Nov,182,07-Oct
+kan,2027,3,66,-1,25-Jan a 13-Jul; 28-Aug a 11-Nov,246,07-Mar
+kan,2027,4,33,1,01-Jan a 16-Apr,106,02-Feb
+kan,2027,5,104,-1,30-Jan a 02-Jul; 03-Nov a 31-Dec,213,14-Apr
+kan,2027,6,202,-1,07-Apr a 02-Oct; 31-Dec a 31-Dec,180,21-Jul
+kan,2027,7,145,-1,22-Feb a 05-Nov,257,25-May
+kan,2027,8,320,1,01-Jan a 11-Apr; 28-May a 31-Dec,319,16-Nov
+kan,2028,1,203,-1,08-Jun a 29-Aug,83,22-Jul
+kan,2028,2,365,1,02-Oct a 31-Dec,91,31-Dec
+kan,2028,3,165,1,18-Jan a 19-Oct,275,14-Jun
+kan,2028,4,1,1,01-Jan a 04-Feb; 09-Apr a 16-May,73,01-Jan
+kan,2028,5,172,1,01-Jan a 21-Jan; 20-Apr a 17-Sep,172,21-Jun
+kan,2028,6,365,1,17-Oct a 31-Dec,76,31-Dec
+kan,2028,7,1,1,01-Jan a 25-Jan; 30-Apr a 10-Jun,67,01-Jan
+kan,2028,8,282,1,07-Feb a 08-Jun; 11-Aug a 07-Dec,241,09-Oct
+mlp,2026,1,117,1,31-Jan a 30-Jun; 13-Dec a 31-Dec,170,27-Apr
+mlp,2026,2,224,1,08-Feb a 10-May; 24-Jun a 08-Oct,199,12-Aug
+mlp,2026,3,86,1,25-Jan a 10-Jun; 27-Aug a 14-Nov,217,27-Mar
+mlp,2026,4,178,1,01-Mar a 25-Nov,270,27-Jun
+mlp,2026,5,213,-1,11-Apr a 15-Nov,219,01-Aug
+mlp,2026,6,321,1,19-Mar a 17-Jul; 17-Sep a 31-Dec,227,17-Nov
+mlp,2026,7,365,1,31-Oct a 31-Dec,62,31-Dec
+mlp,2026,8,365,1,01-Jan a 02-Jan; 10-Apr a 20-Sep; 01-Dec a 31-Dec,197,31-Dec
+mlp,2027,1,206,1,04-May a 04-Nov,185,25-Jul
+mlp,2027,2,276,-1,23-Feb a 06-Jun; 11-Aug a 15-Dec,231,03-Oct
+mlp,2027,3,95,-1,03-Feb a 20-Jun,138,05-Apr
+mlp,2027,4,1,1,01-Jan a 07-Mar,66,01-Jan
+mlp,2027,5,93,-1,28-Jan a 18-Dec,325,03-Apr
+mlp,2027,6,207,-1,23-Mar a 18-Oct; 23-Dec a 31-Dec,219,26-Jul
+mlp,2027,7,256,-1,01-Mar a 20-Nov,265,13-Sep
+mlp,2027,8,192,1,01-Jan a 07-Jan; 04-Apr a 26-Dec,274,11-Jul
+mlp,2028,1,165,-1,31-Mar a 05-Aug; 20-Oct a 27-Dec,197,14-Jun
+mlp,2028,2,156,1,22-Jan a 31-Dec,344,05-Jun
+mlp,2028,3,173,1,26-Jan a 12-Nov,291,22-Jun
+mlp,2028,4,1,1,01-Jan a 18-Feb; 25-May a 26-Jul; 17-Dec a 31-Dec,127,01-Jan
+mlp,2028,5,184,1,12-Mar a 01-Nov,235,03-Jul
+mlp,2028,6,262,-1,18-Feb a 08-Jun; 01-Aug a 02-Nov; 15-Dec a 31-Dec,222,19-Sep
+mlp,2028,7,265,1,16-Feb a 04-Apr; 07-Jul a 29-Nov,194,22-Sep
+mlp,2028,8,277,1,13-Feb a 14-May; 02-Aug a 07-Dec,219,04-Oct

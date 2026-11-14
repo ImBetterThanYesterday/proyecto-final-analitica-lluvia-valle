@@ -15,10 +15,10 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 | `lluvia_valle_funcional.R` | **Toda la parte funcional, en un solo archivo:** emparejamiento, construcción de las curvas, EDA funcional, comparación de fuentes y regresión funcional. Solo lee `salidas_R_datos/datos_preparados.rds`. Los cambios de lo funcional se hacen aquí (D-48). |
 | `salidas_R_funcional/` | Lo que produce ese archivo: `tablas/` y `graficos/` (prefijos `F1_` a `F6_`), `para_python/` (insumos de la red) y `resultados_funcional.rds`. |
 | `lluvia_valle_red.py` | **La red neuronal funcional y la ablación de la cabeza (lineal, KAN y MLP), en Python.** Solo lee `salidas_R_funcional/para_python/`. Solo entrena y exporta las predicciones; R las evalúa en la sección 7 del funcional (D-54). Orden: `Rscript lluvia_valle_funcional.R` → `python lluvia_valle_red.py` (~15 min; `torch`, `numpy`, `pandas`) → `Rscript lluvia_valle_funcional.R`. |
-| `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
+| `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `cabeza_lineal_pesos.csv`, `kan_activaciones_capa1.csv`, `kan_importancia_aristas.csv`, `modelos/`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
 | `BITACORA_CAMBIOS.md` | **Qué cambió en cada sesión y por qué**, para ponerse al día. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-54), con su justificación, y preguntas para el profesor. |
+| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-55), con su justificación, y preguntas para el profesor. |
 | `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
 | `datos_web/` | Fuentes externas: estaciones del Valle, límites del DANE, CNE, ONI, CHIRPS y NASA POWER. |
 | `datos_curso/` | **Datos crudos del curso. No se suben a git:** hay que copiarlos aquí (ver abajo). |
@@ -73,7 +73,7 @@ El detalle criterio por criterio está en `CONTROL_RUBRICA.md`.
 | 8b. Comparación funcional estación vs. satélite (d(t), correlación cruzada, covarianzas, altitud, ENSO) | ✅ sección 4, con todos los años |
 | 9. Regresión funcional función a función | ✅ sección 5: FPCA M = 6, λ por validación; en prueba baja el error L² relativo de 0,51 a 0,44 frente al satélite (D-48) |
 | 9b. Red funcional (cabezas lineal, KAN y MLP) y ablación | ✅ `lluvia_valle_red.py` (D-52): la lineal reproduce a R; en prueba L² relativo 0,440 / 0,434 / 0,420 (lineal / KAN / MLP) frente a 0,513 del satélite |
-| 9c. Interpretación (w_k, activaciones KAN, ajuste simbólico) y ENSO por cabeza | ⏳ |
+| 9c. Evaluación por fase ENSO e interpretación (w_k, activaciones KAN, ajuste simbólico, peores casos) | ✅ secciones 7 y 8 del funcional (D-54, D-55) |
 | Años 1985, 1988 y 2000 del satélite | ✅ entran al modelo, por indicación del profesor y verificado con datos (D-47, D-48) |
 | 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |
 

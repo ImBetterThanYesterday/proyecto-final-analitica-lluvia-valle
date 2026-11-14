@@ -528,6 +528,36 @@ for (tipo, s), red in redes.items():
         cod.append({"cabeza": tipo, "semilla": s, "neurona": k + 1, **{f"a{j + 1}": A[k, j] for j in range(K_S)}, "media_z": m_z[k], "de_z": s_z[k]})
 pd.DataFrame(cod).to_csv(SALIDA / "pesos_codificador.csv", index=False, float_format="%.12g")
 
+# Para la interpretación (rúbrica 4.5, se grafica en R): pesos de la cabeza lineal, activaciones de la
+# primera capa de la KAN evaluadas en el rango de los datos de entrenamiento, y los modelos guardados.
+NOMBRES_ENTRADA = [f"z{k + 1}" for k in range(N_NEURONAS)] + ["altitud", "ONI"]
+(SALIDA / "modelos").mkdir(exist_ok=True)
+lin_w, kan_act, kan_imp = [], [], []
+for (tipo, s), red in redes.items():
+    torch.save(red.state_dict(), SALIDA / "modelos" / f"{tipo}_{s}.pt")
+    with torch.no_grad():
+        u = red.entrada_cabeza(X_t[I_ENT], E_t[I_ENT])            # entradas de la cabeza en entrenamiento
+        if tipo == "lineal":
+            W, b = red.cabeza.weight.numpy(), red.cabeza.bias.numpy()
+            for m in range(M):
+                lin_w += [{"semilla": s, "componente": m + 1, "entrada": NOMBRES_ENTRADA[i], "peso": W[m, i]} for i in range(len(NOMBRES_ENTRADA))]
+                lin_w.append({"semilla": s, "componente": m + 1, "entrada": "sesgo", "peso": b[m]})
+        if tipo == "kan":
+            capa = red.cabeza.capas[0]
+            phi_ent = capa.activaciones(u).numpy()                     # (n, entradas, ocultas)
+            un = u.numpy()
+            for i, nom in enumerate(NOMBRES_ENTRADA):
+                q = np.quantile(un[:, i], [.01, .99])
+                xg = torch.linspace(float(q[0]), float(q[1]), 101).unsqueeze(1).repeat(1, len(NOMBRES_ENTRADA))
+                phi_g = capa.activaciones(xg).numpy()[:, i, :]
+                for j in range(phi_g.shape[1]):
+                    kan_act += [{"semilla": s, "entrada": nom, "oculta": j + 1, "x": float(xg[g, i]), "phi": phi_g[g, j]} for g in range(101)]
+                    kan_imp.append({"semilla": s, "entrada": nom, "oculta": j + 1, "de_phi_entrenamiento": phi_ent[:, i, j].std(),
+                                    "x_p01": q[0], "x_p99": q[1]})
+pd.DataFrame(lin_w).to_csv(SALIDA / "cabeza_lineal_pesos.csv", index=False, float_format="%.12g")
+pd.DataFrame(kan_act).to_csv(SALIDA / "kan_activaciones_capa1.csv", index=False, float_format="%.10g")
+pd.DataFrame(kan_imp).to_csv(SALIDA / "kan_importancia_aristas.csv", index=False, float_format="%.10g")
+
 # No negatividad: cuánto hay que recortar en 0 la reconstrucción en √P (rúbrica 4.2)
 recorte = []
 for part, mascara in (("validación", val), ("prueba", pru)):

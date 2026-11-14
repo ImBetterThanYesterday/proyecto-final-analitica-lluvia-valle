@@ -4,7 +4,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 
 **Estados:** ✅ hecho y verificado en el código · 🟡 hecho, falta redactarlo o un detalle · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/05_red_funcional.py` con los insumos viejos (248 estaciones) y hay que reconectarlo a `salidas_R_funcional/para_python/`.
 
-**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53). Python solo entrena; R evalúa (D-54).
+**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53). Python solo entrena; R evalúa (D-54) e interpreta (D-55).
 
 ## Resumen
 
@@ -17,11 +17,11 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 4.2 Red neuronal funcional | 10 % | ✅ | `lluvia_valle_red.py`, secciones 1–3 (D-52); falta redactar la demostración en el informe |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ✅ | Secciones 4–5 (D-52); falta redactar las conclusiones |
 | 4.4 Evaluación | 8 % | ✅ | Sección 7 del funcional (D-54), con fase ENSO. Solo falta confirmar con el profesor el CSV de estaciones reservadas |
-| 4.5 Interpretación climatológica | 10 % | ♻️ | Todo en Python, más la lectura climatológica |
+| 4.5 Interpretación climatológica | 10 % | ✅ | Sección 8 del funcional (D-55); falta redactarla en el informe |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
 | 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno; el Python |
 
-Lo que pesa más y falta: 4.5 (10 %) y el informe (10 %).
+Lo que falta: el informe (10 %), el anexo de IA, unir los dos R y las decisiones abiertas (P-16, P-19, estaciones reservadas).
 
 ## Auditoría: ¿se hace como en clase? (14-nov)
 
@@ -140,16 +140,16 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
 | Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
 
-## 4.5 Interpretación climatológica (10 %) — Python
+## 4.5 Interpretación climatológica (10 %) — sección 8 de `lluvia_valle_funcional.R` (D-55)
 
-| Lo que pide la rúbrica | Estado | Base |
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
 |---|---|---|
-| w_k(t) graficadas con la ventana del año de cada neurona | ♻️ | Figuras de `05_red_funcional.py` |
-| Activaciones de la primera capa de la KAN en el rango de los datos | ♻️ | |
-| Contraste con los coeficientes de la cabeza lineal | ♻️ | En R ya está β(s,t) (`F5_beta_superficie.png`) |
-| Ajuste simbólico de al menos una activación con su R² | ♻️ | `ajuste_simbolico` |
-| Lectura climatológica coherente con las gráficas | ⬜ | |
-| Peores casos con sus curvas | ⬜ | |
+| w_k(t) graficadas con la ventana del año de cada neurona | ✅ | `F8_pesos_w_k.png`, `F8_ventanas_w_k.csv` |
+| Activaciones de la primera capa de la KAN en el rango de los datos | ✅ | `F8_kan_activaciones.png` (rango p1–p99 de entrenamiento), `F8_kan_aristas.csv` |
+| Contraste con los coeficientes de la cabeza lineal | ✅ | `F8_importancia_entradas.csv`, `F8_beta_red_vs_regresion.png`, `F8_estabilidad_beta_lineal.csv` |
+| Ajuste simbólico de al menos una activación con su R² | ✅ | `F8_ajuste_simbolico.csv`: 4 aristas; tanh con R² 0,992–0,997 |
+| Lectura climatológica coherente con las gráficas | 🟡 | Escrita en "Qué dicen los datos" de la sección 8 (régimen bimodal, orografía, ENSO); falta pasarla al informe |
+| Peores casos con sus curvas | ✅ | `F8_peores_casos.png/.csv` |
 
 ## 5. Informe en PDF (10 %)
 
@@ -173,7 +173,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 
 ## Plan para cerrar (en orden)
 
-1. ~~Red funcional y ablación en Python~~ — hecho (D-52). Sigue: **4.5** (w_k(t), activaciones de la KAN, ajuste simbólico, peores casos) y **4.4 por fase ENSO** para las tres cabezas.
+1. ~~Red funcional y ablación en Python~~ — hecho (D-52). 4.5 y 4.4 por fase ENSO también hechos (D-54, D-55).
 2. **Decisiones abiertas:** P-19 (recomendado no usar 1930–1979), P-16 (ONI anual) y confirmar el CSV de estaciones reservadas.
 3. **Texto respaldado:** tasa mm/día vs. acumulada; ventanas de temporada en el Pacífico; interpretación del sesgo.
 4. **Unir los dos R** en un solo archivo de entrega.
