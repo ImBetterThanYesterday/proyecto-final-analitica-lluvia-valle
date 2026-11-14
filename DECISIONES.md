@@ -282,7 +282,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-1 | Los 21 códigos sin ubicar y los 35 con departamento inferido se descartan y no se usan. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-2 | Resuelta (D-35): no se usa SRTM para la altitud | ✅ |
 | P-3 | No: se usa solo el satélite entregado, sin rellenar ni reemplazar con otra fuente (CHIRPS u otra). Los problemas del satélite se tratan con el modelo. Respuesta del profesor (13-nov-2026) | ✅ |
-| P-4 | ¿Qué hacer con 1985, 1988 y 2000 del satélite? D-37/D-42 (Jacobo) los dejan fuera del modelo; D-44 (Gus) muestra que no son archivos dañados sino años Niña que el satélite subestima, y que el profesor pidió no rellenar con otras fuentes. **Hay que acordarlo en equipo** | 🟡 |
+| P-4 | Resuelta: **no se eliminan años** del satélite (1985, 1988, 2000 incluidos); el modelo debe aprender a corregir también esos casos. Revisa D-37 y D-42 (ver D-47). Respuesta del profesor (13-nov-2026) | ✅ |
 | P-5 | Resuelta por la fe de erratas (D-28) | ✅ |
 | P-6 | Aplicar el filtro del Valle y el recorte del satélite y rehacer las fases | Resuelta (D-34, D-37 a D-40) |
 | P-7 | Conectar las coordenadas verificadas al cruce estación–píxel | Resuelta (D-38; confirmado en D-44) |
@@ -290,8 +290,14 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-9 | Resuelta por el enunciado: el ONI del año y la altitud se agregan al vector z de la red | ✅ |
 | P-10 | Ya no hay estaciones reservadas: cambió el plan del curso. La prueba es solo 2001–2003 con nuestras estaciones. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-11 | Ya no aplica: el CSV de predicciones era para las estaciones reservadas | ✅ |
-| P-12 | ¿Se aceptan las fuentes externas: ONI de la NOAA, altitudes y coordenadas del CNE del IDEAM, polígono del DANE? | ⬜ |
+| P-12 | Resuelta: se aceptan las fuentes externas oficiales, principalmente del IDEAM. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-13 | Confirmado: solo estaciones dentro del Valle del Cauca. Respuesta del profesor (13-nov-2026) | ✅ |
+| P-14 | Resuelta: se acepta la altitud de Univalle (996 m) tomada del IDEAM, porque los datos del curso también vienen del IDEAM (D-46). Respuesta del profesor (13-nov-2026) | ✅ |
+| P-15 | Respondida: hay que armar la serie y dibujarla para entender el tope. Hecho en la sección 12 (`12_serie_tope_200.png`): el tope afecta 33 de 238 224 péntadas comparables y solo 3 estaciones del Pacífico (D-47). Respuesta del profesor (13-nov-2026) | ✅ |
+| P-16 | ¿Qué "ONI del año" espera: la media de los 12 trimestres del año (lo que se usa) o un trimestre concreto (p. ej. DEF)? | ⬜ |
+| P-17 | Resuelta: está bien quitar el 29 de febrero. Respuesta del profesor (13-nov-2026) | ✅ |
+| P-18 | Resuelta: el píxel que contiene la estación está bien; como el píxel es más grande que el punto, no hay que reescalar ni promediar. Respuesta del profesor (13-nov-2026) | ✅ |
+| P-19 | ¿Se pueden usar los registros de 1930–1979 solo para estimar el FPCA, aunque la fe de erratas fije 1981–2003? | ⬜ |
 
 ---
 
@@ -517,6 +523,22 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - Las vecinas son coherentes: Edificio CVC, a 4,8 km, está a 985 m.
   - Prueba automática nueva: todas las estaciones incluidas tienen altitud.
 - **Dónde:** sección 1 de `lluvia_valle_datos.R` (columna `fuente_alt`). El CSV de `datos_web/` no se modifica.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-47 · Respuestas de la asesoría del 13-nov-2026 ✅
+- **No se eliminan años (P-4).** El profesor pidió no quitar 1985, 1988 ni 2000: el modelo tiene que aprender a corregir también los años Niño y Niña. Esto **revisa D-37 y D-42**. En la parte funcional, la constante `ANIOS_SAT_DEFECTUOSOS` debe dejar de excluir pares y quedar solo para un análisis de sensibilidad. La auditoría (`AUDITORIA_FUNCIONAL.md`, G1) ya había mostrado que incluirlos mejora la prueba.
+- **29 de febrero (P-17), píxel de la estación (P-18), Univalle (P-14) y fuentes oficiales del IDEAM (P-12):** aceptados como están.
+- **Tope de 200 mm (P-15).** Se armó la serie péntada a péntada (sección 12, `12_serie_tope_200.png` y `tablas/12_tope_200_por_estacion.csv`):
+  - En los pares estación–píxel, el satélite toca el tope en solo 33 de 238 224 péntadas, en 3 estaciones del Pacífico (Bahía Málaga 17, Yurumanguí 9, San Francisco 7).
+  - La estación pasa de 200 mm en 1 049 péntadas, y en solo el 2 % de ellas el satélite está en el tope.
+  - **Conclusión:** el tope no es la causa principal de que el satélite subestime los aguaceros. El satélite casi nunca llega a esos valores por sí mismo. El tope se documenta y no se corrige.
+- **Base de Fourier o B-splines.** Se revisó el material de clase:
+  - El enunciado exige B-splines en el codificador (X(t) y w_k(t)).
+  - El ejemplo de clase con esta misma lluvia (`Script_AnalisisExploratorio.R`, `X_sat` y `Y_est`) usa B-splines cúbicas.
+  - Fourier se usa en clase (`Script_Regresion_Funcional.R`) para `CanadianWeather`, que son promedios climatológicos de muchos años y, por eso, de verdad periódicos.
+  - Una curva de un solo año no es periódica: el 31 de diciembre de un año no tiene por qué empalmar con el 1 de enero del mismo año.
+  - **Se mantienen las B-splines**, y el efecto de borde se documenta.
+- **Principio para la sustentación:** toda regla debe estar respaldada por resultados en el código ("¿dónde lo verifican?"). Cada regla de D-36 tiene su tabla de evidencia y una prueba automática. La revisión manual de R4 (Loboguerrero 1995) está en la tabla `5b_revision_rachas.csv`.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
 ## Fuentes

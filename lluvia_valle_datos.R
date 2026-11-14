@@ -859,6 +859,30 @@ grafico(ggplot(cmp, aes(mm_est, mm_sat)) + geom_bin2d(bins = 60) + geom_abline(c
                title = "Satélite frente a estación, péntada a péntada", subtitle = "Línea roja: igualdad"),
         "12_satelite_vs_estacion")
 
+# El tope de 200 mm por péntada (P-15; el profesor pidió armar la serie y dibujarla).
+# ¿Qué registra la estación cuando su píxel está en el tope? Si el tope fuera inocuo,
+# la estación también estaría cerca de 200; si recorta, la estación pasaría de 200.
+tope_est <- cmp[, .(pentadas = .N, sat_en_tope = sum(mm_sat == 200), est_sobre_200 = sum(mm_est > 200),
+                    est_mediana_en_tope = if (any(mm_sat == 200)) median(mm_est[mm_sat == 200]) else NA_real_), by = codigo]
+tope_est <- pares[, .(codigo, nombre, vertiente)][tope_est, on = "codigo"][order(-sat_en_tope)]
+tabla(tope_est[sat_en_tope > 0], "12_tope_200_por_estacion")
+print(tope_est[sat_en_tope > 0])
+cat("Péntadas estación-satélite con el satélite en 200:", cmp[mm_sat == 200, .N], "de", nrow(cmp),
+    "| en ellas la estación registra: mediana", cmp[mm_sat == 200, median(mm_est)], "mm, más de 200 en",
+    cmp[mm_sat == 200, round(100 * mean(mm_est > 200))], "% |",
+    "péntadas de estación sobre 200 mm:", cmp[mm_est > 200, .N], "(satélite en el tope en",
+    cmp[mm_est > 200, round(100 * mean(mm_sat == 200))], "% de ellas)\n")
+ej_tope <- tope_est$codigo[1]
+serie_tope <- cmp[codigo == ej_tope][order(anio, pentada)][, t := anio + (dia_centro - 1) / 365]
+grafico(ggplot(melt(serie_tope[, .(t, anio, `Estación` = mm_est, `Satélite (su píxel)` = mm_sat)], id.vars = c("t", "anio")),
+               aes(t, value, colour = variable, group = interaction(variable, anio))) + geom_line(linewidth = .3) +
+          geom_hline(yintercept = 200, linetype = 2) +
+          geom_point(data = serie_tope[mm_sat == 200], aes(t, mm_sat), inherit.aes = FALSE, colour = "red", size = 1) +
+          labs(x = NULL, y = "mm por péntada", colour = NULL,
+               title = paste0("Serie péntada a péntada de ", tope_est$nombre[1], " (", tope_est$vertiente[1], "), 1981–2003"),
+               subtitle = "Línea punteada: tope de 200 mm del satélite; puntos rojos: péntadas en el tope"),
+        "12_serie_tope_200", ancho = 11, alto = 4.5)
+
 # Por estación: correlación y sesgo; ¿de qué dependen?
 por_est_sat <- cmp[, .(pentadas = .N, r = cor(mm_sat, mm_est), sesgo = sum(mm_sat) / sum(mm_est),
                        mm_anual_est = mean(mm_est / dias_reales) * 365, mm_anual_sat = mean(mm_sat / dias_reales) * 365), by = codigo]

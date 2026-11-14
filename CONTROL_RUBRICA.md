@@ -60,7 +60,7 @@ Se actualiza cada vez que se avanza.
 - ✅ Comparación de las covarianzas.
 - ✅ Comparación por altitud, vertiente y fase ENSO.
 - 🟡 Interpretación del sesgo satelital: base en D-44 y en la sección 13; falta redactarla.
-- ⚠️ **Por acordar (P-4):** la comparación principal hoy excluye 1985, 1988 y 2000 (D-37/D-42); D-44 propone no excluirlos.
+- ⚠️ **Por corregir (P-4 resuelta):** el profesor pidió no eliminar años; la comparación principal hoy excluye 1985, 1988 y 2000 (D-37/D-42) y hay que incluirlos (D-47).
 
 ## 4.1 Preprocesamiento y selección de datos (6 %)
 
@@ -138,6 +138,7 @@ Detalle en `DECISIONES.md`, §8.
 
 - ✅ P-8 y P-3: el satélite es CHIRP y se usa solo el entregado.
 - ✅ P-1: los 21 sin ubicar se descartan.
-- P-12: fuentes externas (ONI, CNE, DANE).
 - ✅ P-13: solo el Valle del Cauca.
-- P-4: el año 2000 del satélite (ya no es urgente, D-44).
+- ✅ P-4: no se eliminan años del satélite (D-47); falta aplicarlo en `funcional/`.
+- ✅ P-12, P-14, P-15, P-17 y P-18: fuentes del IDEAM, Univalle, tope de 200 mm (serie graficada), 29 de febrero y píxel de la estación, aceptados en la asesoría (D-47).
+- P-16 (definición del ONI anual) y P-19 (registros 1930–1979): siguen abiertas.
