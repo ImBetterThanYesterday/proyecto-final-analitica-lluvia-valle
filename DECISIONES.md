@@ -617,6 +617,14 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Requisito nuevo:** el script carga `fda` y `fda.usc` (`install.packages("fda.usc")` si falta). Ahora tiene 13 pruebas.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
+### D-54 · Python solo entrena; R evalúa la red con las herramientas de clase ✅ (rúbrica 4.4 y regla del curso)
+- **Problema:** el apartado de la red solo permite PyTorch y pykan, pero `lluvia_valle_red.py` usaba además `scipy` (Wilcoxon) y `matplotlib`, y calculaba las métricas con fórmulas propias, distintas de las de R.
+- **Cambio:** Python entrena, verifica la construcción y exporta `salidas_python/predicciones_coef_raiz.csv` (coeficientes √P de las 3 299 curvas por cabeza y semilla) y `pesos_codificador.csv` (para graficar w_k en 4.5). Solo usa `torch`, `numpy` y `pandas` (estas dos para leer y escribir). La **sección 7 de `lluvia_valle_funcional.R`** evalúa con las mismas funciones de 5.5: métricas, IC bootstrap por estación, `wilcox.test` y la tabla por fase ENSO.
+- **Orden de ejecución:** `lluvia_valle_funcional.R` → `python lluvia_valle_red.py` → `lluvia_valle_funcional.R` otra vez (si no están las predicciones, la sección 7 avisa y no falla).
+- **Controles** (5 de 5, `F7_pruebas_red.csv`): las filas son los mismos pares; la regresión de R rehecha en Python coincide con la de R a 1e-10; tres semillas y 3 299 curvas por cabeza.
+- **Resultado:** el mismo de D-52 (prueba: L² 0,440 / 0,434 / 0,420), ahora con IC y por fase ENSO (`F7_metricas_por_fase_ENSO.csv`): en años Niño (1997, 2002) KAN y MLP son las mejores; en años Niña (1999-2000) la lineal es la mejor y las no lineales sobrestiman (+14 % KAN, +7 % MLP). La no linealidad depende de la fase ENSO.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.

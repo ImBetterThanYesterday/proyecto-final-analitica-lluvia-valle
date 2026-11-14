@@ -14,11 +14,11 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 | `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
 | `lluvia_valle_funcional.R` | **Toda la parte funcional, en un solo archivo:** emparejamiento, construcción de las curvas, EDA funcional, comparación de fuentes y regresión funcional. Solo lee `salidas_R_datos/datos_preparados.rds`. Los cambios de lo funcional se hacen aquí (D-48). |
 | `salidas_R_funcional/` | Lo que produce ese archivo: `tablas/` y `graficos/` (prefijos `F1_` a `F6_`), `para_python/` (insumos de la red) y `resultados_funcional.rds`. |
-| `lluvia_valle_red.py` | **La red neuronal funcional y la ablación de la cabeza (lineal, KAN y MLP), en Python.** Solo lee `salidas_R_funcional/para_python/`. Se corre con `python lluvia_valle_red.py` (~15 min; necesita `torch`, `numpy`, `pandas`, `scipy` y `matplotlib`). |
-| `salidas_python/` | Lo que produce: `tablas/` (prefijos `P1_` a `P6_`) y `versiones.txt`. |
+| `lluvia_valle_red.py` | **La red neuronal funcional y la ablación de la cabeza (lineal, KAN y MLP), en Python.** Solo lee `salidas_R_funcional/para_python/`. Solo entrena y exporta las predicciones; R las evalúa en la sección 7 del funcional (D-54). Orden: `Rscript lluvia_valle_funcional.R` → `python lluvia_valle_red.py` (~15 min; `torch`, `numpy`, `pandas`) → `Rscript lluvia_valle_funcional.R`. |
+| `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
 | `BITACORA_CAMBIOS.md` | **Qué cambió en cada sesión y por qué**, para ponerse al día. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-53), con su justificación, y preguntas para el profesor. |
+| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-54), con su justificación, y preguntas para el profesor. |
 | `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
 | `datos_web/` | Fuentes externas: estaciones del Valle, límites del DANE, CNE, ONI, CHIRPS y NASA POWER. |
 | `datos_curso/` | **Datos crudos del curso. No se suben a git:** hay que copiarlos aquí (ver abajo). |

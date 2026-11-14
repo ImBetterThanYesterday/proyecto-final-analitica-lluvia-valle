@@ -4,7 +4,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 
 **Estados:** ✅ hecho y verificado en el código · 🟡 hecho, falta redactarlo o un detalle · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/05_red_funcional.py` con los insumos viejos (248 estaciones) y hay que reconectarlo a `salidas_R_funcional/para_python/`.
 
-**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53).
+**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53). Python solo entrena; R evalúa (D-54).
 
 ## Resumen
 
@@ -16,12 +16,12 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 4.1 Preprocesamiento y selección | 6 % | 🟡 | Decidir P-19 (registros 1930–1979) |
 | 4.2 Red neuronal funcional | 10 % | ✅ | `lluvia_valle_red.py`, secciones 1–3 (D-52); falta redactar la demostración en el informe |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ✅ | Secciones 4–5 (D-52); falta redactar las conclusiones |
-| 4.4 Evaluación | 8 % | 🟡 | Métricas, bootstrap y Wilcoxon de las tres cabezas hechos; falta separarlas por fase ENSO. Confirmar el CSV de estaciones reservadas |
+| 4.4 Evaluación | 8 % | ✅ | Sección 7 del funcional (D-54), con fase ENSO. Solo falta confirmar con el profesor el CSV de estaciones reservadas |
 | 4.5 Interpretación climatológica | 10 % | ♻️ | Todo en Python, más la lectura climatológica |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
 | 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno; el Python |
 
-Lo que pesa más y falta: 4.5 (10 %), el informe (10 %) y cerrar 4.4 por fase ENSO.
+Lo que pesa más y falta: 4.5 (10 %) y el informe (10 %).
 
 ## Auditoría: ¿se hace como en clase? (14-nov)
 
@@ -38,12 +38,12 @@ Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se p
 | Inferencia por grupos (ENSO, altitud, fuente) | `fda::tperm.fd` (t funcional) y `fdANOVA` | Bandas ± 2EE (lo pide la rúbrica) y tablas por grupo; **sin prueba t ni ANOVA funcional de clase** | 🟡 recomendado |
 | Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
 | Red (codificador, cabezas) | No se vio; el enunciado permite PyTorch y pykan | PyTorch; KAN programada con la fórmula del enunciado y verificada con una función sintética | ✅ |
-| Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` para leer y escribir, **`scipy` (Wilcoxon) y `matplotlib`** | 🟡 riesgo |
-| Métricas, bootstrap, Wilcoxon, ENSO de la red | — | En Python (`scipy`) | 🟡 mejor en R |
+| Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` solo para leer y escribir (D-54) | ✅ |
+| Métricas, bootstrap, Wilcoxon, ENSO de la red | Funciones de R (5.5) y `wilcox.test` | Sección 7 de `lluvia_valle_funcional.R`, con las predicciones exportadas por Python (D-54) | ✅ |
 
 ### Qué cambiar para quedar 100 % dentro de la regla
 
-1. **Python solo entrena y exporta.** `lluvia_valle_red.py` deja las predicciones (coeficientes √P por curva y cabeza/semilla), las w_k(t) y las activaciones de la KAN en CSV. Las métricas, el bootstrap, Wilcoxon (`wilcox.test` de R base), la tabla por fase ENSO y las gráficas de 4.5 se hacen en R con las mismas funciones ya verificadas de la sección 5. Así desaparecen `scipy` y `matplotlib`, y las tres cabezas se evalúan exactamente igual que la regresión.
+1. ~~**Python solo entrena y exporta.**~~ Hecho (D-54). `lluvia_valle_red.py` deja las predicciones (coeficientes √P por curva y cabeza/semilla), las w_k(t) y las activaciones de la KAN en CSV. Las métricas, el bootstrap, Wilcoxon (`wilcox.test` de R base), la tabla por fase ENSO y las gráficas de 4.5 se hacen en R con las mismas funciones ya verificadas de la sección 5. Así desaparecen `scipy` y `matplotlib`, y las tres cabezas se evalúan exactamente igual que la regresión.
 2. ~~Contrastar la regresión con la de clase~~ — hecho (sección 5.5b, D-53).
 3. **Verificar FM con `fda.usc::depth.FM`** (instalar `fda.usc`).
 4. **Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`)** para satélite frente a estación y para ENSO y altitud.
@@ -122,11 +122,11 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 |---|---|---|
 | Las tres cabezas con el mismo codificador y el mismo decodificador | ✅ | Prueba automática (sección 6) |
 | Parámetros de KAN y MLP con `sum(p.numel())`, diferencia ≤ 10 % | ✅ | `P4_parametros_cabezas.csv`: 640 vs 635 (0,8 %) |
-| Tres semillas, media y DE | ✅ | `P5_entrenamiento_por_semilla.csv`, `P5_ablacion_media_DE_semillas.csv` |
+| Tres semillas, media y DE | ✅ | `P5_entrenamiento_por_semilla.csv` (Python), `F7_ablacion_media_DE_semillas.csv` (R) |
 | Mismo presupuesto: épocas, parada temprana, pruebas de hiperparámetros | ✅ | `P5_presupuesto.csv`, `P5_seleccion_lambda_por_cabeza.csv`: 5 pruebas de λ_w por cabeza |
 | KAN verificada con una función sintética (RMSE ≤ 1e-2) | ✅ | `P4_kan_sintetica.csv`: RMSE 2e-3 |
-| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `P5_comparaciones_pareadas_prueba.csv` (columna `gana`) |
-| Conclusiones sobre la no linealidad del sesgo y el costo de la interpretabilidad | 🟡 | Escritas en el bloque "Qué dicen los datos" de la sección 5; falta pasarlas al informe |
+| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `F7_comparaciones_pareadas_prueba.csv` (columna `gana`) |
+| Conclusiones sobre la no linealidad del sesgo y el costo de la interpretabilidad | 🟡 | Escritas en "Qué dicen los datos" de la sección 7 del funcional: la no linealidad depende de la fase ENSO (ayuda en Niño, estorba en Niña); falta pasarlas al informe |
 | Tope: hiperparámetros con prueba → máximo 1 | ✅ no aplica | λ_w y épocas solo con validación |
 
 ## 4.4 Evaluación (8 %)
@@ -135,10 +135,10 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 |---|---|---|
 | Partición 1981–1995 / 1996–2000 / 2001–2003 sin fuga | ✅ | Datos preparados; prueba de no fuga del funcional (prueba 9) |
 | Estaciones reservadas | 🟡 | El profesor dijo que ya no van (P-10), pero la fe de erratas aún pide el CSV `station_id, year, day, value_mm`. **Confirmar con él** |
-| Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `P5_ablacion_media_DE_semillas.csv` (tres cabezas) |
+| Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `F7_ablacion_media_DE_semillas.csv` (tres cabezas) |
 | Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420 |
-| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `P5_comparaciones_pareadas_prueba.csv` |
-| Por fase ENSO con el ONI y su fuente | ✅ regresión / ⬜ cabezas | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
+| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
+| Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
 
 ## 4.5 Interpretación climatológica (10 %) — Python
 

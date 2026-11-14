@@ -13,7 +13,10 @@ Reconstruye la curva anual de una estación a partir de la curva anual del saté
 Todo en escala √P (como la regresión de R); la curva final en mm es max(ŷ, 0)².
 
 Entrada única: salidas_R_funcional/para_python/ (sale de lluvia_valle_funcional.R).
-Salidas:       salidas_python/tablas y salidas_python/graficos, con prefijos P1_ a P6_ por sección.
+Salidas:       salidas_python/tablas (prefijos P1_ a P6_ por sección) y salidas_python/predicciones_coef_raiz.csv.
+División del trabajo con R (regla del curso: solo herramientas de clase): este archivo ENTRENA la red y
+verifica su construcción; las métricas, el bootstrap, Wilcoxon y la tabla por fase ENSO de las tres
+cabezas se calculan en R (sección 7 de lluvia_valle_funcional.R) con las mismas funciones que la regresión.
 Uso, desde la raíz del repositorio:  python lluvia_valle_red.py
 Librerías del apartado (enunciado): PyTorch. La KAN se programa aquí con la forma del enunciado,
 φ(x) = w_b·SiLU(x) + w_s·Σ_i c_i B_i(x), para poder graficar y verificar cada arista.
@@ -35,14 +38,9 @@ import sys
 import time
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
-from scipy import stats
 
 torch.set_default_dtype(torch.float64)
 torch.set_num_threads(4)
@@ -50,8 +48,8 @@ torch.set_num_threads(4)
 RAIZ = Path(__file__).resolve().parent
 ENTRADA = RAIZ / "salidas_R_funcional" / "para_python"
 SALIDA = RAIZ / "salidas_python"
-TAB, GRA = SALIDA / "tablas", SALIDA / "graficos"
-for d in (TAB, GRA):
+TAB = SALIDA / "tablas"
+for d in (TAB,):
     d.mkdir(parents=True, exist_ok=True)
 
 DIAS = np.arange(1, 366, dtype=float)
@@ -64,7 +62,6 @@ EPOCAS_MAX, PACIENCIA, LR = 5000, 1000, 1e-2
 # λ_w: la rugosidad relativa ∫w''²/∫w² de una w_k cualquiera es del orden de 1e-6 (día^-4), así que la
 # rejilla va de 1e6 (penalización leve) a 1e9 (w_k casi lineales). Misma rejilla para las tres cabezas.
 LAMBDAS_W = (0.0, 1e6, 1e7, 1e8, 1e9)
-N_BOOT = 2000
 PRUEBAS = {}
 
 
@@ -171,58 +168,23 @@ oni = pares.ONI_anual.to_numpy()
 prueba("Altitud estandarizada con media y DE de entrenamiento",
        abs(pares.altitud[ent].mean() - spec["altitud_media"]) < 1e-4 and abs(pares.altitud[ent].std() - spec["altitud_de"]) < 1e-4)
 
-# Curvas observadas y del satélite sin corregir en mm/día (la referencia de toda comparación)
-Y_mm = np.clip(C_e_mm @ Phi_e.T, 0, None)
-X_mm = np.clip(C_s_mm @ Phi_s.T, 0, None)
-
-
 def a_mm(C_raiz):
+    """De coeficientes √P a mm/día: max(·, 0)². Devuelve también dónde hubo que recortar."""
     y = C_raiz @ Phi_e.T
     return np.clip(y, 0, None) ** 2, y < 0
 
 
-def pico(Y, v):
-    return np.argmax(Y[:, v[0] - 1:v[1]], axis=1) + v[0]
-
-
-def metricas(P, i, modelo, semilla=0):
-    """Las cuatro métricas de la rúbrica 4.4 por curva, con las mismas fórmulas que la sección 5.5 de R."""
-    Yo = Y_mm[i]
-    r = np.array([np.corrcoef(a, b)[0, 1] for a, b in zip(P, Yo)])
-    kge = 1 - np.sqrt((r - 1) ** 2 + (P.std(1, ddof=1) / Yo.std(1, ddof=1) - 1) ** 2 + (P.mean(1) / Yo.mean(1) - 1) ** 2)
-    return pd.DataFrame({"modelo": modelo, "semilla": semilla, "codigo": pares.codigo[i].to_numpy(), "anio": pares.anio[i].to_numpy(),
-                         "fase": pares.fase[i].to_numpy(), "particion": pares.particion[i].to_numpy(),
-                         "l2_rel": np.sqrt(((P - Yo) ** 2).sum(1) / (Yo ** 2).sum(1)), "rmse": np.sqrt(((P - Yo) ** 2).mean(1)),
-                         "kge": kge, "sesgo_pct": 100 * (P.mean(1) - Yo.mean(1)) / Yo.mean(1),
-                         "err_pico_1": np.abs(pico(P, (60, 200)) - pico(Yo, (60, 200))),
-                         "err_pico_2": np.abs(pico(P, (230, 350)) - pico(Yo, (230, 350)))})
-
-
-METRICAS = ["l2_rel", "rmse", "kge", "sesgo_pct", "err_pico_1", "err_pico_2"]
-
-# La regresión de R, evaluada en Python con sus coeficientes: debe dar las mismas métricas de prueba
+# La regresión de R reconstruida en Python con sus coeficientes. Sus predicciones se exportan y la
+# sección 7 del funcional (R) comprueba que son las mismas que calcula R.
 Zx = C_s_raiz @ W_s                                       # ∫ φ_j(s) X(s) ds, j = 1..K_s
 diseno_R = np.column_stack([np.ones(len(pares)), Zx, alt, oni])
-C_R = mu + (diseno_R @ B_R) @ D.T                         # coeficientes √P reconstruidos por la regresión de R
+C_R = mu + (diseno_R @ B_R) @ D.T                         # coeficientes √P de la regresión de R
 i_pru = np.flatnonzero(pru)
-m_R = metricas(a_mm(C_R[i_pru])[0], i_pru, "Regresión funcional (R)")
-m_sat = metricas(X_mm[i_pru], i_pru, "Satélite sin corregir")
-ref_R = pd.read_csv(ENTRADA.parent / "tablas" / "F5_metricas_prueba.csv")
-punto = lambda s: float(str(s).split(" ")[0])
-comp_R = pd.DataFrame({
-    "metrica": ["L2_relativo", "KGE", "sesgo_anual_pct"],
-    "R": [punto(ref_R.loc[ref_R.modelo == "Regresión funcional", c].iloc[0]) for c in ("L2_relativo", "KGE", "sesgo_anual_pct")],
-    "Python": [m_R.groupby("codigo")[c].mean().mean() for c in ("l2_rel", "kge", "sesgo_pct")]})
-print(tabla(comp_R, "P1_regresion_R_reproducida"))
-comp_R["decimales_R"] = [2, 2, 1]
-comp_R["coincide"] = [abs(r - round(p, d)) < 1e-9 for r, p, d in zip(comp_R.R, comp_R.Python, comp_R.decimales_R)]
-prueba("Python reproduce las métricas de prueba de la regresión de R", comp_R.coincide.all(), "a los decimales que publica R")
 
 # QUÉ DICEN LOS DATOS (sección 1)
 #   Python lee exactamente lo que dejó R: la W por cuadratura coincide (< 1e-10), el FPCA
-#   recalculado solo con entrenamiento coincide con el de R salvo el signo de cada ψ, y con
-#   los coeficientes de R la regresión da las mismas métricas de prueba. Desde aquí, todo
-#   lo que cambie en la red es efecto de la cabeza, no de los datos.
+#   recalculado solo con entrenamiento coincide con el de R salvo el signo de cada ψ. Desde
+#   aquí, todo lo que cambie en la red es efecto de la cabeza, no de los datos.
 
 # =============================================================================================
 # 2. LA RED FUNCIONAL
@@ -544,48 +506,38 @@ tabla(pd.DataFrame([{"optimizador": "Adam", "lr": LR, "lote": "completo (entrena
                      "parada_temprana": f"L² de validación, paciencia {PACIENCIA}", "pruebas_hiperparametros_por_cabeza": len(LAMBDAS_W),
                      "rejilla_lambda_w": str(LAMBDAS_W), "semillas": str(SEMILLAS)}]), "P5_presupuesto")
 
-# Métricas en validación y prueba, contra el satélite sin corregir y la regresión de R
-filas, recorte = [], []
+# Exportación para R: los coeficientes √P predichos para las 3 299 curvas por cada cabeza y semilla,
+# más la regresión de R reconstruida aquí (control cruzado). R calcula todas las métricas.
+todas = np.arange(len(pares))
+pred = [pd.DataFrame(C_R, columns=[f"c{j + 1}" for j in range(K_E)]).assign(modelo="regresión R (en Python)", semilla=0, fila=todas + 1)]
+for (tipo, s), red in redes.items():
+    pred.append(pd.DataFrame(predecir(red, todas), columns=[f"c{j + 1}" for j in range(K_E)]).assign(modelo=tipo, semilla=s, fila=todas + 1))
+pred = pd.concat(pred, ignore_index=True)
+pred = pred.merge(pares[["codigo", "anio", "particion"]].assign(fila=todas + 1), on="fila")
+pred[["fila", "codigo", "anio", "particion", "modelo", "semilla"] + [f"c{j + 1}" for j in range(K_E)]].to_csv(
+    SALIDA / "predicciones_coef_raiz.csv", index=False, float_format="%.12g")
+print(f"Predicciones exportadas: {len(pred)} filas ({pred.modelo.nunique()} modelos) en salidas_python/predicciones_coef_raiz.csv")
+
+# Pesos del codificador (para graficar w_k(s) en R, rúbrica 4.5) y escala de z en entrenamiento
+cod = []
+for (tipo, s), red in redes.items():
+    with torch.no_grad():
+        m_z, s_z = (v.numpy() for v in red.escala_z())
+    A = red.A.detach().numpy()
+    for k in range(N_NEURONAS):
+        cod.append({"cabeza": tipo, "semilla": s, "neurona": k + 1, **{f"a{j + 1}": A[k, j] for j in range(K_S)}, "media_z": m_z[k], "de_z": s_z[k]})
+pd.DataFrame(cod).to_csv(SALIDA / "pesos_codificador.csv", index=False, float_format="%.12g")
+
+# No negatividad: cuánto hay que recortar en 0 la reconstrucción en √P (rúbrica 4.2)
+recorte = []
 for part, mascara in (("validación", val), ("prueba", pru)):
     idx = np.flatnonzero(mascara)
-    filas += [metricas(X_mm[idx], idx, "satélite sin corregir"), metricas(a_mm(C_R[idx])[0], idx, "regresión (R)")]
     for (tipo, s), red in redes.items():
-        P, neg = a_mm(predecir(red, idx))
-        filas.append(metricas(P, idx, tipo, s))
+        _, neg = a_mm(predecir(red, idx))
         recorte.append({"particion": part, "cabeza": tipo, "semilla": s, "pct_valores_recortados": 100 * neg.mean(),
                         "pct_curvas_con_recorte": 100 * neg.any(1).mean()})
-met = pd.concat(filas, ignore_index=True)
-met.to_csv(TAB / "P5_metricas_por_curva.csv", index=False)
-tabla(pd.DataFrame(recorte).groupby(["particion", "cabeza"])[["pct_valores_recortados", "pct_curvas_con_recorte"]].mean().round(3).reset_index(),
-      "P5_recorte_no_negatividad")
-
-# Media ± DE entre semillas (cada semilla: media de las medias por estación, como en R)
-por_sem = met.groupby(["particion", "modelo", "semilla", "codigo"])[METRICAS].mean().groupby(["particion", "modelo", "semilla"]).mean()
-res = por_sem.groupby(["particion", "modelo"]).agg(["mean", "std"]).round(3)
-res.columns = [f"{a}_{b}" for a, b in res.columns]
-print(tabla(res.reset_index(), "P5_ablacion_media_DE_semillas").to_string())
-
-# Comparaciones pareadas por estación en PRUEBA (métricas promediadas sobre las 3 semillas):
-# IC 95 % bootstrap de la diferencia (2 000 remuestreos de estaciones) y Wilcoxon pareado.
-rng = np.random.default_rng(20261114)
-pe = met[met.particion == "prueba"].groupby(["modelo", "codigo"])[METRICAS].mean()
-comp = []
-for a, b in (("kan", "lineal"), ("mlp", "lineal"), ("kan", "mlp"), ("lineal", "satélite sin corregir"),
-             ("kan", "satélite sin corregir"), ("mlp", "satélite sin corregir"), ("lineal", "regresión (R)")):
-    for mt in METRICAS:
-        va, vb = pe.loc[a, mt], pe.loc[b, mt]
-        if mt == "sesgo_pct":
-            va, vb = va.abs(), vb.abs()
-        d = (va - vb).to_numpy()
-        boot = d[rng.integers(0, len(d), (N_BOOT, len(d)))].mean(1)
-        q = np.quantile(boot, [.025, .975])
-        mejor_es_mayor = mt == "kge"
-        comp.append({"comparacion": f"{a} − {b}", "metrica": "|sesgo_pct|" if mt == "sesgo_pct" else mt, "diferencia": d.mean(),
-                     "ic_inf": q[0], "ic_sup": q[1], "ic_excluye_0": q[0] > 0 or q[1] < 0,
-                     "gana": (a if (d.mean() > 0) == mejor_es_mayor else b) if (q[0] > 0 or q[1] < 0) else "ninguna (IC con 0)",
-                     "p_wilcoxon": stats.wilcoxon(va, vb).pvalue if np.any(d != 0) else 1.0})
-comp = tabla(pd.DataFrame(comp).round(4), "P5_comparaciones_pareadas_prueba")
-print(comp.to_string())
+print(tabla(pd.DataFrame(recorte).groupby(["particion", "cabeza"])[["pct_valores_recortados", "pct_curvas_con_recorte"]].mean().round(3).reset_index(),
+            "P5_recorte_no_negatividad"))
 
 # QUÉ DICEN LOS DATOS (sección 5)
 #   Elección de λ_w (validación, semilla 2026): lineal 1e8, KAN 1e6, MLP 1e7.
@@ -593,23 +545,9 @@ print(comp.to_string())
 #   no lineales se detienen hacia la época 100 (la lineal hacia la 2 000-3 800) y quedan con una
 #   brecha entrenamiento-validación de 15 puntos: aprenden rápido y sobreajustan rápido. La KAN
 #   es menos estable entre semillas (una de las tres queda en 124).
-#   Prueba (2001-2003, 370 curvas, 137 estaciones; media ± DE de 3 semillas):
-#     L² relativo  satélite 0,513 | lineal 0,440 ± 0,002 | KAN 0,434 ± 0,002 | MLP 0,420 ± 0,010
-#     KGE          satélite 0,382 | lineal 0,454 ± 0,005 | KAN 0,471 ± 0,009 | MLP 0,485 ± 0,020
-#     sesgo anual  satélite +26 % | lineal +9,8 %        | KAN +9,5 %        | MLP +10,2 %
-#   Las tres cabezas mejoran al satélite sin corregir en L², KGE, sesgo y pico 1 (IC 95 % de la
-#   diferencia lejos del 0). Entre cabezas (IC 95 % bootstrap pareado por estación):
-#     - MLP supera a la lineal en L² relativo (−0,020 [−0,040, −0,000]) y en KGE (+0,030
-#       [0,005, 0,056]), por poco; la lineal ubica mejor el pico 1 (0,7 días).
-#     - KAN no se distingue de la lineal en L² ni en KGE; reduce el |sesgo| 4 puntos y ubica
-#       peor el pico 2 (2 días).
-#     - KAN frente a MLP: no se distinguen en L², KGE, sesgo ni pico 1; el MLP ubica mejor el
-#       pico 2 (1,8 días).
-#   Lectura: hay algo de no linealidad en el sesgo (el MLP gana), pero es pequeña y se ve sobre
-#   todo en validación, que tiene un Niño fuerte (1997) y dos Niñas (1999, 2000); la prueba
-#   solo tiene años neutros y un Niño moderado (2002). El
-#   costo de la interpretabilidad (KAN frente a MLP) no es significativo en prueba. Ninguna
-#   predicción queda negativa en la escala √P (0 % de valores recortados).
+#   Ninguna predicción queda negativa en la escala √P en prueba (0 % recortado).
+#   Las métricas en mm (L², KGE, sesgo, picos), sus IC y la comparación entre cabezas están en
+#   la sección 7 de lluvia_valle_funcional.R, que lee salidas_python/predicciones_coef_raiz.csv.
 
 # =============================================================================================
 # 6. PRUEBAS Y CIERRE
@@ -619,10 +557,10 @@ prueba("Las tres cabezas tienen el mismo codificador y el mismo decodificador",
        len({(r.A.shape, tuple(r.D.shape)) for r in redes.values()}) == 1 and all(torch.equal(r.D, redes[("lineal", SEMILLAS[0])].D) for r in redes.values()))
 prueba("Tres semillas por cabeza", final.groupby("cabeza").semilla.nunique().eq(3).all())
 prueba("Reconstrucción en mm no negativa", all((a_mm(predecir(r, i_pru))[0] >= 0).all() for r in redes.values()))
-prueba("Bootstrap con al menos 1 000 remuestreos", N_BOOT >= 1000)
+prueba("Predicciones exportadas para las 3 299 curvas de cada modelo", pred.groupby(["modelo", "semilla"]).size().eq(len(pares)).all())
 pd.DataFrame([{"prueba": k, "pasa": v[0], "detalle": v[1]} for k, v in PRUEBAS.items()]).to_csv(TAB / "P6_pruebas.csv", index=False)
 (SALIDA / "versiones.txt").write_text(f"python {sys.version.split()[0]} | {platform.platform()}\nnumpy {np.__version__} | pandas {pd.__version__} | "
-                                      f"torch {torch.__version__} | scipy {__import__('scipy').__version__}\n", encoding="utf-8")
+                                      f"torch {torch.__version__}\n", encoding="utf-8")
 n_ok = sum(v[0] for v in PRUEBAS.values())
 print(f"\nPruebas: {n_ok} de {len(PRUEBAS)} pasan")
 assert n_ok == len(PRUEBAS), "Alguna prueba falla"

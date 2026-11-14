@@ -1598,3 +1598,108 @@ stopifnot(res_pruebas$pasa)
 saveRDS(list(construccion = o, eda = eda, comparacion = comparacion, regresion = regresion, pruebas = res_pruebas),
         file.path(SALIDA_F, "resultados_funcional.rds"), compress = "xz")
 writeLines(capture.output(sessionInfo()), file.path(SALIDA_F, "sessionInfo.txt"))
+
+titulo("7. Evaluación de la red funcional (predicciones de lluvia_valle_red.py)")
+# Python entrena la red (PyTorch, lo único permitido en ese apartado) y exporta los coeficientes
+# √P predichos para las 3 299 curvas por cada cabeza y semilla. Aquí se evalúan con las MISMAS
+# funciones de la sección 5.5 (métricas, bootstrap por estación, wilcox.test), así la regresión y
+# las tres cabezas se miden exactamente igual y todo el análisis usa herramientas de clase.
+# Orden de ejecución: este archivo → python lluvia_valle_red.py → este archivo otra vez.
+ARCH_PRED <- file.path("salidas_python", "predicciones_coef_raiz.csv")
+if (!file.exists(ARCH_PRED)) {
+  cat("No está", ARCH_PRED, "→ corra python lluvia_valle_red.py y vuelva a correr este archivo para evaluar la red.\n")
+} else {
+  set.seed(20261114)
+  pr <- fread(ARCH_PRED, colClasses = list(character = "codigo"))
+  cols_c <- paste0("c", seq_len(K_e))
+  # Control 1: las filas son los mismos pares, en el mismo orden
+  ok_filas <- pr[, all(codigo == pares$codigo[fila] & anio == pares$anio[fila] & particion == pares$particion[fila])]
+  # Control 2: la regresión de R reconstruida en Python da las mismas curvas que aquí
+  rp <- pr[modelo == "regresión R (en Python)"][order(fila)]
+  dif_py_R <- max(abs(as.matrix(rp[, ..cols_c]) %*% t(Phi_e) - predecir_raiz(B, rp$fila)))
+  cat(sprintf("Regresión de R hecha en Python vs en R: diferencia máxima %.1e (√(mm/día))\n", dif_py_R))
+
+  cabezas <- pr[modelo %in% c("lineal", "kan", "mlp")]
+  i_vp <- which(val | pru)
+  mc_red <- rbindlist(c(
+    list(metricas_de(X_mm[i_vp, ], i_vp, "satélite sin corregir")[, semilla := 0L],
+         metricas_de(a_mm(predecir_raiz(B, i_vp)), i_vp, "regresión (R)")[, semilla := 0L]),
+    lapply(split(cabezas[fila %in% i_vp], by = c("modelo", "semilla")), function(d) {
+      d <- d[order(fila)]
+      metricas_de(a_mm(as.matrix(d[, ..cols_c]) %*% t(Phi_e)), d$fila, d$modelo[1])[, semilla := d$semilla[1]]
+    })))
+  tabla_f(mc_red, "F7_metricas_red_por_curva")
+  vars_m <- c("l2_rel", "rmse", "kge", "sesgo_pct", "err_pico_1", "err_pico_2")
+
+  # (a) Media ± DE entre semillas: en cada semilla, media de las medias por estación (como en 5.5)
+  por_semilla <- mc_red[, lapply(.SD, mean), by = .(particion, modelo, semilla, codigo), .SDcols = vars_m][
+    , lapply(.SD, mean), by = .(particion, modelo, semilla), .SDcols = vars_m]
+  ablacion <- por_semilla[, c(.(semillas = .N), unlist(lapply(.SD, function(v) list(media = round(mean(v), 3), DE = round(sd(v), 3))), recursive = FALSE)),
+                          by = .(particion, modelo), .SDcols = vars_m]
+  print(tabla_f(ablacion, "F7_ablacion_media_DE_semillas"))
+
+  # (b) IC 95 % bootstrap por estación, con las métricas de cada curva promediadas en las 3 semillas
+  mc_prom <- mc_red[, lapply(.SD, mean), by = .(particion, modelo, codigo, anio, fase), .SDcols = vars_m]
+  ic_red <- mc_prom[, resumir(.SD), by = .(particion, modelo)]
+  print(tabla_f(ic_red, "F7_ablacion_IC_bootstrap"))
+
+  # (c) Comparaciones pareadas por estación en PRUEBA: una cabeza supera a otra solo si el IC 95 %
+  #     de la diferencia excluye el 0 (rúbrica 4.3); Wilcoxon pareado como apoyo.
+  pe_red <- mc_prom[particion == "prueba", lapply(.SD, mean), by = .(modelo, codigo), .SDcols = vars_m]
+  comparar_red <- function(a, b, v) {
+    x <- pe_red[modelo == a][order(codigo)][[v]]; y <- pe_red[modelo == b][order(codigo)][[v]]
+    if (v == "sesgo_pct") { x <- abs(x); y <- abs(y) }
+    d <- x - y; q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
+    excl <- q[1] > 0 | q[2] < 0; mejor_a <- if (v == "kge") mean(d) > 0 else mean(d) < 0
+    data.table(comparacion = paste(a, "−", b), metrica = if (v == "sesgo_pct") "|sesgo_pct|" else v,
+               media_a = round(mean(x), 3), media_b = round(mean(y), 3), diferencia = round(mean(d), 4), ic_inf = round(q[1], 4), ic_sup = round(q[2], 4),
+               p_wilcoxon = signif(wilcox.test(x, y, paired = TRUE, exact = FALSE)$p.value, 2), ic_excluye_0 = excl,
+               gana = if (!excl) "ninguna (IC con 0)" else if (mejor_a) a else b)
+  }
+  pares_red <- list(c("kan", "lineal"), c("mlp", "lineal"), c("kan", "mlp"), c("lineal", "regresión (R)"),
+                    c("lineal", "satélite sin corregir"), c("kan", "satélite sin corregir"), c("mlp", "satélite sin corregir"))
+  comp_red <- rbindlist(lapply(pares_red, function(p) rbindlist(lapply(vars_m, function(v) comparar_red(p[1], p[2], v)))))
+  print(tabla_f(comp_red, "F7_comparaciones_pareadas_prueba"))
+
+  # (d) Por fase ENSO (rúbrica 4.4). La prueba no tiene años Niña: la validación se agrega como
+  #     ORIENTATIVA (con ella se eligieron λ_w y la parada temprana, no los pesos).
+  fase_red <- mc_prom[, resumir(.SD), by = .(particion, fase, modelo)]
+  fase_red[, anios := sapply(seq_len(.N), function(k) paste(sort(unique(pares[particion == fase_red$particion[k] & fase == fase_red$fase[k], anio])), collapse = " "))]
+  setcolorder(fase_red, c("particion", "fase", "anios")); setorder(fase_red, -particion, fase, modelo)
+  print(tabla_f(fase_red, "F7_metricas_por_fase_ENSO"))
+
+  pruebas_red <- list(
+    "Las predicciones de Python corresponden a los mismos pares y en el mismo orden" = ok_filas,
+    "La regresión de R hecha en Python coincide con la de R (< 1e-8)" = dif_py_R < 1e-8,
+    "Tres semillas por cabeza y las 3 299 curvas en cada una" = cabezas[, .N, by = .(modelo, semilla)][, uniqueN(semilla) == 3 && all(N == nrow(pares)), by = modelo][, all(V1)],
+    "Métricas finitas en todas las curvas de validación y prueba" = mc_red[, all(is.finite(l2_rel) & is.finite(kge))],
+    "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000)
+  res_red <- data.table(prueba = names(pruebas_red), pasa = unlist(pruebas_red))
+  print(tabla_f(res_red, "F7_pruebas_red"))
+  cat(sprintf("\nPruebas de la evaluación de la red: %d de %d pasan\n", sum(res_red$pasa), nrow(res_red)))
+  stopifnot(res_red$pasa)
+}
+
+# QUÉ DICEN LOS DATOS (sección 7)
+#   Control cruzado: la regresión de R rehecha en Python da las mismas curvas (1e-10, la
+#   precisión del CSV), así que Python y R miden lo mismo.
+#   Prueba 2001-2003 (370 curvas, 137 estaciones; media ± DE de 3 semillas):
+#     L² relativo  satélite 0,513 | regresión R 0,437 | lineal 0,440 ± 0,002 | KAN 0,434 ± 0,002 | MLP 0,420 ± 0,010
+#     KGE          satélite 0,382 | regresión R 0,467 | lineal 0,454 ± 0,005 | KAN 0,471 ± 0,009 | MLP 0,485 ± 0,020
+#   Las tres cabezas mejoran al satélite sin corregir en L², KGE, |sesgo| y pico 1 (IC que
+#   excluyen el 0). Entre cabezas (F7_comparaciones_pareadas_prueba.csv):
+#     - MLP supera a la lineal en L² (−0,020 [−0,040, −0,002]) y KGE (+0,030 [0,003, 0,058]),
+#       por poco; la lineal ubica mejor el pico 1 (0,7 días).
+#     - KAN no se distingue de la lineal en L² ni KGE; baja el |sesgo| 4 puntos y ubica peor el
+#       pico 2 (2 días).
+#     - KAN frente a MLP: iguales en L², KGE, sesgo y pico 1; el MLP mejor en RMSE y pico 2.
+#     - La red lineal no se distingue de la regresión de R en L², pero queda algo peor en KGE
+#       (−0,013) y sesgo: la penalización de la red (rugosidad de w_k) no es la de R (de β).
+#   Por fase ENSO (F7_metricas_por_fase_ENSO.csv) aparece lo más interesante:
+#     - Años Niño (1997 en validación, 2002 en prueba): KAN y MLP son las mejores (L² 0,38
+#       frente a 0,40 de la lineal en 2002; 0,45 frente a 0,47 en 1997).
+#     - Años Niña (1999-2000, validación): la lineal es la mejor (0,39) y las no lineales
+#       empeoran (KAN 0,45, MLP 0,42) y sobrestiman la lluvia (+14 % y +7 %).
+#   La no linealidad del sesgo existe, pero depende de la fase: lo que KAN y MLP aprenden ayuda
+#   en años secos (Niño) y estorba en años húmedos (Niña). Con solo 3 años de prueba y ninguno
+#   Niña, la ventaja global de las no lineales es pequeña y no se puede generalizar.

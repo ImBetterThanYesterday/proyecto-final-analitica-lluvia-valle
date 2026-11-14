@@ -62,10 +62,14 @@ Archivo nuevo en Python. Lee solo `salidas_R_funcional/para_python/`.
 
 El enunciado exige usar solo métodos vistos en clase. Nuestra regresión se comparó con las dos versiones de clase del modelo integral: la del taller de repaso (ejercicio 10, paso 3: puntajes de Y sobre puntajes de X) y `fda.usc::fregre.basis.fr()` (ejercicio 9). Con parámetros elegidos en validación, en prueba las tres dan el mismo L² relativo (0,43–0,44) y la nuestra tiene mejor KGE (+0,03, IC que excluye el 0). Se mantiene la nuestra. El script ahora usa `fda` y `fda.usc` y tiene **13 pruebas**. En la Mac hay que instalar `fda.usc` una vez: `Rscript -e 'install.packages("fda.usc", repos = "https://cloud.r-project.org")'`.
 
+### 6. Python solo entrena; R evalúa — sección 7 del funcional (D-54)
+
+El apartado de la red solo permite PyTorch y pykan. `lluvia_valle_red.py` ya no usa `scipy` ni `matplotlib`: entrena, verifica y exporta las predicciones (`salidas_python/predicciones_coef_raiz.csv`) y los pesos del codificador. La sección 7 nueva de `lluvia_valle_funcional.R` calcula las métricas, los IC, Wilcoxon y la tabla por fase ENSO con las mismas funciones de la regresión. Hallazgo: en años Niño (1997, 2002) KAN y MLP son mejores; en años Niña (1999-2000) la lineal es la mejor y las no lineales sobrestiman. Las tablas viejas de Python con métricas (`P1_regresion_R_reproducida`, `P5_ablacion_media_DE_semillas`, `P5_comparaciones_pareadas_prueba`, `P5_metricas_por_curva`) se reemplazan por las `F7_` de R.
+
 ### Qué sigue
 
 1. 4.5: graficar las w_k(t) y las activaciones de la KAN, ajuste simbólico y peores casos.
-2. 4.4: métricas de las tres cabezas por fase ENSO.
+2. ~~4.4 por fase ENSO~~ — hecho (D-54).
 3. Decisiones abiertas: P-16 (ONI anual), P-19 (1930–1979) y confirmar con el profesor el CSV de estaciones reservadas.
 4. Unir los dos R en uno para la entrega; informe PDF; anexo de IA con los prompts.
 
@@ -73,6 +77,7 @@ El enunciado exige usar solo métodos vistos en clase. Nuestra regresión se com
 
 ```bash
 Rscript lluvia_valle_datos.R        # ~5 min, 27 pruebas (necesita datos_curso/)
-Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc)
-python lluvia_valle_red.py          # ~15 min, 14 pruebas (pip install torch numpy pandas scipy matplotlib)
+Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc); deja para_python/
+python lluvia_valle_red.py          # ~15 min, 13 pruebas (pip install torch numpy pandas)
+Rscript lluvia_valle_funcional.R    # otra vez: la sección 7 evalúa la red (5 pruebas más)
 ```
