@@ -14,7 +14,7 @@ Todo lo funcional quedó en un solo archivo, `lluvia_valle_funcional.R`, que ree
 | I1. EDA que mezcla dos climas | ✅ Por vertiente y con anomalías | Sección 3.2; `F3_covarianza_por_vertiente_y_anomalias.csv` |
 | I2. K distinto por fuente | ✅ Verificado: no cambia las conclusiones | Sección 4.2; `F4_sensibilidad_mismo_K.csv` |
 | I3. Orden de la raíz y el suavizado | ✅ Verificado: suavizar en mm conserva el acumulado anual | Sección 5.1; `F5_orden_raiz_y_suavizado.csv` |
-| I4. K = 8 rígido | 🟡 Sensibilidad hecha; la elección entre K = 8 y 12/16 sigue abierta (P-20) | Sección 2; `F2_sensibilidad_K_estaciones.csv` |
+| I4. K = 8 rígido | ✅ Se mantiene K = 8: la ventaja de K mayor en los picos depende de la referencia (D-51) | Sección 2; `F2_K_picos_vs_referencia.csv`, `F2_K_que_gana_por_referencia.csv` |
 | I5. Bordes | ✅ Documentado | Bloque "Qué dicen los datos" de la sección 2 |
 | I6. Dos definiciones de vertiente | ✅ Una sola: estación más cercana | Sección 1; `F1_regla_vertiente_pixeles.csv` |
 | Ventanas fijas de temporada | 🟡 Se mantienen; se reporta el % de picos en el borde de la ventana | `F2_sensibilidad_K_estaciones.csv` |

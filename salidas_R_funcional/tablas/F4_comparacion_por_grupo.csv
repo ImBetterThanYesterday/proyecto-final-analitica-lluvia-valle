@@ -2,8 +2,8 @@ agrupacion,grupo,pares,estaciones,P_estacion,P_satelite,sesgo_mm_anio,cociente,d
 vertiente,Cauca (interandina),2889,150,1551,1669,-109,1.08,263,0.38
 vertiente,Pacífico,410,26,3105,2827,475,0.91,46,0.73
 banda_altitud,< 1200 m,1346,74,1815,1870,47,1.03,77,0.74
-banda_altitud,> 2000 m,313,17,1607,1485,124,0.92,95,0.25
 banda_altitud,1200-2000 m,1640,85,1712,1828,-112,1.07,234,0.32
+banda_altitud,> 2000 m,313,17,1607,1485,124,0.92,95,0.25
 fase,Neutro,1547,176,1734,1849,-77,1.07,201,0.64
 fase,Niña,903,176,1926,1731,253,0.9,273,0.61
 fase,Niño,849,176,1570,1833,-232,1.17,269,0.61

@@ -36,6 +36,7 @@ Se actualiza cada vez que se avanza.
 
 - ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (sección 2 de `lluvia_valle_funcional.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
 - ✅ K por ECM, VC y VCG para cada fuente, solo con entrenamiento: K = 8 (estaciones) y K = 11 (satélite) (D-39).
+- ✅ K = 8 se sostiene frente a la fecha de los picos: el K que la mejora depende de la referencia elegida (D-51, `F2_K_que_gana_por_referencia.csv`).
 - ✅ S idempotente y tr(S) = K (error < 1e-14).
 - ✅ Covarianza residual y bandas punto a punto.
 - ✅ Ambas fuentes en el dominio 1–365 (péntadas en su día central).

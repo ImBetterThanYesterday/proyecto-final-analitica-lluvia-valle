@@ -374,6 +374,38 @@ sens_K <- rbindlist(lapply(sort(unique(c(K_EST, 12L, 16L, 24L))), function(K) {
 }))
 print(tabla_f(sens_K, "F2_sensibilidad_K_estaciones"))
 
+# P-20 (D-51): con K mayor la fecha del pico se acerca a una media móvil de 31 días de
+# los datos crudos (prueba del stash "fase A"). ¿Es una mejora real o depende de la
+# referencia? Se mide contra tres medias móviles (15, 31 y 61 días; ninguna depende de K)
+# en las curvas completas de la vertiente interandina (régimen bimodal), solo de
+# entrenamiento. Si el K que gana cambia con la referencia, la fecha del pico no sirve
+# para elegir K y se queda el de la VCG.
+vert_curva <- est$vertiente[match(id_est$codigo, est$codigo)]
+cur_p20 <- ent_est & vert_curva != "Pacífico"
+media_movil <- function(M, w) t(apply(M, 1, function(y) as.numeric(stats::filter(y, rep(1 / w, w), sides = 2))))
+pico_en <- function(M, v) apply(M[, v, drop = FALSE], 1, which.max) + min(v) - 1
+V1 <- 60:200; V2 <- 230:350; ANCHOS_REF <- c(15L, 31L, 61L)
+picos_ref <- lapply(ANCHOS_REF, function(w) { R <- media_movil(Y[cur_p20, ], w); cbind(pico_en(R, V1), pico_en(R, V2)) })
+K_picos <- rbindlist(lapply(c(K_EST, 10L, 12L, 16L, 20L), function(k) {
+  P <- base_bspline(T_DIA, k); Fk <- Y[cur_p20, ] %*% t(P %*% solve(crossprod(P), t(P)))
+  pk <- cbind(pico_en(Fk, V1), pico_en(Fk, V2))
+  rbindlist(lapply(seq_along(ANCHOS_REF), function(r) data.table(K = k, referencia_dias = ANCHOS_REF[r],
+    err_pico_1 = median(abs(pk[, 1] - picos_ref[[r]][, 1])), err_pico_2 = median(abs(pk[, 2] - picos_ref[[r]][, 2])))))
+}))
+K_picos[, err_total := err_pico_1 + err_pico_2]
+gana_por_ref <- K_picos[, .(K_que_gana = K[which.min(err_total)]), by = referencia_dias]
+dif_refs <- rbindlist(lapply(list(c(1, 2), c(1, 3), c(2, 3)), function(ab) data.table(
+  referencias = paste(ANCHOS_REF[ab], collapse = " vs "),
+  pico_1 = median(abs(picos_ref[[ab[1]]][, 1] - picos_ref[[ab[2]]][, 1])), pico_2 = median(abs(picos_ref[[ab[1]]][, 2] - picos_ref[[ab[2]]][, 2])))))
+print(tabla_f(dcast(K_picos, K ~ referencia_dias, value.var = c("err_pico_1", "err_pico_2")), "F2_K_picos_vs_referencia"))
+print(tabla_f(gana_por_ref, "F2_K_que_gana_por_referencia"))
+print(tabla_f(dif_refs, "F2_diferencia_entre_referencias"))
+cat(sprintf("Curvas: %d. Dispersión de la fecha del pico entre curvas (RIC, ref. 31 días): %d y %d días\n",
+            sum(cur_p20), as.integer(IQR(picos_ref[[2]][, 1])), as.integer(IQR(picos_ref[[2]][, 2]))))
+# La decisión depende de este resultado: si una misma K ganara con las tres referencias,
+# el argumento de D-51 no valdría y el script se detiene para revisarlo.
+stopifnot(uniqueN(gana_por_ref$K_que_gana) > 1)
+
 sel_largo <- melt(sel, id.vars = c("fuente", "K"), variable.name = "criterio")
 marcas_K <- sel_largo[criterio != "ECM", .SD[which.min(value)], by = .(fuente, criterio)]
 grafico_f(ggplot(sel_largo[K <= 60], aes(K, value)) + geom_line(colour = "steelblue") + geom_point(size = .8, colour = "steelblue") +
@@ -496,6 +528,14 @@ grafico_base("F2_mismo_dominio", function() {
 #   menos que la dispersión entre curvas (29 a 45 días), y los valores negativos
 #   suben de 2,0 % a 5,4 %. Una base más flexible no cambia las conclusiones y
 #   empeora la VC, así que se mantiene K = 8.
+#   P-20 (D-51): frente a una media móvil de 31 días, K = 16 deja el pico a 6 y 6
+#   días por curva y K = 8 a 12 y 9, lo que parecía pedir subir K. Pero el K que
+#   gana depende de la referencia: con 15 y 31 días gana K = 20, con 61 días gana
+#   K = 10 (y K = 16 queda peor que K = 8: 13 y 15 días). Las tres referencias
+#   difieren entre sí 8 a 19 días en la fecha del pico, tanto como lo que se gana
+#   subiendo K, y la fecha varía 32 a 36 días entre curvas. La fecha del pico no
+#   sirve para elegir K: se queda el mínimo de la VCG, K = 8. Así tampoco hay que
+#   rehacer el experimento de huecos de R5, hecho con K = 8.
 #   S es simétrica, idempotente y tr(S) = K hasta 1e-14 en el peor de los ajustes
 #   (también en las curvas con días faltantes, que usan su propia S).
 #   El error de las estaciones no es homogéneo: su varianza va de 26 (mm/día)^2 en

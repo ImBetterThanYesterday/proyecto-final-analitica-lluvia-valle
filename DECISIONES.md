@@ -298,7 +298,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-17 | Resuelta: está bien quitar el 29 de febrero. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-18 | Resuelta: el píxel que contiene la estación está bien; como el píxel es más grande que el punto, no hay que reescalar ni promediar. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-19 | ¿Se pueden usar los registros de 1930–1979 solo para estimar el FPCA, aunque la fe de erratas fije 1981–2003? | ⬜ |
-| P-20 | (Equipo) K de las estaciones: 8 o 12/16. Con K = 8 el error en la fecha de los picos por curva es 12 y 10 días; con K = 16, 6 y 5, con la VC solo 0,9 % peor, pero los valores negativos suben de 2 % a 3,3 %. Si cambia K hay que rehacer el experimento de huecos de R5 (hecho con K = 8) | ⬜ |
+| P-20 | Resuelta (D-51): K = 8 en las estaciones. La ventaja de K = 16 en la fecha de los picos dependía de la referencia elegida | ✅ |
 
 ---
 
@@ -583,6 +583,14 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Regla R0** (sección 2 de `lluvia_valle_datos.R`, tabla `2_R0_valores_imposibles.csv`): un valor diario P < 0 o P > 1 825 mm pasa a faltante, antes de R1. 1 825 mm es el récord mundial de lluvia en 24 h reconocido por la OMM (Foc-Foc, La Reunión, 7–8 de enero de 1966).
 - **Resultado:** en las 220 estaciones del Valle R0 no quita nada (0 negativos; máximo 600 mm, Pardo). En el crudo completo detecta un solo valor, 859 375 mm, de una estación fuera del Valle. La trazabilidad lleva la fila "1b. R0" con 0 días que salen, y una prueba nueva de la sección 14 lo comprueba en la matriz final.
 - **Efecto en el conjunto:** ninguno; 176 estaciones y 3 299 pares, como antes.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-51 · K = 8 en las estaciones: la fecha de los picos no sirve para elegir K ✅ (cierra P-20; confirma D-39)
+- **Problema:** la VC de las estaciones es casi plana entre K = 5 y 17. Una prueba del stash "fase A" mostraba que con K = 16 la fecha de los picos queda más cerca de una media móvil de 31 días de los datos crudos (6 y 5 días por curva frente a 12 y 10 con K = 8), con la VC solo 0,9 % peor.
+- **Prueba** (sección 2 de `lluvia_valle_funcional.R`; tablas `F2_K_picos_vs_referencia.csv`, `F2_K_que_gana_por_referencia.csv` y `F2_diferencia_entre_referencias.csv`): 1 643 curvas completas interandinas de entrenamiento, con K = 8, 10, 12, 16 y 20, y tres referencias que no dependen de K (medias móviles de 15, 31 y 61 días).
+- **Resultado:** el K que gana cambia con la referencia: K = 20 con 15 y 31 días, K = 10 con 61 días. Con 61 días, K = 16 queda peor que K = 8 (13 y 15 días frente a 10 y 9). Las referencias difieren entre sí 8 a 19 días en la fecha del pico, lo mismo que se gana subiendo K, y la fecha varía 32 a 36 días entre curvas (RIC). La prueba mide qué suavizado se parece a la referencia, no cuál ubica mejor el pico.
+- **Decisión:** se mantiene K = 8, el mínimo de la VCG (criterio de clase). El script se detiene si algún día una misma K ganara con las tres referencias, porque entonces este argumento ya no valdría.
+- **Consecuencias:** no cambia nada del análisis. El experimento de huecos de R5 sigue valiendo, porque se hizo con K = 8. K = 10 queda documentado como alternativa (VC 0,34 % peor, menos negativos), sin adoptarlo.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
 ## Fuentes
