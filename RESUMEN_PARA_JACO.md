@@ -11,7 +11,7 @@ El análisis completo de la rúbrica (ítems 1 a 4.5) está programado, verifica
 | 1. Construcción de datos funcionales | 10 % | ✅ | B-splines paso a paso, K = 8 / 11 por ECM, VC y VCG (D-39, D-51) |
 | 2. EDA funcional | 15 % | ✅ | Media verificada con `fda::mean.fd`, covarianzas, derivadas, profundidad, atípicas verificadas con `fbplot` |
 | 3. Comparación por fuente | 15 % | ✅ | Emparejamiento documentado, d(t) con banda, correlación cruzada, por vertiente, altitud y ENSO |
-| 4.1 Preprocesamiento | 6 % | 🟡 | Reglas R0 a R7, trazabilidad 323 → 220 → 176, sin fuga. **Falta justificar P-19** |
+| 4.1 Preprocesamiento | 6 % | ✅ | Reglas R0 a R7, trazabilidad 323 → 220 → 176, sin fuga. P-19 cerrada con datos (D-56) |
 | 4.2 Red funcional | 10 % | ✅ | Gram por cuadratura, FPCA de entrenamiento (94,2 %), equivalencia demostrada y verificada (1,5e-14), no negativa |
 | 4.3 Ablación | 11 % | ✅ | Mismo codificador y decodificador, KAN 640 vs MLP 635 parámetros, 3 semillas, mismo presupuesto, KAN verificada |
 | 4.4 Evaluación | 8 % | ✅ | Cuatro métricas, IC bootstrap, Wilcoxon, por fase ENSO, contra el satélite sin corregir |
@@ -55,7 +55,7 @@ Pruebas automáticas: 27 (datos) + 13 (funcional) + 5 (red en R) + 13 (Python), 
 
 ## 5. Lo que falta para entregar
 
-1. Cerrar P-19 en el código (después de la decisión 1).
+1. ~~Cerrar P-19 en el código~~: hecho (D-56, sección 5.2b).
 2. Correr `lluvia_valle.R` completo en la Mac (27 + 13 + 5 pruebas).
 3. Informe PDF: una columna, ≤ 20 páginas, figuras y tablas numeradas, citadas e interpretadas.
 4. Anexo en Word: herramienta de IA usada (Claude) y los prompts.

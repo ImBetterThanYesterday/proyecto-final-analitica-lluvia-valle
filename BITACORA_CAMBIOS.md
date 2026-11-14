@@ -74,11 +74,21 @@ Python exporta además los pesos de la cabeza lineal, las activaciones de la pri
 
 Une `lluvia_valle_datos.R` (Parte A) y `lluvia_valle_funcional.R` (Parte B) sin cambiar el código: se verificó que, quitando lo agregado, quedan exactamente los dos archivos. Lo agregado: un encabezado con el mapa de la rúbrica, una marca "RÚBRICA x" antes de cada sección y, entre las partes, `rm(list = ls())` (vacía la memoria de R, no los archivos; la Parte B lee del disco lo que dejó la A). Probado aquí: Parte A hasta la sección 8 + Parte B completa en la misma sesión, 13 + 5 pruebas. Los dos archivos originales se mantienen hasta que el equipo decida cuál se edita (`RESUMEN_PARA_JACO.md`, decisión 4).
 
+### 9. P-19 y P-16 cerradas, y corrida completa de `lluvia_valle.R` (D-56)
+
+| Archivo | Cambio | Por qué |
+|---|---|---|
+| `lluvia_valle_funcional.R` y `lluvia_valle.R` | Nueva sección 5.2b: lee `P_1930_1979.xlsx`, aplica R5 a las 176 estaciones, ajusta las curvas y mide cuánto las explica el FPCA de entrenamiento y cuánto cambia si se agregan | P-19 necesitaba respaldo en el código. Resultado: 1 250 curvas válidas, explicadas al 89,8 %; agregarlas deja iguales las cuatro primeras funciones propias. No se usan |
+| `DECISIONES.md` | D-56; P-16 y P-19 cerradas | ONI anual = media de los 12 trimestres; sin registros de 1930–1979 |
+| `CONTROL_RUBRICA.md`, `RESUMEN_PARA_JACO.md` | 4.1 en ✅ | Ya no queda nada abierto en el preprocesamiento |
+
+Corrida completa de `lluvia_valle.R` en Windows (R 4.4.2): pruebas 27 de 27, 13 de 13 y 5 de 5. Las salidas coinciden con las de la Mac salvo redondeo (diferencia máxima 1e-10), así que no se vuelven a subir; solo se agregan `F5_P19_conteo.csv` y `F5_P19_registros_1930_1979.csv`. Hace falta tener instalado `fda.usc`.
+
 ### Qué sigue
 
 1. ~~4.5~~ — hecho (D-55).
 2. ~~4.4 por fase ENSO~~ — hecho (D-54).
-3. Decisiones abiertas: P-16 (ONI anual), P-19 (1930–1979) y confirmar con el profesor el CSV de estaciones reservadas.
+3. ~~P-16 y P-19~~: cerradas (D-56). Falta confirmar por escrito con el profesor que no hay CSV de estaciones reservadas.
 4. Unir los dos R en uno para la entrega; informe PDF; anexo de IA con los prompts.
 
 ### Cómo correr todo

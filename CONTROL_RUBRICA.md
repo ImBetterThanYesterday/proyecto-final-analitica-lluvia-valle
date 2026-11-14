@@ -13,7 +13,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 1. Construcción de datos funcionales | 10 % | ✅ | Redactarlo en el informe |
 | 2. EDA funcional | 15 % | ✅ | Redactarlo; ventanas de temporada en el Pacífico (ver abajo) |
 | 3. Comparación funcional por fuente | 15 % | ✅ | Redactar la interpretación del sesgo |
-| 4.1 Preprocesamiento y selección | 6 % | 🟡 | Decidir P-19 (registros 1930–1979) |
+| 4.1 Preprocesamiento y selección | 6 % | ✅ | P-19 cerrada con datos (D-56) |
 | 4.2 Red neuronal funcional | 10 % | ✅ | `lluvia_valle_red.py`, secciones 1–3 (D-52); falta redactar la demostración en el informe |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ✅ | Secciones 4–5 (D-52); falta redactar las conclusiones |
 | 4.4 Evaluación | 8 % | ✅ | Sección 7 del funcional (D-54), con fase ENSO. Solo falta confirmar con el profesor el CSV de estaciones reservadas |
@@ -21,7 +21,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 5. Informe PDF | 10 % | ⬜ | Todo |
 | 6. Scripts R y Python | 5 % | 🟡 | R unido en `lluvia_valle.R` (falta correrlo completo en la Mac y decidir cuál se edita); Python en un solo archivo |
 
-Lo que falta: el informe (10 %), el anexo de IA, unir los dos R y las decisiones abiertas (P-16, P-19, estaciones reservadas).
+Lo que falta: el informe (10 %), el anexo de IA, unir los dos R y confirmar por escrito que no hay estaciones reservadas (P-16 y P-19 cerradas en D-56).
 
 ## Auditoría: ¿se hace como en clase? (14-nov)
 
@@ -98,7 +98,7 @@ El diagnóstico global no depende de usar K distinto por fuente; el veredicto d�
 | Regla explícita para valores imposibles y errores de digitación | ✅ | R0: negativos y > 1 825 mm (récord OMM), `2_R0_valores_imposibles.csv` (D-50). R2: extremos sin respaldo de las vecinas |
 | Totales acumulados en un solo día y ceros que son faltantes | ✅ | R3 (totales mensuales) y R4 (rachas de ceros con la vecina y umbral de Bonferroni, D-49) |
 | Cobertura mínima por estación y año, justificada | ✅ | R5 (≥ 90 % y hueco ≤ 15 días) y R6 (≥ 7 años de entrenamiento), con el experimento de huecos (sección 7) |
-| Decisión justificada sobre agregar o eliminar datos | 🟡 | Sin imputación (D-13). **Falta P-19:** usar o no 1930–1979 para el FPCA. Recomendación: no usarlos (la fe de erratas fija 1981–2003 y el FPCA con 2 257 curvas ya explica 94 % con M = 6) |
+| Decisión justificada sobre agregar o eliminar datos | ✅ | Sin imputación (D-13). P-19 (D-56): los 1 250 años válidos de 1930–1979 no se usan; el FPCA de entrenamiento ya explica el 89,8 % de su variabilidad y agregarlos deja iguales las 4 primeras funciones propias (`F5_P19_registros_1930_1979.csv`) |
 | Trazabilidad: estaciones y pares antes y después de cada paso | ✅ | `8_trazabilidad.csv`: 323 → 220 → 176 estaciones, 3 299 pares |
 | Nada usa datos de prueba | ✅ | Umbrales y experimentos solo con 1981–1995; prueba automática |
 
@@ -138,7 +138,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `F7_ablacion_media_DE_semillas.csv` (tres cabezas) |
 | Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420 |
 | IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
-| Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
+| Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 cerrada (D-56): ONI anual = media de los 12 trimestres |
 
 ## 4.5 Interpretación climatológica (10 %) — sección 8 de `lluvia_valle_funcional.R` (D-55)
 
@@ -175,7 +175,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 
 | Script | Qué tiene | Ítems de la rúbrica |
 |---|---|---|
-| `lluvia_valle_datos.R` | Datos crudos → datos limpios: reglas R0 a R7, trazabilidad, satélite (lectura, recorte, EDA), datos preparados; 27 pruebas | 4.1 completo (salvo P-19) |
+| `lluvia_valle_datos.R` | Datos crudos → datos limpios: reglas R0 a R7, trazabilidad, satélite (lectura, recorte, EDA), datos preparados; 27 pruebas | 4.1 completo (P-19 en la sección 5.2b de la parte funcional) |
 | `lluvia_valle_funcional.R` | Sección 1: emparejamiento estación–píxel · 2: construcción funcional · 3: EDA funcional · 4: comparación por fuente · 5: regresión funcional (y 5.5b: contraste con los métodos de clase) · 6: 13 pruebas · 7: evaluación de la red (métricas, IC, Wilcoxon, ENSO) · 8: interpretación de la red | 1, 2, 3; 4.2 (parte R); 4.4; 4.5 |
 | `lluvia_valle_red.py` | Codificador, decodificador FPCA, cabezas lineal / KAN / MLP, equivalencia con la regresión, KAN sintética, ablación con 3 semillas; exporta predicciones y pesos; 13 pruebas | 4.2 y 4.3 |
 
@@ -244,5 +244,5 @@ Detalle en `DECISIONES.md`, §8.
 
 - ✅ P-1, P-3, P-4, P-8, P-10, P-12 a P-15, P-17 y P-18 respondidas en la asesoría del 13-nov (D-47).
 - ✅ P-20 (K de las estaciones) cerrada por el equipo con datos (D-51).
-- ⬜ P-16 (definición del ONI anual) y P-19 (registros 1930–1979).
+- ✅ P-16 (definición del ONI anual) y P-19 (registros 1930–1979), cerradas en D-56.
 - ⬜ Confirmar que no hace falta el CSV de estaciones reservadas que todavía menciona la fe de erratas en 4.4.

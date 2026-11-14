@@ -56,6 +56,8 @@ T_DIA     <- 1:365
 # Años en que el satélite se queda más corto (La Niña). NO se excluyen (D-47): solo se usan
 # para el análisis de sensibilidad "con y sin esos años".
 ANIOS_MARCADOS <- c(1985L, 1988L, 2000L)
+COB_MIN_R5 <- 0.90
+HUECO_MAX_R5 <- 15L
 
 SALIDA_F <- "salidas_R_funcional"
 dir.create(file.path(SALIDA_F, "tablas"), showWarnings = FALSE, recursive = TRUE)
@@ -1169,6 +1171,51 @@ cat(sprintf("Contra fda::pca.fd (4 primeras): autovalores x N/(N-1) a %.1e relat
             max(abs(pca_fda$values[1:4] * sum(ent) / (sum(ent) - 1) - eg$values[1:4]) / eg$values[1:4]),
             max(abs(abs(psi_fda) - abs(Phi_e %*% psi_c[, 1:4])))))
 S_todos <- sweep(re$coef, 2, mu_c) %*% W_e %*% psi_c
+
+titulo("5.2b P-19: registros de 1930-1979 y estabilidad del FPCA")
+h30 <- rbindlist(lapply(readxl::excel_sheets("datos_curso/P_1930_1979.xlsx"), function(s) as.data.table(readxl::read_excel("datos_curso/P_1930_1979.xlsx", sheet = s))))
+h30 <- h30[as.character(STATION_ID) %in% unique(id_est$codigo) & !(MONTH == 2 & DAY == 29) & !is.na(VALUE) & VALUE >= 0 & VALUE <= 1825,
+           .(codigo = as.character(STATION_ID), anio = as.integer(YEAR), dia = yday(as.IDate(sprintf("%d-%02d-%02d", YEAR, MONTH, DAY))) - (YEAR %% 4 == 0 & MONTH > 2), P = VALUE)]
+h30 <- unique(h30, by = c("codigo", "anio", "dia"))
+anios30 <- h30[, .(n_obs = .N, hueco_max = { r <- rle(!(1:365 %in% dia)); if (any(r$values)) max(r$lengths[r$values]) else 0L }), by = .(codigo, anio)]
+anios30[, valido := n_obs >= COB_MIN_R5 * 365 & hueco_max <= HUECO_MAX_R5]
+h30 <- h30[anios30[valido == TRUE, .(codigo, anio)], on = .(codigo, anio)]
+h30[, fila := .GRP, by = .(codigo, anio)]
+Y30 <- matrix(NA_real_, max(h30$fila), 365); Y30[cbind(h30$fila, h30$dia)] <- h30$P
+C30 <- a_raiz(construir(Y30, T_DIA, K_e)$coef, Phi_e)$coef
+eg_30 <- fpca_ent(rbind(re$coef[ent, ], C30), rep(TRUE, sum(ent) + nrow(C30)))
+explicada <- function(C, mu, psi, M = 6L) {
+  D <- sweep(C, 2, mu); R <- D - (D %*% W_e %*% psi[, 1:M]) %*% t(psi[, 1:M])
+  100 * (1 - sum(rowSums((R %*% W_e) * R)) / sum(rowSums((D %*% W_e) * D)))
+}
+M_ref <- 6L
+p19 <- data.table(
+  curvas = c("Entrenamiento 1981-1995", "Validación 1996-2000", "Prueba 2001-2003", "Registros 1930-1979 válidos"),
+  n = c(sum(ent), sum(val), sum(pru), nrow(C30)),
+  pct_explicado_FPCA_entrenamiento = round(c(explicada(re$coef[ent, ], mu_c, psi_c, M_ref), explicada(re$coef[val, ], mu_c, psi_c, M_ref),
+                                             explicada(re$coef[pru, ], mu_c, psi_c, M_ref), explicada(C30, mu_c, psi_c, M_ref)), 1))
+print(tabla_f(p19, "F5_P19_registros_1930_1979"))
+print(tabla_f(anios30[, .(estaciones = uniqueN(codigo), estacion_anios = .N, validos = sum(valido), estaciones_con_validos = uniqueN(codigo[valido]),
+                          validos_1970_1979 = sum(valido & anio >= 1970)), by = NULL], "F5_P19_conteo"))
+cos_p19 <- svd(t(psi_c[, 1:M_ref]) %*% W_e %*% eg_30$psi[, 1:M_ref])$d
+d_mu <- eg_30$mu - mu_c
+cat(sprintf("FPCA con 1930-1979 agregados: %.1f %% con M = %d (sin ellos %.1f %%) | cosenos principales entre subespacios: %s | cambio de la media: %.1f %% de su norma\n",
+            100 * sum(eg_30$values[1:M_ref]) / sum(eg_30$values), M_ref, 100 * sum(eg$values[1:M_ref]) / sum(eg$values),
+            paste(round(cos_p19, 3), collapse = ", "), 100 * sqrt(drop(t(d_mu) %*% W_e %*% d_mu) / drop(t(mu_c) %*% W_e %*% mu_c))))
+rm(h30, Y30)
+
+# QUÉ DICEN LOS DATOS (P-19)
+#   De las 176 estaciones, 145 tienen registros en 1930-1979 y 140 tienen años que
+#   cumplen R5 (>= 90 % de días y ningún hueco > 15): 1 250 curvas, 963 de ellas
+#   de los años setenta. Sumarían un 55 % a las 2 257 curvas de entrenamiento.
+#   El FPCA de entrenamiento ya las representa: con M = 6 explica el 89,8 % de su
+#   variabilidad, cerca del 91,5 % de validación y del 95,2 % de prueba.
+#   Si se agregan al ajuste, las primeras cuatro funciones propias no cambian
+#   (coseno 1,000), la quinta casi no (0,994) y solo gira algo la sexta (0,912);
+#   la media se mueve un 1,7 %. La varianza explicada con M = 6 baja de 94,2 % a
+#   93,2 %: esas curvas traen variabilidad de otra época, no estructura nueva.
+#   Decisión (P-19): no se usan. La fe de erratas fija 1981-2003, el decodificador
+#   sería prácticamente el mismo y habría que depurar 50 años más con R0 a R7.
 
 titulo("5.3 Ajuste y elección de M y lambda con validación")
 alt_m <- mean(pares$altitud[ent]); alt_s <- sd(pares$altitud[ent])

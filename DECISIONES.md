@@ -294,10 +294,10 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-13 | Confirmado: solo estaciones dentro del Valle del Cauca. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-14 | Resuelta: se acepta la altitud de Univalle (996 m) tomada del IDEAM, porque los datos del curso también vienen del IDEAM (D-46). Respuesta del profesor (13-nov-2026) | ✅ |
 | P-15 | Respondida: hay que armar la serie y dibujarla para entender el tope. Hecho en la sección 12 (`12_serie_tope_200.png`): el tope afecta 33 de 238 224 péntadas comparables y solo 3 estaciones del Pacífico (D-47). Respuesta del profesor (13-nov-2026) | ✅ |
-| P-16 | ¿Qué "ONI del año" espera: la media de los 12 trimestres del año (lo que se usa) o un trimestre concreto (p. ej. DEF)? | ⬜ |
+| P-16 | Cerrada (D-56): el ONI del año es la media de sus 12 trimestres, salvo que el profesor indique otra cosa | ✅ |
 | P-17 | Resuelta: está bien quitar el 29 de febrero. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-18 | Resuelta: el píxel que contiene la estación está bien; como el píxel es más grande que el punto, no hay que reescalar ni promediar. Respuesta del profesor (13-nov-2026) | ✅ |
-| P-19 | ¿Se pueden usar los registros de 1930–1979 solo para estimar el FPCA, aunque la fe de erratas fije 1981–2003? | ⬜ |
+| P-19 | Cerrada (D-56): no se usan los registros de 1930–1979; el FPCA de entrenamiento ya los representa | ✅ |
 | P-20 | Resuelta (D-51): K = 8 en las estaciones. La ventaja de K = 16 en la fecha de los picos dependía de la referencia elegida | ✅ |
 
 ---
@@ -636,6 +636,15 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Por qué así:** la importancia de cada neurona por separado no es estable entre semillas (con cabeza lineal las w_k se pueden rotar sin cambiar la predicción); por eso se interpreta la β(s,t) completa (estable: correlación 0,98–0,99 entre semillas) y, en la KAN, las aristas con sus formas.
 - **Lectura:** la cabeza lineal usa w_k casi rectas; KAN y MLP usan w_k que contrastan las temporadas del régimen bimodal. Las activaciones importantes de la KAN son de saturación (tanh, R² 0,992–0,997): la corrección deja de crecer cuando el satélite marca mucha lluvia. La entrada más no lineal es la altitud (efecto no monótono, coherente con la orografía andina); la cabeza lineal casi no la usa. El ONI entra casi monótono. Los peores casos son estaciones secas (500–830 mm/año) del fondo del valle del Cauca y de la cuenca del Dagua donde el satélite marca 1 000–2 400 mm: es un límite de representatividad del píxel.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-56 · Sin registros de 1930–1979 y ONI anual como media de los 12 trimestres ✅ (cierra P-16 y P-19)
+- **P-19, registros de 1930–1979:** no se usan. Respaldo en la sección 5.2b de `lluvia_valle_funcional.R`, con las tablas `F5_P19_conteo.csv` y `F5_P19_registros_1930_1979.csv`:
+  - 145 de las 176 estaciones tienen registros en ese periodo y 140 tienen años que cumplen R5. Son 1 250 curvas (963 de los años setenta), un 55 % más que las 2 257 de entrenamiento.
+  - El FPCA de entrenamiento con M = 6 explica el 89,8 % de su variabilidad, cerca del 91,5 % de validación y del 95,2 % de prueba.
+  - Si se agregan al ajuste, las cuatro primeras funciones propias no cambian (coseno 1,000), la quinta casi no (0,994) y solo gira algo la sexta (0,912). La media se mueve 1,7 % y la varianza explicada con M = 6 baja de 94,2 % a 93,2 %.
+  - Conclusión: el decodificador sería prácticamente el mismo. La fe de erratas fija 1981–2003, y usarlos obligaría a depurar 50 años más con R0 a R7.
+- **P-16, ONI anual:** se mantiene la media de los 12 trimestres del año. La curva es del año completo y la fase (Niño, Niña o neutro) sale de esa media. No cambia ninguna entrada de la red.
+- **Fecha y responsable:** 2026-11-14, Jacobo.
 
 ## Fuentes
 
