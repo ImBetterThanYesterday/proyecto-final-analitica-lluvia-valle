@@ -52,22 +52,24 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 Las reglas que dependen de los datos se calculan solo con entrenamiento.
 
-## Por dónde vamos (13-nov-2026)
+## Por dónde vamos (14-nov-2026)
+
+El detalle criterio por criterio está en `CONTROL_RUBRICA.md`.
 
 | Paso | Estado |
 |---|---|
 | 1. Ubicar los 344 códigos y quedarse con el Valle | ✅ 232 estaciones, todas dentro del polígono del DANE (D-31 a D-35) |
 | 2. EDA de los datos crudos | ✅ secciones 1–6 de `lluvia_valle_datos.R` |
-| 3. Reglas de depuración sacadas de los datos | ✅ experimento de huecos y reglas D-36 |
+| 3. Reglas de depuración sacadas de los datos | ✅ R0 a R7: experimento de huecos, reglas D-36, R4 calculada (D-49) y R0 con el récord OMM (D-50) |
 | 4. Dataset limpio de estaciones | ✅ 176 estaciones y 3 299 estación-años válidos, en `lluvia_valle_limpia.rds` |
 | 5. Satélite: fuente, recorte al Valle, mm/día y EDA | ✅ es CHIRP solo-infrarrojo, confirmado (D-43); acierta el clima medio pero no los años Niño/Niña (D-44). Secciones 9–12 de `lluvia_valle_datos.R` |
 | 6. Emparejar cada estación con su píxel | ✅ 176 estaciones en 148 píxeles (D-38, D-44) |
 | 6b. Datos preparados para lo funcional, con pruebas | ✅ `datos_preparados.rds`: 3 299 curvas de estación, 15 663 de satélite y sus pares con el ONI (D-45); Univalle con 996 m (D-46) |
-| 7. Construcción funcional (B-splines propias; K por ECM/VC/VCG) con las 176 | ✅ sección 2 de `lluvia_valle_funcional.R`: K = 8 / 11 (D-39, D-48) |
+| 7. Construcción funcional (B-splines propias; K por ECM/VC/VCG) con las 176 | ✅ sección 2 de `lluvia_valle_funcional.R`: K = 8 / 11 (D-39, D-48); K = 8 confirmado frente a la fecha de los picos (D-51) |
 | 8. EDA funcional de cada fuente (media, varianza, profundidad, boxplot, ENSO) | ✅ sección 3 |
 | 8b. Comparación funcional estación vs. satélite (d(t), correlación cruzada, covarianzas, altitud, ENSO) | ✅ sección 4, con todos los años |
 | 9. Regresión funcional función a función | ✅ sección 5: FPCA M = 6, λ por validación; en prueba baja el error L² relativo de 0,51 a 0,44 frente al satélite (D-48) |
-| 9b. Red funcional (cabezas lineal, KAN y MLP), ablación e interpretación | ⏳ Python, con `salidas_R_funcional/para_python/` |
+| 9b. Red funcional (cabezas lineal, KAN y MLP), ablación e interpretación | ⏳ Python: se reconecta `archivo_flujo_anterior/05_red_funcional.py` a `salidas_R_funcional/para_python/` |
 | Años 1985, 1988 y 2000 del satélite | ✅ entran al modelo, por indicación del profesor y verificado con datos (D-47, D-48) |
 | 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |
 
