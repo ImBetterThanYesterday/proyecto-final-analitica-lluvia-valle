@@ -56,7 +56,7 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
 
 ## 3b. Datos listos (13-nov-2026)
 
-`lluvia_valle_datos.R` deja `salidas_R_datos/datos_preparados.rds`: matriz de estaciones (3 326 × 365), matriz del satélite
+`lluvia_valle_datos.R` deja `salidas_R_datos/datos_preparados.rds`: matriz de estaciones (3 299 × 365), matriz del satélite
 (15 663 × 72, mm/día) y los pares estación–píxel, con 26 pruebas automáticas (D-36, D-43 a D-45). El satélite es CHIRP solo-infrarrojo (D-43)
 y no capta los años Niño/Niña (D-44). El control de lo que pide el enunciado está en `CONTROL_RUBRICA.md`.
 
@@ -67,7 +67,7 @@ representatividad de las 176 estaciones incluidas (sección 8). Sigue:
 
 1. ~~Satélite: recorte, mm/día y EDA~~ — hecho (D-43, D-44).
 2. ~~Emparejar cada estación con su píxel~~ — hecho (D-45).
-3. ~~Construcción funcional, EDA funcional, comparación y regresión de referencia~~ — hechos por Jacobo y María en `funcional/10` a `14` (D-37 a D-42), ya con los datos nuevos.
+3. ~~Construcción funcional, EDA funcional, comparación y regresión de referencia~~ — hechos por Jacobo y María y cerrados en un solo archivo, `lluvia_valle_funcional.R`, con todos los años y las métricas de la rúbrica (D-37 a D-42, D-48).
 4. **Acordar P-4:** si 1985, 1988 y 2000 del satélite entran al modelo (D-37/D-42 los sacan; D-44 dice que no están dañados).
 5. **Sensibilidad:** con y sin las 6 del cruce con el CNE, y con y sin las 12 coordenadas a revisar que quedaron entre las 176.
 

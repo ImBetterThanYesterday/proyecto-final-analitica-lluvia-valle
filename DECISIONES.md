@@ -347,7 +347,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   2. Una estación entra si tiene ≥7 años válidos en entrenamiento: quedan **176 estaciones**, entre ellas las 6 del CNE y 12 con coordenada a revisar.
   3. Los 5 extremos sin respaldo de vecinas pasan a faltante.
   4. Los totales mensuales en un día pasan a faltante si el mes está casi vacío; si el mes está completo, deciden las vecinas.
-  5. Las rachas de ceros no se borran por regla. Las 6 se revisaron a mano:
+  5. *(Reemplazado por D-49: R4 ahora es una regla calculada.)* Las rachas de ceros no se borran por regla. Las 6 se revisaron a mano:
      - **Loboguerrero, oct–nov de 1995, pasa a faltante.** Es temporada de lluvias: la estación suele llover el 41 % de esos días, y Dagua, a 12 km en el mismo cañón, tuvo 12 días con lluvia (83 mm).
      - **Las otras 5 se mantienen.** La Despensa (ene–feb 1996) y Loboguerrero (1982, 1982–83, 1989 y 1991) caen en temporada seca o en El Niño, y la vecina del mismo cañón también estuvo casi seca.
   6. No se imputa (D-13).
@@ -540,6 +540,42 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - **Se mantienen las B-splines**, y el efecto de borde se documenta.
 - **Principio para la sustentación:** toda regla debe estar respaldada por resultados en el código ("¿dónde lo verifican?"). Cada regla de D-36 tiene su tabla de evidencia y una prueba automática. La revisión manual de R4 (Loboguerrero 1995) está en la tabla `5b_revision_rachas.csv`.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-48 · Cierre de la parte funcional: un solo archivo, todos los años y cada decisión verificada ✅ (revisa D-37, D-39, D-40, D-41 y D-42)
+- **Un solo archivo funcional.** `lluvia_valle_funcional.R` reemplaza a `funcional/00` y `10` a `14` (quedan en el historial de git). Tiene cinco secciones: datos y emparejamiento, construcción, EDA funcional, comparación y regresión. Quien cambie algo de lo funcional lo cambia ahí.
+  - **Entrada única:** `salidas_R_datos/datos_preparados.rds`. Ya no se vuelve a leer el satélite ni a emparejar: se quitó el procesamiento duplicado de la antigua sección 10, y las 26 pruebas del archivo de datos cubren todo lo que entra.
+  - **Son dos archivos R mientras se trabaja** (`lluvia_valle_datos.R` y `lluvia_valle_funcional.R`), para no mezclar. La entrega pide un único R: se pegan uno tras otro al final, porque el segundo solo depende del `.rds` que deja el primero.
+- **Todos los años entran (D-47).** Se quitó la exclusión de 1985, 1988 y 2000 en la elección de K, la comparación y la regresión. Verificación en el código:
+  - el cociente satélite/estación de cada año sigue al ONI (r = 0,68); 1984 y 1999 se apartan tanto como los tres años marcados;
+  - sin esos años la prueba empeora (L² relativo 0,439 frente a 0,434) en 79 de 137 estaciones (Wilcoxon p = 0,003).
+- **Métricas de la rúbrica 4.4.** Error L² relativo, KGE, sesgo del acumulado anual en % y error en la fecha de los dos picos; IC del 95 % por bootstrap de estaciones (2 000 remuestreos); Wilcoxon pareado por estación; resultados por fase ENSO.
+  - Prueba 2001–2003, regresión frente al satélite sin corregir: L² relativo 0,51 → 0,44; KGE 0,38 → 0,47; sesgo anual +26 % → +7 %; pico de la primera temporada 23 → 18 días. El IC de la diferencia excluye el cero en cinco métricas; en el pico de la segunda temporada la ganancia (medio día) no es significativa.
+  - La prueba no tiene ningún año Niña. Por eso se reporta también la validación por fase, marcada como orientativa. En los años Niña 1999–2000 la regresión casi empata con el satélite y su sesgo empeora (−0,5 % → −11 %): es el punto débil de la referencia lineal.
+- **Vertiente de los píxeles: la de la estación más cercana.** El corte en la longitud −76,8° solo acierta el 88,6 % al comprobarlo con las estaciones (ningún corte pasa de 89,2 %); la estación más cercana acierta el 97,7 % dejando una fuera. Queda una sola definición para las dos fuentes: la cuenca de la CVC.
+- **K = 8 y K = 11 se mantienen (D-39),** ahora elegidos con todos los años de entrenamiento. Sensibilidad: con K = 12, 16 o 24 la fecha mediana de los picos se mueve a lo sumo 9 días y los valores negativos suben de 2 % a 5 %.
+- **Comparación con el mismo K.** Con el satélite también en K = 8, la diferencia media, la diagonal de la correlación y el cociente de varianzas casi no cambian. Las diferencias entre fuentes no salen de usar K distinto.
+- **Primero se suaviza en mm y luego se saca la raíz (D-23 se mantiene).** Ese orden conserva el acumulado anual (cociente 1,000); sacar la raíz al dato diario y luego suavizar lo reduce a un tercio (0,33).
+- **EDA por vertiente y con anomalías.** El 74 % de la varianza de las estaciones es diferencia entre sitios. Con anomalías por estación, la primera componente baja de 76 % a 29 % y abril y octubre casi no se relacionan (0,14).
+- **Regresión (revisa D-40):** M = 6 (94,2 % de la varianza, con los datos de D-49) y λ = 3,2e8, elegidos con validación con todos los años. La equivalencia β(s,t) frente a puntajes FPCA da 4e-15.
+- **Pruebas:** 12 comprobaciones automáticas al final del archivo (`tablas/F6_pruebas.csv`); si una falla, el script se detiene.
+- **Salidas:** `salidas_R_funcional/` con los prefijos `F1_` a `F6_`, `para_python/` y `resultados_funcional.rds`. `para_python/pares.csv` ya no lleva la columna `defectuoso`.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-49 · R4 calculada con los datos: rachas de ceros sin respaldo de la vecina ✅ (revisa la R4 de D-36)
+- **Problema:** la R4 anterior era una revisión a mano. Se revisaron las 6 rachas en las que las vecinas llovían más del 40 % de los días, y solo una (Loboguerrero, oct–nov de 1995) quedó escrita con sus fechas en el código. No había un criterio verificable ("¿dónde lo verifican?").
+- **Regla nueva** (sección 5b de `lluvia_valle_datos.R`, tabla `5b_rachas_ceros_prueba.csv` y gráfica `5b_rachas_ceros_prueba.png`). Para cada racha de 30 días o más en 0:
+  - se toma la vecina más cercana (a 25 km o menos) que tenga datos en al menos el 80 % de la racha, y se cuenta en cuántos días k llovió;
+  - con los días de entrenamiento (1981–1995) en que ambas tienen dato, se calcula q = P(llueve en la estación | llueve en la vecina). No usa validación ni prueba;
+  - p = (1 − q)^k es la probabilidad de que la estación marque 0 todos esos días por azar;
+  - la racha pasa a faltante si p < 0,05 / 917 = 5,5e-5. Es la corrección de Bonferroni, porque se prueban 917 rachas a la vez.
+- **Por qué este umbral:** p supone días independientes y la lluvia viene en rachas, así que p exagera lo raro. Un umbral exigente compensa eso. Con 0,001 se marcarían 72 rachas, con más riesgo de borrar sequías reales.
+- **Resultado:** 30 de 917 rachas son falsas, en 27 estaciones (1 356 días). La mayoría de las rachas largas son sequías reales: la vecina también estuvo seca (El Niño de 1997, temporadas secas).
+  - El caso más claro es Bella Vista 1982: 49 días en 0 mientras La Ceja (8,7 km) llovió 23 días (p = 7e-10).
+  - **Loboguerrero oct–nov de 1995 vuelve a ser dato.** Dagua llovió 12 días, pero coincide con Loboguerrero solo la mitad de los días de lluvia (q = 0,50); p = 2e-4 no alcanza el umbral. Un enclave seco con 33 días sin lluvia en noviembre es posible.
+  - **Loboguerrero dic-1982 a mar-1983 (67 días) sí pasa a faltante.** La revisión a mano la había dejado porque "Dagua también estuvo seca", pero Dagua solo tiene 4 días de datos en esas fechas. La regla usa la siguiente vecina con datos, Limones (16,7 km), que llovió 39 días (p = 5e-7).
+- **Efecto en el conjunto:** cada racha deja un hueco de más de 15 días, así que su año deja de ser válido (R5). Quedan 176 estaciones y **3 299 pares estación–año** (2 257 de entrenamiento, 672 de validación y 370 de prueba), frente a 3 326. Las 26 pruebas de datos y las 12 funcionales pasan.
+- **Efecto en lo funcional:** casi ninguno. K sigue en 8 y 11. M pasa de 5 a 6 (94,2 % de la varianza, dentro del rango 4–6 del enunciado). En prueba la regresión baja el error L² relativo de 0,51 a 0,44 frente al satélite.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
 ## Fuentes
 

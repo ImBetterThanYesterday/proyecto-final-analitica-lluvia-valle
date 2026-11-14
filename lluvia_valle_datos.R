@@ -337,29 +337,50 @@ a_fecha <- function(k) as.IDate(sprintf("%d-01-01", k %/% 1000)) + (k %% 1000) -
 rz[, `:=`(ini = a_fecha(ini), fin = a_fecha(fin))]
 rz <- valle[, .(codigo, nombre, vertiente)][rz, on = "codigo"]
 tabla(rz, "5b_rachas_ceros_15d")
-print(rz[, .(rachas = .N, de_30_o_mas = sum(largo >= 30), sin_vecinas = sum(is.na(p_lluvia_vecinas)),
-             de_30_y_vecinas_llueven_40 = sum(largo >= 30 & p_lluvia_vecinas >= .4, na.rm = TRUE))])
-rachas_revisar <- rz[largo >= 30 & p_lluvia_vecinas >= .4]
-print(rachas_revisar)
+print(rz[, .(rachas = .N, de_30_o_mas = sum(largo >= 30), sin_vecinas = sum(is.na(p_lluvia_vecinas)))])
 grafico(ggplot(rz[!is.na(p_lluvia_vecinas)], aes(largo, p_lluvia_vecinas, colour = vertiente)) +
-          geom_point(alpha = .5) + scale_x_log10() + geom_hline(yintercept = .4, linetype = 2) +
+          geom_point(alpha = .5) + scale_x_log10() +
           labs(x = "Largo de la racha de ceros (días, log)", y = "Fracción de días-vecina con lluvia (≤25 km)",
                title = "Rachas ≥15 días de ceros: ¿las vecinas también estaban secas?"),
         "5b_rachas_ceros")
 
-# Revisión a mano de las rachas marcadas: en los mismos meses de otros años,
-# ¿cuánto llueve la estación? ¿Y la vecina más cercana durante la racha?
-revision <- rbindlist(lapply(seq_len(nrow(rachas_revisar)), function(i) {
-  cod <- rachas_revisar$codigo[i]; a <- rachas_revisar$ini[i]; b <- rachas_revisar$fin[i]
-  meses <- unique(month(seq(a, b, by = 1)))
-  cercana <- names(sort(DK[cod, vecinas(cod)]))[1]
-  data.table(codigo = cod, nombre = rachas_revisar$nombre[i], ini = a, fin = b, largo = rachas_revisar$largo[i],
-             pct_dias_lluvia_normal = round(100 * d[codigo == cod & month(fecha) %in% meses & !(fecha %between% c(a, b)), mean(P > 0)]),
-             vecina_cercana = valle[codigo == cercana, nombre], km = round(DK[cod, cercana], 1),
-             dias_lluvia_vecina = d[codigo == cercana & fecha %between% c(a, b), sum(P > 0)],
-             mm_vecina = d[codigo == cercana & fecha %between% c(a, b), sum(P)])
-}))
-print(tabla(revision, "5b_revision_rachas"))
+# Prueba de cada racha de ≥30 días en cero (R4). Si la estación de verdad estuvo
+# seca, su vecina más cercana también debió estar seca o casi. Se mide:
+#   k = días en que llovió la vecina más cercana con datos (≥80 % de la racha);
+#   q = P(llueve en la estación | llueve en la vecina), con los días de
+#       entrenamiento (1981–1995) en que ambas tienen dato (sin fuga);
+#   p = (1 - q)^k: probabilidad de que la estación marque 0 todos esos días.
+# Se hacen muchas pruebas a la vez, así que el umbral es 0,05 / número de rachas
+# (Bonferroni). Supone días independientes; como la lluvia viene en rachas, p
+# exagera lo raro, y por eso el umbral es exigente.
+R4_LARGO <- 30L
+ll_ent <- d[anio <= 1995 & !is.na(P), .(codigo, fecha, ll = P > 0)]; setkey(ll_ent, codigo, fecha)
+d_obs <- d[!is.na(P), .(codigo, fecha, P)]; setkey(d_obs, codigo, fecha)
+r4 <- rz[largo >= R4_LARGO]
+r4[, c("vecina", "km", "dias_vecina", "dias_lluvia_vecina", "q") := rbindlist(lapply(seq_len(.N), function(i) {
+  cod <- codigo[i]; desde <- ini[i]; hasta <- fin[i]   # copias locales: dentro de d_obs[...] "codigo" sería su columna
+  for (v in names(sort(DK[cod, vecinas(cod)]))) {
+    x <- d_obs[.(v)][fecha %between% c(desde, hasta)]
+    if (nrow(x) >= .8 * largo[i]) {
+      a <- merge(ll_ent[.(cod)], ll_ent[.(v)], by = "fecha")
+      return(data.table(v, round(DK[cod, v], 1), nrow(x), sum(x$P > 0), a[ll.y == TRUE, mean(ll.x)]))
+    }
+  }
+  data.table(NA_character_, NA_real_, NA_integer_, NA_integer_, NA_real_)
+}))]
+R4_UMBRAL <- 0.05 / nrow(r4)
+r4[, `:=`(p_azar = (1 - q)^dias_lluvia_vecina, nombre_vecina = valle[match(vecina, codigo), nombre])]
+r4[, falso := !is.na(p_azar) & p_azar < R4_UMBRAL]
+tabla(r4[order(p_azar)], "5b_rachas_ceros_prueba")
+cat(sprintf("Rachas de ≥%d días en 0: %d (%d sin vecina con datos). Umbral 0,05/%d = %.1e → %d rachas falsas en %d estaciones\n",
+            R4_LARGO, nrow(r4), r4[is.na(p_azar), .N], nrow(r4), R4_UMBRAL, r4[falso == TRUE, .N], r4[falso == TRUE, uniqueN(codigo)]))
+print(r4[order(p_azar)][1:12, .(nombre, ini, fin, largo, vecina = nombre_vecina, km, dias_lluvia_vecina, q = round(q, 2), p_azar = signif(p_azar, 2), falso)])
+grafico(ggplot(r4[!is.na(p_azar)], aes(dias_lluvia_vecina, pmax(p_azar, 1e-12), colour = falso)) + geom_point(alpha = .6) +
+          geom_hline(yintercept = R4_UMBRAL, linetype = 2) + scale_y_log10() +
+          scale_colour_manual(values = c(`TRUE` = "firebrick", `FALSE` = "grey50"), labels = c(`TRUE` = "Falsa → faltante", `FALSE` = "Se mantiene"), name = NULL) +
+          labs(x = "Días con lluvia en la vecina más cercana durante la racha", y = "p = (1 - q)^k (log)",
+               title = "R4: rachas de ≥30 días en 0 que la vecina no respalda", subtitle = sprintf("Línea: umbral 0,05 / %d rachas", nrow(r4))),
+        "5b_rachas_ceros_prueba")
 
 # 5c. Años idénticos entre estaciones (copias)
 huella <- d[, .(n = .N, h = paste(P, collapse = ",")), by = .(codigo, anio)][n >= 300]
@@ -375,8 +396,15 @@ rm(dr)
 
 # QUÉ DICEN LOS DATOS (H5–H7)
 #   19 meses con un solo día de lluvia > p99; en varios solo hay un día observado
-#   (se anotó el total mensual) → R3. De 918 rachas de ceros ≥30 días, solo 6
-#   tienen vecinas lloviendo ≥40 % (5 de Loboguerrero, 1 de La Despensa) → R4.
+#   (se anotó el total mensual) → R3. De 917 rachas de ceros ≥30 días, 30 (en
+#   27 estaciones) no tienen respaldo: su vecina más cercana llovió normal y la
+#   probabilidad de que la estación marcara 0 todos esos días es < 0,05/917 → R4.
+#   Ejemplo: Bella Vista 1982, 49 días en 0 mientras La Ceja (8,7 km) llovió 23
+#   días (p = 7e-10). La mayoría de las 917 son sequías reales: la vecina también
+#   estuvo seca (El Niño de 1997, temporadas secas). Loboguerrero oct–nov 1995,
+#   antes revisada a mano, no pasa el umbral (p = 2e-4): Dagua coincide con ella
+#   solo la mitad de los días de lluvia, y 12 días no alcanzan para descartar
+#   una sequía real en un enclave seco. Se mantiene como dato.
 #   No hay años copiados; lo más repetido son 11 días seguidos de 1 mm (llovizna).
 
 
@@ -595,17 +623,12 @@ m_mes <- d[meses_sosp[marcar == TRUE, .(codigo, anio, mes, dias_obs, p_lluvia_ve
       detalle = sprintf("%d días observados; vecinas llovieron %.0f %% de los días%s",
                         dias_obs, 100 * p_lluvia_vecinas, fifelse(mes_vacio, "; mes casi vacío", "")))]
 
-# R4. Rachas de ceros: no se borran por regla. Revisión a mano (tabla 5b):
-#     - Loboguerrero, oct–nov 1995 → faltante: temporada de lluvias, la estación
-#       suele llover el 41 % de esos días y Dagua (12 km, mismo cañón) tuvo 12
-#       días con lluvia (83 mm).
-#     - Las otras 5 (La Despensa ene–feb 1996; Loboguerrero 1982, 1982–83, 1989,
-#       1991) caen en temporada seca o en El Niño y la vecina del mismo cañón
-#       también estuvo casi seca → se mantienen.
-m_cero <- d[codigo == "5301500102" & fecha %between% as.IDate(c("1995-10-27", "1995-11-28")),
-            .(codigo, fecha, P, regla = "R4 racha de ceros revisada",
-              detalle = "33 días en 0 en temporada de lluvias; Dagua (12 km) 12 días con lluvia")]
-stopifnot(nrow(m_cero) == 33, all(m_cero$P == 0))
+# R4. Racha de ≥30 días en 0 que la vecina más cercana no respalda → faltante
+#     (prueba de la sección 5b, umbral 0,05 / número de rachas).
+m_cero <- r4[falso == TRUE][, d[codigo == .BY$codigo & fecha %between% c(ini, fin), .(fecha, P)], by = .(codigo, ini, fin, nombre_vecina, dias_lluvia_vecina, p_azar)][
+  , .(codigo, fecha, P, regla = "R4 racha de ceros sin respaldo",
+      detalle = sprintf("%s: llovió %d días; p = %.1e", nombre_vecina, dias_lluvia_vecina, p_azar))]
+stopifnot(all(m_cero$P == 0), nrow(m_cero) == r4[falso == TRUE, sum(largo)])
 
 marcas <- valle[, .(codigo, nombre)][rbind(m_ext, m_mes, m_cero), on = "codigo"]
 print(marcas[, .(dias = .N, estaciones = uniqueN(codigo)), by = regla])
@@ -641,7 +664,7 @@ trazabilidad <- rbind(
   cbind(paso = "2. R1: sin 29 de febrero", cuenta(d)),
   cbind(paso = "3. R2: extremos sin respaldo a faltante", cuenta(d_r2)),
   cbind(paso = "4. R3: totales mensuales en un día a faltante", cuenta(d_r3)),
-  cbind(paso = "5. R4: racha de ceros revisada a faltante", cuenta(d_r4)),
+  cbind(paso = "5. R4: rachas de ceros sin respaldo de la vecina a faltante", cuenta(d_r4)),
   cbind(paso = "6. R5: años con ≥90 % de días y hueco ≤15", cuenta(diario_todo[!is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
   cbind(paso = "7. R6: estaciones con ≥7 años válidos en entrenamiento", cuenta(diario[!is.na(P)])))
 trazabilidad[, `:=`(estaciones_que_salen = c(NA, -diff(estaciones)), pares_que_salen = c(NA, -diff(pares_estacion_anio)),
@@ -653,7 +676,7 @@ reglas <- c(
   R1 = "Dominio 1–365: se quita el 29 de febrero",
   R2 = "Extremo > 3·p99 y ≥150 mm sin vecina (≤25 km, ±1 día) que supere P/3 → faltante",
   R3 = "Mes con un solo día de lluvia > p99 y (mes con <50 % de días o vecinas con lluvia ≥40 % de los días) → mes faltante",
-  R4 = "Rachas de ceros: no se borran por regla; revisión a mano: Loboguerrero oct–nov 1995 → faltante",
+  R4 = "Racha ≥30 días en 0 → faltante si la vecina más cercana llovió k días y (1 − q)^k < 0,05/rachas (q de entrenamiento)",
   R5 = "Año válido: ≥90 % de 365 días y hueco máximo ≤15 días",
   R6 = "Estación: ≥7 años válidos en entrenamiento (1981–1995)",
   R7 = "Sin imputación")

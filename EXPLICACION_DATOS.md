@@ -14,9 +14,9 @@ Este documento recorre, sección por sección, las tablas y gráficas que produc
 |---|---|---|---|
 | Crudo, 1981–2003 | 323 | 5 514 | — |
 | Solo el Valle, con coordenada | 220 | 3 943 | Se quedan solo las del polígono del DANE (D-31 a D-35) |
-| R1 a R4: limpiar días | 220 | 3 943 | 100 días pasan a faltante (más los 832 del 29 de febrero) |
-| R5: años válidos | 214 | 3 482 | ≥ 90 % de los días y ningún hueco de más de 15 días |
-| R6: estaciones con historia | **176** | **3 326** | ≥ 7 años válidos en entrenamiento |
+| R1 a R4: limpiar días | 220 | 3 943 | 1 423 días pasan a faltante (más los 832 del 29 de febrero) |
+| R5: años válidos | 214 | 3 455 | ≥ 90 % de los días y ningún hueco de más de 15 días |
+| R6: estaciones con historia | **176** | **3 299** | ≥ 7 años válidos en entrenamiento |
 
 Tabla: `tablas/8_trazabilidad.csv`. Es la tabla de trazabilidad que pide la rúbrica (4.1).
 
@@ -146,18 +146,27 @@ Por eso, más adelante, la distribución de la lluvia sale "en escalera".
 
 ![Rachas de ceros](salidas_R_datos/graficos/5b_rachas_ceros.png)
 
-**Qué muestra.** Cada punto es una racha de 15 días o más en cero en una estación. El eje X es el largo de la racha. El eje Y es en qué fracción de esos días llovió en las vecinas (≤ 25 km). La línea punteada está en 0,4.
+**Qué muestra.** Cada punto es una racha de 15 días o más en cero en una estación. El eje X es el largo de la racha. El eje Y es en qué fracción de esos días llovió en las vecinas (≤ 25 km).
 
 **Cómo se lee:**
-- Abajo de la línea, las vecinas también estaban secas: la sequía fue real.
+- Abajo, las vecinas también estaban secas: la sequía fue real.
 - Arriba, las vecinas llovían y la estación marcaba cero: probablemente nadie leyó el pluviómetro y se anotó 0.
 
-**Cifras.** Hay 7 097 rachas, 917 de 30 días o más. Solo 6 son largas y tienen a las vecinas lloviendo más del 40 % de los días (`tablas/5b_revision_rachas.csv`). Esas 6 se revisaron a mano:
-- La Despensa (1996): la vecina más cercana, a 3,6 km, también estuvo seca. Se conserva.
-- Loboguerrero (1982, 1983, 1989, 1991): la vecina, Dagua, llovió poco. Se conservan.
-- **Loboguerrero, 27-oct a 28-nov de 1995:** Dagua llovió 12 días y 83 mm, en plena temporada húmeda. **Pasa a faltante.**
+Esta gráfica muestra el problema, pero no basta para decidir: estar "arriba" depende de qué tan seguido coinciden la estación y su vecina. Por eso R4 usa la prueba de abajo.
 
-**Regla R4.** Las rachas no se borran con una regla automática, porque la mayoría son sequías reales del valle. Solo se quitó el caso revisado (33 días).
+![Prueba de las rachas](salidas_R_datos/graficos/5b_rachas_ceros_prueba.png)
+
+**Qué muestra.** Cada punto es una racha de 30 días o más en cero (hay 917). El eje X es cuántos días llovió su vecina más cercana con datos durante la racha (k). El eje Y es p = (1 − q)^k: la probabilidad de que la estación marcara 0 en todos esos días por azar. Aquí q es qué tan seguido llueve en la estación cuando llueve en la vecina, calculado solo con 1981–1995. La línea punteada es el umbral 0,05 / 917.
+
+**Cómo se lee:**
+- A la izquierda y arriba, la vecina casi no llovió: la sequía fue real y la racha se conserva.
+- Abajo de la línea (en rojo), la vecina llovió muchos días y la estación siguió en 0: es muy improbable que sea real. Pasa a faltante.
+
+**Cifras** (`tablas/5b_rachas_ceros_prueba.csv`). Hay 7 097 rachas de 15 días o más y 917 de 30 o más. **30 rachas, en 27 estaciones, no tienen respaldo** (1 356 días). El caso más claro es Bella Vista 1982: 49 días en 0 mientras La Ceja (8,7 km) llovió 23 días (p = 7e-10). La mayoría de las rachas largas son sequías reales (El Niño de 1997, temporadas secas).
+
+**Regla R4** (D-49). Una racha de 30 días o más en 0 pasa a faltante si p < 0,05 / 917. El umbral es tan exigente porque p supone días independientes y la lluvia viene en rachas, así que exagera lo raro.
+- Loboguerrero oct–nov de 1995, que antes se había quitado a mano, se conserva: Dagua coincide con ella solo la mitad de los días de lluvia y p = 2e-4 no alcanza el umbral.
+- Loboguerrero dic-1982 a mar-1983 sí pasa a faltante. La revisión a mano la había dejado porque Dagua "también estaba seca", pero Dagua casi no tiene datos esos días. La vecina con datos, Limones, llovió 39 días.
 
 **Otros controles:** ningún año está duplicado entre estaciones, y las rachas de valores repetidos distintos de cero son cortas (máximo 11 días de "1 mm").
 
@@ -247,10 +256,10 @@ Esto justifica dos cosas:
 
 ## 8. Depuración y dataset final
 
-**Días que pasan a faltante** (`tablas/8_marcas_limpieza.csv`): 100 en total.
+**Días que pasan a faltante** (`tablas/8_marcas_limpieza.csv`): 1 423 en total.
 - R2: 5 extremos.
 - R3: 62 días de totales mensuales.
-- R4: 33 días de la racha revisada.
+- R4: 1 356 días de 30 rachas de ceros sin respaldo.
 
 ![Estaciones incluidas](salidas_R_datos/graficos/8_mapa_incluidas.png)
 
@@ -269,9 +278,9 @@ Esto justifica dos cosas:
 
 | Conjunto | Años | Curvas | Estaciones | Días faltantes |
 |---|---|---|---|---|
-| Entrenamiento | 1981–1995 | 2 278 | 176 | 2 189 (0,26 %) |
-| Validación | 1996–2000 | 673 | 147 | 479 |
-| Prueba | 2001–2003 | 375 | 137 | 219 |
+| Entrenamiento | 1981–1995 | 2 257 | 176 | 2 191 (0,27 %) |
+| Validación | 1996–2000 | 672 | 147 | 465 |
+| Prueba | 2001–2003 | 370 | 137 | 219 |
 
 ---
 
@@ -431,7 +440,7 @@ En una péntada concreta, el satélite es una estimación gruesa.
 **Interpretación.** Las dos fuentes tienen resoluciones muy distintas. Por eso cada una se construye con su propia base, y se comparan como curvas, no día a día.
 
 **Contenido de `datos_preparados.rds`:**
-- Estaciones: 3 326 curvas × 365 días, en mm/día, con `NA` en los faltantes (0,24 %).
+- Estaciones: 3 299 curvas × 365 días, en mm/día, con `NA` en los faltantes (0,24 %).
 - Satélite: 15 663 curvas × 72 péntadas, en mm/día, ubicadas en su día central.
 - Pares: cada curva de estación con la de su píxel y su año, más el ONI y la fase ENSO.
 - Metadatos de las estaciones: coordenada, altitud (Univalle con 996 m, D-46), vertiente y marcas para la sensibilidad (6 del cruce con el CNE, 12 con coordenada a revisar).

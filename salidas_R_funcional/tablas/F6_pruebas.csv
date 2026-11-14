@@ -1,0 +1,13 @@
+prueba,pasa
+El emparejamiento es el mismo del archivo de datos,TRUE
+Ningún año queda fuera del modelo,TRUE
+La base propia coincide con splines::splineDesign,TRUE
+"S simétrica, idempotente y tr(S) = K en las dos fuentes",TRUE
+W integra el dominio: 1'W1 = 364,TRUE
+La media paso a paso coincide con fda::mean.fd,TRUE
+Las atípicas coinciden con fda::fbplot,TRUE
+Funciones propias ortonormales con W,TRUE
+"K, FPCA y escalas solo con entrenamiento; M y lambda con validación",TRUE
+"Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)",TRUE
+La reconstrucción en mm no es negativa,TRUE
+Bootstrap con al menos 1000 remuestreos,TRUE

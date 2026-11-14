@@ -5,34 +5,34 @@ Se actualiza cada vez que se avanza.
 
 **Estados:** ✅ hecho y verificado · 🟡 a medias · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/` con la población vieja (248 estaciones) y hay que rehacerlo con las 176.
 
-**Última actualización:** 13-nov-2026, después de unir el trabajo funcional de Jacobo y María.
+**Última actualización:** 13-nov-2026, después de cerrar la parte funcional en `lluvia_valle_funcional.R` (D-48).
 
 ## Resumen
 
 | Ítem | Peso | Estado | Qué falta |
 |---|---|---|---|
-| 1. Construcción de datos funcionales | 10 % | ✅ | Hecho en `funcional/11` (Jacobo): K = 8 / 11, S verificada, bandas |
-| 2. EDA funcional | 15 % | ✅ | Hecho en `funcional/12`; falta pulir la interpretación para el informe |
-| 3. Comparación funcional por fuente | 15 % | ✅ | Hecho en `funcional/10` y `13` |
+| 1. Construcción de datos funcionales | 10 % | ✅ | Sección 2 de `lluvia_valle_funcional.R`: K = 8 / 11, S verificada, bandas |
+| 2. EDA funcional | 15 % | ✅ | Sección 3; falta pasar la interpretación al informe |
+| 3. Comparación funcional por fuente | 15 % | ✅ | Secciones 1 (emparejamiento) y 4, con todos los años |
 | 4.1 Preprocesamiento y selección | 6 % | ✅ | Solo decidir sobre los registros 1930–1979 (con el FPCA) |
-| 4.2 Red neuronal funcional | 10 % | 🟡 | La regresión de referencia está (`funcional/14`); falta la red en Python |
+| 4.2 Red neuronal funcional | 10 % | 🟡 | La regresión de referencia está (sección 5); falta la red en Python |
 | 4.3 Ablación KAN, MLP y lineal | 11 % | ♻️ | Rehacer |
-| 4.4 Evaluación | 8 % | 🟡 | Métricas e IC de la regresión de referencia hechos; falta para la red |
+| 4.4 Evaluación | 8 % | 🟡 | Las cuatro métricas, IC bootstrap, Wilcoxon y fase ENSO hechos para la regresión (sección 5.5); falta para la red |
 | 4.5 Interpretación climatológica | 10 % | ♻️ | Rehacer |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
-| 6. Scripts R y Python | 5 % | 🟡 | El R está en 6 archivos: hay que unirlos en uno (D-41); falta el Python |
+| 6. Scripts R y Python | 5 % | 🟡 | El R son dos archivos (datos y funcional) que se pegan para la entrega (D-48); falta el Python |
 
 ## Antes de lo funcional: datos y EDA (lo que ya está)
 
 - ✅ **Estaciones del Valle:** 232 con coordenada, todas dentro del polígono del DANE (D-31 a D-35).
 - ✅ **EDA de los datos crudos de estaciones:** secciones 1–6 de `lluvia_valle_datos.R`.
-- ✅ **Depuración con reglas sacadas de los datos (D-36):** 176 estaciones y 3 326 pares estación–año.
+- ✅ **Depuración con reglas sacadas de los datos (D-36):** 176 estaciones y 3 299 pares estación–año.
 - ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-43), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
 - ✅ **EDA del satélite y comparación con las estaciones (D-44).**
 - ✅ **Datos preparados para la construcción funcional:** `salidas_R_datos/datos_preparados.rds`.
 - ✅ **Pruebas:** 26 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
 
-## 1. Construcción de datos funcionales (10 %) — `funcional/11_construccion_funcional.R`
+## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
 - ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (`00_funciones.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
 - ✅ K por ECM, VC y VCG para cada fuente, solo con entrenamiento: K = 8 (estaciones) y K = 11 (satélite) (D-39).
@@ -42,7 +42,7 @@ Se actualiza cada vez que se avanza.
 - 🟡 Días faltantes: el ajuste usa solo los días observados (sin imputar). Hay que escribirlo en el informe.
 - ⚠️ **Tope:** construir las curvas con librerías deja la nota en máximo 2.
 
-## 2. Análisis exploratorio funcional (15 %) — `funcional/12_eda_funcional.R`
+## 2. Análisis exploratorio funcional (15 %) — sección 3 de `lluvia_valle_funcional.R`
 
 - ✅ Media funcional paso a paso, verificada con `fda::mean.fd`.
 - ✅ Varianza y desviación estándar funcional.
@@ -52,7 +52,7 @@ Se actualiza cada vez que se avanza.
 - 🟡 Interpretación climatológica (régimen bimodal, orografía, ENSO): está en los comentarios del código; falta redactarla en el informe.
 - ✅ **Tope de representatividad:** las 176 estaciones representan a las 220 (sección 8 de `lluvia_valle_datos.R`).
 
-## 3. Comparación funcional por fuente (15 %) — `funcional/10` y `funcional/13`
+## 3. Comparación funcional por fuente (15 %) — secciones 1 y 4 de `lluvia_valle_funcional.R`
 
 - ✅ Emparejamiento estación–píxel documentado: 176 estaciones en 148 píxeles, 23 compartidos (D-38, D-44).
 - ✅ Curva de diferencia d(t) con banda ± 2EE e intervalos donde no contiene el cero.
@@ -60,12 +60,13 @@ Se actualiza cada vez que se avanza.
 - ✅ Comparación de las covarianzas.
 - ✅ Comparación por altitud, vertiente y fase ENSO.
 - 🟡 Interpretación del sesgo satelital: base en D-44 y en la sección 13; falta redactarla.
-- ⚠️ **Por corregir (P-4 resuelta):** el profesor pidió no eliminar años; la comparación principal hoy excluye 1985, 1988 y 2000 (D-37/D-42) y hay que incluirlos (D-47).
+- ✅ Todos los años entran (D-47, D-48). 1985, 1988 y 2000 se muestran además aparte, como descripción.
+- ✅ Verificado que las diferencias no salen de usar K distinto por fuente (`F4_sensibilidad_mismo_K.csv`).
 
 ## 4.1 Preprocesamiento y selección de datos (6 %)
 
 - ✅ Regla explícita para valores imposibles y errores de digitación (R2: extremos sin respaldo de las vecinas).
-- ✅ Totales acumulados en un solo día (R3) y ceros que son faltantes (R4, con revisión a mano).
+- ✅ Totales acumulados en un solo día (R3) y ceros que son faltantes (R4, regla calculada con la vecina más cercana y umbral de Bonferroni: 30 rachas, D-49).
 - ✅ Criterio de cobertura mínima por estación y año, justificado con el experimento de huecos (R5 y R6).
 - 🟡 Decisión sobre agregar datos:
   - imputación: no se imputa, y está justificado (D-13);
@@ -97,9 +98,9 @@ Se actualiza cada vez que se avanza.
 - ✅ Partición 1981–1995 / 1996–2000 / 2001–2003 aplicada en los datos preparados.
 - ✅ Estaciones reservadas por el docente: **ya no van** (el profesor cambió el plan). La prueba es 2001–2003.
 - ♻️ Comparación contra la curva satelital sin corregir.
-- ♻️ Las cuatro métricas: error L² relativo, KGE, sesgo del acumulado anual y error en la fecha de los dos picos.
-- ♻️ IC bootstrap del 95 % (≥ 1000 remuestreos) y prueba de Wilcoxon pareada por estación.
-- 🟡 Resultados por fase ENSO con el ONI y su fuente citada. El ONI está en `datos_web/`; falta aplicarlo a los resultados.
+- 🟡 Las cuatro métricas (error L² relativo, KGE, sesgo del acumulado anual en % y error en la fecha de los dos picos): hechas para la regresión de referencia (`F5_metricas_prueba.csv`); falta para la red.
+- 🟡 IC bootstrap del 95 % (2 000 remuestreos por estación) y Wilcoxon pareado por estación: hechos para la regresión (`F5_regresion_vs_satelite_pareado.csv`); falta para la red.
+- 🟡 Resultados por fase ENSO con el ONI: hechos para la regresión (`F5_metricas_por_fase_ENSO.csv`). La prueba no tiene año Niña; se agrega la validación como orientativa. Falta para la red.
 
 ## 4.5 Interpretación climatológica (10 %)
 
@@ -121,8 +122,8 @@ Se actualiza cada vez que se avanza.
 
 ## 6. Scripts en R y Python (5 %)
 
-- 🟡 Un único archivo de R y un único archivo de Python. Hoy: `lluvia_valle_datos.R` (datos). Falta sumarle lo funcional y armar el Python.
-- ✅ El R corre de principio a fin, con rutas relativas, semilla fija y versiones listadas (`salidas_R_datos/sessionInfo.txt`).
+- 🟡 Un único archivo de R y un único archivo de Python. Hoy el R son dos: `lluvia_valle_datos.R` y `lluvia_valle_funcional.R`. El segundo solo lee `datos_preparados.rds`, así que para la entrega se pegan uno tras otro (D-48). Falta el Python.
+- ✅ Los dos R corren de principio a fin, con rutas relativas, semilla fija y versiones listadas (`sessionInfo.txt` en cada carpeta de salidas). Pruebas automáticas: 26 en datos y 12 en funcional.
 - 🟡 Solo procedimientos vistos en clase; librerías adicionales solo donde se permite. En el R de datos las librerías son de EDA; la base B-spline del experimento de huecos es propia.
 - ⬜ Cada tabla y figura del informe ubicable en el código.
 
@@ -139,6 +140,6 @@ Detalle en `DECISIONES.md`, §8.
 - ✅ P-8 y P-3: el satélite es CHIRP y se usa solo el entregado.
 - ✅ P-1: los 21 sin ubicar se descartan.
 - ✅ P-13: solo el Valle del Cauca.
-- ✅ P-4: no se eliminan años del satélite (D-47); falta aplicarlo en `funcional/`.
+- ✅ P-4: no se eliminan años del satélite (D-47), ya aplicado en `lluvia_valle_funcional.R` (D-48).
 - ✅ P-12, P-14, P-15, P-17 y P-18: fuentes del IDEAM, Univalle, tope de 200 mm (serie graficada), 29 de febrero y píxel de la estación, aceptados en la asesoría (D-47).
 - P-16 (definición del ONI anual) y P-19 (registros 1930–1979): siguen abiertas.

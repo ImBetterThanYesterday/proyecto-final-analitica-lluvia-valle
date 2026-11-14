@@ -1,0 +1,3 @@
+K_estacion,K_satelite,d_medio_mm_anio,dias_banda_sin_cero,dias_con_el_mismo_veredicto,r_diagonal_media,cociente_varianzas_mediana
+8,11,-22,147,365,0.618,0.24
+8,8,-20,159,281,0.635,0.246
