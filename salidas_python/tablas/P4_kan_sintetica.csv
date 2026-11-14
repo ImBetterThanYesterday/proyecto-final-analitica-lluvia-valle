@@ -1,0 +1,2 @@
+funcion,arquitectura,RMSE_prueba,umbral
+"exp(sin(pi x) + y^2) en [-1,1]^2","KAN [2,5,1], G = 10",0.002007698592799972,0.01

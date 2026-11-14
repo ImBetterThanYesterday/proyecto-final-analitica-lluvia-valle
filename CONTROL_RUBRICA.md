@@ -4,7 +4,7 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 
 **Estados:** ✅ hecho y verificado en el código · 🟡 hecho, falta redactarlo o un detalle · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/05_red_funcional.py` con los insumos viejos (248 estaciones) y hay que reconectarlo a `salidas_R_funcional/para_python/`.
 
-**Última actualización:** 14-nov-2026, commit `b1bd344` (R0, P-20 cerrada, 27 + 12 pruebas pasan en la Mac del grupo).
+**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 12 pruebas.
 
 ## Resumen
 
@@ -14,14 +14,14 @@ Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeEr
 | 2. EDA funcional | 15 % | ✅ | Redactarlo; ventanas de temporada en el Pacífico (ver abajo) |
 | 3. Comparación funcional por fuente | 15 % | ✅ | Redactar la interpretación del sesgo |
 | 4.1 Preprocesamiento y selección | 6 % | 🟡 | Decidir P-19 (registros 1930–1979) |
-| 4.2 Red neuronal funcional | 10 % | ♻️ | La red en Python; la regresión de referencia en R ya cumple |
-| 4.3 Ablación KAN, MLP y lineal | 11 % | ♻️ | Todo en Python |
-| 4.4 Evaluación | 8 % | 🟡 | Hecha para la regresión; falta para las tres cabezas. Confirmar el CSV de estaciones reservadas |
+| 4.2 Red neuronal funcional | 10 % | ✅ | `lluvia_valle_red.py`, secciones 1–3 (D-52); falta redactar la demostración en el informe |
+| 4.3 Ablación KAN, MLP y lineal | 11 % | ✅ | Secciones 4–5 (D-52); falta redactar las conclusiones |
+| 4.4 Evaluación | 8 % | 🟡 | Métricas, bootstrap y Wilcoxon de las tres cabezas hechos; falta separarlas por fase ENSO. Confirmar el CSV de estaciones reservadas |
 | 4.5 Interpretación climatológica | 10 % | ♻️ | Todo en Python, más la lectura climatológica |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
 | 6. Scripts R y Python | 5 % | 🟡 | Unir los dos R en uno; el Python |
 
-Lo que pesa más y falta es lo de Python: 4.2 + 4.3 + 4.4 + 4.5 suman 39 % de la nota.
+Lo que pesa más y falta: 4.5 (10 %), el informe (10 %) y cerrar 4.4 por fase ENSO.
 
 ## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
@@ -78,29 +78,30 @@ El diagnóstico global no depende de usar K distinto por fuente; el veredicto d�
 
 Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
 
-## 4.2 Red neuronal funcional (10 %) — Python
+## 4.2 Red neuronal funcional (10 %) — `lluvia_valle_red.py` (D-52)
 
-| Lo que pide la rúbrica | Estado | Base |
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
 |---|---|---|
-| Codificador con w_k(t) en B-splines y z = A W c, Gram por cuadratura | ♻️ | `05_red_funcional.py` (8 neuronas). W ya viene por Gauss–Legendre en `para_python/W_s.csv` |
-| Altitud y ONI agregados a z | ♻️ | En `para_python/pares.csv`, con la media y la DE de entrenamiento en `especificacion.json` |
-| FPCA solo con entrenamiento; M justificado y varianza reportada | ✅ en R / ♻️ en Python | R: M = 6 (94,2 %), elegido en validación (`F5_fpca_varianza.csv`). Python debe usar el mismo M y la misma ψ (`fpca_estaciones.csv`) |
-| Pérdida L² con W y penalización de rugosidad sobre w_k | ♻️ | `05_red_funcional.py`; R_s en `para_python/R_s.csv` |
-| Demostración escrita y verificación ≤ 1e-4 de la equivalencia con la regresión funcional | ✅ en R / ♻️ en Python | R: 4e-15. Python: `verificar_equivalencia_lineal` |
-| Reconstrucción no negativa con el % recortado | ✅ en R / ♻️ en Python | R reporta el % recortado (sección 5.5) |
-| Tope: MLP sobre el vector de péntadas → máximo 1 | | No aplica si se usa el codificador funcional |
+| Codificador con w_k(t) en B-splines y z = A W c, Gram por cuadratura | ✅ | Clase `RedFuncional` (8 neuronas). W por Gauss–Legendre, igual a la de R a 8e-14 (sección 1) |
+| Altitud y ONI agregados a z | ✅ | Altitud estandarizada con entrenamiento; ONI anual de `pares.csv` |
+| FPCA solo con entrenamiento; M justificado y varianza reportada | ✅ | `P1_fpca_varianza.csv`: M = 6 (94,2 %), el mismo de R (elegido en validación); FPCA de Python = R a 1e-14 |
+| Pérdida L² con W y penalización de rugosidad sobre w_k | ✅ | `perdida_L2` y `rugosidad_relativa` (∫w''²/∫w², no se puede "ganar" encogiendo las w_k) |
+| Demostración escrita y verificación ≤ 1e-4 | ✅ | Demostración en la sección 3; `P3_equivalencia_lineal.csv`: 1,5e-14 en 3 semillas, y la red con los coeficientes de R da sus predicciones (3,6e-15) |
+| Reconstrucción no negativa con el % recortado | ✅ | `P5_recorte_no_negatividad.csv`: 0 % en prueba |
+| Tope: MLP sobre el vector de péntadas → máximo 1 | ✅ no aplica | Las tres cabezas van después del codificador funcional |
 
-## 4.3 Ablación KAN, MLP y cabeza lineal (11 %) — Python
+## 4.3 Ablación KAN, MLP y cabeza lineal (11 %) — `lluvia_valle_red.py` (D-52)
 
-| Lo que pide la rúbrica | Estado | Base |
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
 |---|---|---|
-| Las tres cabezas con el mismo codificador y el mismo decodificador | ♻️ | Clase `RedFuncional` |
-| Parámetros de KAN y MLP con `sum(p.numel())`, diferencia ≤ 10 % | ♻️ | `n_param` y `parametros_cabezas.csv`, con `assert` |
-| Tres semillas, media y DE | ♻️ | `SEMILLAS = (2026, 2027, 2028)` |
-| Mismo presupuesto: épocas, parada temprana con validación, pruebas de hiperparámetros | ♻️ | 6 000 épocas máx., paciencia 500; λ se elige con la cabeza lineal. Hay que tabular el presupuesto |
-| KAN verificada con una función sintética (RMSE ≤ 1e-2) | ♻️ | `verificar_kan_sintetica` |
-| Una cabeza supera a otra solo si el IC 95 % bootstrap de la diferencia excluye el 0 | ♻️ | Comparaciones pareadas por estación |
-| Tope: hiperparámetros con prueba → máximo 1 | | Solo validación |
+| Las tres cabezas con el mismo codificador y el mismo decodificador | ✅ | Prueba automática (sección 6) |
+| Parámetros de KAN y MLP con `sum(p.numel())`, diferencia ≤ 10 % | ✅ | `P4_parametros_cabezas.csv`: 640 vs 635 (0,8 %) |
+| Tres semillas, media y DE | ✅ | `P5_entrenamiento_por_semilla.csv`, `P5_ablacion_media_DE_semillas.csv` |
+| Mismo presupuesto: épocas, parada temprana, pruebas de hiperparámetros | ✅ | `P5_presupuesto.csv`, `P5_seleccion_lambda_por_cabeza.csv`: 5 pruebas de λ_w por cabeza |
+| KAN verificada con una función sintética (RMSE ≤ 1e-2) | ✅ | `P4_kan_sintetica.csv`: RMSE 2e-3 |
+| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `P5_comparaciones_pareadas_prueba.csv` (columna `gana`) |
+| Conclusiones sobre la no linealidad del sesgo y el costo de la interpretabilidad | 🟡 | Escritas en el bloque "Qué dicen los datos" de la sección 5; falta pasarlas al informe |
+| Tope: hiperparámetros con prueba → máximo 1 | ✅ no aplica | λ_w y épocas solo con validación |
 
 ## 4.4 Evaluación (8 %)
 
@@ -108,10 +109,10 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 |---|---|---|
 | Partición 1981–1995 / 1996–2000 / 2001–2003 sin fuga | ✅ | Datos preparados; prueba de no fuga del funcional (prueba 9) |
 | Estaciones reservadas | 🟡 | El profesor dijo que ya no van (P-10), pero la fe de erratas aún pide el CSV `station_id, year, day, value_mm`. **Confirmar con él** |
-| Comparación con el satélite sin corregir | ✅ regresión / ♻️ red | `F5_metricas_prueba.csv` |
-| Las cuatro métricas | ✅ regresión / ♻️ red | L² relativo 0,51 → 0,44; KGE 0,38 → 0,47; sesgo anual +26 % → +7 %; picos |
-| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ regresión / ♻️ red | 2 000 remuestreos, `F5_regresion_vs_satelite_pareado.csv` |
-| Por fase ENSO con el ONI y su fuente | ✅ regresión / ♻️ red | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
+| Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `P5_ablacion_media_DE_semillas.csv` (tres cabezas) |
+| Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420 |
+| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `P5_comparaciones_pareadas_prueba.csv` |
+| Por fase ENSO con el ONI y su fuente | ✅ regresión / ⬜ cabezas | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 (ONI anual = media de los 12 trimestres) sigue abierta |
 
 ## 4.5 Interpretación climatológica (10 %) — Python
 
@@ -139,14 +140,14 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 
 | Lo que pide la rúbrica | Estado |
 |---|---|
-| Un único R y un único Python | 🟡 Hoy hay dos R (datos y funcional); se pegan uno tras otro para la entrega (D-48). Falta el Python |
+| Un único R y un único Python | 🟡 Hoy hay dos R (datos y funcional); se pegan uno tras otro para la entrega (D-48). Python: `lluvia_valle_red.py` (un solo archivo) |
 | Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 12 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
 | Solo procedimientos de clase; librerías extra solo donde se permite | 🟡 Construcción sin librerías; en Python solo PyTorch (pykan permitido) |
-| Cada tabla y figura del informe ubicable en el código | 🟡 Prefijos `2_`…`15_` (datos) y `F1_`…`F6_` (funcional); falta en Python |
+| Cada tabla y figura del informe ubicable en el código | 🟡 Prefijos `2_`…`15_` (datos), `F1_`…`F6_` (funcional) y `P1_`…`P6_` (Python) |
 
 ## Plan para cerrar (en orden)
 
-1. **Red funcional en Python:** reconectar `05_red_funcional.py` a `para_python/`, con M = 6, ψ y escalas de R; un solo archivo `lluvia_valle_red.py`. Cubre 4.2, 4.3, 4.4 y 4.5.
+1. ~~Red funcional y ablación en Python~~ — hecho (D-52). Sigue: **4.5** (w_k(t), activaciones de la KAN, ajuste simbólico, peores casos) y **4.4 por fase ENSO** para las tres cabezas.
 2. **Decisiones abiertas:** P-19 (recomendado no usar 1930–1979), P-16 (ONI anual) y confirmar el CSV de estaciones reservadas.
 3. **Texto respaldado:** tasa mm/día vs. acumulada; ventanas de temporada en el Pacífico; interpretación del sesgo.
 4. **Unir los dos R** en un solo archivo de entrega.

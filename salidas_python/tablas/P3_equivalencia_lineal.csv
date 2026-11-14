@@ -1,0 +1,5 @@
+verificacion,dif_max,umbral
+red lineal con los coeficientes de R vs predicciones de R,3.552713678800501e-15,1e-08
+"red lineal entrenada (semilla 2026) vs ∫β(s,t)X(s)ds por cuadratura, prueba",1.3766765505351941e-14,0.0001
+"red lineal entrenada (semilla 2027) vs ∫β(s,t)X(s)ds por cuadratura, prueba",1.509903313490213e-14,0.0001
+"red lineal entrenada (semilla 2028) vs ∫β(s,t)X(s)ds por cuadratura, prueba",1.2434497875801753e-14,0.0001

@@ -1,0 +1,4 @@
+cabeza,arquitectura,param_cabeza,param_codificador,param_total
+lineal,Linear(10→6),66,88,154
+kan,"KAN[10,4,6], G = 5, cúbica",640,88,728
+mlp,"MLP[10,37,6], SiLU",635,88,723

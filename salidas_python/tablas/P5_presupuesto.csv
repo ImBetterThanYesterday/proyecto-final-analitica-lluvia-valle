@@ -1,0 +1,2 @@
+optimizador,lr,lote,epocas_max,parada_temprana,pruebas_hiperparametros_por_cabeza,rejilla_lambda_w,semillas
+Adam,0.01,completo (entrenamiento),5000,"L² de validación, paciencia 1000",5,"(0.0, 1000000.0, 10000000.0, 100000000.0, 1000000000.0)","(2026, 2027, 2028)"

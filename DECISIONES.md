@@ -593,6 +593,22 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Consecuencias:** no cambia nada del análisis. El experimento de huecos de R5 sigue valiendo, porque se hizo con K = 8. K = 10 queda documentado como alternativa (VC 0,34 % peor, menos negativos), sin adoptarlo.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
+### D-52 · Red neuronal funcional y ablación de la cabeza en Python, conectada a lo de R ✅ (rúbrica 4.2 y 4.3)
+- **Por qué Python:** el enunciado permite PyTorch y pykan solo en este apartado, y son de Python. R ya tiene la versión lineal (regresión funcional, sección 5), así que Python lee lo que deja R en `salidas_R_funcional/para_python/` y no vuelve a construir nada.
+- **Base:** se reutilizó `archivo_flujo_anterior/05_red_funcional.py` (KAN con la forma del enunciado, MLP, conteo de parámetros, semillas, prueba sintética), reconectado a los insumos actuales en un solo archivo: `lluvia_valle_red.py`. Salidas en `salidas_python/tablas` (prefijos P1 a P6).
+- **Puente con R** (sección 1 y 3): W por cuadratura igual a la de R (8e-14); FPCA de entrenamiento igual (1e-14, salvo signo); las métricas de prueba de la regresión de R se reproducen; la red lineal cargada con los coeficientes de R da sus predicciones (3,6e-15). El decodificador usa el μ y las ψ de R (M = 6, 94,2 %), congelados.
+- **Arquitectura:** z_k = a_kᵀ W_s c con 8 neuronas, más altitud estandarizada y ONI. z se estandariza con su media y DE en ENTRENAMIENTO (afín, no rompe la equivalencia lineal; deja las entradas de la KAN dentro de su rejilla). Cabezas: lineal (10→6), KAN [10,4,6] con G = 5 (640 parámetros) y MLP [10,37,6] (635; 0,8 % de diferencia).
+- **Cambios frente al script viejo, con su razón:**
+  - *Penalización de rugosidad relativa* Σ ∫w_k''² / ∫w_k²: con z estandarizado, la penalización absoluta a_kᵀRa_k se podía bajar encogiendo las w_k sin suavizarlas.
+  - *Optimizador:* con lr = 3e-3 y paciencia 300 la cabeza lineal paraba en una pérdida de validación de 142, peor que mínimos cuadrados (137). Con lr = 1e-2, hasta 5 000 épocas y paciencia 1 000 llega al mínimo de entrenamiento de MCO, y con λ_w = 1e8 a 126,3 (la regresión de R: 126,9). Sin esto, la ventaja de las otras cabezas habría sido un artefacto.
+  - *Rejilla de λ_w* {0, 1e6, 1e7, 1e8, 1e9}: la rugosidad relativa es del orden de 1e-6; la rejilla vieja (≤ 0,1) no penalizaba nada.
+  - *M y ψ de R* en lugar de elegir M otra vez con "≥ 95 % de varianza": un solo criterio en todo el proyecto (validación, D-48).
+- **Presupuesto igual para las tres cabezas:** Adam, lr 1e-2, lote completo, hasta 5 000 épocas, parada temprana con la pérdida L² de validación (paciencia 1 000), 5 pruebas de λ_w con la semilla 2026 y luego 3 semillas (2026-2028). `P5_presupuesto.csv`.
+- **Verificaciones** (14 de 14 pasan, `P6_pruebas.csv`): equivalencia de la cabeza lineal con β(s,t) a 1,5e-14 en las 3 semillas (criterio 1e-4); KAN sintética con RMSE 2e-3 (criterio 1e-2); parámetros igualados; mismo codificador y decodificador; reconstrucción no negativa (0 % recortado).
+- **Resultado** (prueba 2001-2003, 370 curvas, 137 estaciones): L² relativo satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420. El MLP supera a la lineal en L² y KGE por poco (IC 95 % pareado que apenas excluye el 0); la KAN no se distingue de la lineal en L² ni en KGE y reduce el |sesgo| 4 puntos; KAN y MLP no se distinguen salvo en el pico 2. En validación la ventaja no lineal es mayor (pérdida 100-108 frente a 126), pero las no lineales sobreajustan pronto (época ~100). Detalle en el bloque "Qué dicen los datos" de la sección 5.
+- **Falta:** interpretación 4.5 (w_k(t), activaciones de la KAN, ajuste simbólico, peores casos) y las métricas por fase ENSO para las tres cabezas (4.4).
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.

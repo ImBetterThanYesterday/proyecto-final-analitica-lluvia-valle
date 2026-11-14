@@ -1,0 +1,43 @@
+comparacion,metrica,diferencia,ic_inf,ic_sup,ic_excluye_0,gana,p_wilcoxon
+kan − lineal,l2_rel,-0.0063,-0.0281,0.0158,False,ninguna (IC con 0),0.6573
+kan − lineal,rmse,-0.0947,-0.2478,0.0295,False,ninguna (IC con 0),0.6114
+kan − lineal,kge,0.0163,-0.015,0.0457,False,ninguna (IC con 0),0.7891
+kan − lineal,|sesgo_pct|,-4.0154,-7.4548,-0.4353,True,kan,0.0512
+kan − lineal,err_pico_1,0.3848,-0.5975,1.1302,False,ninguna (IC con 0),0.0
+kan − lineal,err_pico_2,2.0158,1.1792,2.8708,True,lineal,0.0
+mlp − lineal,l2_rel,-0.0201,-0.0397,-0.0001,True,mlp,0.0475
+mlp − lineal,rmse,-0.2142,-0.4557,-0.0417,True,mlp,0.1274
+mlp − lineal,kge,0.0301,0.0049,0.0562,True,mlp,0.0654
+mlp − lineal,|sesgo_pct|,-2.1928,-5.5593,1.1377,False,ninguna (IC con 0),0.0657
+mlp − lineal,err_pico_1,0.7068,0.1679,1.1744,True,lineal,0.0
+mlp − lineal,err_pico_2,0.2603,-0.2284,0.801,False,ninguna (IC con 0),0.8193
+kan − mlp,l2_rel,0.0138,-0.0011,0.0256,False,ninguna (IC con 0),0.0
+kan − mlp,rmse,0.1196,0.0261,0.2602,True,mlp,0.0
+kan − mlp,kge,-0.0138,-0.0324,0.0056,False,ninguna (IC con 0),0.0002
+kan − mlp,|sesgo_pct|,-1.8226,-3.9283,0.0604,False,ninguna (IC con 0),0.3141
+kan − mlp,err_pico_1,-0.322,-0.9741,0.2041,False,ninguna (IC con 0),0.6918
+kan − mlp,err_pico_2,1.7555,0.7578,2.747,True,mlp,0.0
+lineal − satélite sin corregir,l2_rel,-0.073,-0.0912,-0.0543,True,lineal,0.0
+lineal − satélite sin corregir,rmse,-0.2359,-0.3028,-0.168,True,lineal,0.0
+lineal − satélite sin corregir,kge,0.0723,0.0472,0.0961,True,lineal,0.0
+lineal − satélite sin corregir,|sesgo_pct|,-10.7096,-13.2609,-8.182,True,lineal,0.0
+lineal − satélite sin corregir,err_pico_1,-3.9639,-5.1164,-2.884,True,lineal,0.0
+lineal − satélite sin corregir,err_pico_2,-0.899,-1.6497,-0.1771,True,lineal,0.0452
+kan − satélite sin corregir,l2_rel,-0.0793,-0.112,-0.047,True,kan,0.0006
+kan − satélite sin corregir,rmse,-0.3306,-0.5038,-0.1804,True,kan,0.0015
+kan − satélite sin corregir,kge,0.0885,0.0464,0.1315,True,kan,0.0025
+kan − satélite sin corregir,|sesgo_pct|,-14.725,-19.5574,-10.3455,True,kan,0.0
+kan − satélite sin corregir,err_pico_1,-3.5791,-4.6063,-2.5432,True,kan,0.0
+kan − satélite sin corregir,err_pico_2,1.1168,0.1545,2.1332,True,satélite sin corregir,0.003
+mlp − satélite sin corregir,l2_rel,-0.0931,-0.125,-0.0632,True,mlp,0.0
+mlp − satélite sin corregir,rmse,-0.4502,-0.7154,-0.2445,True,mlp,0.0
+mlp − satélite sin corregir,kge,0.1023,0.0628,0.1457,True,mlp,0.0001
+mlp − satélite sin corregir,|sesgo_pct|,-12.9024,-17.3731,-8.4723,True,mlp,0.0
+mlp − satélite sin corregir,err_pico_1,-3.2571,-4.1588,-2.268,True,mlp,0.0
+mlp − satélite sin corregir,err_pico_2,-0.6387,-1.4815,0.1829,False,ninguna (IC con 0),0.1405
+lineal − regresión (R),l2_rel,0.0037,-0.0052,0.0128,False,ninguna (IC con 0),0.1032
+lineal − regresión (R),rmse,0.007,-0.027,0.0448,False,ninguna (IC con 0),0.0874
+lineal − regresión (R),kge,-0.013,-0.0236,-0.0023,True,regresión (R),0.0399
+lineal − regresión (R),|sesgo_pct|,2.0363,0.89,3.1814,True,regresión (R),0.0095
+lineal − regresión (R),err_pico_1,1.0556,0.6196,1.4874,True,regresión (R),0.0
+lineal − regresión (R),err_pico_2,-0.3054,-0.6557,0.0191,False,ninguna (IC con 0),0.1384
