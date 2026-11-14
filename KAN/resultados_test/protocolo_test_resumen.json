@@ -1,0 +1,440 @@
+{
+  "proposito": "Evaluación post hoc del test 2001–2003 después de congelar la configuración con validación; no se usa para seleccionar ni ajustar.",
+  "particion": {
+    "pares": 257,
+    "estaciones": 93,
+    "anios": [
+      2001,
+      2002,
+      2003
+    ],
+    "estaciones_compartidas_con_entrenamiento": 93,
+    "estaciones_nuevas_vs_entrenamiento": 0
+  },
+  "configuracion_congelada_en_validacion": {
+    "nombre": "combinacion_seleccionada_por_factor",
+    "neuronas_funcionales": 6,
+    "componentes_fpca": 4,
+    "bases_kan": 8,
+    "lambda_rugosidad": 0.0001,
+    "grado_bspline": 3,
+    "tasa_aprendizaje": 0.002,
+    "tamano_lote": 64,
+    "weight_decay": 0.0
+  },
+  "semillas": [
+    2026,
+    2027,
+    2028
+  ],
+  "prediccion_final_kan": {
+    "metodo": "Promedio punto a punto en mm/día de las reconstrucciones de las tres semillas.",
+    "n_semillas": 3
+  },
+  "metricas_por_semilla_kan": {
+    "l2_relativo": {
+      "media_entre_semillas": 0.4385152757167816,
+      "desviacion_estandar_entre_semillas": 0.00910089910030365,
+      "por_semilla": {
+        "2026": 0.44258472323417664,
+        "2027": 0.44487136602401733,
+        "2028": 0.4280897080898285
+      }
+    },
+    "kge": {
+      "media_entre_semillas": 0.4690013681722888,
+      "desviacion_estandar_entre_semillas": 0.007440441471889093,
+      "por_semilla": {
+        "2026": 0.4645067470708762,
+        "2027": 0.4649076255642005,
+        "2028": 0.47758973188178977
+      }
+    },
+    "sesgo_anual_pct": {
+      "media_entre_semillas": 14.710681915283203,
+      "desviacion_estandar_entre_semillas": 1.782260775566101,
+      "por_semilla": {
+        "2026": 15.079586029052734,
+        "2027": 16.27962303161621,
+        "2028": 12.77283763885498
+      }
+    },
+    "error_fecha_picos_dias": {
+      "media_entre_semillas": 22.242542153047992,
+      "desviacion_estandar_entre_semillas": 0.3243041466095408,
+      "por_semilla": {
+        "2026": 22.042801556420233,
+        "2027": 22.06809338521401,
+        "2028": 22.616731517509727
+      }
+    }
+  },
+  "bootstrap": {
+    "unidad_de_remuestreo": "estacion",
+    "replicas": 2000,
+    "intervalo": "95%"
+  },
+  "reconstruccion": {
+    "no_negativa_en_mm": true,
+    "porcentaje_raices_negativas_recortadas": 0.0,
+    "nota": "La raíz predicha negativa se recorta a cero antes de elevar al cuadrado."
+  },
+  "modelos": {
+    "kan": {
+      "l2_relativo": {
+        "media_por_curva": 0.4348386526107788,
+        "desviacion_estandar_por_curva": 0.23887799680233002,
+        "mediana_por_curva": 0.3795473277568817,
+        "media_por_estacion": 0.4403344988822937,
+        "ic95_bootstrap": [
+          0.4034350782632828,
+          0.4822746783494947
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "kge": {
+        "media_por_curva": 0.47561828245444654,
+        "desviacion_estandar_por_curva": 0.32612432028803184,
+        "mediana_por_curva": 0.5476936098078411,
+        "media_por_estacion": 0.4681758308596809,
+        "ic95_bootstrap": [
+          0.41529460542727975,
+          0.5171575680546768
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_anual_pct": {
+        "media_por_curva": 14.710681915283203,
+        "desviacion_estandar_por_curva": 37.95724868774414,
+        "mediana_por_curva": 8.007080078125,
+        "media_por_estacion": 15.653836250305176,
+        "ic95_bootstrap": [
+          8.7654438495636,
+          23.395014905929564
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "error_fecha_picos_dias": {
+        "media_por_curva": 22.186770428015564,
+        "desviacion_estandar_por_curva": 17.6160809679607,
+        "mediana_por_curva": 17.5,
+        "media_por_estacion": 22.725806451612904,
+        "ic95_bootstrap": [
+          20.53667114695341,
+          25.32641129032257
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_absoluto_anual_pct": {
+        "media_por_curva": 28.467845916748047,
+        "desviacion_estandar_por_curva": 29.058879852294922,
+        "mediana_por_curva": 22.102556228637695,
+        "media_por_estacion": 28.864416122436523,
+        "ic95_bootstrap": [
+          24.169853162765502,
+          34.2278374671936
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      }
+    },
+    "satelite": {
+      "l2_relativo": {
+        "media_por_curva": 0.5382286310195923,
+        "desviacion_estandar_por_curva": 0.30162718892097473,
+        "mediana_por_curva": 0.45041006803512573,
+        "media_por_estacion": 0.5450164079666138,
+        "ic95_bootstrap": [
+          0.48950214460492136,
+          0.6035233736038208
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "kge": {
+        "media_por_curva": 0.3598526984741179,
+        "desviacion_estandar_por_curva": 0.40244011159900966,
+        "mediana_por_curva": 0.4577840081083623,
+        "media_por_estacion": 0.34481544017125504,
+        "ic95_bootstrap": [
+          0.27197723164699095,
+          0.4120712864592751
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_anual_pct": {
+        "media_por_curva": 30.224502563476562,
+        "desviacion_estandar_por_curva": 47.86960983276367,
+        "mediana_por_curva": 20.22420310974121,
+        "media_por_estacion": 29.977983474731445,
+        "ic95_bootstrap": [
+          21.12759099006653,
+          39.9068302154541
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "error_fecha_picos_dias": {
+        "media_por_curva": 25.970817120622566,
+        "desviacion_estandar_por_curva": 20.145373143611184,
+        "mediana_por_curva": 19.5,
+        "media_por_estacion": 26.7078853046595,
+        "ic95_bootstrap": [
+          24.047043010752684,
+          29.622558243727603
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_absoluto_anual_pct": {
+        "media_por_curva": 41.90372085571289,
+        "desviacion_estandar_por_curva": 38.02377700805664,
+        "mediana_por_curva": 30.136486053466797,
+        "media_por_estacion": 42.02716827392578,
+        "ic95_bootstrap": [
+          35.190459442138675,
+          49.591567039489746
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      }
+    }
+  },
+  "comparacion_pareada_kan_menos_satelite_sin_corregir": {
+    "l2_relativo": {
+      "diferencia_media_por_estacion": -0.10468188553087172,
+      "ic95": [
+        -0.15101537081182645,
+        -0.05792407540864842
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1220.0,
+      "wilcoxon_p_value": 0.00021610685095176216
+    },
+    "kge": {
+      "diferencia_media_por_estacion": 0.12336039068842587,
+      "ic95": [
+        0.0616682557543169,
+        0.18365678949859174
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1267.0,
+      "wilcoxon_p_value": 0.0004326568971090704
+    },
+    "sesgo_anual_pct": {
+      "diferencia_media_por_estacion": -14.324148408828243,
+      "ic95": [
+        -21.556134019359465,
+        -7.29669562847384
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1240.0,
+      "wilcoxon_p_value": 0.0002914632112299143
+    },
+    "error_fecha_picos_dias": {
+      "diferencia_media_por_estacion": -3.9820788530465947,
+      "ic95": [
+        -5.255689964157707,
+        -2.6021057347670253
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 745.5,
+      "wilcoxon_p_value": 5.753301905693938e-08
+    },
+    "sesgo_absoluto_anual_pct": {
+      "diferencia_media_por_estacion": -13.162759396337695,
+      "ic95": [
+        -19.852750337252054,
+        -7.0909026811199825
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1285.0,
+      "wilcoxon_p_value": 0.0005598604925075324
+    }
+  },
+  "fase_enso": {
+    "fuente": "NOAA CPC ONI anual; etiquetas heredadas del conjunto emparejado",
+    "fases_con_datos": [
+      "Neutral",
+      "Nino"
+    ],
+    "fases_sin_datos": [
+      "Nina"
+    ],
+    "resultados": [
+      {
+        "fase_enso": "Neutral",
+        "pares": 172,
+        "estaciones": 92,
+        "metricas": {
+          "kan_l2_relativo": {
+            "media_por_curva": 0.46092942357063293,
+            "media_por_estacion": 0.4637712836265564,
+            "ic95_bootstrap_por_estacion": [
+              0.42356339693069456,
+              0.5081960678100584
+            ]
+          },
+          "kan_kge": {
+            "media_por_curva": 0.4292648384501808,
+            "media_por_estacion": 0.4292912025790687,
+            "ic95_bootstrap_por_estacion": [
+              0.3792476935646244,
+              0.4805045249828986
+            ]
+          },
+          "kan_sesgo_anual_pct": {
+            "media_por_curva": 18.10329818725586,
+            "media_por_estacion": 18.594165802001953,
+            "ic95_bootstrap_por_estacion": [
+              11.450481414794922,
+              26.374913930892944
+            ]
+          },
+          "kan_error_fecha_picos_dias": {
+            "media_por_curva": 23.86627906976744,
+            "media_por_estacion": 23.95923913043478,
+            "ic95_bootstrap_por_estacion": [
+              22.073233695652174,
+              25.926902173913042
+            ]
+          },
+          "satelite_l2_relativo": {
+            "media_por_curva": 0.5377340912818909,
+            "media_por_estacion": 0.5430638194084167,
+            "ic95_bootstrap_por_estacion": [
+              0.4924771718680859,
+              0.5986399963498114
+            ]
+          },
+          "satelite_kge": {
+            "media_por_curva": 0.34844895460057856,
+            "media_por_estacion": 0.3420027601392871,
+            "ic95_bootstrap_por_estacion": [
+              0.2718459662210758,
+              0.4115106170866881
+            ]
+          },
+          "satelite_sesgo_anual_pct": {
+            "media_por_curva": 29.33573341369629,
+            "media_por_estacion": 29.34425926208496,
+            "ic95_bootstrap_por_estacion": [
+              20.694910192489623,
+              38.79091024398804
+            ]
+          },
+          "satelite_error_fecha_picos_dias": {
+            "media_por_curva": 28.665697674418606,
+            "media_por_estacion": 28.483695652173914,
+            "ic95_bootstrap_por_estacion": [
+              26.339130434782607,
+              30.70115489130435
+            ]
+          }
+        }
+      },
+      {
+        "fase_enso": "Nino",
+        "pares": 85,
+        "estaciones": 85,
+        "metricas": {
+          "kan_l2_relativo": {
+            "media_por_curva": 0.38204315304756165,
+            "media_por_estacion": 0.38204315304756165,
+            "ic95_bootstrap_por_estacion": [
+              0.3416020393371582,
+              0.4247049182653427
+            ]
+          },
+          "kan_kge": {
+            "media_por_curva": 0.5694158397336664,
+            "media_por_estacion": 0.5694158397336664,
+            "ic95_bootstrap_por_estacion": [
+              0.5104151642599354,
+              0.6245851748289513
+            ]
+          },
+          "kan_sesgo_anual_pct": {
+            "media_por_curva": 7.845625400543213,
+            "media_por_estacion": 7.845625400543213,
+            "ic95_bootstrap_por_estacion": [
+              1.247988083958626,
+              15.026904058456417
+            ]
+          },
+          "kan_error_fecha_picos_dias": {
+            "media_por_curva": 18.788235294117648,
+            "media_por_estacion": 18.788235294117648,
+            "ic95_bootstrap_por_estacion": [
+              14.545588235294117,
+              23.58823529411765
+            ]
+          },
+          "satelite_l2_relativo": {
+            "media_por_curva": 0.5392292141914368,
+            "media_por_estacion": 0.5392292141914368,
+            "ic95_bootstrap_por_estacion": [
+              0.4772110156714916,
+              0.61363864839077
+            ]
+          },
+          "satelite_kge": {
+            "media_por_curva": 0.3829285096064561,
+            "media_por_estacion": 0.3829285096064561,
+            "ic95_bootstrap_por_estacion": [
+              0.29251327379891323,
+              0.46938989934147834
+            ]
+          },
+          "satelite_sesgo_anual_pct": {
+            "media_por_curva": 32.02294921875,
+            "media_por_estacion": 32.02294921875,
+            "ic95_bootstrap_por_estacion": [
+              21.47169256210327,
+              43.55846462249755
+            ]
+          },
+          "satelite_error_fecha_picos_dias": {
+            "media_por_curva": 20.51764705882353,
+            "media_por_estacion": 20.51764705882353,
+            "ic95_bootstrap_por_estacion": [
+              16.3875,
+              25.10632352941176
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "interpretacion_diferencias": {
+    "l2_relativo": "una diferencia negativa favorece a KAN",
+    "kge": "una diferencia positiva favorece a KAN",
+    "sesgo_anual_pct": "es sesgo firmado; una menor magnitud no implica menor error",
+    "sesgo_absoluto_anual_pct": "una diferencia negativa favorece a KAN",
+    "error_fecha_picos_dias": "una diferencia negativa favorece a KAN"
+  },
+  "limitaciones": [
+    "El test ya se evaluó e inspeccionó anteriormente; este resultado es post hoc, no ciego.",
+    "No se usó el test para seleccionar hiperparámetros ni modificar la arquitectura.",
+    "El test no contiene estaciones nuevas respecto del entrenamiento.",
+    "La comparación por ENSO es descriptiva y depende de la cobertura disponible.",
+    "No hay observaciones de test para estas fases ENSO: Nina."
+  ],
+  "diagnostico_estaciones": {
+    "estaciones": 93,
+    "curvas_estacion_anio": 257,
+    "umbral_cuartil_superior_l2": 0.46404656767845154,
+    "estaciones_cuartil_superior": 24,
+    "estaciones_referencia": 69
+  }
+}

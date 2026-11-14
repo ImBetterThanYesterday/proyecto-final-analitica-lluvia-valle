@@ -1,0 +1,26 @@
+{
+  "uso": "archivos suministrados por el docente; sin estimar faltantes",
+  "csv_coordinate_rows": 238,
+  "dta_coordinate_rows": 238,
+  "same_coordinate_code_set": true,
+  "max_csv_dta_longitude_difference_degrees": 3.811113288065826e-06,
+  "max_csv_dta_latitude_difference_degrees": 2.2872216831615333e-07,
+  "elevation_rows": 229,
+  "project_stations_after_preprocessing": 248,
+  "project_stations_with_coordinates": 170,
+  "project_stations_with_elevation": 145,
+  "project_stations_with_all_covariates_inside_grid": 105,
+  "usable_station_year_pairs": 2051,
+  "usable_pairs_by_partition": {
+    "entrenamiento": 1349,
+    "validacion": 445,
+    "prueba": 257
+  },
+  "unique_satellite_pixels": 89,
+  "median_pixel_distance_km": 2.2830218602644012,
+  "max_pixel_distance_km": 3.8715829485306674,
+  "elevation_range_m": [
+    20.0,
+    3690.0
+  ]
+}

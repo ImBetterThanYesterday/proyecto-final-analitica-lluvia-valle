@@ -1,0 +1,21 @@
+{
+  "grado": 7,
+  "r2_holdout": 0.999998517080147,
+  "coeficientes_polinomio": [
+    0.7185996298331003,
+    -0.7714065041529719,
+    -0.6764402833290588,
+    -0.04931871084149658,
+    0.042635298805184525,
+    0.0004963419350042392,
+    -0.0018698482906392294,
+    0.00019950750393711938
+  ],
+  "entrada": "z8",
+  "score_fpca": 1,
+  "rango_entrenamiento": [
+    -2.13763427734375,
+    4.994861602783203
+  ],
+  "nota": "Ajuste polinómico de la activación; R2 calculado en puntos alternos retenidos."
+}

@@ -1,0 +1,11 @@
+.DS_Store
+~$*
+__pycache__/
+.ipynb_checkpoints/
+*.pkl
+# Datos crudos entregados por el curso (se descargan del aula; ~100 MB)
+P_1930_1979.xlsx
+P_1980_1990.csv
+P_1991_2003.csv
+ImagenesSatelitePentadal/
+ImagenesSatelitePentadal.zip

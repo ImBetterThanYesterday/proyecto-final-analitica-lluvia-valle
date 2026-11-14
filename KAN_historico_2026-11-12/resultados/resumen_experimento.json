@@ -1,0 +1,252 @@
+{
+  "fuentes": [
+    "eda_fase0",
+    "fda_fase1",
+    "Datos",
+    "datos_web/ONI_NOAA_CPC_1981_2013.csv"
+  ],
+  "pares": {
+    "total_emparejado": 2051,
+    "entrenamiento": 1349,
+    "validacion": 445,
+    "prueba_cerrada": 257,
+    "estaciones": 105,
+    "estaciones_reservadas_docente": "PENDIENTE: no se encontró una lista separada"
+  },
+  "emparejamiento": {
+    "pendiente_confirmacion_docente": true,
+    "distancia_pixel_km_mediana": 2.307902939218318,
+    "distancia_pixel_km_maxima": 3.8715776008799243,
+    "estaciones_que_comparten_pixel": 14,
+    "trazabilidad": [
+      {
+        "etapa": "pares_validos",
+        "pares_estacion_anio": 4485,
+        "estaciones": 248
+      },
+      {
+        "etapa": "coordenadas_disponibles",
+        "pares_estacion_anio": 3172,
+        "estaciones": 170
+      },
+      {
+        "etapa": "coordenadas_y_altitud",
+        "pares_estacion_anio": 2214,
+        "estaciones": 113
+      },
+      {
+        "etapa": "coordenadas_altitud_y_dominio",
+        "pares_estacion_anio": 2051,
+        "estaciones": 105
+      },
+      {
+        "etapa": "curvas_estacion_y_pixel_emparejadas",
+        "pares_estacion_anio": 2051,
+        "estaciones": 105
+      }
+    ]
+  },
+  "arquitectura": {
+    "neuronas_funcionales": 8,
+    "componentes_fpca": 6,
+    "varianza_fpca_acumulada": 0.9285234175622463,
+    "bases_kan_por_arista": 8,
+    "lambda_rugosidad": 0.0001,
+    "parametros": {
+      "kan": {
+        "parametros_totales": 628,
+        "parametros_cabeza": 540
+      },
+      "lineal": {
+        "parametros_totales": 154,
+        "parametros_cabeza": 66
+      },
+      "mlp": {
+        "parametros_totales": 621,
+        "parametros_cabeza": 533
+      }
+    },
+    "diferencia_parametros_kan_mlp_pct": 1.1146496815286624,
+    "diferencia_parametros_cabeza_kan_mlp_pct": 1.2962962962962963
+  },
+  "verificaciones": {
+    "rmse_kan_sintetica": 0.004916595295071602,
+    "max_diferencia_equivalencia_lineal": 4.76837158203125e-07,
+    "rango_kan_fijado_solo_con_entrenamiento": [
+      -6.132609844207764,
+      5.5952863693237305
+    ],
+    "porcentaje_caracteristicas_fuera_del_rango_kan": {
+      "entrenamiento": 0.0,
+      "validacion": 0.0
+    },
+    "porcentaje_valores_raiz_recortados": 0.0,
+    "inferencias_pareadas_por_estacion": {
+      "kan_menos_mlp": {
+        "l2_relativo": {
+          "diferencia_media_por_estacion": -0.01227525161935928,
+          "ic95": [
+            -0.019945755862492195,
+            -0.005240928429238341
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1482.0,
+          "wilcoxon_p_value": 0.004653544344332677
+        },
+        "kge": {
+          "diferencia_media_por_estacion": 0.019073883671584885,
+          "ic95": [
+            0.00863897589655943,
+            0.030378139073297637
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1378.0,
+          "wilcoxon_p_value": 0.00127182097890527
+        },
+        "sesgo_anual_pct": {
+          "diferencia_media_por_estacion": -3.979913944893695,
+          "ic95": [
+            -4.9484534348579166,
+            -3.017616092651448
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 479.0,
+          "wilcoxon_p_value": 3.7830812699920585e-11
+        },
+        "error_fecha_picos_dias": {
+          "diferencia_media_por_estacion": -0.7530141843971628,
+          "ic95": [
+            -2.1969791666666665,
+            0.5150953014184398
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1567.0,
+          "wilcoxon_p_value": 0.025917210632952933
+        }
+      },
+      "kan_menos_lineal": {
+        "l2_relativo": {
+          "diferencia_media_por_estacion": -0.019859351693315708,
+          "ic95": [
+            -0.03600556711725732,
+            -0.003920890921924988
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1748.0,
+          "wilcoxon_p_value": 0.06769709807864362
+        },
+        "kge": {
+          "diferencia_media_por_estacion": 0.02719319658522963,
+          "ic95": [
+            -0.0005375428945500633,
+            0.05583122357490833
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1847.0,
+          "wilcoxon_p_value": 0.14603081537502635
+        },
+        "sesgo_anual_pct": {
+          "diferencia_media_por_estacion": -1.2906103413155738,
+          "ic95": [
+            -4.5297239256031965,
+            2.0423245649388484
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1919.0,
+          "wilcoxon_p_value": 0.23713112615267695
+        },
+        "error_fecha_picos_dias": {
+          "diferencia_media_por_estacion": -0.9738475177304964,
+          "ic95": [
+            -2.578816489361702,
+            0.27196365248226906
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 2082.0,
+          "wilcoxon_p_value": 0.9652684007723753
+        }
+      },
+      "kan_menos_satelite": {
+        "l2_relativo": {
+          "diferencia_media_por_estacion": -0.10172204197721278,
+          "ic95": [
+            -0.14024490643530452,
+            -0.0657837222151934
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 950.0,
+          "wilcoxon_p_value": 1.3232912726753313e-06
+        },
+        "kge": {
+          "diferencia_media_por_estacion": 0.11572265690883707,
+          "ic95": [
+            0.06623209047198896,
+            0.16632729264299184
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 1233.0,
+          "wilcoxon_p_value": 0.00016387069455274677
+        },
+        "sesgo_anual_pct": {
+          "diferencia_media_por_estacion": -16.828178755780485,
+          "ic95": [
+            -22.564658667178865,
+            -11.018339574717466
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 918.0,
+          "wilcoxon_p_value": 7.162924857910884e-07
+        },
+        "error_fecha_picos_dias": {
+          "diferencia_media_por_estacion": -11.218971631205672,
+          "ic95": [
+            -13.36436835106383,
+            -9.206343085106385
+          ],
+          "n_estaciones": 94,
+          "bootstrap_replicas": 2000,
+          "wilcoxon_estadistico": 254.0,
+          "wilcoxon_p_value": 8.599402210127692e-14
+        }
+      }
+    },
+    "prueba_utilizada": false,
+    "fase_enso": {
+      "fuente": "datos_web/ONI_NOAA_CPC_1981_2013.csv",
+      "regla": "promedio anual de los 12 valores; Nino >= 0.5, Nina <= -0.5, Neutral en otro caso"
+    }
+  },
+  "ajuste_simbolico_activacion": {
+    "grado": 7,
+    "r2_holdout": 0.999998517080147,
+    "coeficientes_polinomio": [
+      0.7185996298331003,
+      -0.7714065041529719,
+      -0.6764402833290588,
+      -0.04931871084149658,
+      0.042635298805184525,
+      0.0004963419350042392,
+      -0.0018698482906392294,
+      0.00019950750393711938
+    ],
+    "entrada": "z8",
+    "score_fpca": 1,
+    "rango_entrenamiento": [
+      -2.13763427734375,
+      4.994861602783203
+    ],
+    "nota": "Ajuste polinómico de la activación; R2 calculado en puntos alternos retenidos."
+  },
+  "mejor_seed_kan_validacion": 2027
+}

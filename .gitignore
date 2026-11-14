@@ -1,8 +1,6 @@
 .DS_Store
-.Rhistory
 ~$*
 __pycache__/
 .ipynb_checkpoints/
 *.pkl
-# Datos crudos entregados por el curso (se descargan del aula; ~100 MB): van en datos_curso/
-datos_curso/
+

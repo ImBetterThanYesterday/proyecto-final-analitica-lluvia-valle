@@ -1,0 +1,19 @@
+{
+  "pares_totales": 2959,
+  "estaciones": 154,
+  "pixeles_unicos": 127,
+  "pares_por_particion": {
+    "ENTRENAMIENTO": 1987,
+    "VALIDACION": 619,
+    "PRUEBA": 353
+  },
+  "estaciones_por_particion": {
+    "ENTRENAMIENTO": 154,
+    "PRUEBA": 126,
+    "VALIDACION": 129
+  },
+  "variables_satelitales": 72,
+  "variables_terrestres": 365,
+  "regla_espacial": "pixel cuyo centro es el mas cercano a la estacion",
+  "covariables_piloto": "ninguna; no se usan altitud ni ONI"
+}

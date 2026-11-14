@@ -1,0 +1,60 @@
+{
+  "proposito": "Entradas reproducibles para construccion y EDA funcional en R",
+  "estado": "PROVISIONAL: faltan decisiones sobre totales mensuales, ceros falsos y unidad/calendario satelital",
+  "estaciones": {
+    "archivo": "fda_fase1\\curvas_estaciones_mm.csv.gz",
+    "filas": 4769,
+    "estaciones": 263,
+    "columnas_temporales": 365,
+    "valores_faltantes": 6234,
+    "feb29_excluidos_representacion_funcional": 1043,
+    "pares_por_particion": {
+      "ENTRENAMIENTO": 3368,
+      "VALIDACION": 923,
+      "PRUEBA": 478
+    },
+    "reglas": [
+      "periodo 1981-2003",
+      "859375 mm -> NA en columna limpia",
+      "cobertura diaria >= 90%",
+      "hueco interior <= 30 dias",
+      "cada borde <= 15 dias",
+      "estacion con >=5 anios validos en train",
+      "29-feb excluido solo de la malla funcional de 365 dias",
+      "totales mensuales y ceros falsos aun no resueltos: no se alteran"
+    ]
+  },
+  "satelite": {
+    "archivo": "fda_fase1\\curvas_satelite_mm.csv.gz",
+    "archivo_mascara": "fda_fase2\\coef_satelite_tierra.csv.gz",
+    "filas": 33189,
+    "pixeles_por_anio": 1443,
+    "forma_raster": [
+      39,
+      37
+    ],
+    "columnas_temporales": 72,
+    "anios": [
+      1981,
+      2003
+    ],
+    "nodata": 0,
+    "negativos": 0,
+    "valores_igual_200": 5138,
+    "archivos_auxiliares_ignorados": 2328,
+    "reglas": [
+      "solo TIFF con nombre pptYYYYPP.tif",
+      "archivos ._ ignorados",
+      "periodo 1981-2003",
+      "72 capas por anio",
+      "escala original conservada; unidad pendiente de confirmar",
+      "valor 200 conservado y reportado; no se corrige",
+      "soporte temporal provisional: seis periodos por mes, punto medio no bisiesto",
+      "fila y columna con indice base cero"
+    ]
+  },
+  "oni": {
+    "archivo_esperado": "eda_fase0/oni_anual_fase.csv",
+    "estado": "NO CREADO: requiere fuente oficial y regla de clasificacion documentada"
+  }
+}

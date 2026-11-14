@@ -1,0 +1,5 @@
+fuente,escala,% puntos < 0 (mm/día),% curvas con algún punto < 0,mín. mm/día,error reproyección (% norma L2),% puntos < 0 tras reproyectar,"error ida y vuelta (mm/día, medio)","error en total anual (%, mediana)"
+estaciones,raiz,1.937,44.482,-18.795,3.039,0.084,0.203,0.093
+estaciones,log1p,1.937,44.482,-18.795,4.159,0.164,0.321,0.233
+satelite,raiz,0.004,0.909,-1.196,0.864,0.0,0.109,0.007
+satelite,log1p,0.004,0.909,-1.196,1.281,0.0,0.197,0.036

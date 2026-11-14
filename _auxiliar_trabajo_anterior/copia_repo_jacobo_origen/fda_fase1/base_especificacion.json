@@ -1,0 +1,45 @@
+{
+  "rango": [
+    1,
+    365
+  ],
+  "orden": 4,
+  "K_estaciones": 8,
+  "K_satelite": 11,
+  "nodos_estaciones": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    73.8,
+    146.6,
+    219.39999999999998,
+    292.2,
+    365.0,
+    365.0,
+    365.0,
+    365.0
+  ],
+  "nodos_satelite": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    46.5,
+    92.0,
+    137.5,
+    183.0,
+    228.5,
+    274.0,
+    319.5,
+    365.0,
+    365.0,
+    365.0,
+    365.0
+  ],
+  "escala": "mm/dia (la raiz se aplica despues, en la fase 4)",
+  "dominio": "dia del año 1..365 (29-feb eliminado); péntadas en su día central",
+  "satelite": "solo pixeles de tierra (mascara CHIRPS v2); n_tope200 = pentadas en el tope de 200 mm por curva",
+  "gram": "matrices_gram.npz (W_est, W_sat): W = integral de phi phi' por Gauss-Legendre",
+  "escala_modelo": "coeficientes_transformados.npz: curva recortada en 0, transformada (raiz o log1p) y reproyectada en la misma base"
+}

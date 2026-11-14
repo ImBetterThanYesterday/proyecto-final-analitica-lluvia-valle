@@ -1,0 +1,378 @@
+{
+  "proposito": "Análisis complementario de la evaluación de test ya realizada; no se reentrena ni se ajusta el modelo.",
+  "modelo": "KAN seed 2026",
+  "pares_test": 257,
+  "estaciones_test": 93,
+  "estaciones_compartidas_con_entrenamiento": 93,
+  "estaciones_nuevas_vs_entrenamiento": 0,
+  "bootstrap": {
+    "unidad_de_remuestreo": "estacion",
+    "replicas": 2000,
+    "intervalo": "95%"
+  },
+  "reconstruccion": {
+    "no_negativa_en_mm": true,
+    "porcentaje_valores_raiz_recortados": 0.0
+  },
+  "fase_enso": {
+    "fuente": "NOAA CPC ONI anual; etiquetas heredadas del conjunto emparejado",
+    "resultados": [
+      {
+        "fase_enso": "Neutral",
+        "modelo": "kan",
+        "pares": 172,
+        "estaciones": 92,
+        "metricas": {
+          "l2_relativo": {
+            "media_por_curva": 0.4575316905975342,
+            "media_por_estacion": 0.4606136679649353,
+            "ic95_bootstrap_por_estacion": [
+              0.419653794914484,
+              0.5062464073300361
+            ]
+          },
+          "kge": {
+            "media_por_curva": 0.43464928660333446,
+            "media_por_estacion": 0.43460310469596275,
+            "ic95_bootstrap_por_estacion": [
+              0.37890324390143787,
+              0.48517042660005677
+            ]
+          },
+          "sesgo_anual_pct": {
+            "media_por_curva": 18.661779403686523,
+            "media_por_estacion": 19.184667587280273,
+            "ic95_bootstrap_por_estacion": [
+              11.999294686317445,
+              26.703937864303587
+            ]
+          },
+          "error_fecha_picos_dias": {
+            "media_por_curva": 23.61627906976744,
+            "media_por_estacion": 23.70108695652174,
+            "ic95_bootstrap_por_estacion": [
+              21.87493206521739,
+              25.747622282608695
+            ]
+          }
+        }
+      },
+      {
+        "fase_enso": "Neutral",
+        "modelo": "satelite",
+        "pares": 172,
+        "estaciones": 92,
+        "metricas": {
+          "l2_relativo": {
+            "media_por_curva": 0.5377340912818909,
+            "media_por_estacion": 0.5430638194084167,
+            "ic95_bootstrap_por_estacion": [
+              0.49286604672670364,
+              0.5969042301177978
+            ]
+          },
+          "kge": {
+            "media_por_curva": 0.34844895460057856,
+            "media_por_estacion": 0.3420027601392871,
+            "ic95_bootstrap_por_estacion": [
+              0.27049141005008925,
+              0.4073397749202998
+            ]
+          },
+          "sesgo_anual_pct": {
+            "media_por_curva": 29.33573341369629,
+            "media_por_estacion": 29.34425926208496,
+            "ic95_bootstrap_por_estacion": [
+              19.97601523399353,
+              38.41541748046875
+            ]
+          },
+          "error_fecha_picos_dias": {
+            "media_por_curva": 28.665697674418606,
+            "media_por_estacion": 28.483695652173914,
+            "ic95_bootstrap_por_estacion": [
+              26.31779891304348,
+              30.92703804347826
+            ]
+          }
+        }
+      },
+      {
+        "fase_enso": "Nino",
+        "modelo": "kan",
+        "pares": 85,
+        "estaciones": 85,
+        "metricas": {
+          "l2_relativo": {
+            "media_por_curva": 0.38068240880966187,
+            "media_por_estacion": 0.38068240880966187,
+            "ic95_bootstrap_por_estacion": [
+              0.34394563883543017,
+              0.4231409907341003
+            ]
+          },
+          "kge": {
+            "media_por_curva": 0.5697815120370202,
+            "media_por_estacion": 0.5697815120370202,
+            "ic95_bootstrap_por_estacion": [
+              0.5076848700792221,
+              0.6267631081069491
+            ]
+          },
+          "sesgo_anual_pct": {
+            "media_por_curva": 6.70613956451416,
+            "media_por_estacion": 6.70613956451416,
+            "ic95_bootstrap_por_estacion": [
+              -0.3138265073299407,
+              13.888870239257812
+            ]
+          },
+          "error_fecha_picos_dias": {
+            "media_por_curva": 18.8,
+            "media_por_estacion": 18.8,
+            "ic95_bootstrap_por_estacion": [
+              14.211764705882352,
+              23.711764705882352
+            ]
+          }
+        }
+      },
+      {
+        "fase_enso": "Nino",
+        "modelo": "satelite",
+        "pares": 85,
+        "estaciones": 85,
+        "metricas": {
+          "l2_relativo": {
+            "media_por_curva": 0.5392292141914368,
+            "media_por_estacion": 0.5392292141914368,
+            "ic95_bootstrap_por_estacion": [
+              0.47491528540849687,
+              0.6117087960243225
+            ]
+          },
+          "kge": {
+            "media_por_curva": 0.3829285096064561,
+            "media_por_estacion": 0.3829285096064561,
+            "ic95_bootstrap_por_estacion": [
+              0.29017616932508944,
+              0.46495586466848576
+            ]
+          },
+          "sesgo_anual_pct": {
+            "media_por_curva": 32.02294921875,
+            "media_por_estacion": 32.02294921875,
+            "ic95_bootstrap_por_estacion": [
+              21.468914031982422,
+              43.219960021972646
+            ]
+          },
+          "error_fecha_picos_dias": {
+            "media_por_curva": 20.51764705882353,
+            "media_por_estacion": 20.51764705882353,
+            "ic95_bootstrap_por_estacion": [
+              16.029117647058825,
+              25.38264705882353
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "modelos": {
+    "kan": {
+      "l2_relativo": {
+        "media_por_curva": 0.4321146011352539,
+        "desviacion_estandar_por_curva": 0.2401411533355713,
+        "mediana_por_curva": 0.3706527054309845,
+        "media_por_estacion": 0.43804386258125305,
+        "ic95_bootstrap": [
+          0.401266822963953,
+          0.48042559623718256
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "kge": {
+        "media_por_curva": 0.47934282419813323,
+        "desviacion_estandar_por_curva": 0.33162035606042395,
+        "mediana_por_curva": 0.5624488859061901,
+        "media_por_estacion": 0.47050518310394834,
+        "ic95_bootstrap": [
+          0.41754206868515514,
+          0.520888983624894
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_anual_pct": {
+        "media_por_curva": 14.707578659057617,
+        "desviacion_estandar_por_curva": 37.734840393066406,
+        "mediana_por_curva": 7.033949375152588,
+        "media_por_estacion": 15.710127830505371,
+        "ic95_bootstrap": [
+          8.915400123596191,
+          23.40915365219116
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "error_fecha_picos_dias": {
+        "media_por_curva": 22.023346303501945,
+        "desviacion_estandar_por_curva": 18.000093307286264,
+        "mediana_por_curva": 17.5,
+        "media_por_estacion": 22.6326164874552,
+        "ic95_bootstrap": [
+          20.348342293906807,
+          25.471550179211473
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_absoluto_anual_pct": {
+        "media_por_curva": 28.208473205566406,
+        "desviacion_estandar_por_curva": 29.02153968811035,
+        "mediana_por_curva": 21.826486587524414,
+        "media_por_estacion": 28.684314727783203,
+        "ic95_bootstrap": [
+          23.932373332977296,
+          34.10181789398193
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      }
+    },
+    "satelite": {
+      "l2_relativo": {
+        "media_por_curva": 0.5382286310195923,
+        "desviacion_estandar_por_curva": 0.30162718892097473,
+        "mediana_por_curva": 0.45041006803512573,
+        "media_por_estacion": 0.5450164079666138,
+        "ic95_bootstrap": [
+          0.48950214460492136,
+          0.6035233736038208
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "kge": {
+        "media_por_curva": 0.3598526984741179,
+        "desviacion_estandar_por_curva": 0.40244011159900966,
+        "mediana_por_curva": 0.4577840081083623,
+        "media_por_estacion": 0.34481544017125504,
+        "ic95_bootstrap": [
+          0.27197723164699095,
+          0.4120712864592751
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_anual_pct": {
+        "media_por_curva": 30.224502563476562,
+        "desviacion_estandar_por_curva": 47.86960983276367,
+        "mediana_por_curva": 20.22420310974121,
+        "media_por_estacion": 29.977983474731445,
+        "ic95_bootstrap": [
+          21.12759099006653,
+          39.9068302154541
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "error_fecha_picos_dias": {
+        "media_por_curva": 25.970817120622566,
+        "desviacion_estandar_por_curva": 20.145373143611184,
+        "mediana_por_curva": 19.5,
+        "media_por_estacion": 26.7078853046595,
+        "ic95_bootstrap": [
+          24.047043010752684,
+          29.622558243727603
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      },
+      "sesgo_absoluto_anual_pct": {
+        "media_por_curva": 41.90372085571289,
+        "desviacion_estandar_por_curva": 38.02377700805664,
+        "mediana_por_curva": 30.136486053466797,
+        "media_por_estacion": 42.02716827392578,
+        "ic95_bootstrap": [
+          35.190459442138675,
+          49.591567039489746
+        ],
+        "n_estaciones": 93,
+        "remuestreos": 2000
+      }
+    }
+  },
+  "comparacion_pareada_kan_menos_satelite_sin_corregir": {
+    "l2_relativo": {
+      "diferencia_media_por_estacion": -0.10697261155933462,
+      "ic95": [
+        -0.15277680155009993,
+        -0.06039318454361734
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1157.0,
+      "wilcoxon_p_value": 8.121241116216812e-05
+    },
+    "kge": {
+      "diferencia_media_por_estacion": 0.12568974293269342,
+      "ic95": [
+        0.06332702092932092,
+        0.18398855627947283
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1219.0,
+      "wilcoxon_p_value": 0.00021286750824043167
+    },
+    "sesgo_anual_pct": {
+      "diferencia_media_por_estacion": -14.267857766920521,
+      "ic95": [
+        -21.51444639980152,
+        -7.36339649000476
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1237.0,
+      "wilcoxon_p_value": 0.0002787727699276639
+    },
+    "error_fecha_picos_dias": {
+      "diferencia_media_por_estacion": -4.075268817204301,
+      "ic95": [
+        -5.330689964157706,
+        -2.7326388888888906
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 784.5,
+      "wilcoxon_p_value": 7.952621659961627e-08
+    },
+    "sesgo_absoluto_anual_pct": {
+      "diferencia_media_por_estacion": -13.342857330076155,
+      "ic95": [
+        -20.030533399889546,
+        -7.281209192737461
+      ],
+      "n_estaciones": 93,
+      "bootstrap_replicas": 2000,
+      "wilcoxon_estadistico": 1272.0,
+      "wilcoxon_p_value": 0.0004649779818558153
+    }
+  },
+  "interpretacion_diferencias": {
+    "l2_relativo": "una diferencia negativa favorece a KAN",
+    "kge": "una diferencia positiva favorece a KAN",
+    "sesgo_anual_pct": "es sesgo firmado; para comparar magnitud del error usar sesgo_absoluto_anual_pct",
+    "sesgo_absoluto_anual_pct": "una diferencia negativa favorece a KAN",
+    "error_fecha_picos_dias": "una diferencia negativa favorece a KAN"
+  },
+  "limitaciones": [
+    "El test ya fue evaluado e inspeccionado previamente; estos resultados son post hoc.",
+    "No se debe usar este análisis para elegir hiperparametros ni modificar el modelo.",
+    "No hay estaciones nuevas en test ni una lista separada de estaciones reservadas del docente.",
+    "La comparacion por ENSO es descriptiva y algunos grupos tienen pocos pares."
+  ]
+}

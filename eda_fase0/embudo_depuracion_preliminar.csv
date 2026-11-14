@@ -1,0 +1,11 @@
+paso,estaciones,pares_estacion_anio,dias_con_dato
+P0 crudo 1981‑2003,323,5514,1930611.0
+P1 valores imposibles,323,5514,1930607.0
+P2 totales mensuales,322,5513,1930550.0
+P2b totales mensuales con el resto del mes en cero,322,5513,1930216.0
+P2c meses anómalos (≥5 días > 3·p99),322,5513,1930187.0
+P2d errores de digitación (> 4·p99 y > 150 mm),322,5513,1930184.0
+P3 años copiados,322,5511,1929578.0
+P4 ceros falsos,322,5511,1927628.0
+"P5 cobertura ≥90 %, hueco ≤30 d, 12 meses",308,4732,
+P6 estaciones con ≥7 años válidos en entrenamiento,248,4485,

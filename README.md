@@ -1,82 +1,47 @@
-# Lluvia del Valle del Cauca 1981–2003 · Proyecto final de Analítica de Datos (UAO, 2026-2S)
+# Proyecto final de Analítica de Datos 2026-2S: lluvia del Valle del Cauca (1981–2003)
 
-La lluvia del Valle del Cauca se modela como datos funcionales: cada año de cada sitio es una curva. Hay dos fuentes:
-- estaciones con lluvia diaria;
-- satélite con lluvia por péntadas.
+Modelado funcional de la precipitación diaria de estaciones y de estimaciones satelitales pentadales (cada año en cada sitio es un dato funcional), comparación de fuentes con métodos funcionales y reconstrucción de la curva de estación a partir de la curva satelital con KAN, MLP, cabeza lineal (≈ regresión funcional) y decodificador FPCA.
 
-El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA funcional y reconstruir la curva de la estación a partir de la del satélite.
-
-## Estructura
-
-| Carpeta / archivo | Qué es |
-|---|---|
-| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 26 pruebas automáticas. |
-| `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
-| `funcional/` | **La parte funcional, por secciones** (10 a 14), que continúa `lluvia_valle_datos.R`. `00_funciones.R` tiene las funciones comunes; cada sección lee el `.rds` de la anterior. Para la entrega se unen en un solo `.R` (D-41). |
-| `salidas_R_funcional/` | Lo que producen las secciones 10 a 14: `.rds` intermedios, `tablas/`, `graficos/` y `para_python/` (insumos de la red). |
-| `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-46), con su justificación, y preguntas para el profesor. |
-| `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
-| `datos_web/` | Fuentes externas: estaciones del Valle, límites del DANE, CNE, ONI, CHIRPS y NASA POWER. |
-| `datos_curso/` | **Datos crudos del curso. No se suben a git:** hay que copiarlos aquí (ver abajo). |
-| `enunciado/` | Enunciado y fe de erratas. |
-| `material_clase/` | PDF y scripts de clase, con sus datos de ejemplo. Son la referencia de los métodos permitidos. |
-| `archivo_flujo_anterior/` | Flujo anterior (notebooks, fases 0–4, `proyecto_funcional.R`, pruebas, informes). Usaba 248 estaciones sin filtrar por el Valle. Se conserva como referencia y para reutilizar código: ya no es el flujo activo. |
-
-## Cómo se corre
-
-1. Copiar en `datos_curso/`:
-   - `P_1930_1979.xlsx`, `P_1980_1990.csv` y `P_1991_2003.csv`;
-   - `ImagenesSatelitePentadal.zip` o la carpeta `ImagenesSatelitePentadal/`;
-   - `CVC_Wheather_Stations_Long_Lat.csv`, `CVC_Wheather_Stations_Long_Lat.dta` y `CatalogoEstacionesElevacion.xlsx`.
-2. Desde la raíz del repositorio:
-
-   ```bash
-   Rscript lluvia_valle_datos.R
-   ```
-
-   Usa R 4.5 con data.table, ggplot2, readxl, sf y terra. Tarda unos minutos.
-3. La parte funcional, en orden (unos 75 s en total; además usa, solo para verificar, fda):
-
-   ```bash
-   Rscript funcional/10_satelite_emparejamiento.R
-   Rscript funcional/11_construccion_funcional.R
-   Rscript funcional/12_eda_funcional.R
-   Rscript funcional/13_comparacion_fuentes.R
-   Rscript funcional/14_regresion_funcional.R
-   ```
-
-## Periodo y partición (fe de erratas)
+## Periodo y partición (fe de erratas del enunciado)
 
 | Conjunto | Años |
 |---|---|
+| Periodo del proyecto | 1981–2003 (antes 1981–2013) |
 | Entrenamiento | 1981–1995 |
 | Validación | 1996–2000 |
-| Prueba | 2001–2003 (el profesor ya no reserva estaciones) |
+| Prueba | 2001–2003, más las estaciones reservadas por el docente |
 
-Las reglas que dependen de los datos se calculan solo con entrenamiento.
+Las decisiones del preprocesamiento que dependen de los datos (percentiles por estación, mínimo de años por estación, selección de K) se calculan solo con el periodo de entrenamiento. Las péntadas satelitales de 2004–2013 quedan fuera del análisis.
 
-## Por dónde vamos (13-nov-2026)
+## Contenido
 
-| Paso | Estado |
+| Archivo / carpeta | Qué contiene |
 |---|---|
-| 1. Ubicar los 344 códigos y quedarse con el Valle | ✅ 232 estaciones, todas dentro del polígono del DANE (D-31 a D-35) |
-| 2. EDA de los datos crudos | ✅ secciones 1–6 de `lluvia_valle_datos.R` |
-| 3. Reglas de depuración sacadas de los datos | ✅ experimento de huecos y reglas D-36 |
-| 4. Dataset limpio de estaciones | ✅ 176 estaciones y 3 326 estación-años válidos, en `lluvia_valle_limpia.rds` |
-| 5. Satélite: fuente, recorte al Valle, mm/día y EDA | ✅ es CHIRP solo-infrarrojo, confirmado (D-43); acierta el clima medio pero no los años Niño/Niña (D-44). Sección 10 de `funcional/` (D-37) |
-| 6. Emparejar cada estación con su píxel | ✅ 176 estaciones en 148 píxeles (D-38, D-44) |
-| 6b. Datos preparados para lo funcional, con pruebas | ✅ `datos_preparados.rds`: 3 326 curvas de estación, 15 663 de satélite y sus pares con el ONI (D-45); Univalle con 996 m (D-46) |
-| 7. Construcción funcional (B-splines propias; K por ECM/VC/VCG) con las 176 | ✅ sección 11: K = 8 / 11 (D-39) |
-| 8. EDA funcional de cada fuente (media, varianza, profundidad, boxplot, ENSO) | ✅ sección 12 |
-| 8b. Comparación funcional estación vs. satélite (d(t), correlación cruzada, covarianzas, altitud, ENSO) | ✅ sección 13 |
-| 9. Regresión funcional función a función | ✅ sección 14: FPCA M = 5, λ por validación, evaluación en prueba (D-40) |
-| 9b. Red funcional (cabezas lineal, KAN y MLP), ablación e interpretación | ⏳ Python, con `salidas_R_funcional/para_python/` |
-| ⚠️ Por acordar | Años 1985, 1988 y 2000 del satélite: fuera del modelo (D-37/D-42) o dentro (D-44). Ver P-4 |
-| 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |
+| `01_EDA_calidad_datos.ipynb` | EDA y auditoría de calidad de los datos crudos de estaciones |
+| `01b_valores_unicos.ipynb` | Valores únicos por variable, por estación y por año |
+| `02_datos_externos.ipynb` | ONI, CHIRPS v2, NASA POWER, códigos CNE/IDEAM |
+| `03_construccion_funcional.ipynb` / `.R` | Construcción de las curvas en B-splines programadas a mano: K por ECM/VC/VCG con entrenamiento, verificación de S, bandas punto a punto, matriz de Gram W, escala √ / log(1+P) y sensibilidad de K |
+| `04_eda_funcional.ipynb` / `.R` | EDA funcional: media, varianza, covarianza, derivadas y fechas de temporadas, profundidad FM/MBD, boxplot funcional, atípicas, cuenca y ENSO |
+| `eda_fase0/`, `fda_fase1/`, `fda_fase2/` | Resultados (CSV, coeficientes, figuras) de cada fase; las salidas de R están en `figuras_R/` y `tablas_R/` |
+| `KAN/entrenar_kan.py` | Arquitectura funcional KAN, búsqueda escalonada de hiperparámetros solo con validación y reconstrucciones de validación |
+| `KAN/auditar_kan.py` | Auditoría post hoc del test: métricas, bootstrap por estación, Wilcoxon pareado, ENSO y gráficas esenciales |
+| `KAN/resultados_validacion/` | Configuración seleccionada, modelos de tres semillas, comparación con MLP/cabeza lineal, métricas, curvas estación-año y `tabla_resultados_validacion.png` |
+| `KAN/resultados_test/` | Métricas, curvas completas, ranking por L2 y diagnóstico de asociaciones por estación |
+| `KAN/graficas_esenciales_test/` | Comparación de métricas, ejemplos representativos, todas las curvas, `04_tabla_resultados_test.png` y `05_diagnostico_estaciones_test.png` |
+| `KAN_historico_2026-11-12/` | Respaldo íntegro de los scripts y resultados anteriores a la reorganización |
+| `datos_web/` | Datos externos descargados (ONI, CNE, CHIRPS v2, NASA POWER) |
 
-**Abierto con el profesor** (ver `DECISIONES.md`, §8):
-- ✅ P-1: los 21 códigos sin ubicar se descartan;
-- ✅ P-3: no se usa CHIRPS ni otra fuente; solo el satélite entregado;
-- ⚠️ P-4: 1985, 1988 y 2000 del satélite, fuera (D-37/D-42) o dentro (D-44): por acordar en equipo;
-- ✅ P-8: el satélite es CHIRP (confirmado).
+## Orden de ejecución
+
+1. Notebooks `01` → `02` → `03` → `04` (Python).
+2. Scripts `03_construccion_funcional.R` → `04_eda_funcional.R`, desde la raíz del repositorio. Usan solo R base (`splines` y `fda` únicamente para verificar). El de la fase 1 lee las curvas preparadas por el notebook 03 y construye sus propios coeficientes; el de la fase 2 trabaja con esos coeficientes de R y al final comprueba que K, coeficientes, matriz W, profundidades, fechas y atípicas coinciden con los de Python.
+3. Desde la raíz, `python KAN\entrenar_kan.py` compara en validación neuronas funcionales, componentes FPCA, bases y grado spline, rugosidad, tasa de aprendizaje, tamaño de lote y weight decay. La rugosidad es la segunda derivada media de las funciones de peso sobre el año normalizado a [0,1]. Usa tres semillas por configuración, selecciona una configuración parsimoniosa, guarda las curvas observada/satelital/KAN y crea una tabla gráfica de métricas y comparaciones inferenciales en `KAN\resultados_validacion\`.
+4. Después de congelar la configuración, `python KAN\auditar_kan.py` evalúa una sola vez el test 2001–2003 y genera las métricas, bootstrap por estación (2.000 réplicas), Wilcoxon pareado, desglose ENSO, diagnóstico post hoc de factores asociados al L2 por estación y gráficos —incluidas las tablas resumen— en las carpetas de test. No reentrena ni ajusta con test.
+
+## Datos crudos (no incluidos)
+
+Los archivos `P_1930_1979.xlsx`, `P_1980_1990.csv`, `P_1991_2003.csv`, los catálogos de estaciones y `ImagenesSatelitePentadal` están centralizados en `Datos/`. Los notebooks leen los insumos desde esa carpeta.
+
+## Estado
+
+Fases 0–2 listas, en Python y en R. El satélite se trabaja solo en los 1 353 píxeles de tierra (los 90 de océano vienen rellenados). La KAN reconstruye la curva de estación con la curva satelital en escala raíz, elevación y ONI anual; FPCA y normalización se ajustan solo con entrenamiento. La selección por validación eligió 6 neuronas funcionales, M=4 (84,2 % de varianza FPCA), 8 bases cúbicas, λ=1e-4, tasa 0,002, lote 64 y weight decay 0; la KAN tiene 354 parámetros frente a 356 del MLP. La penalización de rugosidad se calcula como curvatura en el dominio anual normalizado [0,1]. En validación, el ensamble KAN obtuvo L2 relativo 0,394 y KGE 0,465. El ensamble post hoc de tres semillas obtuvo en test L2 0,435 por curva (media por estación 0,440; IC95 % 0,403–0,482), KGE 0,476, sesgo anual +14,7 % y error de picos 21,9 días; el satélite sin corregir obtuvo L2 0,538, KGE 0,360, sesgo +30,2 % y error de picos 26,0 días. El diagnóstico post hoc por estación encontró mayor L2 asociado con mayor L2 satelital (Spearman ρ=0,407; q=0,00013), menor acumulado anual observado (ρ=-0,429; q=0,000060), mayor variabilidad diaria (ρ=0,308; q=0,0044) y mayor concentración de lluvia en el 10 % de días (ρ=0,363; q=0,00070). El cuartil de L2 más alto tuvo RMSE diario medio 2,40 frente a 1,72 mm/día y sesgo anual absoluto 60 % frente a 18 %; altitud y distancia al píxel no mostraron asociación clara. Como el L2 es relativo y el sesgo comparte errores con esa métrica, estos son patrones correlacionales, no causas demostradas. El test cubre Neutral y El Niño, pero no La Niña; sus 93 estaciones ya están en entrenamiento, así que no es prueba ciega ni mide generalización espacial. La confirmación docente del emparejamiento estación–píxel y la lista de estaciones reservadas siguen pendientes.

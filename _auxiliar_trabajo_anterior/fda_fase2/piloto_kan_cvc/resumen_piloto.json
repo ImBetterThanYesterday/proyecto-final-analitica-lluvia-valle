@@ -1,0 +1,34 @@
+{
+  "estado": "piloto ejecutado; prueba no consultada",
+  "pares_train": 1987,
+  "pares_validacion": 619,
+  "pares_prueba_reservados": 353,
+  "estaciones": 154,
+  "pixeles": 127,
+  "bases_satelite": 11,
+  "bases_terrestre": 8,
+  "componentes_fpca": 6,
+  "varianza_fpca_acumulada": 0.9553840279418646,
+  "media_satelital_train_escala_original": 25.130773639769615,
+  "desviacion_satelital_train_escala_original": 16.70395768501652,
+  "coordenadas_media_train": [
+    3.8674750719425037,
+    -76.29547851252234
+  ],
+  "coordenadas_desviacion_train": [
+    0.48375291606144916,
+    0.2494671881985697
+  ],
+  "kan_hidden": 4,
+  "mlp_hidden": 20,
+  "parametros_cabeza_kan": 346,
+  "parametros_cabeza_mlp": 346,
+  "diferencia_parametros_pct": 0.0,
+  "mejor_modelo_validacion": "MLP + coordenadas",
+  "limitaciones": [
+    "el catalogo CVC no aporta altitud; se usan latitud y longitud",
+    "la escala fisica y el posible techo 200 del satelite siguen pendientes",
+    "las estaciones repetidas entre anos permiten evaluar transferencia temporal, no espacial",
+    "una sola semilla no permite declarar superioridad entre arquitecturas"
+  ]
+}

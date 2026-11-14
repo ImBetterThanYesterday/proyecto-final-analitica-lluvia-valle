@@ -1,0 +1,100 @@
+{
+  "eda": {
+    "estaciones_finales": 248,
+    "pares_finales": 4485,
+    "pares_por_particion": {
+      "entrenamiento": 3153,
+      "validacion": 871,
+      "prueba": 461
+    },
+    "minimo_anios_entrenamiento_observado": 7,
+    "reglas_continuidad_verificadas": {
+      "cobertura_minima": 0.9043715846994536,
+      "hueco_maximo": 16,
+      "meses_con_20_dias_minimo": 12
+    },
+    "embudo": [
+      {
+        "paso": "P0 crudo 1981‑2003",
+        "estaciones": 323,
+        "pares_estacion_anio": 5514,
+        "dias_con_dato": 1930611.0
+      },
+      {
+        "paso": "P1 valores imposibles",
+        "estaciones": 323,
+        "pares_estacion_anio": 5514,
+        "dias_con_dato": 1930607.0
+      },
+      {
+        "paso": "P2 totales mensuales",
+        "estaciones": 322,
+        "pares_estacion_anio": 5513,
+        "dias_con_dato": 1930550.0
+      },
+      {
+        "paso": "P2b totales mensuales con el resto del mes en cero",
+        "estaciones": 322,
+        "pares_estacion_anio": 5513,
+        "dias_con_dato": 1930216.0
+      },
+      {
+        "paso": "P2c meses anómalos (≥5 días > 3·p99)",
+        "estaciones": 322,
+        "pares_estacion_anio": 5513,
+        "dias_con_dato": 1930187.0
+      },
+      {
+        "paso": "P2d errores de digitación (> 4·p99 y > 150 mm)",
+        "estaciones": 322,
+        "pares_estacion_anio": 5513,
+        "dias_con_dato": 1930184.0
+      },
+      {
+        "paso": "P3 años copiados",
+        "estaciones": 322,
+        "pares_estacion_anio": 5511,
+        "dias_con_dato": 1929578.0
+      },
+      {
+        "paso": "P4 ceros falsos",
+        "estaciones": 322,
+        "pares_estacion_anio": 5511,
+        "dias_con_dato": 1927628.0
+      },
+      {
+        "paso": "P5 cobertura ≥90 %, hueco ≤30 d, 12 meses",
+        "estaciones": 308,
+        "pares_estacion_anio": 4732,
+        "dias_con_dato": NaN
+      },
+      {
+        "paso": "P6 estaciones con ≥7 años válidos en entrenamiento",
+        "estaciones": 248,
+        "pares_estacion_anio": 4485,
+        "dias_con_dato": NaN
+      }
+    ]
+  },
+  "fda": {
+    "curvas_terrestres": 4485,
+    "curvas_satelitales": 31119,
+    "pixeles_satelitales": 1353,
+    "anios_satelitales": 23,
+    "pares_eda_iguales_a_curvas_terrestres": true
+  },
+  "emparejamiento_kan": {
+    "estaciones": 105,
+    "pares": 2051,
+    "pares_por_particion": {
+      "entrenamiento": 1349,
+      "prueba": 257,
+      "validacion": 445
+    },
+    "pixeles": 89
+  },
+  "dependencias_faltantes_entorno_actual": [
+    "rasterio",
+    "skfda"
+  ]
+}

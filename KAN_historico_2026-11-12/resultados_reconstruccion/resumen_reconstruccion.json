@@ -1,0 +1,82 @@
+{
+  "objetivo": "Reconstruir curvas de precipitación de estación con una KAN.",
+  "entrada_modelo": [
+    "curva satelital en escala raíz",
+    "elevación",
+    "ONI anual"
+  ],
+  "semilla": 2026,
+  "filas": {
+    "entrenamiento": 1349,
+    "validacion": 445,
+    "prueba": 257
+  },
+  "estaciones_validacion": 94,
+  "prueba": {
+    "pares": 257,
+    "estaciones": 93,
+    "evaluada": true,
+    "usada_para_seleccion_del_modelo": false,
+    "estaciones_compartidas_con_entrenamiento": 93,
+    "estaciones_nuevas_vs_entrenamiento": 0,
+    "metricas": {
+      "l2_relativo": {
+        "media": 0.4321146011352539,
+        "desviacion_estandar": 0.2401411533355713
+      },
+      "kge": {
+        "media": 0.47934282419813323,
+        "desviacion_estandar": 0.33162035606042395
+      },
+      "sesgo_anual_pct": {
+        "media": 14.707578659057617,
+        "desviacion_estandar": 37.734840393066406
+      },
+      "error_fecha_picos_dias": {
+        "media": 22.023346303501945,
+        "desviacion_estandar": 18.000093307286264
+      }
+    }
+  },
+  "arquitectura": {
+    "neuronas_funcionales": 8,
+    "componentes_fpca": 6,
+    "varianza_fpca_acumulada": 0.9285234175622463,
+    "bases_spline_por_arista": 8,
+    "parametros_entrenables": 628
+  },
+  "entrenamiento": {
+    "mejor_epoca": 149,
+    "perdida_funcional_validacion_raiz": 97.8279744694742
+  },
+  "metricas_validacion": {
+    "l2_relativo": {
+      "media": 0.39190590381622314,
+      "desviacion_estandar": 0.1529587209224701
+    },
+    "kge": {
+      "media": 0.4647486798096287,
+      "desviacion_estandar": 0.24344181479485338
+    },
+    "sesgo_anual_pct": {
+      "media": -4.540835857391357,
+      "desviacion_estandar": 28.926788330078125
+    },
+    "error_fecha_picos_dias": {
+      "media": 32.57752808988764,
+      "desviacion_estandar": 23.68931675059736
+    }
+  },
+  "metricas_por_estacion": {
+    "n_estaciones": 94,
+    "l2_relativo_medio": 0.3944227397441864,
+    "l2_relativo_mediana": 0.36510390043258667
+  },
+  "graficas": [
+    "curva_aprendizaje.png",
+    "curvas_validacion_ejemplos.png",
+    "distribucion_l2_por_estacion.png"
+  ],
+  "prueba_utilizada": true,
+  "emparejamiento_estacion_pixel_pendiente_confirmacion_docente": true
+}

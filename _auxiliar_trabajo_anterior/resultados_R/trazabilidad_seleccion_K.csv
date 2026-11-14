@@ -1,0 +1,7 @@
+"fuente","particion","curvas_totales","curvas_completas","usadas_para_elegir_K"
+"estaciones","ENTRENAMIENTO",3368,2721,2721
+"estaciones","VALIDACION",923,784,0
+"estaciones","PRUEBA",478,429,0
+"satelite","ENTRENAMIENTO",21645,21645,21645
+"satelite","VALIDACION",7215,7215,0
+"satelite","PRUEBA",4329,4329,0

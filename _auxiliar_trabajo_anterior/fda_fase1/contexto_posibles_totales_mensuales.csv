@@ -1,0 +1,5 @@
+station_id,year,month,partition,dominant_day,dominant_value_mm,max_other_positive_station_mm,ratio_vs_other_station_max,same_month_other_years,same_month_total_median_mm,same_month_total_max_mm
+2612700202,1986,7,ENTRENAMIENTO,21,135.0,96.0,1.40625,12,30.0,75.0
+2612800104,2003,9,PRUEBA,6,138.0,120.0,1.15,21,58.0,168.0
+2622330105,1988,3,ENTRENAMIENTO,8,140.0,140.0,1.0,20,155.5,297.0
+2623500101,1985,2,ENTRENAMIENTO,23,90.0,126.0,0.7142857142857143,22,123.0,293.0

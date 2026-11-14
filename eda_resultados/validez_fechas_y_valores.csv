@@ -1,0 +1,4 @@
+source,rows,NaT_or_invalid_date,VALUE_missing_or_not_numeric,negative_VALUE
+csv_1980_1990,997791,0,0,0
+csv_1991_2003,1010677,0,0,0
+excel_1930_1979,984226,0,0,0

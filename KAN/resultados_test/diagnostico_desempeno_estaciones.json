@@ -1,0 +1,201 @@
+{
+  "proposito": "Análisis descriptivo post hoc de factores asociados al L2 por estación; no se usa para seleccionar, reentrenar ni modificar la KAN.",
+  "muestra": {
+    "estaciones": 93,
+    "curvas_estacion_anio": 257,
+    "umbral_cuartil_superior_l2": 0.46404656767845154,
+    "estaciones_cuartil_superior": 24,
+    "estaciones_referencia": 69
+  },
+  "definiciones": {
+    "l2_estacion": "Promedio del L2 relativo de la KAN entre años de test disponibles.",
+    "grupo_alto_l2": "Estaciones con L2 medio >= percentil 75 del conjunto de test.",
+    "bootstrap": "2000 réplicas; remuestreo de estaciones dentro de cada grupo.",
+    "correlaciones": "Spearman por estación; p ajustado por FDR Benjamini-Hochberg.",
+    "contrastes_grupos": "IC bootstrap de diferencias de medias y medianas; Mann-Whitney compara distribuciones/rangos, por lo que su p puede diferir del IC de la media.",
+    "l2_satelite": "L2 relativo de la curva satelital sin corregir.",
+    "rmse_diario": "Raíz del error cuadrático medio punto a punto, en mm/día."
+  },
+  "resumen_grupo_alto_l2": {
+    "l2_medio": 0.6936144828796387,
+    "l2_medio_resto": 0.35223716497421265,
+    "l2_satelite_medio": 0.8147571682929993,
+    "lluvia_anual_media_mm": 1259.9813232421875,
+    "lluvia_anual_media_resto_mm": 1563.9638671875,
+    "lluvia_anual_mediana_mm": 1017.3571166992188,
+    "lluvia_anual_mediana_resto_mm": 1434.9837646484375,
+    "rmse_diario_medio_mm": 2.399946451187134,
+    "rmse_diario_medio_resto_mm": 1.7221672534942627,
+    "sesgo_absoluto_anual_medio_pct": 60.215206146240234,
+    "sesgo_absoluto_anual_resto_pct": 17.95979118347168,
+    "kan_peor_que_satelite_en_cuartil_superior": 12,
+    "kan_peor_que_satelite_total_estaciones": 39,
+    "spearman_l2_kan_vs_sat": {
+      "rho": 0.4073587777147802,
+      "p_sin_ajuste": 5.066755065683801e-05,
+      "p_ajustado_fdr_bh": 0.00012666887664209502
+    }
+  },
+  "estaciones_mayor_l2": [
+    {
+      "station_id": "2612800104",
+      "station_name": "AUJI",
+      "l2_kan": 1.3641228675842285,
+      "l2_satelite": 0.7068392634391785,
+      "mejora_l2_vs_satelite": -0.65728360414505,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2614100104",
+      "station_name": "LOS BANCOS",
+      "l2_kan": 1.1409775018692017,
+      "l2_satelite": 1.0205520391464233,
+      "mejora_l2_vs_satelite": -0.12042546272277832,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2612810118",
+      "station_name": "CASETEJA",
+      "l2_kan": 1.0715264081954956,
+      "l2_satelite": 0.8814371824264526,
+      "mejora_l2_vs_satelite": -0.19008922576904297,
+      "anios_test": 1
+    },
+    {
+      "station_id": "2624700120",
+      "station_name": "LA DESPENSA",
+      "l2_kan": 1.0684977769851685,
+      "l2_satelite": 1.7749139070510864,
+      "mejora_l2_vs_satelite": 0.706416130065918,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2612710103",
+      "station_name": "ING LA QUINTA",
+      "l2_kan": 0.8672564625740051,
+      "l2_satelite": 0.52083420753479,
+      "mejora_l2_vs_satelite": -0.3464222550392151,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2612800103",
+      "station_name": "BELLA VISTA",
+      "l2_kan": 0.7553371787071228,
+      "l2_satelite": 0.6067331433296204,
+      "mejora_l2_vs_satelite": -0.14860403537750244,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2612720103",
+      "station_name": "BOLO BLANCO",
+      "l2_kan": 0.748511791229248,
+      "l2_satelite": 0.40407800674438477,
+      "mejora_l2_vs_satelite": -0.3444337844848633,
+      "anios_test": 3
+    },
+    {
+      "station_id": "2612800106",
+      "station_name": "LA CEJA",
+      "l2_kan": 0.733318567276001,
+      "l2_satelite": 0.6515079140663147,
+      "mejora_l2_vs_satelite": -0.08181065320968628,
+      "anios_test": 1
+    },
+    {
+      "station_id": "5420410115",
+      "station_name": "PUERTO NUEVO",
+      "l2_kan": 0.7241147756576538,
+      "l2_satelite": 1.3534212112426758,
+      "mejora_l2_vs_satelite": 0.629306435585022,
+      "anios_test": 2
+    },
+    {
+      "station_id": "5420410118",
+      "station_name": "MORAVITO",
+      "l2_kan": 0.7064908146858215,
+      "l2_satelite": 1.0795878171920776,
+      "mejora_l2_vs_satelite": 0.3730970025062561,
+      "anios_test": 3
+    }
+  ],
+  "asociaciones": [
+    {
+      "caracteristica": "L2 del satélite sin corregir",
+      "columna": "l2_satelite",
+      "spearman_rho": 0.4073587777147802,
+      "p_sin_ajuste": 5.066755065683801e-05,
+      "p_ajustado_fdr_bh": 0.00012666887664209502
+    },
+    {
+      "caracteristica": "Precipitación anual observada (mm)",
+      "columna": "lluvia_anual_observada_mm",
+      "spearman_rho": -0.4288293396198262,
+      "p_sin_ajuste": 1.7974854754687122e-05,
+      "p_ajustado_fdr_bh": 5.9916182515623736e-05
+    },
+    {
+      "caracteristica": "RMSE diario KAN (mm/día)",
+      "columna": "rmse_diario_mm",
+      "spearman_rho": 0.6551580078183283,
+      "p_sin_ajuste": 1.0418030121757147e-12,
+      "p_ajustado_fdr_bh": 5.209015060878574e-12
+    },
+    {
+      "caracteristica": "Sesgo anual absoluto KAN (%)",
+      "columna": "sesgo_absoluto_kan_pct",
+      "spearman_rho": 0.8468114947330727,
+      "p_sin_ajuste": 1.1006109978034782e-26,
+      "p_ajustado_fdr_bh": 1.1006109978034782e-25
+    },
+    {
+      "caracteristica": "Variabilidad diaria observada (CV)",
+      "columna": "cv_diario_observado",
+      "spearman_rho": 0.3082719107158843,
+      "p_sin_ajuste": 0.0026450421681923947,
+      "p_ajustado_fdr_bh": 0.004408403613653991
+    },
+    {
+      "caracteristica": "Fracción de lluvia en el 10% de días",
+      "columna": "fraccion_lluvia_10pct_dias",
+      "spearman_rho": 0.3628360836740175,
+      "p_sin_ajuste": 0.00035108635378402775,
+      "p_ajustado_fdr_bh": 0.0007021727075680555
+    },
+    {
+      "caracteristica": "Fracción de días secos",
+      "columna": "fraccion_dias_secos",
+      "spearman_rho": 0.12746011475387203,
+      "p_sin_ajuste": 0.22340281198364176,
+      "p_ajustado_fdr_bh": 0.3191468742623454
+    },
+    {
+      "caracteristica": "Altitud (m)",
+      "columna": "elevation_m",
+      "spearman_rho": 0.018442324847474705,
+      "p_sin_ajuste": 0.8607175277443467,
+      "p_ajustado_fdr_bh": 0.8607175277443467
+    },
+    {
+      "caracteristica": "Distancia estación-píxel (km)",
+      "columna": "distancia_pixel_km",
+      "spearman_rho": -0.026066067858315178,
+      "p_sin_ajuste": 0.8041232272839408,
+      "p_ajustado_fdr_bh": 0.8607175277443467
+    },
+    {
+      "caracteristica": "Años disponibles en test",
+      "columna": "anios_test",
+      "spearman_rho": -0.05789003855290242,
+      "p_sin_ajuste": 0.581507944811262,
+      "p_ajustado_fdr_bh": 0.7268849310140775
+    }
+  ],
+  "limitaciones": [
+    "El test ya había sido inspeccionado previamente; este análisis es post hoc.",
+    "Las estaciones de test también aparecen en entrenamiento; no mide generalización espacial.",
+    "El L2 es relativo a la norma de la lluvia observada; puede aumentar cuando el acumulado observado es bajo.",
+    "Las asociaciones son exploratorias, correlacionales y no identifican causalidad.",
+    "No se dispone aquí de una auditoría independiente de calidad de los pluviómetros ni de la representatividad espacial del píxel.",
+    "Hay entre uno y tres años de test por estación; se promedian los años disponibles."
+  ]
+}
