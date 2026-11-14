@@ -43,7 +43,7 @@
 # Librerías: data.table, ggplot2, readxl, sf y terra (EDA). La base B-spline del
 # experimento de huecos se programa sin librerías (recursión de Cox–de Boor),
 # como pide el curso para la construcción funcional.
-# Decisiones y su justificación: DECISIONES.md (D-01 a D-36).
+# Decisiones y su justificación: DECISIONES.md (D-01 a D-49).
 # =============================================================================
 
 

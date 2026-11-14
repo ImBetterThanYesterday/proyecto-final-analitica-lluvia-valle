@@ -74,5 +74,5 @@ Las reglas que dependen de los datos se calculan solo con entrenamiento.
 **Abierto con el profesor** (ver `DECISIONES.md`, §8):
 - ✅ P-1: los 21 códigos sin ubicar se descartan;
 - ✅ P-3: no se usa CHIRPS ni otra fuente; solo el satélite entregado;
-- ⚠️ P-4: 1985, 1988 y 2000 del satélite, fuera (D-37/D-42) o dentro (D-44): por acordar en equipo;
+- ✅ P-4: 1985, 1988 y 2000 del satélite entran al modelo; quitarlos solo se usa como sensibilidad (D-47, D-48);
 - ✅ P-8: el satélite es CHIRP (confirmado).

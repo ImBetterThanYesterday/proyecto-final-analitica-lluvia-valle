@@ -34,7 +34,7 @@ Se actualiza cada vez que se avanza.
 
 ## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
-- ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (`00_funciones.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
+- ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (sección 2 de `lluvia_valle_funcional.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
 - ✅ K por ECM, VC y VCG para cada fuente, solo con entrenamiento: K = 8 (estaciones) y K = 11 (satélite) (D-39).
 - ✅ S idempotente y tr(S) = K (error < 1e-14).
 - ✅ Covarianza residual y bandas punto a punto.
@@ -59,9 +59,9 @@ Se actualiza cada vez que se avanza.
 - ✅ Correlación cruzada funcional y su diagonal.
 - ✅ Comparación de las covarianzas.
 - ✅ Comparación por altitud, vertiente y fase ENSO.
-- 🟡 Interpretación del sesgo satelital: base en D-44 y en la sección 13; falta redactarla.
+- 🟡 Interpretación del sesgo satelital: base en D-44, en la sección 12 de `lluvia_valle_datos.R` y en la sección 4 de `lluvia_valle_funcional.R`; falta redactarla.
 - ✅ Todos los años entran (D-47, D-48). 1985, 1988 y 2000 se muestran además aparte, como descripción.
-- ✅ Verificado que las diferencias no salen de usar K distinto por fuente (`F4_sensibilidad_mismo_K.csv`).
+- ✅ Verificado que el diagnóstico global (diferencia media, diagonal, cociente de varianzas) no sale de usar K distinto por fuente; el veredicto día a día coincide en 281 de 365 días, así que las fechas de días significativos llevan esa salvedad (`F4_sensibilidad_mismo_K.csv`).
 
 ## 4.1 Preprocesamiento y selección de datos (6 %)
 

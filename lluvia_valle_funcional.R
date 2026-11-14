@@ -17,7 +17,7 @@
 #
 # Cómo se corre (desde la raíz del repositorio):
 #   Rscript lluvia_valle_datos.R        # una vez, deja datos_preparados.rds
-#   Rscript lluvia_valle_funcional.R    # este archivo, ~1 minuto
+#   Rscript lluvia_valle_funcional.R    # este archivo, ~1 minuto (fija UTF-8 solo)
 #
 # Reglas del proyecto que se cumplen aquí:
 #   - La base B-spline (Cox-de Boor), los mínimos cuadrados, S, W, la media, la
@@ -30,6 +30,15 @@
 #     gráfica o un stopifnot(). El bloque "QUÉ DICEN LOS DATOS" de cada sección
 #     resume lo que salió.
 # =============================================================================
+
+# Locale: si R arranca sin UTF-8 (en la Mac del grupo LANG está vacío), las tildes del
+# código ("validación") no coinciden con las de los datos y el script se detiene en la
+# primera comparación de texto. Se fija UTF-8 aquí, antes de cualquier cadena con tilde.
+if (!isTRUE(l10n_info()$`UTF-8`)) {
+  for (loc in c("en_US.UTF-8", "es_CO.UTF-8", "es_ES.UTF-8", "C.UTF-8"))
+    if (nzchar(suppressWarnings(Sys.setlocale("LC_CTYPE", loc)))) break
+  if (!isTRUE(l10n_info()$`UTF-8`)) stop("No hay un locale UTF-8 disponible; corra con LC_ALL=en_US.UTF-8 Rscript ...")
+}
 
 suppressPackageStartupMessages({
   library(data.table)
@@ -722,7 +731,13 @@ grafico_base("F3_boxplot_funcional", function() {
 titulo("3.6 Contexto: vertiente, altitud y ENSO")
 id_e[, banda_altitud := cut(altitud, c(-Inf, 1200, 2000, Inf), labels = c("< 1200 m", "1200-2000 m", "> 2000 m"))]
 id_e <- oni[, .(anio, fase)][id_e, on = "anio"]; id_s <- oni[, .(anio, fase)][id_s, on = "anio"]
-grupo_media <- function(Y, g) { g <- as.character(g); k <- !is.na(g); sapply(split(seq_len(nrow(Y))[k], g[k]), function(i) colMeans(Y[i, , drop = FALSE])) }
+# Orden de los grupos fijo (niveles del factor u orden "radix", que no depende del locale):
+# así las tablas salen con las mismas filas en cualquier máquina.
+niveles_de <- function(g) if (is.factor(g)) levels(droplevels(g)) else sort(unique(g[!is.na(g)]), method = "radix")
+grupo_media <- function(Y, g) {
+  k <- !is.na(g); g <- factor(as.character(g), levels = niveles_de(g))
+  sapply(split(seq_len(nrow(Y))[k], g[k], drop = TRUE), function(i) colMeans(Y[i, , drop = FALSE]))
+}
 m_vert_e <- grupo_media(Ye, id_e$vertiente); m_vert_s <- grupo_media(Xs, id_s$vertiente)
 m_alt <- grupo_media(Ye[id_e$vertiente != "Pacífico", ], id_e$banda_altitud[id_e$vertiente != "Pacífico"])
 m_enso_e <- grupo_media(Ye[id_e$vertiente != "Pacífico", ], id_e$fase[id_e$vertiente != "Pacífico"])
@@ -944,7 +959,7 @@ grafico_base("F4_covarianzas", function() {
 titulo("4.3 Por vertiente, altitud y fase ENSO")
 por_grupo <- function(var) {
   g <- as.character(pares[[var]]); k <- ok & !is.na(g)
-  rbindlist(lapply(sort(unique(g[k])), function(v) {
+  rbindlist(lapply(intersect(niveles_de(pares[[var]]), unique(g[k])), function(v) {
     i <- k & g == v; bb <- banda_diferencia(D[i, , drop = FALSE], pares$codigo[i])
     data.table(agrupacion = var, grupo = v, pares = sum(i), estaciones = bb$n,
                P_estacion = mean(Y[i, ]) * 365, P_satelite = mean(X[i, ]) * 365, sesgo_mm_anio = mean(bb$d) * 365,
@@ -979,7 +994,7 @@ grafico_f(ggplot(por_est[!is.na(altitud)], aes(altitud, cociente, colour = verti
 
 curvas_d <- rbindlist(lapply(c("vertiente", "banda_altitud", "fase"), function(var) {
   g <- as.character(pares[[var]]); k <- ok & !is.na(g)
-  rbindlist(lapply(sort(unique(g[k])), function(v) { i <- k & g == v; bb <- banda_diferencia(D[i, , drop = FALSE], pares$codigo[i])
+  rbindlist(lapply(intersect(niveles_de(pares[[var]]), unique(g[k])), function(v) { i <- k & g == v; bb <- banda_diferencia(D[i, , drop = FALSE], pares$codigo[i])
     data.table(agrupacion = var, grupo = v, dia = T_DIA, d = bb$d, inf = bb$d - 2 * bb$ee, sup = bb$d + 2 * bb$ee) }))
 }))
 grafico_f(ggplot(curvas_d, aes(dia, d, colour = grupo, fill = grupo)) + geom_hline(yintercept = 0, linetype = 3) +
@@ -1015,8 +1030,10 @@ grafico_f(ggplot(curvas_d, aes(dia, d, colour = grupo, fill = grupo)) + geom_hli
 #   ~5,5 km y la péntada promedian los aguaceros locales.
 #   Mismo K: al construir el satélite también con K = 8, la diferencia media
 #   (-20 frente a -22 mm/año), la diagonal (0,64 frente a 0,62) y el cociente de
-#   varianzas (0,25 frente a 0,24) casi no cambian, y el veredicto de la banda coincide en 281
-#   de 365 días. Las diferencias entre fuentes no salen de usar K distinto.
+#   varianzas (0,25 frente a 0,24) casi no cambian: el diagnóstico global no sale
+#   de usar K distinto. El veredicto día a día sí es sensible: coincide en 281 de
+#   365 días (77 %) y la banda excluye el 0 en 159 días en vez de 147. Por eso las
+#   fechas exactas de los días significativos se reportan con esa salvedad.
 #   Subregión: en el Cauca el satélite sobreestima 8 % (+109 mm/año) y la banda
 #   excluye el 0 en 263 días. En la vertiente Pacífica el sesgo depende del
 #   sitio. El satélite subestima a la mitad las estaciones más lluviosas (El
@@ -1092,10 +1109,14 @@ pru <- pares$usar & pares$particion == "prueba"
 
 titulo("5.2 FPCA de las estaciones (solo entrenamiento)")
 ev <- eigen(W_e, symmetric = TRUE); W12 <- ev$vectors %*% diag(sqrt(ev$values)) %*% t(ev$vectors); Wm12 <- ev$vectors %*% diag(1 / sqrt(ev$values)) %*% t(ev$vectors)
-mu_c <- colMeans(re$coef[ent, ])
-Cc <- sweep(re$coef[ent, ], 2, mu_c)
-eg <- eigen(W12 %*% (crossprod(Cc) / (sum(ent) - 1)) %*% W12, symmetric = TRUE)
-psi_c <- Wm12 %*% eg$vectors
+# El FPCA es una función de los coeficientes y de las filas que lo ajustan: así la prueba
+# de no fuga (sección 6) lo puede volver a correr con los datos de fuera alterados.
+fpca_ent <- function(coef, filas) {
+  mu <- colMeans(coef[filas, ]); Cc <- sweep(coef[filas, ], 2, mu)
+  eg <- eigen(W12 %*% (crossprod(Cc) / (sum(filas) - 1)) %*% W12, symmetric = TRUE)
+  list(mu = mu, values = eg$values, psi = Wm12 %*% eg$vectors)
+}
+eg <- fpca_ent(re$coef, ent); mu_c <- eg$mu; psi_c <- eg$psi; psi_todas <- psi_c
 var_fpca <- data.table(m = seq_len(K_e), autovalor = eg$values, pct = 100 * eg$values / sum(eg$values))[, acumulado := cumsum(pct)]
 print(tabla_f(var_fpca, "F5_fpca_varianza"))
 stopifnot(max(abs(t(psi_c) %*% W_e %*% psi_c - diag(K_e))) < 1e-10)
@@ -1110,32 +1131,44 @@ S_todos <- sweep(re$coef, 2, mu_c) %*% W_e %*% psi_c
 titulo("5.3 Ajuste y elección de M y lambda con validación")
 alt_m <- mean(pares$altitud[ent]); alt_s <- sd(pares$altitud[ent])
 Zx <- rs$coef %*% W_s
-diseno <- function(i, con_sat = TRUE) cbind(1, if (con_sat) Zx[i, , drop = FALSE], (pares$altitud[i] - alt_m) / alt_s, pares$ONI_anual[i])
+# Los datos entran como argumentos con valor por defecto (los reales) para que la prueba
+# de no fuga pueda reajustar con datos alterados sin tocar los objetos del análisis.
+diseno <- function(i, con_sat = TRUE, zx = Zx, alt = pares$altitud, oni = pares$ONI_anual, am = alt_m, ds = alt_s)
+  cbind(1, if (con_sat) zx[i, , drop = FALSE], (alt[i] - am) / ds, oni[i])
 penal <- function(con_sat = TRUE) { P <- matrix(0, 3 + con_sat * K_s, 3 + con_sat * K_s); if (con_sat) P[1 + 1:K_s, 1 + 1:K_s] <- R_s; P }
-ajustar_B <- function(lambda, M, con_sat = TRUE) { Z <- diseno(which(ent), con_sat); solve(crossprod(Z) + lambda * penal(con_sat), crossprod(Z, S_todos[ent, 1:M, drop = FALSE])) }
-predecir_raiz <- function(B, i, con_sat = TRUE) { M <- ncol(B); sweep((diseno(i, con_sat) %*% B) %*% t(Phi_e %*% psi_c[, 1:M, drop = FALSE]), 2, drop(Phi_e %*% mu_c), "+") }
+ajustar_B <- function(lambda, M, con_sat = TRUE, S = S_todos, ...) {
+  Z <- diseno(which(ent), con_sat, ...); solve(crossprod(Z) + lambda * penal(con_sat), crossprod(Z, S[ent, 1:M, drop = FALSE]))
+}
+predecir_raiz <- function(B, i, con_sat = TRUE, psi = psi_c, ...) {
+  M <- ncol(B); sweep((diseno(i, con_sat, ...) %*% B) %*% t(Phi_e %*% psi[, 1:M, drop = FALSE]), 2, drop(Phi_e %*% mu_c), "+")
+}
 a_mm <- function(R) pmax(R, 0)^2
-rmse_l2 <- function(P, i) sqrt(rowMeans((P - Y_mm[i, ])^2))
+rmse_l2 <- function(P, i, Y = Y_mm) sqrt(rowMeans((P - Y[i, ])^2))
 
 lambdas <- 10^seq(-2, 10, by = .5)
-sel_lambda <- rbindlist(lapply(seq_len(K_e), function(M) rbindlist(lapply(lambdas, function(l) {
-  B <- ajustar_B(l, M)
-  data.table(M = M, lambda = l, rmse_entrenamiento = mean(rmse_l2(a_mm(predecir_raiz(B, which(ent))), which(ent))),
-             rmse_validacion = mean(rmse_l2(a_mm(predecir_raiz(B, which(val))), which(val))))
+tabla_seleccion <- function(S = S_todos, Y = Y_mm, ...) rbindlist(lapply(seq_len(K_e), function(M) rbindlist(lapply(lambdas, function(l) {
+  B <- ajustar_B(l, M, S = S, ...)
+  data.table(M = M, lambda = l, rmse_entrenamiento = mean(rmse_l2(a_mm(predecir_raiz(B, which(ent), psi = psi_todas, ...)), which(ent), Y)),
+             rmse_validacion = mean(rmse_l2(a_mm(predecir_raiz(B, which(val), psi = psi_todas, ...)), which(val), Y)))
 }))))
+# Regla: el menor M cuyo mejor RMSE de validación queda a menos de 0,5 % del mínimo.
+elegir_M_lambda <- function(sel) {
+  mejor <- sel[, .SD[which.min(rmse_validacion)], by = M]
+  M_sel <- mejor[rmse_validacion <= min(rmse_validacion) * 1.005, min(M)]
+  list(mejor = mejor, M = M_sel, lambda = mejor[M == M_sel, lambda])
+}
+sel_lambda <- tabla_seleccion()
 tabla_f(sel_lambda, "F5_seleccion_M_lambda")
-mejor_por_M <- sel_lambda[, .SD[which.min(rmse_validacion)], by = M]
+eleccion <- elegir_M_lambda(sel_lambda); mejor_por_M <- eleccion$mejor
 print(mejor_por_M)
-minimo <- min(mejor_por_M$rmse_validacion)
-M_sel <- mejor_por_M[rmse_validacion <= minimo * 1.005, min(M)]
-LAMBDA <- mejor_por_M[M == M_sel, lambda]; M <- M_sel
+LAMBDA <- eleccion$lambda; M <- eleccion$M
 psi_c <- psi_c[, 1:M, drop = FALSE]; psi_t <- Phi_e %*% psi_c; S <- S_todos[, 1:M, drop = FALSE]
 cat(sprintf("Elegidos: M = %d (%.1f %% de la varianza; el menor M a menos de 0,5 %% del mejor RMSE de validación) y lambda = %s\n",
             M, var_fpca$acumulado[M], format(LAMBDA, scientific = TRUE)))
 grafico_f(ggplot(sel_lambda, aes(lambda, rmse_validacion, colour = factor(M))) + geom_line() +
             geom_point(data = mejor_por_M, size = 2) + geom_vline(xintercept = LAMBDA, linetype = 2, colour = "red") + scale_x_log10() +
             labs(x = expression(lambda), y = "RMSE L2 medio en validación (mm/día)", colour = "M",
-                 title = "Elección de M y lambda con los años de validación (1996-1999)"),
+                 title = "Elección de M y lambda con los años de validación (1996-2000)"),
           "F5_seleccion_M_lambda", ancho = 9, alto = 5)
 
 B <- ajustar_B(LAMBDA, M); B_sin_sat <- ajustar_B(0, M, con_sat = FALSE)
@@ -1335,7 +1368,7 @@ cat("Archivos para Python en", dir_py, ":", paste(list.files(dir_py), collapse =
 #   completo a mitad de año y lo amortigua al final. El ONI resta lluvia todo el
 #   año y sobre todo a mitad de año (-0,24 raíz(mm/día) por unidad el 2-jul): El Niño profundiza la sequía de
 #   junio-julio. La altitud pesa poco una vez que se conoce el píxel.
-#   Prueba (2001-2003, 375 curvas de 137 estaciones, IC 95 % por bootstrap de
+#   Prueba (2001-2003, 370 curvas de 137 estaciones, IC 95 % por bootstrap de
 #   estaciones con 2 000 remuestreos). Frente al satélite sin corregir, la
 #   regresión baja el error L² relativo de 0,51 a 0,44, sube el KGE de 0,38 a
 #   0,47, baja el sesgo del acumulado anual de +26 % a +7 % y acerca el pico de
@@ -1370,6 +1403,36 @@ regresion <- list(M = M, lambda = LAMBDA, B = B, mu_c = mu_c, psi_c = psi_c, var
 # 6. PRUEBAS Y CIERRE
 # =============================================================================
 titulo("6. Pruebas de la parte funcional")
+# Prueba de no fuga. (a) Se reemplaza por ruido TODO lo que no es entrenamiento (curvas
+# de estación, píxel, altitud y ONI de validación y prueba) y se reajusta con las mismas
+# funciones: media, autovalores, escalas de altitud y B tienen que salir idénticos.
+# (b) Se altera solo la prueba y se vuelve a elegir M y lambda: tienen que salir iguales.
+# (c) K se eligió con ent_est / ent_sat: se revisa que esas filas sean solo de 1981-1995.
+set.seed(7)
+ruido_filas <- function(A, filas) { A[filas, ] <- matrix(rnorm(sum(filas) * ncol(A), sd = 3 * sd(A)), sum(filas)); A }
+alterar <- function(filas) {
+  coef <- ruido_filas(re$coef, filas)
+  list(coef = coef, Y = abs(ruido_filas(Y_mm, filas)), zx = ruido_filas(Zx, filas),
+       alt = replace(pares$altitud, filas, runif(sum(filas), 0, 4500)), oni = replace(pares$ONI_anual, filas, rnorm(sum(filas), sd = 2)))
+}
+d <- alterar(!ent)
+fp_r <- fpca_ent(d$coef, ent); am_r <- mean(d$alt[ent]); ds_r <- sd(d$alt[ent])
+S_r <- sweep(d$coef, 2, fp_r$mu) %*% W_e %*% fp_r$psi
+B_r <- ajustar_B(LAMBDA, M, S = S_r, zx = d$zx, alt = d$alt, oni = d$oni, am = am_r, ds = ds_r)
+no_fuga_ent <- c(media = max(abs(fp_r$mu - mu_c)), autovalores = max(abs(fp_r$values - var_fpca$autovalor)),
+                 escalas = max(abs(c(am_r, ds_r) - c(alt_m, alt_s))), B = max(abs(B_r - B)))
+d <- alterar(pru)
+S_p <- sweep(d$coef, 2, mu_c) %*% W_e %*% psi_todas
+el_p <- elegir_M_lambda(tabla_seleccion(S = S_p, Y = d$Y, zx = d$zx, alt = d$alt, oni = d$oni))
+no_fuga_sel <- el_p$M == M && el_p$lambda == LAMBDA
+no_fuga_K <- all(id_est$anio[ent_est] <= 1995) && all(id_sat$anio[ent_sat] <= 1995)
+cat(sprintf("No fuga: con validación y prueba reemplazadas por ruido, diferencia máxima en media %.1e, autovalores %.1e, escalas %.1e y B %.1e
+",
+            no_fuga_ent[1], no_fuga_ent[2], no_fuga_ent[3], no_fuga_ent[4]))
+cat(sprintf("No fuga: con la prueba alterada se vuelve a elegir M = %d y lambda = %s (original M = %d, lambda = %s)
+",
+            el_p$M, format(el_p$lambda, scientific = TRUE), M, format(LAMBDA, scientific = TRUE)))
+rm(d)
 pruebas <- list(
   "El emparejamiento es el mismo del archivo de datos" = identical(pares[order(fila_est), fila_sat], dp$pares[order(fila_est), fila_sat]) && identical(pares[order(fila_est), codigo], dp$pares[order(fila_est), codigo]),
   "Ningún año queda fuera del modelo" = all(pares$usar) && setequal(unique(pares$anio[ent]), 1981:1995) && setequal(unique(pares$anio[val]), 1996:2000) && setequal(unique(pares$anio[pru]), 2001:2003),
@@ -1379,7 +1442,8 @@ pruebas <- list(
   "La media paso a paso coincide con fda::mean.fd" = all(verif_media$vs_fda_mean.fd < 1e-10),
   "Las atípicas coinciden con fda::fbplot" = all(verif_fb),
   "Funciones propias ortonormales con W" = max(abs(t(psi_c) %*% W_e %*% psi_c - diag(M))) < 1e-10,
-  "K, FPCA y escalas solo con entrenamiento; M y lambda con validación" = !any(ent & pares$anio > 1995) && !any(val & (pares$anio < 1996 | pares$anio > 2000)),
+  "Sin fuga: K, FPCA, escalas y B no cambian si se alteran validación y prueba; M y lambda no cambian si se altera la prueba" =
+    no_fuga_K && all(no_fuga_ent < 1e-10) && no_fuga_sel,
   "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)" = dif_equiv <= 1e-4,
   "La reconstrucción en mm no es negativa" = min(modelos[["Regresión funcional"]]) >= 0,
   "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000

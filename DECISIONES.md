@@ -298,6 +298,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-17 | Resuelta: está bien quitar el 29 de febrero. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-18 | Resuelta: el píxel que contiene la estación está bien; como el píxel es más grande que el punto, no hay que reescalar ni promediar. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-19 | ¿Se pueden usar los registros de 1930–1979 solo para estimar el FPCA, aunque la fe de erratas fije 1981–2003? | ⬜ |
+| P-20 | (Equipo) K de las estaciones: 8 o 12/16. Con K = 8 el error en la fecha de los picos por curva es 12 y 10 días; con K = 16, 6 y 5, con la VC solo 0,9 % peor, pero los valores negativos suben de 2 % a 3,3 %. Si cambia K hay que rehacer el experimento de huecos de R5 (hecho con K = 8) | ⬜ |
 
 ---
 

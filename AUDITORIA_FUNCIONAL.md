@@ -1,4 +1,4 @@
-# Auditoría de la parte funcional (`funcional/10` a `14`)
+# Auditoría de la parte funcional (hoy `lluvia_valle_funcional.R`; antes `funcional/10` a `14`)
 
 Rama `gus-auditoria-funcional`, 13-nov-2026. Se revisó el código de Jacobo y María contra el enunciado (fe de erratas), la rúbrica y los datos cerrados (D-43 a D-46). Los puntos dudosos se probaron corriendo el código; los experimentos están al final.
 
@@ -14,7 +14,7 @@ Todo lo funcional quedó en un solo archivo, `lluvia_valle_funcional.R`, que ree
 | I1. EDA que mezcla dos climas | ✅ Por vertiente y con anomalías | Sección 3.2; `F3_covarianza_por_vertiente_y_anomalias.csv` |
 | I2. K distinto por fuente | ✅ Verificado: no cambia las conclusiones | Sección 4.2; `F4_sensibilidad_mismo_K.csv` |
 | I3. Orden de la raíz y el suavizado | ✅ Verificado: suavizar en mm conserva el acumulado anual | Sección 5.1; `F5_orden_raiz_y_suavizado.csv` |
-| I4. K = 8 rígido | ✅ Sensibilidad hecha; se mantiene K = 8 | Sección 2; `F2_sensibilidad_K_estaciones.csv` |
+| I4. K = 8 rígido | 🟡 Sensibilidad hecha; la elección entre K = 8 y 12/16 sigue abierta (P-20) | Sección 2; `F2_sensibilidad_K_estaciones.csv` |
 | I5. Bordes | ✅ Documentado | Bloque "Qué dicen los datos" de la sección 2 |
 | I6. Dos definiciones de vertiente | ✅ Una sola: estación más cercana | Sección 1; `F1_regla_vertiente_pixeles.csv` |
 | Ventanas fijas de temporada | 🟡 Se mantienen; se reporta el % de picos en el borde de la ventana | `F2_sensibilidad_K_estaciones.csv` |
