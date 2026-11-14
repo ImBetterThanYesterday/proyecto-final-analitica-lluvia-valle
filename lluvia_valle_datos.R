@@ -11,7 +11,7 @@
 #   5. Patrones sospechosos: totales mensuales, rachas de ceros, copias
 #   6. Climatología y coherencia espacial
 #   7. Experimento de huecos: ¿cuánta falta de datos aguanta una curva?
-#   8. Depuración (reglas D-36) y dataset final
+#   8. Depuración (reglas R0 a R7, D-36) y dataset final
 #   9. Satélite: lectura, estructura y fuente (D-43)
 #  10. Satélite: recorte al Valle, calendario de péntadas y mm/día
 #  11. Satélite: EDA
@@ -48,6 +48,13 @@
 
 
 # ---- 0. CONFIGURACIÓN -------------------------------------------------------
+# Locale: sin UTF-8 (LANG vacío en la Mac del grupo) las tildes del código no coinciden
+# con las de los datos. Se fija aquí, antes de cualquier cadena con tilde.
+if (!isTRUE(l10n_info()$`UTF-8`)) {
+  for (loc in c("en_US.UTF-8", "es_CO.UTF-8", "es_ES.UTF-8", "C.UTF-8"))
+    if (nzchar(suppressWarnings(Sys.setlocale("LC_CTYPE", loc)))) break
+  if (!isTRUE(l10n_info()$`UTF-8`)) stop("No hay un locale UTF-8 disponible; corra con LC_ALL=en_US.UTF-8 Rscript ...")
+}
 suppressPackageStartupMessages({
   library(data.table)
   library(ggplot2)
@@ -66,6 +73,10 @@ RADIO_VEC   <- 25                           # km: vecinas para cualquier contras
 COB_MIN     <- 0.90                         # R5: fracción mínima de días en el año
 HUECO_MAX   <- 15                           # R5: hueco máximo permitido (días)
 ANIOS_MIN   <- 7                            # R6: años válidos mínimos en entrenamiento
+# R0: máximo físico = récord mundial de lluvia en 24 h reconocido por la OMM: 1 825 mm,
+# Foc-Foc (La Reunión), 7-8 ene 1966, ciclón Denise (WMO Weather and Climate Extremes
+# Archive, https://wmo.asu.edu). Un dato diario por encima no puede ser lluvia real.
+P_MAX_FISICO <- 1825
 
 SALIDA <- "salidas_R_datos"
 dir.create(file.path(SALIDA, "tablas"), showWarnings = FALSE, recursive = TRUE)
@@ -165,6 +176,7 @@ vecinas <- function(cod) setdiff(names(which(DK[cod, ] <= RADIO_VEC)), cod)
 # ---- 2. ESTRUCTURA DE LOS ARCHIVOS CRUDOS ------------------------------------
 titulo("2. Estructura del archivo")
 d <- crudo[codigo %in% valle$codigo, .(codigo, anio = YEAR, mes = MONTH, dia_mes = DAY, P = as.numeric(VALUE))]
+crudo_r0 <- crudo[, .(codigo, P = as.numeric(VALUE))]   # solo para el conteo de R0
 rm(crudo); invisible(gc())
 d[, fecha := as.IDate(sprintf("%d-%02d-%02d", anio, mes, dia_mes))]
 estructura <- data.table(
@@ -175,6 +187,24 @@ estructura <- data.table(
   no_enteros = sum(d$P != round(d$P)), dias_29feb = d[mes == 2 & dia_mes == 29, .N],
   maximo = max(d$P))
 print(tabla(estructura, "2_estructura"))
+
+# R0. Valor físicamente imposible → faltante: P < 0 o P > P_MAX_FISICO (récord OMM 24 h).
+# La regla se aplica antes de todo lo demás y se cuenta aunque dé 0, para que quede
+# verificado en el código y no supuesto. Como referencia se cuenta también en el archivo
+# crudo completo (todas las estaciones, 1981-2003), donde sí aparecen valores imposibles.
+imposible <- function(P) !is.na(P) & (P < 0 | P > P_MAX_FISICO)
+m_r0 <- d[imposible(P), .(codigo, fecha, P, regla = "R0 valor imposible",
+                          detalle = fifelse(P < 0, "negativo", sprintf("> %d mm (récord OMM 24 h)", P_MAX_FISICO)))]
+r0_resumen <- data.table(
+  archivo = c("crudo completo (todas las estaciones)", "estaciones del Valle"),
+  negativos = c(sum(crudo_r0$P < 0), m_r0[P < 0, .N]),
+  sobre_maximo_fisico = c(sum(crudo_r0$P > P_MAX_FISICO), m_r0[P > P_MAX_FISICO, .N]),
+  estaciones_afectadas = c(uniqueN(crudo_r0[imposible(P), codigo]), uniqueN(m_r0$codigo)),
+  valor_maximo = c(max(crudo_r0$P), d[, max(P)]))
+print(tabla(r0_resumen, "2_R0_valores_imposibles"))
+rm(crudo_r0)
+d <- d[!imposible(P)]
+traza_r0 <- d[, .(estaciones = uniqueN(codigo), pares_estacion_anio = uniqueN(paste(codigo, anio)), dias_con_dato = .N)]
 
 # Los decimales vienen de las estaciones climatológicas (tipo 02/03 en los
 # dígitos 7-8 del código), que leen a 0,1 mm. No son error.
@@ -189,7 +219,8 @@ grafico(ggplot(d[P > 0 & P == round(P)], aes(factor(P %% 10))) + geom_bar() +
 
 # QUÉ DICEN LOS DATOS (H2)
 #   Un faltante es una FILA AUSENTE: no hay NA, negativos ni duplicados, y no
-#   aparece el valor imposible (859 375 mm) de otra estación. Hay 832 registros
+#   aparece el valor imposible (859 375 mm) de otra estación. R0 lo comprueba con
+#   un umbral citado (récord OMM, 1 825 mm en 24 h): en el Valle no quita nada. Hay 832 registros
 #   del 29-feb y 5 144 valores con decimales (estaciones climatológicas).
 
 
@@ -630,7 +661,7 @@ m_cero <- r4[falso == TRUE][, d[codigo == .BY$codigo & fecha %between% c(ini, fi
       detalle = sprintf("%s: llovió %d días; p = %.1e", nombre_vecina, dias_lluvia_vecina, p_azar))]
 stopifnot(all(m_cero$P == 0), nrow(m_cero) == r4[falso == TRUE, sum(largo)])
 
-marcas <- valle[, .(codigo, nombre)][rbind(m_ext, m_mes, m_cero), on = "codigo"]
+marcas <- valle[, .(codigo, nombre)][rbind(m_r0, m_ext, m_mes, m_cero), on = "codigo"]
 print(marcas[, .(dias = .N, estaciones = uniqueN(codigo)), by = regla])
 
 # Aplicar: un faltante es una fila ausente / NA en la rejilla (R7: no se imputa)
@@ -661,6 +692,7 @@ trazabilidad <- rbind(
              pares_estacion_anio = sum(cobertura_cruda$anios_con_dato), dias_con_dato = sum(cobertura_cruda$dias_con_dato)),
   data.table(paso = "1. Solo el Valle, con coordenada (D-34)", estaciones = nrow(valle),
              pares_estacion_anio = sum(valle$anios_con_dato), dias_con_dato = sum(valle$dias_con_dato)),
+  cbind(paso = "1b. R0: negativos y valores sobre el récord OMM (1 825 mm) a faltante", traza_r0),
   cbind(paso = "2. R1: sin 29 de febrero", cuenta(d)),
   cbind(paso = "3. R2: extremos sin respaldo a faltante", cuenta(d_r2)),
   cbind(paso = "4. R3: totales mensuales en un día a faltante", cuenta(d_r3)),
@@ -673,6 +705,7 @@ print(tabla(trazabilidad, "8_trazabilidad"))
 rm(d_r2, d_r3, d_r4)
 
 reglas <- c(
+  R0 = "Valor imposible → faltante: P < 0 o P > 1 825 mm (récord mundial OMM en 24 h)",
   R1 = "Dominio 1–365: se quita el 29 de febrero",
   R2 = "Extremo > 3·p99 y ≥150 mm sin vecina (≤25 km, ±1 día) que supere P/3 → faltante",
   R3 = "Mes con un solo día de lluvia > p99 y (mes con <50 % de días o vecinas con lluvia ≥40 % de los días) → mes faltante",
@@ -709,9 +742,13 @@ inv_sat <- data.table(archivo = arch_sat, anio = as.integer(substr(basename(arch
                       pentada = as.integer(substr(basename(arch_sat), 8, 9)))
 print(inv_sat[, .N, by = anio][, .(anios = .N, con_72_pentadas = sum(N == 72),
                                    incompletos = paste(anio[N != 72], N[N != 72], sep = ": ", collapse = "; "))])
-r_sat <- terra::rast(inv_sat$archivo)
-print(r_sat[[1]])
-S_todo <- terra::values(r_sat, mat = TRUE)          # píxel (fila) × péntada (columna)
+# Se lee por lotes de 200: abrir los 2 328 a la vez supera el límite de archivos
+# abiertos del sistema (1 024 en macOS) y terra se detiene. gc() cierra cada lote.
+lee_lote <- function(a) { v <- terra::values(terra::rast(a), mat = TRUE); invisible(gc()); v }
+S_todo <- do.call(cbind, lapply(split(inv_sat$archivo, ceiling(seq_len(nrow(inv_sat)) / 200)), lee_lote))  # píxel × péntada
+r_sat <- terra::rast(inv_sat$archivo[1])             # solo la geometría (todas comparten la rejilla)
+stopifnot(ncol(S_todo) == nrow(inv_sat), identical(colnames(S_todo), sub("\\.tif$", "", basename(inv_sat$archivo))))
+print(r_sat)
 storage.mode(S_todo) <- "double"
 estructura_sat <- data.table(
   archivos = ncol(S_todo), pixeles = nrow(S_todo), filas = terra::nrow(r_sat), columnas = terra::ncol(r_sat),
@@ -1100,6 +1137,8 @@ n_obs_Y <- rowSums(!is.na(Y)); hueco_Y <- apply(!is.na(Y), 1, hueco_mas_largo)
 prueba("Cada curva tiene ≥90 % de días", all(n_obs_Y >= COB_MIN * 365), paste("mínimo:", min(n_obs_Y)))
 prueba("Ninguna curva tiene un hueco > 15 días", all(hueco_Y <= HUECO_MAX), paste("máximo:", max(hueco_Y)))
 prueba("Sin duplicados estación-año", !anyDuplicated(id_est[, .(codigo, anio)]))
+prueba("R0: ningún valor negativo ni sobre el récord OMM de 24 h", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= P_MAX_FISICO,
+       sprintf("en el Valle R0 quitó %d valores; en el crudo completo habría quitado %d", nrow(m_r0), sum(r0_resumen[1, .(negativos, sobre_maximo_fisico)])))
 prueba("Valores entre 0 y el máximo crudo", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= estructura$maximo, paste("máximo:", max(Y, na.rm = TRUE)))
 
 # -- Estaciones: contra los archivos crudos, leídos de nuevo

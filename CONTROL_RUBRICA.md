@@ -30,7 +30,7 @@ Se actualiza cada vez que se avanza.
 - ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-43), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
 - ✅ **EDA del satélite y comparación con las estaciones (D-44).**
 - ✅ **Datos preparados para la construcción funcional:** `salidas_R_datos/datos_preparados.rds`.
-- ✅ **Pruebas:** 26 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
+- ✅ **Pruebas:** 27 comprobaciones automáticas dentro del script (sección 14), incluida la R0 (D-50).
 
 ## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
@@ -65,7 +65,7 @@ Se actualiza cada vez que se avanza.
 
 ## 4.1 Preprocesamiento y selección de datos (6 %)
 
-- ✅ Regla explícita para valores imposibles y errores de digitación (R2: extremos sin respaldo de las vecinas).
+- ✅ Regla explícita para valores imposibles y errores de digitación: R0 (negativos y valores sobre el récord OMM de 1 825 mm en 24 h, contados aunque den 0; D-50) y R2 (extremos sin respaldo de las vecinas).
 - ✅ Totales acumulados en un solo día (R3) y ceros que son faltantes (R4, regla calculada con la vecina más cercana y umbral de Bonferroni: 30 rachas, D-49).
 - ✅ Criterio de cobertura mínima por estación y año, justificado con el experimento de huecos (R5 y R6).
 - 🟡 Decisión sobre agregar datos:

@@ -10,7 +10,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 | Carpeta / archivo | Qué es |
 |---|---|
-| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 26 pruebas automáticas. |
+| `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 27 pruebas automáticas. |
 | `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
 | `lluvia_valle_funcional.R` | **Toda la parte funcional, en un solo archivo:** emparejamiento, construcción de las curvas, EDA funcional, comparación de fuentes y regresión funcional. Solo lee `salidas_R_datos/datos_preparados.rds`. Los cambios de lo funcional se hacen aquí (D-48). |
 | `salidas_R_funcional/` | Lo que produce ese archivo: `tablas/` y `graficos/` (prefijos `F1_` a `F6_`), `para_python/` (insumos de la red) y `resultados_funcional.rds`. |

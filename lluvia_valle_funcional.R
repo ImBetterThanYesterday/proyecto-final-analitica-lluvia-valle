@@ -12,7 +12,7 @@
 # Entrada única: salidas_R_datos/datos_preparados.rds, que produce
 #   lluvia_valle_datos.R (estaciones depuradas, satélite en mm/día, pares,
 #   altitud y ONI). Aquí no se vuelve a leer ni a limpiar ningún dato crudo:
-#   así las 26 pruebas del archivo de datos cubren todo lo que entra.
+#   así las 27 pruebas del archivo de datos cubren todo lo que entra.
 # Salidas: salidas_R_funcional/tablas, /graficos y /para_python (insumos de la red).
 #
 # Cómo se corre (desde la raíz del repositorio):

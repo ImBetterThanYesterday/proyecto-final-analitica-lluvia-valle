@@ -578,6 +578,13 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Efecto en lo funcional:** casi ninguno. K sigue en 8 y 11. M pasa de 5 a 6 (94,2 % de la varianza, dentro del rango 4–6 del enunciado). En prueba la regresión baja el error L² relativo de 0,51 a 0,44 frente al satélite.
 - **Fecha y responsable:** 2026-11-14, Gus y Claude.
 
+### D-50 · R0: valores físicamente imposibles a faltante, con umbral citado ✅ (completa D-36)
+- **Problema:** la sección 2 contaba los negativos y el máximo, pero ninguna regla los convertía en faltante. La ausencia de valores imposibles se suponía, no se verificaba ("¿dónde lo verifican?").
+- **Regla R0** (sección 2 de `lluvia_valle_datos.R`, tabla `2_R0_valores_imposibles.csv`): un valor diario P < 0 o P > 1 825 mm pasa a faltante, antes de R1. 1 825 mm es el récord mundial de lluvia en 24 h reconocido por la OMM (Foc-Foc, La Reunión, 7–8 de enero de 1966).
+- **Resultado:** en las 220 estaciones del Valle R0 no quita nada (0 negativos; máximo 600 mm, Pardo). En el crudo completo detecta un solo valor, 859 375 mm, de una estación fuera del Valle. La trazabilidad lleva la fila "1b. R0" con 0 días que salen, y una prueba nueva de la sección 14 lo comprueba en la matriz final.
+- **Efecto en el conjunto:** ninguno; 176 estaciones y 3 299 pares, como antes.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.
@@ -589,6 +596,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - Elevación SRTM 30 m vía OpenTopoData: https://api.opentopodata.org (ejemplo: `/v1/srtm30m?locations=3.52242,-76.104246`).
 - Sistemas de coordenadas: https://epsg.io/3115 y https://epsg.io/9377
 - ONI (NOAA CPC): https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
+- Récord mundial de lluvia en 24 h (R0, D-50): tabla de récords de la OMM, https://public.wmo.int/sites/default/files/2025-07/Table_Records_25Jul2025.pdf, y archivo de extremos https://wmo.asu.edu
 - CHIRPS v2 (UCSB CHC) y NASA POWER (MERRA-2): ver `02_datos_externos.ipynb`.
 
 ---

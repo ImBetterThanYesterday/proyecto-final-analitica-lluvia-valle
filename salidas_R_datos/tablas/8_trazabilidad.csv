@@ -1,6 +1,7 @@
 paso,estaciones,pares_estacion_anio,dias_con_dato,estaciones_que_salen,pares_que_salen,dias_que_salen
 0. Crudo: códigos con datos en 1981–2003,323,5514,1930611,,,
 "1. Solo el Valle, con coordenada (D-34)",220,3943,1386107,103,1571,544504
+1b. R0: negativos y valores sobre el récord OMM (1 825 mm) a faltante,220,3943,1386107,0,0,0
 2. R1: sin 29 de febrero,220,3943,1385275,0,0,832
 3. R2: extremos sin respaldo a faltante,220,3943,1385270,0,0,5
 4. R3: totales mensuales en un día a faltante,220,3943,1385208,0,0,62

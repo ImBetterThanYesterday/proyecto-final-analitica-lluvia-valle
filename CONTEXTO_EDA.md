@@ -57,7 +57,7 @@ Archivo principal: **`datos_web/estaciones_valle_finales.csv`** (y `.xlsx`), con
 ## 3b. Datos listos (13-nov-2026)
 
 `lluvia_valle_datos.R` deja `salidas_R_datos/datos_preparados.rds`: matriz de estaciones (3 299 × 365), matriz del satélite
-(15 663 × 72, mm/día) y los pares estación–píxel, con 26 pruebas automáticas (D-36, D-43 a D-45). El satélite es CHIRP solo-infrarrojo (D-43)
+(15 663 × 72, mm/día) y los pares estación–píxel, con 27 pruebas automáticas (D-36, D-43 a D-45, D-50). El satélite es CHIRP solo-infrarrojo (D-43)
 y no capta los años Niño/Niña (D-44). El control de lo que pide el enunciado está en `CONTROL_RUBRICA.md`.
 
 ## 4. Qué sigue
