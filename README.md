@@ -10,6 +10,8 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 
 | Carpeta / archivo | Qué es |
 |---|---|
+| `lluvia_valle.R` | **Archivo único de R para la entrega:** une `lluvia_valle_datos.R` (Parte A) y `lluvia_valle_funcional.R` (Parte B) sin cambiar el código, con marcas "RÚBRICA x" en cada sección. |
+| `RESUMEN_PARA_JACO.md` | Resumen, feedback y decisiones pendientes para el equipo. |
 | `lluvia_valle_datos.R` | **El código de datos, en un solo archivo.** Va de los crudos a los datasets limpios: población, EDA, experimento de huecos, depuración, y el satélite (fuente, recorte, EDA y comparación con las estaciones), los datos preparados y 27 pruebas automáticas. |
 | `salidas_R_datos/` | Lo que produce ese archivo. Tiene `datos_preparados.rds` (las matrices listas para la construcción funcional), `lluvia_valle_limpia.rds` (estaciones) y `satelite_valle.rds` (satélite y pares estación–píxel), además de `tablas/` y `graficos/`. |
 | `lluvia_valle_funcional.R` | **Toda la parte funcional, en un solo archivo:** emparejamiento, construcción de las curvas, EDA funcional, comparación de fuentes y regresión funcional. Solo lee `salidas_R_datos/datos_preparados.rds`. Los cambios de lo funcional se hacen aquí (D-48). |

@@ -70,6 +70,10 @@ El apartado de la red solo permite PyTorch y pykan. `lluvia_valle_red.py` ya no 
 
 Python exporta además los pesos de la cabeza lineal, las activaciones de la primera capa de la KAN y los modelos (`salidas_python/modelos/`); los resultados no cambian (mismas predicciones, byte a byte). La sección 8 de R grafica las w_k, compara la β(s,t) de la red con la de la regresión, mide la importancia y la no linealidad de cada entrada, hace el ajuste simbólico y muestra los peores casos. Lo principal: KAN y MLP miran contrastes entre temporadas; la corrección satura (tanh) cuando el satélite marca mucha lluvia; la altitud es la entrada más no lineal; los peores casos son estaciones secas (fondo del valle del Cauca y cuenca del Dagua) que el píxel no representa.
 
+### 8. Un solo archivo de R — `lluvia_valle.R`
+
+Une `lluvia_valle_datos.R` (Parte A) y `lluvia_valle_funcional.R` (Parte B) sin cambiar el código: se verificó que, quitando lo agregado, quedan exactamente los dos archivos. Lo agregado: un encabezado con el mapa de la rúbrica, una marca "RÚBRICA x" antes de cada sección y, entre las partes, `rm(list = ls())` (vacía la memoria de R, no los archivos; la Parte B lee del disco lo que dejó la A). Probado aquí: Parte A hasta la sección 8 + Parte B completa en la misma sesión, 13 + 5 pruebas. Los dos archivos originales se mantienen hasta que el equipo decida cuál se edita (`RESUMEN_PARA_JACO.md`, decisión 4).
+
 ### Qué sigue
 
 1. ~~4.5~~ — hecho (D-55).
@@ -80,6 +84,7 @@ Python exporta además los pesos de la cabeza lineal, las activaciones de la pri
 ### Cómo correr todo
 
 ```bash
+Rscript lluvia_valle.R              # todo R en uno (o los dos de abajo por separado)
 Rscript lluvia_valle_datos.R        # ~5 min, 27 pruebas (necesita datos_curso/)
 Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc); deja para_python/
 python lluvia_valle_red.py          # ~15 min, 13 pruebas (pip install torch numpy pandas)
