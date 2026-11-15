@@ -327,11 +327,18 @@ if (requireNamespace("fda", quietly = TRUE)) {
   fit_fda <- fRegress(yfd, xlist, blist)
   b0_f <- drop(eval.fd(T_DIA, fit_fda$betaestlist$const$fd)); b1_f <- drop(eval.fd(T_DIA, fit_fda$betaestlist$sat$fd))
   P_f <- sweep(X_r[i_pru, ], 2, b1_f, "*"); P_f <- sweep(P_f, 2, b0_f, "+")
-  cmp <- data.frame(cantidad = c("b0(t)", "b1(t)", "predicción en prueba (escala raíz)", "RMSE L2 en prueba, mm/día (propio)", "RMSE L2 en prueba, mm/día (fRegress)"),
-                    valor = c(max(abs(ajuste$A$B[, 1] - b0_f)), max(abs(ajuste$A$B[, 2] - b1_f)), max(abs(P_A - P_f)),
+  # Error de ajuste en entrenamiento (la función objetivo sin penalizar) de cada solución, con los mismos pesos
+  sse <- function(b0, b1) { P <- sweep(sweep(X_r[i_ent, ], 2, b1, "*"), 2, b0, "+"); sum(sweep((Y_r[i_ent, ] - P)^2, 2, W_T, "*")) }
+  centro <- 11:355                                          # sin los 10 días de cada extremo, donde b(t) está menos determinada
+  cmp <- data.frame(cantidad = c("SSE de entrenamiento, solución propia", "SSE de entrenamiento, fRegress", "diferencia relativa del SSE (%)",
+                                 "RMS de la diferencia de predicción en prueba (escala raíz)", "máx. |b0 propio - b0 fRegress|, centro del año", "máx. |b1 propio - b1 fRegress|, centro del año",
+                                 "RMSE L2 en prueba, mm/día (propio)", "RMSE L2 en prueba, mm/día (fRegress)"),
+                    valor = c(sse(ajuste$A$B[, 1], ajuste$A$B[, 2]), sse(b0_f, b1_f), 100 * (sse(b0_f, b1_f) / sse(ajuste$A$B[, 1], ajuste$A$B[, 2]) - 1),
+                              sqrt(mean((P_A - P_f)^2)), max(abs(ajuste$A$B[centro, 1] - b0_f[centro])), max(abs(ajuste$A$B[centro, 2] - b1_f[centro])),
                               mean(rmse_l2(a_mm(P_A), i_pru)), mean(rmse_l2(a_mm(P_f), i_pru))))
-  names(cmp)[2] <- "diferencia_max_o_valor"
   print(tabla_f(cmp, "C5_contraste_fRegress"))
+  cat("Nota: con poca penalización y muchos parámetros fRegress integra con tolerancia numérica (inprod) y queda algo por encima del mínimo exacto de la solución propia;\n",
+      "      con penalización fuerte coinciden. La solución propia se verifica contra mínimos cuadrados directos en la sección 8.\n")
 } else {
   cat("fda no está instalado: se omite el contraste (instalar con install.packages('fda')).\n")
 }
@@ -347,6 +354,10 @@ chk("el ajuste usa solo filas de entrenamiento (la matriz normal no cambia si se
   X_bak <- X_r; Y_bak <- Y_r; X_r[c(i_val, i_pru), ] <- 0; Y_r[c(i_val, i_pru), ] <- 0
   th2 <- resolver(preparar(i_ent, "A", eleccion$A$K_b), eleccion$A$lambda); X_r <- X_bak; Y_r <- Y_bak
   max(abs(th2 - ajuste$A$theta)) < 1e-10 })
+chk("las ecuaciones normales dan lo mismo que mínimos cuadrados directos sobre todas las filas (curva, día), diferencia < 1e-8", {
+  K_t <- 12L; pre_t <- preparar(i_ent, "A", K_t); n_t <- length(i_ent); Pb <- base_bspline(T_DIA, K_t); sw <- sqrt(W_T[rep(T_DIA, n_t)])
+  Xd <- cbind(Pb[rep(T_DIA, n_t), ] * sw, (Pb[rep(T_DIA, n_t), ] * as.vector(t(X_r[i_ent, ]))) * sw)
+  max(abs(qr.coef(qr(Xd), as.vector(t(Y_r[i_ent, ])) * sw) - resolver(pre_t, 0))) < 1e-8 })
 chk("la rugosidad del equipo y la propia coinciden para una recta (R b = 0)", {
   Pb <- base_bspline(T_DIA, 8L); th_recta <- solve(crossprod(Pb), crossprod(Pb, 3 + 0.01 * T_DIA)); max(abs(gram_rugosidad(8L) %*% th_recta)) < 1e-6 })
 chk("con lambda enorme b1(t) tiende a una recta", {
