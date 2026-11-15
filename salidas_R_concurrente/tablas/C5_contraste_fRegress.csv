@@ -1,0 +1,6 @@
+"cantidad","diferencia_max_o_valor"
+"b0(t)",0.813336878998492
+"b1(t)",0.422603629707992
+"predicción en prueba (escala raíz)",1.03207456858504
+"RMSE L2 en prueba, mm/día (propio)",2.14040616196016
+"RMSE L2 en prueba, mm/día (fRegress)",2.14464400569534
