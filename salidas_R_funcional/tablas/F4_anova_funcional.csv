@@ -1,0 +1,4 @@
+factor,grupos,k,n,F_n,d,p_F,p_F_permutacion,GPF,p_GPF,F_max,p_F_max,dias_F_puntual,dias_criterio_maximo
+Fase ENSO (23 años),Neutro / Niña / Niño,3,23,2.89,8.06,0.00034,6e-04,1053,0.0046,5.42,0.22,102,0
+Vertiente (176 estaciones),Cauca (interandina) / Pacífico,2,176,10.07,1.27,7e-04,0.004,3276,0.0046,25.26,4e-04,253,189
+Altitud en el Cauca (150 estaciones),< 1200 m / 1200-2000 m / > 2000 m,3,150,5.94,1.39,0.00093,0.0012,2228,0.0012,13.06,4e-04,352,202

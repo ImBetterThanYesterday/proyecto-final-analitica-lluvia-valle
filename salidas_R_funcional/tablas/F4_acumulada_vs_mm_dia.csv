@@ -1,0 +1,11 @@
+medida,acumulada,mm_dia
+"Acumulado al 31-dic, estaciones (mm)",1748,
+"Acumulado al 31-dic, satélite (mm)",1813,
+d(31-dic) = estación - satélite (mm),-19,
+EE de d(31-dic) por estación (mm),71,
+Días en que la banda de d(t) excluye el 0,120,147
+"CV al 31-dic, estaciones",0.746,
+"CV al 31-dic, satélite",0.368,
+"Diagonal r(t,t) estación-satélite: mediana",0.65,0.65
+"Diagonal r(t,t): mínima",0.36,0.35
+Correlación media entre días separados 90 días o más (estaciones),0.85,0.64

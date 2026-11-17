@@ -14,7 +14,8 @@ Para cada paso explica qué muestra cada tabla y gráfica, qué significa y qué
   - el archivo unido `lluvia_valle.R` tiene las mismas secciones, idénticas salvo los encabezados de rúbrica, desde su línea 1535;
   - la regresión concurrente está en `regresion_concurrente.R`.
 - **Las cifras** son de la corrida del 17-nov-2026:
-  - `lluvia_valle_funcional.R` pasa sus 13 pruebas y `regresion_concurrente.R` las 8 suyas;
+  - `lluvia_valle_funcional.R` pasa sus 16 pruebas y `regresion_concurrente.R` las 9 suyas;
+  - incluyen lo que se agregó a partir del material del profesor (D-57, `docs/BASE_CONOCIMIENTO_PROFESOR.md`): las secciones 4.4 a 4.6, las bandas de 5.4, la sección 5.9 y las bandas de 6.2;
   - las tablas salen iguales a las que están en el repositorio.
 - **Salidas:** gráficas en `salidas_R_funcional/graficos/` y tablas en `salidas_R_funcional/tablas/`, con prefijos F1 a F6. La concurrente deja las suyas en `salidas_R_concurrente/`, con prefijos C1 a C5.
 - **Decisiones:** las D-xx están en `DECISIONES.md`.
@@ -30,6 +31,7 @@ Para cada paso explica qué muestra cada tabla y gráfica, qué significa y qué
 | Reconstruir | 1 (10 %) | B-splines cúbicas y mínimos cuadrados, sin librerías | K = 8 en estaciones y K = 11 en satélite, elegidos con VC y VCG | 2 |
 | EDA funcional | 2 (15 %) | Media, varianza, covarianza, derivadas, profundidad y boxplot | Régimen bimodal; el 74 % de la varianza es diferencia entre sitios | 3 |
 | Comparar fuentes | 3 (15 %) | d(t) con banda, correlación cruzada, por vertiente, altitud y ENSO | El satélite arranca tarde la primera temporada, exagera los picos y amortigua el ENSO | 4 |
+| Pruebas por fuente | 3 | t pareada y ANOVA funcional de la clase, más la vista acumulada | Las medias difieren (p = 0,003); el error depende del ENSO, la vertiente y la altitud | 4.4 a 4.6 |
 | Regresión de función a función | 4.2 y 4.4 | β(s,t) con FPCA de entrenamiento y penalización | En prueba, el error L² relativo baja de 0,51 a 0,44 y el sesgo anual de +26 % a +7 % | 5 |
 | Regresión concurrente | (contraste) | y(t) = b0(t) + b1(t)·x(t), como en el script de clase | El mismo error que la de función a función, pero peor en el sesgo y en el segundo pico | `regresion_concurrente.R` |
 
@@ -227,7 +229,7 @@ W = ∫ φ(t) φ(t)ᵀ dt permite calcular integrales con los coeficientes. Por 
 
 ![Media y dispersión](salidas_R_funcional/graficos/F3_media_y_dispersion.png)
 
-**Qué muestra.** Las curvas en gris, la media en color y la banda de ±2 DE en rojo, para estaciones y para satélite. A la derecha, la desviación estándar funcional de las dos fuentes.
+**Qué muestra.** Las curvas en gris, la media en color y la banda de ±2 DE en rojo, para estaciones y para satélite. Luego, la desviación estándar funcional de las dos fuentes. A la derecha, el **coeficiente de variación funcional** CV(t) = DE(t)/media(t), que la clase usa para comparar fuentes con niveles distintos.
 
 **Cómo se calcula.** La media es la base por el promedio de los coeficientes: x̄(t) = Φ(t) c̄. Se verifica contra `fda::mean.fd` con una diferencia de 3 × 10⁻¹⁵ (`F3_verificacion_media.csv`).
 
@@ -427,6 +429,88 @@ Arriba están las estaciones (todas, Cauca y Pacífico) y el satélite; abajo, l
 
 ---
 
+### 4.4 Prueba t funcional pareada (como en la clase de la semana 14)
+
+La banda d̄(t) ± 2 EE dice día por día dónde difieren las fuentes, pero no da una decisión para todo el año. La clase propone, para datos pareados, tres pruebas (ejercicio 3 de la semana 14, que pide justo esto con `X_sat` y `Y_est`):
+- **norma L²**, T_n = n‖D̄‖², que se compara con β χ²_d (aproximación de Welch–Satterthwaite);
+- **tipo F**, F_n = T_n / tr(γ̂), con distribución F_{d,(n−1)d};
+- **t puntual por permutación con el criterio del máximo**, que controla el error en todo el año y no solo día por día.
+
+La unidad independiente es la **estación**: cada una aporta la diferencia media de sus años (176 curvas). β y d salen de las trazas del operador de covarianza, con los estimadores insesgados de Zhang (2013) que muestra la clase.
+
+![Prueba t pareada](salidas_R_funcional/graficos/F4_prueba_t_pareada.png)
+
+**Qué muestra.** A la izquierda, la diferencia media por estación. A la derecha, |t(t)| frente al crítico puntual (azul) y al crítico del máximo (rojo), calculados con 5 000 permutaciones de signo.
+
+**Cifras** (`F4_prueba_t_pareada.csv`, `F4_prueba_t_pareada_intervalos.csv`).
+
+| Grupo | d̂ | F (p) | Permutación con el máximo (p) | Días significativos: puntual / con el máximo |
+|---|---|---|---|---|
+| Todas las estaciones | 1,28 | 7,7 (0,003) | 0,0002 | 149 / 129 |
+| Cauca | 1,39 | 24,7 (4 × 10⁻⁸) | 0,0002 | 266 / 235 |
+| Pacífico | 1,16 | 2,1 (0,16) | 0,007 | 47 / 6 |
+
+**Interpretación.**
+- **El satélite y la estación no tienen la misma media funcional.**
+- Con el criterio del máximo la diferencia es significativa en 129 días:
+  - 9 de febrero a 25 de marzo, donde la estación llueve más;
+  - 18 de abril a 6 de junio y 1 a 15 de noviembre, donde el satélite exagera los picos;
+  - más los bordes del año, que son efecto de borde.
+- d̂ ≈ 1,3 dice que la diferencia vive casi en una sola dirección: es como comparar un solo número por estación.
+- En el Pacífico la prueba global no rechaza: allí el sesgo cambia de signo según el sitio (sección 4.3) y se compensa.
+- **Comprobación de la clase (ejercicio 2):** con curvas constantes, la F coincide con el cuadrado de la t clásica y d = 1, con una diferencia de 10⁻¹⁶.
+
+### 4.5 ANOVA funcional del error del satélite
+
+¿Cambia la diferencia estación − satélite según la fase ENSO, la vertiente o la altitud? Se usan las pruebas de la clase:
+- la F puntual F(t);
+- la F global, con grados de libertad multiplicados por d̂;
+- la **GPF**, que integra F(t) y es mejor cuando la diferencia es pequeña pero extendida;
+- la **F_max**, que es mejor cuando la diferencia es localizada.
+
+Todas se calibran con permutaciones. **Unidades:** para el ENSO, los 23 años (la fase es del año); para la vertiente y la altitud, las estaciones.
+
+![ANOVA funcional](salidas_R_funcional/graficos/F4_anova_funcional.png)
+
+**Cifras** (`F4_anova_funcional.csv`).
+
+| Factor | F (p) | GPF (p) | F_max (p) | Días con el criterio del máximo |
+|---|---|---|---|---|
+| Fase ENSO (23 años) | 2,9 (0,0003) | 0,005 | 0,22 | 0 |
+| Vertiente (176 estaciones) | 10,1 (0,0007) | 0,005 | 0,0004 | 189 |
+| Altitud en el Cauca (150 estaciones) | 5,9 (0,0009) | 0,001 | 0,0004 | 202 |
+
+**Interpretación.**
+- **El error del satélite depende del ENSO.** El efecto es pequeño en cada día y por eso F_max no lo detecta, pero se extiende por todo el año, y por eso lo detectan F y GPF. En La Niña la estación supera al satélite casi todo el año. Esto respalda con una prueba formal la decisión de darle el ONI al modelo.
+- **También depende de la vertiente y de la altitud**, con diferencias fuertes y localizadas. El satélite no ve la orografía, que es la misma conclusión de la tesis del profesor.
+- **Comprobaciones de la clase (ejercicio 1):** SSE_n = (n − k) tr(γ̂) y, con k = 2, F(t) = t², las dos exactas.
+
+### 4.6 Vista acumulada, como la presenta el profesor
+
+En la tesis del profesor y en las clases, la lluvia se trabaja **acumulada**: los mm desde el 1 de enero. Aquí se muestra esa vista con nuestras curvas, A(t) = ∫ x(u) du. La derivada de la curva acumulada es nuestra curva en mm/día (la "intensidad" de la clase), así que no se pierde información.
+
+![Vista acumulada](salidas_R_funcional/graficos/F4_acumulada.png)
+
+**Cifras** (`F4_acumulada_vs_mm_dia.csv`).
+
+| Medida | Acumulada | mm/día |
+|---|---|---|
+| Acumulado al 31-dic, estaciones / satélite | 1 748 / 1 813 mm | — |
+| d(31-dic) = estación − satélite | −19 ± 71 mm (no significativo) | — |
+| Días en que la banda de d(t) excluye el 0 | 120 | 147 |
+| CV al 31-dic, estaciones / satélite | 0,75 / 0,37 | — |
+| Diagonal r(t,t), mediana | 0,65 | 0,65 |
+| Correlación media entre días separados 90 días o más | 0,85 | 0,64 |
+
+**Interpretación.**
+- **En el acumulado anual el satélite casi acierta**, porque sus errores se compensan: arranca tarde la primera temporada y luego exagera los picos.
+- La diferencia acumulada solo es significativa hasta abril. La curva en mm/día muestra los errores de cada temporada por separado.
+- La acumulada tiene mucha más memoria (0,85 frente a 0,64): está dominada por el total que se va sumando.
+
+**Decisión (D-57).** El modelo sigue en mm/día. El enunciado pide modelar sobre √P o log(1+P) y fechar los dos picos, que son rasgos de la intensidad y no de la acumulada. La vista acumulada se presenta porque es la escala con que trabaja el profesor.
+
+---
+
 ## 5. Regresión funcional de función a función (rúbrica 4.2 y 4.4)
 
 ### 5.1 Qué modelo es y por qué
@@ -500,10 +584,12 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 
 ![Efectos](salidas_R_funcional/graficos/F5_efectos.png)
 
-**Qué muestra.**
-- **∫β(s,t) ds**, a la izquierda: cuánto pasa a la estación si el satélite sube igual todo el año. Lejos de los bordes va de 0,62 en diciembre a 1,03 el 1 de junio. El modelo traslada el nivel del satélite casi completo a mitad de año y lo amortigua al final.
-- **El efecto del ONI δ(t)** resta lluvia todo el año, y sobre todo a mitad de año (−0,24 por unidad de ONI el 2 de julio). El Niño profundiza la sequía de junio–julio.
-- **La altitud γ(t)** pesa poco una vez que se conoce el píxel.
+**Qué muestra.** Cada efecto con su banda del 95 %. Como en la clase y en la tesis del profesor, cada coeficiente va con banda y se lee dónde excluye el 0. La banda sale de un bootstrap de estaciones con 500 remuestreos, que respeta que los años de una estación no son independientes (`F5_efectos_bandas.csv`).
+- **∫β(s,t) ds**, a la izquierda: cuánto pasa a la estación si el satélite sube igual todo el año.
+  - Lejos de los bordes va de 0,62 en diciembre a 1,03 el 1 de junio: el modelo traslada el nivel del satélite casi completo a mitad de año y lo amortigua al final.
+  - La banda excluye el 0 todo el año y excluye el 1 en 173 días.
+- **El efecto del ONI δ(t)** resta lluvia todo el año, y sobre todo a mitad de año (−0,24 por unidad de ONI el 2 de julio). El Niño profundiza la sequía de junio–julio. La banda excluye el 0 en 360 días.
+- **La altitud γ(t):** su banda **contiene el 0 todo el año**. Una vez se conoce el píxel, la altitud no aporta, igual que concluyó la tesis del profesor. Se mantiene porque el enunciado la pide en el vector z de la red.
 
 **Equivalencia.** La predicción con la integral de β por cuadratura y la predicción por puntajes FPCA difieren en 4 × 10⁻¹⁵ (el criterio es 10⁻⁴). Es la identidad β(s,t) = Σ_m β_m(s) ψ_m(t) que la cabeza lineal de la red debe reproducir.
 
@@ -578,6 +664,40 @@ La sección 5.7 del R exporta a `salidas_R_funcional/para_python/`:
 
 La red (`lluvia_valle_red.py`) usa el mismo codificador (z = A W c) y el mismo decodificador FPCA. Su cabeza lineal reproduce esta regresión al decimal.
 
+### 5.9 Inferencia y diagnóstico como en la tesis del profesor
+
+**¿Aporta el satélite más allá de la altitud y el ONI?** Se hace una prueba F por permutación, a la manera de `Fperm.fd` de la clase:
+- en cada permutación, las curvas del satélite se intercambian entre estaciones **del mismo año**, así se conserva el año y su fase ENSO;
+- luego se reajusta el modelo con el mismo FPCA, M y λ.
+
+![Permutación del satélite](salidas_R_funcional/graficos/F5_permutacion_satelite.png)
+
+**Resultado** (`F5_permutacion_satelite.csv`, 300 permutaciones). El F(t) observado supera el crítico en los 365 días: F máximo 1,49 frente a un crítico de 0,35, con p = 0,003, el mínimo posible con 300 permutaciones. **El satélite aporta todo el año.**
+
+![Diagnóstico](salidas_R_funcional/graficos/F5_diagnostico.png)
+
+**Diagnóstico de residuos** (tesis, figuras 9.3 y 9.4; `F5_diagnostico_residuos.csv`).
+- El 4,5 % de los residuos estudentizados de prueba está fuera de ±2, como en una normal. Pero el 1,1 % está fuera de ±3: hay colas más pesadas por los aguaceros.
+- Los residuos no se correlacionan con lo predicho (−0,001). Su dispersión sí crece con el valor predicho.
+- La correlación de los residuos entre días es alta a corto plazo (0,77 a 30 días): son curvas suaves, como en el ejemplo de la clase.
+
+**Traza-variograma de los residuos** (tesis, capítulo 8; `F5_traza_variograma_residuos.csv`). Mide cuánto se parecen los residuos de dos estaciones según la distancia que las separa.
+- Crece de 43 a 7 km hasta unos 115 entre 60 y 100 km.
+- El ajuste exponencial da una pepita de 21, una meseta parcial de 100 y un rango práctico de **96 km**.
+- **Queda correlación espacial** que el modelo no recoge: estaciones cercanas se equivocan parecido. Es el problema que la tesis del profesor resolvió con mínimos cuadrados generalizados.
+- Aquí se respeta con los IC por bootstrap de estaciones, y modelarla queda como trabajo futuro.
+
+![Curvas de 20 estaciones](salidas_R_funcional/graficos/F5_curvas_20_estaciones.png)
+
+**Qué muestra** (tesis, figura 10.3). Veinte estaciones de 2002, repartidas por cuantiles del error, cada una con la estación (negro), el satélite (naranja) y la regresión (azul). El título de cada panel da su error L² relativo.
+
+![Mapa del error](salidas_R_funcional/graficos/F5_mapa_error.png)
+
+**Qué muestra** (tesis, figuras 10.4 a 10.6; `F5_error_por_estacion_prueba.csv`). El tamaño de cada punto es el error de la regresión; el color, cuánto mejora frente al satélite.
+- La regresión mejora en 82 de 137 estaciones.
+- El error medio es 0,42 en el Cauca y 0,60 en el Pacífico.
+- La mayor mejora está en el norte del Valle.
+
 ---
 
 ## 6. Regresión funcional concurrente (`regresion_concurrente.R`, de María)
@@ -641,13 +761,22 @@ Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_pareado.csv`, `F5_
 - **La concurrente A empeora el segundo pico** en 5 días frente al satélite sin corregir, y la diferencia es significativa (IC de 4,1 a 5,9 días). Al mirar solo el mismo día, no puede corregir un retraso de la temporada.
 - **Conclusión:** la concurrente sirve como contraste de clase y para leer b1(t) y R²(t). La de función a función sigue siendo la referencia.
 
-**Ojo con las bandas de b1(t).** Se calculan como si cada curva fuera independiente. Los años de una misma estación repiten su sesgo, y en la comparación (sección 4) eso multiplicó el EE por 3,7. Así que estas bandas probablemente son demasiado estrechas. Habría que calcularlas agrupando por estación, igual que el bootstrap de las métricas.
+**Las bandas de b1(t), corregidas** (`C2_bandas_sandwich_vs_bootstrap.csv`). Las bandas sándwich tratan cada curva como independiente. Al remuestrear estaciones con todos sus años (300 remuestreos), las bandas salen unas **4 veces más anchas**:
+- b1(t) excluye el 1 en 119 días, no en 262;
+- b0(t) excluye el 0 en 88 días, no en 305;
+- b1(t) sigue excluyendo el 0 todo el año: el satélite siempre informa.
+
+![Modelo concurrente como en la clase](salidas_R_concurrente/figuras/C6_concurrente_estilo_clase.png)
+
+**Qué muestra.** La misma figura que la clase arma para el modelo concurrente, aquí con nuestros datos:
+- arriba, las curvas del satélite x_i(t) y de la estación y_i(t), y R²(t) en prueba;
+- abajo, b0(t) y b1(t) con las dos bandas (sombreada, bootstrap de estaciones; roja, sándwich) y la correlación de los residuos entre días.
 
 ---
 
 ## 7. Pruebas automáticas de la parte funcional
 
-Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 13 de 13 pruebas que pasan.
+Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 16 de 16 pruebas que pasan.
 
 | Prueba | Qué protege |
 |---|---|
@@ -664,13 +793,16 @@ Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 13 de 13
 | La reconstrucción en mm no es negativa | La rúbrica 4.2 |
 | Bootstrap con al menos 1 000 remuestreos | Los IC de la rúbrica 4.4 |
 | El contraste de clase está bien armado | Que la comparación con los métodos de clase sea justa |
+| F pareada con curvas constantes = t² y d = 1 | La prueba t funcional pareada (sección 4.4) |
+| SSE_n = (n − k) tr(γ̂) y, con k = 2, F(t) = t² | El ANOVA funcional (sección 4.5) |
+| Réplicas mínimas de bootstrap y permutación | Las bandas y las pruebas por permutación (secciones 4.4, 4.5, 5.4 y 5.9) |
 
 ---
 
 ## 8. Lo que falta o hay que cuidar
 
 1. **Fourier frente a B-spline:** la comprobación de la sección 2.7 está en un script aparte. Hay que pasarla al R y a `DECISIONES.md` para que quede respaldada en el código.
-2. **Bandas de b1(t) en la concurrente:** hay que calcularlas agrupando por estación (sección 6.3).
+2. **Correlación espacial de los residuos:** el traza-variograma (sección 5.9) muestra que queda. Se respeta con IC por bootstrap de estaciones. Modelarla con mínimos cuadrados generalizados, como en la tesis del profesor, queda como trabajo futuro.
 3. **El segundo pico:** ninguna regresión lo mejora de forma significativa, y la concurrente lo empeora. Hay que decirlo así en el informe.
 4. **La Niña:** la prueba no tiene años Niña. Lo que se diga de La Niña sale de la validación y es orientativo.
 5. **¿Qué R se edita?** Hay cuatro archivos: `lluvia_valle_datos.R`, `lluvia_valle_funcional.R`, el unido `lluvia_valle.R` y `regresion_concurrente.R`. Hay que decidir cuál es el definitivo para que las copias no se desincronicen.

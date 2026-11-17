@@ -641,7 +641,7 @@ grafico_base("F3_correlacion_anomalias", function() {
 }, ancho = 13, alto = 5.5)
 
 grafico_base("F3_media_y_dispersion", function() {
-  par(mfrow = c(1, 3)); set.seed(1)
+  par(mfrow = c(1, 4)); set.seed(1)
   for (f in list(list(Ye, media_e, me, "Estaciones", 4), list(Xs, media_s, ms, "Satélite (Valle)", "darkorange"))) {
     matplot(T_DIA, t(f[[1]][sample(nrow(f[[1]]), 250), ]), type = "l", lty = 1, col = "grey85", ylim = c(-2, 22),
             xlab = "Día del año", ylab = "mm/día", main = paste(f[[4]], ": media ± 2 DE"))
@@ -652,7 +652,12 @@ grafico_base("F3_media_y_dispersion", function() {
        main = "Desviación estándar funcional")
   lines(T_DIA, ms$de, lwd = 2, col = "darkorange")
   legend("topleft", c("Estaciones", "Satélite"), col = c(4, "darkorange"), lwd = 2, bty = "n")
-}, ancho = 15, alto = 4.8)
+  # Coeficiente de variación funcional CV(t) = DE(t) / media(t) (clase, semanas 12-13): compara la
+  # dispersión de fuentes con escalas distintas.
+  plot(T_DIA, me$de / media_e, type = "l", lwd = 2, col = 4, ylim = range(c(0, me$de / media_e, ms$de / media_s)), xlab = "Día del año", ylab = "CV(t)",
+       main = "Coeficiente de variación funcional")
+  lines(T_DIA, ms$de / media_s, lwd = 2, col = "darkorange")
+}, ancho = 19, alto = 4.8)
 for (f in list(list(me, "estaciones"), list(ms, "satelite"))) {
   grafico_base(paste0("F3_covarianza_", f[[2]]), function() mapa_calor(T_DIA, f[[1]]$cov, paste("Covarianza funcional:", f[[2]]), paleta = "YlOrRd"), ancho = 7, alto = 5.5)
   grafico_base(paste0("F3_correlacion_", f[[2]]), function() mapa_calor(T_DIA, f[[1]]$cor, paste("Correlación funcional:", f[[2]]), c(-1, 1)), ancho = 7, alto = 5.5)
@@ -1047,6 +1052,161 @@ grafico_f(ggplot(curvas_d, aes(dia, d, colour = grupo, fill = grupo)) + geom_hli
                                                       title = "Diferencia estación - satélite por grupo (±2 EE por estación)"),
           "F4_diferencia_por_grupo", ancho = 14, alto = 4.8)
 
+titulo("4.4 Prueba t funcional pareada (clase, semana 14)")
+# ¿Tienen el satélite y la estación la misma función media? Se aplican las pruebas de la clase
+# para muestras pareadas (InferenciaDatosFuncionales.pdf, diapositivas 15 a 21 y ejercicio 3):
+#   - norma L2:  T_n = n ||D̄||², con T_n ≈ β χ²_d (Welch-Satterthwaite);
+#   - tipo F:    F_n = T_n / tr(γ̂_D) ≈ F_{d, (n-1)d};
+#   - t puntual por permutación con el criterio del máximo (Ramsay y Silverman; Cox y Lee),
+#     que controla el error en todo el año y no día por día.
+# β y d salen de las trazas del operador de covarianza con los estimadores insesgados de
+# Zhang (2013). Unidad independiente: la ESTACIÓN (supuesto S1 de la clase). Cada estación
+# aporta la diferencia media de sus años, D_j(t) = estación - satélite; tratar cada año como
+# independiente daría un EE 3,7 veces más chico (sección 4.1). En datos pareados, permutar
+# es cambiar el signo de cada D_j al azar.
+B_PERM <- 5000L
+w_trap <- c(.5, rep(1, 363), .5)                         # regla del trapecio en la malla diaria
+trazas_zhang <- function(G, N, w = w_trap) {             # G: covarianza evaluada en la malla; N: sus grados de libertad
+  DG <- G * w; t1 <- sum(diag(DG)); t2 <- sum(DG * t(DG))  # tr(D G) y tr((D G)^2)
+  t2_ins <- N^2 / ((N - 1) * (N + 2)) * (t2 - t1^2 / N)
+  t1c_ins <- N * (N + 1) / ((N - 1) * (N + 2)) * (t1^2 - 2 * t2 / (N + 1))
+  list(tr = t1, beta = t2_ins / t1, d = t1c_ins / t2_ins)
+}
+prueba_pareada <- function(Dj, B_perm = B_PERM) {
+  n <- nrow(Dj); dbar <- colMeans(Dj); z <- trazas_zhang(cov(Dj), n - 1)
+  Tn <- n * sum(w_trap * dbar^2); Fn <- Tn / z$tr
+  S2 <- colSums(Dj^2); t_de <- function(m) m / sqrt(pmax(S2 - n * m^2, 1e-12) / (n - 1) / n)
+  t_obs <- abs(t_de(dbar))
+  signos <- matrix(sample(c(-1, 1), n * B_perm, replace = TRUE), B_perm)
+  Mb <- (signos %*% Dj) / n
+  Tb <- abs(Mb / sqrt(pmax(sweep(-n * Mb^2, 2, S2, "+"), 1e-12) / (n - 1) / n))
+  Tmax_b <- apply(Tb, 1, max); c_alfa <- apply(Tb, 2, quantile, .95); c_max <- quantile(Tmax_b, .95)
+  Tn_b <- n * drop(Mb^2 %*% w_trap)
+  list(n = n, dbar = dbar, t = t_obs, c_alfa = c_alfa, c_max = unname(c_max), Tn = Tn, Fn = Fn, beta = z$beta, d = z$d,
+       p_L2 = pchisq(Tn / z$beta, z$d, lower.tail = FALSE), p_F = pf(Fn, z$d, (n - 1) * z$d, lower.tail = FALSE),
+       p_perm_L2 = (1 + sum(Tn_b >= Tn)) / (B_perm + 1), p_perm_max = (1 + sum(Tmax_b >= max(t_obs))) / (B_perm + 1))
+}
+set.seed(20261117)
+D_est <- rowsum(D, pares$codigo) / as.vector(table(pares$codigo)[rownames(rowsum(D, pares$codigo))])
+vert_est <- pares[, .(vertiente = vertiente[1], banda_altitud = banda_altitud[1]), by = codigo][match(rownames(D_est), codigo)]
+pp <- list(`Todas las estaciones` = prueba_pareada(D_est),
+           `Cauca (interandina)` = prueba_pareada(D_est[vert_est$vertiente != "Pacífico", ]),
+           `Pacífico` = prueba_pareada(D_est[vert_est$vertiente == "Pacífico", ]))
+tabla_pareada <- rbindlist(lapply(names(pp), function(nm) with(pp[[nm]], data.table(
+  grupo = nm, estaciones = n, T_n = round(Tn), beta = signif(beta, 3), d = round(d, 2), p_L2 = signif(p_L2, 2),
+  F_n = round(Fn, 2), gl = sprintf("%.1f y %.1f", d, (n - 1) * d), p_F = signif(p_F, 2), p_permutacion_L2 = signif(p_perm_L2, 2),
+  max_t = round(max(t), 2), c_max = round(c_max, 2), p_permutacion_max = signif(p_perm_max, 2),
+  dias_puntual = sum(t > c_alfa), dias_criterio_maximo = sum(t > c_max)))))
+print(tabla_f(tabla_pareada, "F4_prueba_t_pareada"))
+signo_todas <- ifelse(pp[[1]]$dbar > 0, "estación > satélite", "satélite > estación")
+int_max <- with(pp[[1]], { s <- ifelse(t > c_max, signo_todas, NA); r <- rle(s); fin <- cumsum(r$lengths); ini <- fin - r$lengths + 1
+  data.table(desde = fecha_dia(ini), hasta = fecha_dia(fin), dias = r$lengths, signo = r$values)[!is.na(signo)] })
+print(tabla_f(int_max, "F4_prueba_t_pareada_intervalos"))
+# Comprobación de la clase (ejercicio 2): con curvas constantes, la prueba F es el cuadrado de la t clásica y d = 1.
+Dc <- matrix(rnorm(40, .3), 40, 365); pc <- prueba_pareada(Dc, 10L)
+chequeo_F_t2 <- c(F_menos_t2 = abs(pc$Fn - t.test(Dc[, 1])$statistic^2), d_menos_1 = abs(pc$d - 1))
+cat(sprintf("Comprobación con curvas constantes: |F - t²| = %.1e y |d - 1| = %.1e\n", chequeo_F_t2[1], chequeo_F_t2[2]))
+grafico_base("F4_prueba_t_pareada", function() {
+  par(mfrow = c(1, 2))
+  with(pp[[1]], {
+    plot(T_DIA, dbar, type = "l", lwd = 2, xlab = "Día del año", ylab = "mm/día", main = "Diferencia media por estación: estación - satélite")
+    abline(h = 0, lty = 3); rug(T_DIA[t > c_max], col = "firebrick")
+    plot(T_DIA, t, type = "l", lwd = 2, ylim = c(0, max(t, c_max) * 1.05), xlab = "Día del año", ylab = "|t(t)|",
+         main = sprintf("t pareada por permutación (%d estaciones, %d permutaciones)", n, B_PERM))
+    lines(T_DIA, c_alfa, lty = 2, col = "steelblue", lwd = 2); abline(h = c_max, lty = 2, col = "firebrick", lwd = 2)
+    legend("topright", c("|t(t)| observado", "Crítico puntual (95 %)", "Crítico del máximo (95 %)"), col = c(1, "steelblue", "firebrick"),
+           lty = c(1, 2, 2), lwd = 2, bty = "n", cex = .8)
+  })
+}, ancho = 13, alto = 4.8)
+
+titulo("4.5 ANOVA funcional del error del satélite (clase, semana 14)")
+# ¿Cambia la diferencia estación - satélite según la fase ENSO, la vertiente o la altitud?
+# Pruebas de la clase: F puntual F_n(t), tipo F global (Zhang), GPF = ∫ F_n(t) dt y
+# F_max = sup F_n(t), calibradas por permutación de las etiquetas de grupo.
+# Unidades independientes: para el ENSO, los 23 AÑOS (curva media de d de cada año; la
+# fase es del año, no de la estación); para vertiente y altitud, las ESTACIONES (D_j).
+anova_funcional <- function(Xg, g, B_perm = B_PERM) {
+  g <- factor(g); k <- nlevels(g); n <- nrow(Xg)
+  estad <- function(gg) {
+    nk <- tabulate(gg, k); med <- rowsum(Xg, gg, reorder = TRUE) / nk; mg <- colMeans(Xg)
+    SSR <- colSums(nk * sweep(med, 2, mg)^2); SSE <- colSums((Xg - med[gg, , drop = FALSE])^2)
+    list(Ft = (SSR / (k - 1)) / (SSE / (n - k)), SSRn = sum(w_trap * SSR), SSEn = sum(w_trap * SSE), med = med)
+  }
+  o_ <- estad(as.integer(g)); E <- Xg - o_$med[as.integer(g), , drop = FALSE]; z <- trazas_zhang(crossprod(E) / (n - k), n - k)
+  Fn <- (o_$SSRn / (k - 1)) / (o_$SSEn / (n - k))
+  perm <- replicate(B_perm, { e <- estad(sample(as.integer(g))); c(GPF = sum(w_trap * e$Ft), Fmax = max(e$Ft), Fn = (e$SSRn / (k - 1)) / (e$SSEn / (n - k))) })
+  Ft_perm <- replicate(min(B_perm, 2000L), estad(sample(as.integer(g)))$Ft)
+  list(k = k, n = n, niveles = levels(g), Ft = o_$Ft, med = o_$med, Fn = Fn, d = z$d, p_F = pf(Fn, (k - 1) * z$d, (n - k) * z$d, lower.tail = FALSE),
+       GPF = sum(w_trap * o_$Ft), Fmax = max(o_$Ft), p_GPF = (1 + sum(perm["GPF", ] >= sum(w_trap * o_$Ft))) / (B_perm + 1),
+       p_Fmax = (1 + sum(perm["Fmax", ] >= max(o_$Ft))) / (B_perm + 1), p_F_perm = (1 + sum(perm["Fn", ] >= Fn)) / (B_perm + 1),
+       c_alfa = apply(Ft_perm, 1, quantile, .95), c_max = unname(quantile(perm["Fmax", ], .95)), SSEn = o_$SSEn, tr = z$tr)
+}
+set.seed(20261118)
+D_anio <- rowsum(D, pares$anio) / as.vector(table(pares$anio)[rownames(rowsum(D, pares$anio))])
+fase_anio <- oni[match(as.integer(rownames(D_anio)), anio), fase]
+cauca_est <- vert_est$vertiente != "Pacífico"
+av <- list(`Fase ENSO (23 años)` = anova_funcional(D_anio, fase_anio),
+           `Vertiente (176 estaciones)` = anova_funcional(D_est, vert_est$vertiente),
+           `Altitud en el Cauca (150 estaciones)` = anova_funcional(D_est[cauca_est, ], vert_est$banda_altitud[cauca_est]))
+tabla_anova <- rbindlist(lapply(names(av), function(nm) with(av[[nm]], data.table(
+  factor = nm, grupos = paste(niveles, collapse = " / "), k = k, n = n, F_n = round(Fn, 2), d = round(d, 2), p_F = signif(p_F, 2),
+  p_F_permutacion = signif(p_F_perm, 2), GPF = round(GPF), p_GPF = signif(p_GPF, 2), F_max = round(Fmax, 2), p_F_max = signif(p_Fmax, 2),
+  dias_F_puntual = sum(Ft > c_alfa), dias_criterio_maximo = sum(Ft > c_max)))))
+print(tabla_f(tabla_anova, "F4_anova_funcional"))
+# Comprobación de la clase (ejercicio 1): SSE_n = (n - k) tr(γ̂); y con k = 2 la F puntual es t² de dos muestras.
+chequeo_anova <- c(SSE = max(sapply(av, function(a) abs(a$SSEn - (a$n - a$k) * a$tr) / a$SSEn)),
+                   t2 = { a <- av[[2]]; gv <- factor(vert_est$vertiente); x1 <- D_est[gv == levels(gv)[1], 100]; x2 <- D_est[gv == levels(gv)[2], 100]
+                          abs(a$Ft[100] - t.test(x1, x2, var.equal = TRUE)$statistic^2) / a$Ft[100] })
+cat(sprintf("Comprobaciones: SSE_n = (n-k) tr(γ̂) a %.1e relativo; con k = 2, F(t) = t² a %.1e relativo\n", chequeo_anova[1], chequeo_anova[2]))
+grafico_base("F4_anova_funcional", function() {
+  par(mfrow = c(2, 3), mar = c(4, 4, 3, 1))
+  cols <- c("grey30", "steelblue", "firebrick", "darkgreen")
+  for (nm in names(av)) with(av[[nm]], {
+    matplot(T_DIA, t(med), type = "l", lty = 1, lwd = 2, col = cols[seq_len(k)], xlab = "Día del año", ylab = "d(t), mm/día", main = nm)
+    abline(h = 0, lty = 3); legend("bottomleft", niveles, col = cols[seq_len(k)], lwd = 2, bty = "n", cex = .8)
+  })
+  for (nm in names(av)) with(av[[nm]], {
+    plot(T_DIA, Ft, type = "l", lwd = 2, ylim = c(0, max(Ft, c_max) * 1.05), xlab = "Día del año", ylab = "F(t)",
+         main = sprintf("F puntual: GPF p = %.3f, Fmax p = %.3f", p_GPF, p_Fmax))
+    lines(T_DIA, c_alfa, lty = 2, col = "steelblue", lwd = 2); abline(h = c_max, lty = 2, col = "firebrick", lwd = 2)
+  })
+}, ancho = 15, alto = 8)
+
+titulo("4.6 Vista acumulada, como la presenta el profesor (tesis de 2016 y semanas 12-13)")
+# En la tesis del profesor y en las clases la lluvia se trabaja ACUMULADA (mm desde el 1 de
+# enero). Aquí se muestra esa vista con nuestras curvas: A(t) = ∫ x(u) du (curva recortada en 0)
+# y se mide por qué el modelo se queda con la curva de mm/día. La derivada de la curva
+# acumulada es nuestra curva (la "intensidad" de la clase), así que no se pierde nada.
+acumular <- function(M) t(apply(pmax(M, 0), 1, cumsum))
+A_y <- acumular(Y); A_x <- acumular(X); b_acum <- banda_diferencia(A_y - A_x, pares$codigo)
+r_acum <- diag(cor(A_y, A_x)); r_tasa <- diag(cor(Y, X))
+lejos <- outer(T_DIA, T_DIA, function(s, t) abs(s - t) >= 90)
+cor_lejos <- function(M) { R <- cor(M); mean(R[lejos]) }
+acum_vs_tasa <- data.table(
+  medida = c("Acumulado al 31-dic, estaciones (mm)", "Acumulado al 31-dic, satélite (mm)", "d(31-dic) = estación - satélite (mm)", "EE de d(31-dic) por estación (mm)",
+             "Días en que la banda de d(t) excluye el 0", "CV al 31-dic, estaciones", "CV al 31-dic, satélite",
+             "Diagonal r(t,t) estación-satélite: mediana", "Diagonal r(t,t): mínima", "Correlación media entre días separados 90 días o más (estaciones)"),
+  acumulada = c(round(mean(A_y[, 365])), round(mean(A_x[, 365])), round(b_acum$d[365]), round(b_acum$ee[365]),
+                sum((b_acum$d - 2 * b_acum$ee > 0) | (b_acum$d + 2 * b_acum$ee < 0)), round(sd(A_y[, 365]) / mean(A_y[, 365]), 3), round(sd(A_x[, 365]) / mean(A_x[, 365]), 3),
+                round(median(r_acum), 2), round(min(r_acum), 2), round(cor_lejos(A_y), 2)),
+  mm_dia = c(NA, NA, NA, NA, sum((b$d - 2 * b$ee > 0) | (b$d + 2 * b$ee < 0)), NA, NA, round(median(r_tasa), 2), round(min(r_tasa), 2), round(cor_lejos(Y), 2)))
+print(tabla_f(acum_vs_tasa, "F4_acumulada_vs_mm_dia"))
+grafico_base("F4_acumulada", function() {
+  par(mfrow = c(1, 3))
+  set.seed(2); m <- sample(nrow(A_y), 120)
+  matplot(T_DIA, t(A_y[m, ]), type = "l", lty = 1, col = adjustcolor(4, .25), xlab = "Día del año", ylab = "mm acumulados",
+          main = "Precipitación acumulada: estación (azul) y su píxel (naranja)", ylim = range(c(0, quantile(A_y[, 365], .97), quantile(A_x[, 365], .97))))
+  matlines(T_DIA, t(A_x[m, ]), lty = 1, col = adjustcolor("darkorange", .25))
+  lines(T_DIA, colMeans(A_y), lwd = 3, col = 4); lines(T_DIA, colMeans(A_x), lwd = 3, col = "darkorange")
+  plot(T_DIA, b_acum$d, type = "n", ylim = range(c(b_acum$d - 2 * b_acum$ee, b_acum$d + 2 * b_acum$ee, 0)), xlab = "Día del año", ylab = "mm",
+       main = "d(t) acumulada = estación - satélite ±2 EE (por estación)")
+  polygon(c(T_DIA, rev(T_DIA)), c(b_acum$d - 2 * b_acum$ee, rev(b_acum$d + 2 * b_acum$ee)), col = adjustcolor("steelblue", .3), border = NA)
+  lines(T_DIA, b_acum$d, lwd = 2); abline(h = 0, lty = 3)
+  plot(T_DIA, r_acum, type = "l", lwd = 2, ylim = c(0, 1), xlab = "Día del año", ylab = "r(t,t)", main = "Diagonal de la correlación cruzada")
+  lines(T_DIA, r_tasa, lwd = 2, col = "firebrick")
+  legend("bottomright", c("Curvas acumuladas", "Curvas en mm/día"), col = c(1, "firebrick"), lwd = 2, bty = "n")
+}, ancho = 16, alto = 4.8)
+
 # QUÉ DICEN LOS DATOS
 #   Pares: 3 299 estación-año / píxel-año, 176 estaciones en 148 píxeles, todos
 #   los años. El EE se calcula entre estaciones (promedio de cada estación
@@ -1297,15 +1457,41 @@ grafico_base("F5_beta_superficie", function() {
   image(T_DIA, T_DIA, BETA, zlim = lim, col = hcl.colors(64, "Blue-Red 3"), xlab = "s: día del satélite", ylab = "t: día de la estación", main = "Curvas de nivel")
   contour(T_DIA, T_DIA, BETA, add = TRUE, nlevels = 10, drawlabels = FALSE, col = "grey30"); abline(0, 1, lty = 2)
 }, ancho = 13, alto = 5.5)
+# Bandas del 95 % de los efectos funcionales. La clase (semana 15) y la tesis del profesor
+# (figuras 7.1, 9.1 y 9.2) presentan cada coeficiente con su banda y leen dónde excluye el 0.
+# Aquí la banda sale de un bootstrap de ESTACIONES: se remuestrean estaciones de entrenamiento
+# (con todos sus años) y se reajusta B con el mismo FPCA, M y lambda. Así la banda respeta que
+# los años de una estación no son independientes (la banda sándwich de clase los trata como tales).
+B_BOOT_EF <- 500L
+filas_est <- split(which(ent), pares$codigo[ent])
+efectos_de <- function(Bm) cbind(int_beta = colSums(Phi_s %*% Bm[1 + 1:K_s, , drop = FALSE] %*% t(psi_t)),
+                                 gamma = drop(psi_t %*% Bm[K_s + 2, ]), delta = drop(psi_t %*% Bm[K_s + 3, ]))
+set.seed(20261119)
+boot_ef <- replicate(B_BOOT_EF, {
+  f <- unlist(filas_est[sample(length(filas_est), replace = TRUE)], use.names = FALSE)
+  Z <- diseno(f); efectos_de(solve(crossprod(Z) + LAMBDA * penal(), crossprod(Z, S[f, , drop = FALSE])))
+})
+ef_obs <- efectos_de(B); ef_lo <- apply(boot_ef, c(1, 2), quantile, .025); ef_hi <- apply(boot_ef, c(1, 2), quantile, .975)
+lejos_borde <- 16:350
+bandas_ef <- data.table(efecto = c("Integral de beta sobre s", "Altitud gamma(t)", "ONI delta(t)"),
+                        dias_banda_excluye_0 = colSums(ef_lo > 0 | ef_hi < 0),
+                        dias_banda_excluye_1 = c(sum(ef_lo[, 1] > 1 | ef_hi[, 1] < 1), NA, NA),
+                        dias_banda_excluye_0_lejos_del_borde = colSums((ef_lo > 0 | ef_hi < 0)[lejos_borde, ]),
+                        minimo = round(apply(ef_obs, 2, min), 3), maximo = round(apply(ef_obs, 2, max), 3),
+                        ancho_medio_banda = round(colMeans(ef_hi - ef_lo), 3))
+print(tabla_f(bandas_ef, "F5_efectos_bandas"))
+tabla_f(data.table(dia = T_DIA, ef_obs, inf = ef_lo, sup = ef_hi), "F5_efectos_bandas_por_dia")
 grafico_base("F5_efectos", function() {
   par(mfrow = c(1, 3))
-  plot(T_DIA, colSums(BETA), type = "l", lwd = 2, xlab = "Día t de la estación", ylab = "", main = expression(integral(beta(s, t) * ds)))
-  abline(h = 0, lty = 3)
-  plot(T_DIA, gamma_t, type = "l", lwd = 2, col = "brown", xlab = "Día del año", ylab = "raíz(mm/día) por 1 DE", main = "Efecto de la altitud gamma(t)")
-  abline(h = 0, lty = 3)
-  plot(T_DIA, delta_t, type = "l", lwd = 2, col = 4, xlab = "Día del año", ylab = "raíz(mm/día) por unidad de ONI", main = "Efecto del ONI delta(t)")
-  abline(h = 0, lty = 3)
-}, ancho = 14, alto = 4.5)
+  titulos <- list(expression(integral(beta(s, t) * ds)), "Efecto de la altitud gamma(t)", "Efecto del ONI delta(t)")
+  ejes <- c("", "raíz(mm/día) por 1 DE", "raíz(mm/día) por unidad de ONI"); cols <- c("black", "brown", 4)
+  for (j in 1:3) {
+    plot(T_DIA, ef_obs[, j], type = "n", ylim = range(c(ef_lo[, j], ef_hi[, j], 0)), xlab = "Día del año", ylab = ejes[j], main = titulos[[j]])
+    polygon(c(T_DIA, rev(T_DIA)), c(ef_lo[, j], rev(ef_hi[, j])), col = adjustcolor(cols[j], .2), border = NA)
+    lines(T_DIA, ef_obs[, j], lwd = 2, col = cols[j]); abline(h = c(0, if (j == 1) 1), lty = 3)
+  }
+  mtext(sprintf("Bandas del 95 %% por bootstrap de estaciones (%d remuestreos)", B_BOOT_EF), side = 1, line = -1.2, outer = TRUE, cex = .75)
+}, ancho = 14, alto = 4.8)
 cat(sprintf("Integral de beta sobre s: máxima el %s, mínima el %s | efecto ONI más negativo el %s (%.3f) | efecto altitud medio %.3f\n",
             fecha_dia(which.max(colSums(BETA))), fecha_dia(which.min(colSums(BETA))), fecha_dia(which.min(delta_t)), min(delta_t), mean(gamma_t)))
 
@@ -1516,6 +1702,116 @@ grafico_base("F5_prueba", function() {
   boxplot(sesgo_pct ~ modelo, metricas_curva, ylab = "% del acumulado anual", xlab = "", main = "Sesgo anual (prueba)", cex.axis = .8); abline(h = 0, lty = 3)
 }, ancho = 15, alto = 8)
 
+titulo("5.6b Inferencia y diagnóstico como en la tesis del profesor")
+# (a) Prueba F por permutación del aporte del satélite, a la manera de Fperm.fd (clase, semana 15):
+#     F(t) = Σ_i (ŷ_i(t) - ȳ̂(t))² / Σ_i (y_i(t) - ŷ_i(t))², en la escala raíz y en entrenamiento.
+#     H0: la curva del satélite no aporta nada más allá de la altitud y el ONI. Se permutan las
+#     curvas del satélite ENTRE estaciones del mismo año (se conservan el año y su fase ENSO) y
+#     se reajusta B con el mismo FPCA, M y lambda. Se reporta el criterio del máximo y el integrado.
+Y_raiz <- re$coef %*% t(Phi_e); fil_ent <- which(ent)
+F_t_de <- function(P, filas) colSums(sweep(P, 2, colMeans(P))^2) / colSums((Y_raiz[filas, ] - P)^2)
+F_obs <- F_t_de(predecir_raiz(B, fil_ent), fil_ent)
+anio_ent <- pares$anio[fil_ent]
+perm_dentro_anio <- function() { nuevo <- fil_ent; for (a in unique(anio_ent)) { k <- which(anio_ent == a); nuevo[k] <- fil_ent[k][sample.int(length(k))] }; nuevo }
+B_FPERM <- 300L
+set.seed(20261120)
+F_perm <- replicate(B_FPERM, { zxp <- Zx; zxp[fil_ent, ] <- Zx[perm_dentro_anio(), ]
+  F_t_de(predecir_raiz(ajustar_B(LAMBDA, M, zx = zxp), fil_ent, zx = zxp), fil_ent) })
+c_alfa_F <- apply(F_perm, 1, quantile, .95); c_max_F <- quantile(apply(F_perm, 2, max), .95)
+fperm <- data.table(estadistico = c("F máximo", "F integrado (media sobre el año)"), observado = round(c(max(F_obs), mean(F_obs)), 3),
+                    critico_95 = round(c(c_max_F, quantile(colMeans(F_perm), .95)), 3),
+                    p_permutacion = signif(c((1 + sum(apply(F_perm, 2, max) >= max(F_obs))) / (B_FPERM + 1), (1 + sum(colMeans(F_perm) >= mean(F_obs))) / (B_FPERM + 1)), 2),
+                    dias_sobre_el_critico_puntual = c(sum(F_obs > c_alfa_F), NA), permutaciones = B_FPERM)
+print(tabla_f(fperm, "F5_permutacion_satelite"))
+
+# (b) Diagnóstico de residuos (tesis, figuras 9.3 y 9.4; clase, correlación de los residuos):
+#     residuos estudentizados por día con la DE de entrenamiento, residuos frente a predichos y
+#     correlación de los residuos entre días.
+res_ent <- Y_raiz[fil_ent, ] - predecir_raiz(B, fil_ent); sig_t <- apply(res_ent, 2, sd)
+res_pru <- Y_raiz[i_pru, ] - pred_puntajes; stud_pru <- sweep(res_pru, 2, sig_t, "/")
+cor_res <- cor(res_ent)
+diag_res <- data.table(medida = c("Residuos estudentizados de prueba fuera de ±2 (%)", "Residuos estudentizados de prueba fuera de ±3 (%)",
+                                  "Residuo medio de prueba (raíz de mm/día)", "Correlación de los residuos a 1 día", "Correlación de los residuos a 30 días",
+                                  "Correlación de los residuos a 90 días", "Correlación residuo-predicho en prueba"),
+                       valor = round(c(100 * mean(abs(stud_pru) > 2), 100 * mean(abs(stud_pru) > 3), mean(res_pru),
+                                       mean(cor_res[cbind(1:364, 2:365)]), mean(cor_res[cbind(1:335, 31:365)]), mean(cor_res[cbind(1:275, 91:365)]),
+                                       cor(as.vector(res_pru), as.vector(pred_puntajes))), 3))
+print(tabla_f(diag_res, "F5_diagnostico_residuos"))
+
+# (c) Traza-variograma de los residuos (tesis, capítulo 8, Giraldo 2009): γ(h) = ½ E||e_i - e_j||²
+#     para pares de estaciones del mismo año a distancia h. Si crece con h, los residuos de
+#     estaciones cercanas se parecen: hay correlación espacial que el modelo no recoge. Se ajusta
+#     el modelo exponencial de la tesis, γ(h) = c0 + σ²(1 - exp(-h/φ)), por mínimos cuadrados ponderados.
+coord_par <- est[match(pares$codigo[fil_ent], codigo), .(lat, lon)]
+tv <- rbindlist(lapply(sort(unique(anio_ent)), function(a) {
+  k <- which(anio_ent == a); E <- res_ent[k, , drop = FALSE]
+  G <- E %*% (t(E) * w_trap); nn <- diag(G); D2 <- outer(nn, nn, "+") - 2 * G
+  H <- outer(seq_along(k), seq_along(k), function(i, j) haversine(coord_par$lat[k[i]], coord_par$lon[k[i]], coord_par$lat[k[j]], coord_par$lon[k[j]]))
+  u <- which(upper.tri(D2), arr.ind = TRUE); data.table(anio = a, h = H[u], g = D2[u] / 2)
+}))
+tv[, bin := cut(h, c(seq(0, 100, by = 10), 150, 250), include.lowest = TRUE)]
+tv_bin <- tv[, .(h = mean(h), gamma = mean(g), pares = .N), by = bin][order(h)]
+obj_tv <- function(p) with(tv_bin, sum(pares * (gamma - (p[1] + p[2] * (1 - exp(-h / p[3]))))^2))
+fit_tv <- optim(c(min(tv_bin$gamma), diff(range(tv_bin$gamma)), 30), obj_tv, method = "L-BFGS-B", lower = c(0, 0, 1), upper = c(Inf, Inf, 500))$par
+tabla_tv <- tv_bin[, .(bin = as.character(bin), h_km = round(h, 1), traza_variograma = round(gamma, 2), pares)]
+print(tabla_f(tabla_tv, "F5_traza_variograma_residuos"))
+cat(sprintf("Traza-variograma exponencial de los residuos: pepita c0 = %.1f, meseta parcial σ² = %.1f, φ = %.1f km (rango práctico %.0f km); la pepita es %.0f %% de la meseta\n",
+            fit_tv[1], fit_tv[2], fit_tv[3], 3 * fit_tv[3], 100 * fit_tv[1] / (fit_tv[1] + fit_tv[2])))
+tabla_f(data.table(parametro = c("pepita_c0", "meseta_parcial", "phi_km", "rango_practico_km", "pct_pepita"),
+                   valor = round(c(fit_tv, 3 * fit_tv[3], 100 * fit_tv[1] / sum(fit_tv[1:2])), 2)), "F5_traza_variograma_ajuste")
+
+grafico_base("F5_diagnostico", function() {
+  par(mfrow = c(2, 2), mar = c(4.5, 4.5, 3, 1))
+  smoothScatter(as.vector(pred_puntajes), as.vector(res_pru), nrpoints = 0, xlab = "Predicho (raíz de mm/día)", ylab = "Residuo",
+                main = "Residuos frente a predichos (prueba)"); abline(h = 0, lty = 2, col = "red")
+  q <- apply(stud_pru, 2, quantile, c(.05, .25, .5, .75, .95))
+  matplot(T_DIA, t(q), type = "l", lty = c(3, 2, 1, 2, 3), lwd = c(1, 1, 2, 1, 1), col = 1, ylim = c(-4, 4), xlab = "Día del año",
+          ylab = "Residuo estudentizado", main = "Residuos estudentizados por día (prueba): cuantiles 5-95 %"); abline(h = c(-2, 2), lty = 3, col = "red")
+  contour(T_DIA, T_DIA, cor_res, nlevels = 10, xlab = "Día s", ylab = "Día t", main = "Correlación de los residuos (entrenamiento)")
+  with(tv_bin, plot(h, gamma, pch = 19, cex = sqrt(pares) / max(sqrt(pares)) * 2 + .5, ylim = c(0, max(gamma) * 1.1),
+                    xlab = "Distancia entre estaciones (km)", ylab = "Traza-variograma", main = "Traza-variograma de los residuos"))
+  hh <- seq(0, 250, length.out = 200); lines(hh, fit_tv[1] + fit_tv[2] * (1 - exp(-hh / fit_tv[3])), col = "red", lwd = 2)
+}, ancho = 12, alto = 9)
+
+grafico_base("F5_permutacion_satelite", function() {
+  matplot(T_DIA, F_perm, type = "l", lty = 1, col = "grey85", ylim = c(0, max(F_obs, F_perm) * 1.05), xlab = "Día del año", ylab = "F(t)",
+          main = sprintf("Aporte del satélite: F(t) observado frente a %d permutaciones dentro de cada año", B_FPERM))
+  lines(T_DIA, F_obs, lwd = 2); lines(T_DIA, c_alfa_F, lty = 2, col = "steelblue", lwd = 2); abline(h = c_max_F, lty = 2, col = "firebrick", lwd = 2)
+  legend("topright", c("Observado", "Permutaciones", "Crítico puntual 95 %", "Crítico del máximo 95 %"), col = c(1, "grey70", "steelblue", "firebrick"),
+         lty = c(1, 1, 2, 2), lwd = 2, bty = "n", cex = .85)
+}, ancho = 10, alto = 5)
+
+# (d) Curvas observadas y ajustadas de 20 estaciones de un año de prueba (tesis, figura 10.3).
+#     Se toma 2002 (año Niño) y 20 estaciones repartidas por cuantiles del error.
+k02 <- i_pru[pares$anio[i_pru] == 2002]
+err02 <- metricas_curva[modelo == "Regresión funcional" & anio == 2002, l2_rel]
+sel20 <- k02[order(err02)][round(seq(1, length(k02), length.out = 20))]
+grafico_base("F5_curvas_20_estaciones", function() {
+  par(mfrow = c(4, 5), mar = c(2.5, 2.5, 2.5, .5), mgp = c(1.5, .5, 0))
+  for (k in sel20) {
+    j <- match(k, i_pru)
+    matplot(T_DIA, cbind(Y_mm[k, ], modelos[[1]][j, ], modelos[[2]][j, ]), type = "l", lty = c(1, 2, 1), lwd = c(2, 1, 2),
+            col = c(1, "darkorange", 4), xlab = "", ylab = "mm/día", main = sprintf("%s (L² %.2f)", substr(pares$nombre[k], 1, 18), err02[match(k, k02)]), cex.main = .85)
+  }
+}, ancho = 15, alto = 11)
+
+# (e) Mapa del error por estación en prueba (tesis, figuras 10.4 a 10.6).
+mapa_err <- merge(metricas_curva[modelo != "Solo altitud y ONI", .(l2 = mean(l2_rel)), by = .(codigo, modelo)][, dcast(.SD, codigo ~ modelo, value.var = "l2")],
+                  est[, .(codigo, nombre, lat, lon, vertiente)], by = "codigo")
+setnames(mapa_err, c("Regresión funcional", "Satélite sin corregir"), c("l2_reg", "l2_sat"))
+mapa_err[, mejora := l2_reg - l2_sat]
+tabla_f(mapa_err[order(mejora)], "F5_error_por_estacion_prueba")
+cat(sprintf("Prueba, por estación: la regresión baja el error L² relativo en %d de %d estaciones; error medio %.2f en el Cauca y %.2f en el Pacífico\n",
+            sum(mapa_err$mejora < 0), nrow(mapa_err), mapa_err[vertiente != "Pacífico", mean(l2_reg)], mapa_err[vertiente == "Pacífico", mean(l2_reg)]))
+valle <- sf::st_read("datos_web/limites/deptos_valle_y_vecinos_DANE_2020.gpkg", quiet = TRUE)
+grafico_f(ggplot() + geom_sf(data = valle, fill = "grey97", colour = "grey60") +
+            geom_point(data = mapa_err, aes(lon, lat, colour = mejora, size = l2_reg)) +
+            scale_colour_gradient2(low = "steelblue", mid = "grey80", high = "firebrick", midpoint = 0) + scale_size(range = c(1, 4.5)) +
+            coord_sf(xlim = range(mapa_err$lon) + c(-.15, .15), ylim = range(mapa_err$lat) + c(-.15, .15)) +
+            labs(x = NULL, y = NULL, colour = "Regresión - satélite\n(error L², < 0 = mejora)", size = "Error L² relativo\nde la regresión",
+                 title = "Error por estación en prueba (2001-2003)"),
+          "F5_mapa_error", ancho = 8, alto = 7.5)
+
 titulo("5.7 Exportación para la red funcional (Python)")
 dir_py <- file.path(SALIDA_F, "para_python"); dir.create(dir_py, showWarnings = FALSE)
 fwrite(pares[, .(codigo, anio, particion, usar, celda, altitud, ONI_anual, fase, vertiente)], file.path(dir_py, "pares.csv"))
@@ -1635,6 +1931,9 @@ pruebas <- list(
   "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)" = dif_equiv <= 1e-4,
   "La reconstrucción en mm no es negativa" = min(modelos[["Regresión funcional"]]) >= 0,
   "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000,
+  "Prueba F pareada: con curvas constantes F = t² y d = 1 (clase, ejercicio 2)" = all(chequeo_F_t2 < 1e-8),
+  "ANOVA funcional: SSE_n = (n-k) tr(γ̂) y, con k = 2, F(t) = t² (clase, ejercicio 1)" = all(chequeo_anova < 1e-8),
+  "Bandas por bootstrap de estaciones y permutación del satélite con réplicas suficientes" = B_BOOT_EF >= 500 && B_FPERM >= 200 && B_PERM >= 1000,
   "Contraste con los métodos de clase: la B del taller es la de lm() y λ de fregre.basis.fr no queda en el borde" =
     dif_lm_taller < 1e-8 && mejor_fr$lambda_s < max(rej_fr$lambda_s)
 )

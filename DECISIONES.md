@@ -660,6 +660,44 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - Récord mundial de lluvia en 24 h (R0, D-50): tabla de récords de la OMM, https://public.wmo.int/sites/default/files/2025-07/Table_Records_25Jul2025.pdf, y archivo de extremos https://wmo.asu.edu
 - CHIRPS v2 (UCSB CHC) y NASA POWER (MERRA-2): ver `02_datos_externos.ipynb`.
 
+### D-57 · Lo que usa el profesor, aplicado al EDA, la comparación y la regresión ✅
+- **De dónde sale:** la tesis de maestría del profesor (Univalle, 2016), sobre la lluvia del Valle con estaciones y satélite; las presentaciones y scripts de las semanas 10 a 15; los videos de clase. Todo está resumido en `docs/BASE_CONOCIMIENTO_PROFESOR.md`.
+- **Comparación por fuente (nuevas secciones 4.4 a 4.6):**
+  - **Prueba t funcional pareada** (semana 14, ejercicio 3): la unidad es la estación (176 curvas de diferencia media).
+    - El satélite y la estación tienen distinta media funcional: prueba F, p = 0,003; permutación con el criterio del máximo, p = 0,0002.
+    - Con control del error en todo el año, la diferencia es significativa en 129 días (149 sin corregir por multiplicidad).
+    - En el Pacífico, la prueba global no rechaza (p = 0,16).
+  - **ANOVA funcional del error del satélite:**
+    - **Por fase ENSO**, con los 23 años como unidades: F = 2,89, p = 0,0003; GPF, p = 0,005. F_max no rechaza (p = 0,22): el efecto del ENSO es pequeño pero se extiende por todo el año. Esto respalda dar el ONI al modelo.
+    - **Por vertiente y por altitud en el Cauca:** p ≤ 0,005 en las tres pruebas.
+  - **Vista acumulada:** al 31 de diciembre, d = −19 ± 71 mm, que no es significativo. Los errores de las temporadas se compensan en el acumulado, mientras que la curva en mm/día muestra 147 días significativos. Además, la correlación entre días separados 90 días o más es 0,85 en la acumulada y 0,64 en mm/día.
+  - **Decisión:** el modelo sigue en mm/día. El enunciado lo pide así: "se modela sobre √P o log(1+P)" y el error "en la fecha de los dos picos", que son rasgos de la intensidad y no de la acumulada. En clase el profesor asoció el ejemplo de la precipitación acumulada (`X_sat`, `Y_est`) con el proyecto; por eso la vista acumulada se presenta en el EDA.
+- **Regresión (sección 5):**
+  - **Bandas del 95 % por bootstrap de estaciones** (500 remuestreos):
+    - la integral de β excluye el 0 todo el año y excluye el 1 en 173 días: el satélite se traslada atenuado;
+    - **la altitud contiene el 0 todo el año**, como en la tesis del profesor;
+    - el ONI excluye el 0 en 360 días.
+    - La altitud se mantiene porque el enunciado la pide en el vector z de la red.
+  - **Prueba F por permutación** (`Fperm.fd`, permutando el satélite entre estaciones del mismo año): el satélite aporta más allá de la altitud y el ONI, con p = 0,003 en todos los días.
+  - **Diagnóstico de residuos** (tesis, figuras 9.3 y 9.4):
+    - el 4,5 % de los residuos estudentizados está fuera de ±2 (como en una normal), pero el 1,1 % está fuera de ±3, más de lo esperado: colas pesadas;
+    - la correlación entre residuo y predicho es −0,001;
+    - la dispersión crece con el valor predicho.
+  - **Traza-variograma de los residuos** (tesis, cap. 8): crece de 43 a 7 km hasta unos 115 a 60–100 km. Ajuste exponencial: pepita 21, meseta parcial 100 y rango práctico de 96 km. **Queda correlación espacial** que el modelo no recoge. Se respeta con los IC por bootstrap de estaciones; mínimos cuadrados generalizados como en la tesis queda como trabajo futuro.
+  - **Mapa del error y 20 curvas de 2002** (tesis, figuras 10.3 a 10.6): la regresión mejora en 82 de 137 estaciones. El error medio es 0,42 en el Cauca y 0,60 en el Pacífico. La mayor mejora está en el norte del Valle.
+- **Concurrente (`regresion_concurrente.R`):**
+  - Las bandas por bootstrap de estaciones son unas 4 veces más anchas que las sándwich (300 remuestreos).
+  - b₁(t) excluye el 1 en 119 días, no en 262; b₀(t) excluye el 0 en 88 días, no en 305.
+  - Se agrega la figura de la clase (`C6_concurrente_estilo_clase.png`).
+- **EDA:** se agrega el coeficiente de variación funcional CV(t) (semana 12).
+- **Pruebas automáticas nuevas:**
+  - F pareada con curvas constantes igual a t² y d = 1;
+  - SSE_n = (n−k) tr(γ̂);
+  - F(t) = t² con k = 2;
+  - réplicas mínimas de bootstrap y permutación.
+  - Con ellas, el funcional pasa 16 de 16 pruebas y la concurrente 9 de 9.
+- **Fecha y responsable:** 2026-11-17, Gus y Claude.
+
 ---
 
 ## Plantilla para nuevas decisiones

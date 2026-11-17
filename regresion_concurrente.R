@@ -214,6 +214,29 @@ figura("C2_coeficientes_modeloB", function() {
   }
 })
 
+# ---- 4b. BANDAS POR BOOTSTRAP DE ESTACIONES ----------------------------------
+titulo("4b. Bandas de b(t) por bootstrap de estaciones")
+# Las bandas sándwich de arriba usan Σ_E entre días, pero suman las curvas como si fueran
+# independientes. Los años de una misma estación repiten su sesgo: en la comparación por fuente
+# (sección 4.1 de lluvia_valle.R) el EE por estación es 3,7 veces el ingenuo. Aquí se remuestrean
+# ESTACIONES de entrenamiento con todos sus años y se reajusta el modelo A con el mismo K_b y lambda.
+B_BOOT_B <- 300L
+filas_est_ent <- split(i_ent, pares$codigo[i_ent])
+set.seed(20261121)
+boot_b <- replicate(B_BOOT_B, {
+  f <- unlist(filas_est_ent[sample(length(filas_est_ent), replace = TRUE)], use.names = FALSE)
+  pre <- preparar(f, "A", eleccion$A$K_b); coef_t(pre, resolver(pre, eleccion$A$lambda))
+})
+b_lo <- apply(boot_b, c(1, 2), quantile, .025); b_hi <- apply(boot_b, c(1, 2), quantile, .975)
+comp_bandas <- data.frame(coeficiente = c("b0(t)", "b1(t)"),
+                          ancho_medio_sandwich = colMeans(4 * ajuste$A$EE), ancho_medio_bootstrap_estaciones = colMeans(b_hi - b_lo),
+                          cociente_anchos = colMeans(b_hi - b_lo) / colMeans(4 * ajuste$A$EE),
+                          dias_excluye_0_sandwich = colSums(abs(ajuste$A$B) > 2 * ajuste$A$EE), dias_excluye_0_bootstrap = colSums(b_lo > 0 | b_hi < 0),
+                          dias_excluye_1_sandwich = c(NA, sum(abs(ajuste$A$B[, 2] - 1) > 2 * ajuste$A$EE[, 2])),
+                          dias_excluye_1_bootstrap = c(NA, sum(b_lo[, 2] > 1 | b_hi[, 2] < 1)))
+comp_bandas[, -1] <- round(comp_bandas[, -1], 3)
+print(tabla_f(comp_bandas, "C2_bandas_sandwich_vs_bootstrap"))
+
 # ---- 5. ¿EN QUÉ ÉPOCA DEL AÑO EL SATÉLITE EXPLICA MEJOR A LA ESTACIÓN? --------
 titulo("5. R²(t) y época del año")
 # R²(t) = 1 - Σ_i (y_i(t) - ŷ_i(t))² / Σ_i (y_i(t) - ȳ(t))², con ȳ(t) la media de entrenamiento (referencia fija).
@@ -236,6 +259,28 @@ figura("C3_R2_por_dia", function() {
           ylim = c(min(0, as.matrix(R2_tab[, 2:5])), 1), xlab = "Día del año", ylab = expression(R^2*(t)), main = "Varianza explicada por día, años de prueba (2001-2003)")
   abline(h = 0, lty = 3); legend("bottomleft", c("Modelo A (clase)", "Modelo B (+ altitud y ONI)", "Satélite sin corregir"), col = c("black", "blue", "grey50"), lty = c(1, 1, 2), lwd = 2, bty = "n")
 })
+
+figura("C6_concurrente_estilo_clase", function() {
+  # La misma figura que la clase arma para el modelo concurrente (Script_Regresion_Funcional.R, marcha):
+  # x_i(t), y_i(t), R²(t), b0(t) y b1(t) con bandas, y la correlación de los residuos entre días.
+  par(mfrow = c(2, 3), mar = c(4.5, 4.5, 3, 1)); set.seed(3); m <- sample(i_ent, 150)
+  matplot(T_DIA, t(X_r[m, ]), type = "l", lty = 1, col = "grey60", xlab = "Día del año", ylab = "raíz(mm/día)", main = "Satélite: x_i(t)")
+  matplot(T_DIA, t(Y_r[m, ]), type = "l", lty = 1, col = "grey60", xlab = "Día del año", ylab = "raíz(mm/día)", main = "Estación: y_i(t)")
+  plot(T_DIA, R2_tab$R2_A_prueba, type = "l", lwd = 2, ylim = c(min(0, R2_tab$R2_A_prueba), 1), xlab = "Día del año", ylab = expression(R^2*(t)),
+       main = "Varianza explicada por el satélite (prueba)"); abline(h = 0, lty = 3)
+  for (a in 1:2) {
+    b <- ajuste$A$B[, a]; e <- ajuste$A$EE[, a]
+    plot(T_DIA, b, type = "n", ylim = range(c(b_lo[, a], b_hi[, a], b - 2 * e, b + 2 * e, 0)), xlab = "Día del año", ylab = "",
+         main = c("Intercepto: b0(t)", "Efecto del satélite: b1(t)")[a])
+    polygon(c(T_DIA, rev(T_DIA)), c(b_lo[, a], rev(b_hi[, a])), col = adjustcolor("steelblue", .3), border = NA)
+    lines(T_DIA, b, lwd = 2); lines(T_DIA, b + 2 * e, lty = 2, col = "red"); lines(T_DIA, b - 2 * e, lty = 2, col = "red")
+    abline(h = c(0, if (a == 2) 1), lty = 3)
+    if (a == 2) legend("bottomleft", c("Bootstrap de estaciones 95 %", "Sándwich ±2 EE"), fill = c(adjustcolor("steelblue", .3), NA),
+                       border = NA, lty = c(NA, 2), col = c(NA, "red"), bty = "n", cex = .8)
+  }
+  Res_A <- Y_r[i_ent, ] - predecir_raiz(ajuste$A$B, i_ent, "A")
+  contour(T_DIA, T_DIA, cor(Res_A), nlevels = 10, xlab = "Día s", ylab = "Día t", main = "Correlación de los residuos")
+}, ancho = 14, alto = 8.5)
 
 # ---- 6. EVALUACIÓN EN PRUEBA CON LAS MÉTRICAS DE LA RÚBRICA 4.4 --------------
 titulo("6. Evaluación en prueba (2001-2003)")
@@ -363,6 +408,7 @@ chk("la rugosidad del equipo y la propia coinciden para una recta (R b = 0)", {
 chk("con lambda enorme b1(t) tiende a una recta", {
   pre <- preparar(i_ent, "A", 12L); b1 <- coef_t(pre, resolver(pre, 1e14))[, 2]; max(abs(diff(b1, differences = 2))) < 1e-6 })
 chk("la reconstrucción en mm es no negativa", all(modelos[[2]] >= 0) && all(modelos[[3]] >= 0))
+chk("bandas de b(t) por bootstrap de estaciones con al menos 300 remuestreos", B_BOOT_B >= 300)
 chk("el modelo A baja el error L² frente al satélite sin corregir en prueba (por estación, Wilcoxon p < 0,05)",
     with(pareada[pareada$modelo == "Concurrente A (clase)" & pareada$metrica == "l2_rel", ], mejora && p_wilcoxon < 0.05))
 cat(paste(pruebas, collapse = "\n"), "\n")

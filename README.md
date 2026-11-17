@@ -20,7 +20,9 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 | `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `cabeza_lineal_pesos.csv`, `kan_activaciones_capa1.csv`, `kan_importancia_aristas.csv`, `modelos/`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
 | `BITACORA_CAMBIOS.md` | **Qué cambió en cada sesión y por qué**, para ponerse al día. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-55), con su justificación, y preguntas para el profesor. |
+| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-57), con su justificación, y preguntas para el profesor. |
+| `EXPLICACION_FUNCIONAL.md` y `.docx` | Qué sale de la parte funcional (construcción, EDA, comparación y regresiones) y cómo se interpreta. |
+| `docs/BASE_CONOCIMIENTO_PROFESOR.md` | Cómo trabaja y presenta el profesor (su tesis, las clases y los videos) y qué se aplicó al proyecto (D-57). |
 | `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
 | `datos_web/` | Fuentes externas: estaciones del Valle, límites del DANE, CNE, ONI, CHIRPS y NASA POWER. |
 | `datos_curso/` | **Datos crudos del curso. No se suben a git:** hay que copiarlos aquí (ver abajo). |

@@ -1,0 +1,4 @@
+efecto,dias_banda_excluye_0,dias_banda_excluye_1,dias_banda_excluye_0_lejos_del_borde,minimo,maximo,ancho_medio_banda
+Integral de beta sobre s,365,173,335,0.588,1.059,0.422
+Altitud gamma(t),0,,0,-0.097,0.022,0.151
+ONI delta(t),360,,335,-0.243,-0.011,0.101

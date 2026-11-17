@@ -1,13 +1,13 @@
 "modelo","metrica","satelite","concurrente","diferencia","ic_inf","ic_sup","p_wilcoxon","ic_excluye_0","mejora"
 "Concurrente A (clase)","l2_rel",0.513,0.439,-0.074,-0.09,-0.059,3.9e-13,TRUE,TRUE
-"Concurrente A (clase)","rmse",2.423,2.229,-0.194,-0.264,-0.12,6.3e-09,TRUE,TRUE
-"Concurrente A (clase)","kge",0.382,0.47,0.087,0.066,0.109,2.7e-11,TRUE,TRUE
-"Concurrente A (clase)","|sesgo_pct|",37.791,29.167,-8.624,-10.971,-6.297,7.5e-12,TRUE,TRUE
-"Concurrente A (clase)","err_pico_1",23.073,18.861,-4.212,-5.756,-2.758,2.3e-07,TRUE,TRUE
-"Concurrente A (clase)","err_pico_2",18.024,22.988,4.964,4.05,5.881,0,TRUE,FALSE
-"Concurrente B (+ altitud y ONI)","l2_rel",0.513,0.45,-0.063,-0.08,-0.048,4.7e-10,TRUE,TRUE
-"Concurrente B (+ altitud y ONI)","rmse",2.423,2.265,-0.159,-0.229,-0.082,3.5e-06,TRUE,TRUE
-"Concurrente B (+ altitud y ONI)","kge",0.382,0.455,0.073,0.051,0.096,3.2e-07,TRUE,TRUE
-"Concurrente B (+ altitud y ONI)","|sesgo_pct|",37.791,29.071,-8.721,-11.017,-6.325,1.9e-11,TRUE,TRUE
-"Concurrente B (+ altitud y ONI)","err_pico_1",23.073,20.82,-2.253,-2.993,-1.547,1.9e-07,TRUE,TRUE
-"Concurrente B (+ altitud y ONI)","err_pico_2",18.024,19.375,1.35,0.937,1.741,2.7e-09,TRUE,FALSE
+"Concurrente A (clase)","rmse",2.423,2.229,-0.194,-0.266,-0.121,6.3e-09,TRUE,TRUE
+"Concurrente A (clase)","kge",0.382,0.47,0.087,0.066,0.11,2.7e-11,TRUE,TRUE
+"Concurrente A (clase)","|sesgo_pct|",37.791,29.167,-8.624,-10.872,-6.389,7.5e-12,TRUE,TRUE
+"Concurrente A (clase)","err_pico_1",23.073,18.861,-4.212,-5.723,-2.675,2.2e-07,TRUE,TRUE
+"Concurrente A (clase)","err_pico_2",18.024,22.988,4.964,4.043,5.871,2.6e-17,TRUE,FALSE
+"Concurrente B (+ altitud y ONI)","l2_rel",0.513,0.45,-0.063,-0.079,-0.047,4.7e-10,TRUE,TRUE
+"Concurrente B (+ altitud y ONI)","rmse",2.423,2.265,-0.159,-0.229,-0.088,3.5e-06,TRUE,TRUE
+"Concurrente B (+ altitud y ONI)","kge",0.382,0.455,0.073,0.05,0.096,3.2e-07,TRUE,TRUE
+"Concurrente B (+ altitud y ONI)","|sesgo_pct|",37.791,29.071,-8.721,-10.921,-6.366,1.9e-11,TRUE,TRUE
+"Concurrente B (+ altitud y ONI)","err_pico_1",23.073,20.82,-2.253,-3.019,-1.572,1.6e-07,TRUE,TRUE
+"Concurrente B (+ altitud y ONI)","err_pico_2",18.024,19.375,1.35,0.955,1.746,2.5e-09,TRUE,FALSE
