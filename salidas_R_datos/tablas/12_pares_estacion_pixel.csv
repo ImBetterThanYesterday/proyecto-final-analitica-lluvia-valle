@@ -64,7 +64,7 @@ codigo,nombre,lon,lat,altitud,vertiente,nivel_c,revisar,pixel,lon_px,lat_px,en_v
 2614400104,IRLANDA,-75.927235,4.190972,1663,Cauca (interandina),Ubicación oficial,"",625,-75.9249984491617,4.17499931715429,TRUE,1.79
 2614400105,PARDO,-76.100713,4.087271,1314,Cauca (interandina),Ubicación oficial,"",695,-76.1249984521419,4.07499931566417,TRUE,3.02
 2614400201,BARRAGAN,-75.888358,4.033286,3100,Cauca (interandina),Ubicación oficial,"",737,-75.8749984484166,4.02499931491911,TRUE,1.74
-2614500102,EL ALCAZAR,-76.018818,4.30694,17,Cauca (interandina),Ubicación oficial,"",512,-76.0249984506518,4.32499931938946,TRUE,2.12
+2614500102,EL ALCAZAR,-76.018818,4.30694,977,Cauca (interandina),Ubicación oficial,"",512,-76.0249984506518,4.32499931938946,TRUE,2.12
 2614500103,EL JIGUAL,-76.00336114,4.176600197,1433,Cauca (interandina),Ubicación oficial,Altitud registrada 1433 m pero el terreno en la coordenada está a 1082 m (diferencia -351 m): la coordenada podría estar corrida.,623,-76.0249984506518,4.17499931715429,TRUE,2.41
 2614500104,GALICIA,-76.056453,4.171936,1191,Cauca (interandina),Ubicación oficial,"",622,-76.0749984513968,4.17499931715429,TRUE,2.08
 2614900101,EL SOCORRO,-75.959641,4.480446,1025,Cauca (interandina),Ubicación oficial,"",402,-75.9749984499067,4.47499932162464,TRUE,1.81

@@ -118,6 +118,10 @@ Este documento reúne lo que el profesor Johann Alexis Ospina-Galindez enseña, 
 | Diagnóstico | **Residuos estudentizados y residuos frente a predichos** | Tesis figs. 9.3–9.4 | `F5_diagnostico` (**nuevo**) |
 | Diagnóstico | **Traza-variograma de los residuos** | Tesis cap. 8 | `F5_diagnostico` (**nuevo**) |
 | Evaluación | **Mapa del error por estación** | Tesis figs. 10.4–10.6 | `F5_mapa_error` (**nuevo**) |
+| Datos, por año | **Precipitación acumulada por año, estación y satélite** | Tesis figs. 5.8 y 5.12 | `12_acumulada_por_anio` (**nuevo**, D-59) |
+| Datos, por año | **Correlación estación–satélite de cada año** | Tesis cap. 5 | `12_correlacion_por_anio` (**nuevo**, D-59) |
+| EDA, por año | **Curvas de cada año con promedio y desviación estándar** | Tesis figs. 6.2 y 6.3 | `F3_por_anio_estaciones`, `F3_por_anio_satelite` (**nuevo**, D-59) |
+| Regresión, por año | **b₁(t) del concurrente ajustado en cada año, con banda** | Tesis fig. 9.2 | `C7_b1_por_anio` (**nuevo**, D-59) |
 
 ## 4. Funciones de R que enseña
 
@@ -190,7 +194,7 @@ Las tres grabaciones se transcribieron automáticamente (66, 98 y 82 minutos). L
 
 ## 8. Resultados de lo aplicado
 
-Corrida del 17-nov-2026: `lluvia_valle_funcional.R` pasa 16 de 16 pruebas y `regresion_concurrente.R` 9 de 9. El detalle está en D-57 de `DECISIONES.md`.
+Corrida del 18-nov-2026: `lluvia_valle_datos.R` pasa 28 de 28 pruebas, `lluvia_valle_funcional.R` 16 de 16 y `regresion_concurrente.R` 10 de 10. El detalle está en D-57 y D-59 de `DECISIONES.md`.
 
 | Pregunta | Prueba, como en clase | Resultado | Qué significa |
 |---|---|---|---|
@@ -202,3 +206,41 @@ Corrida del 17-nov-2026: `lluvia_valle_funcional.R` pasa 16 de 16 pruebas y `reg
 | ¿Aporta la altitud? | Bandas por bootstrap de estaciones | La banda contiene el 0 todo el año | No, una vez se conoce el píxel. Igual que en la tesis |
 | ¿Quedó correlación espacial? | Traza-variograma de los residuos | Rango práctico de unos 96 km, pepita del 17 % | Sí. Se respeta con IC por estación; mínimos cuadrados generalizados queda como trabajo futuro |
 | ¿Eran correctas las bandas sándwich del concurrente? | Bootstrap de estaciones | Son 4 veces más angostas de lo que deberían | No. Se reportan las de bootstrap |
+
+## 9. Su forma de graficar y qué metodologías suyas adoptamos (revisión del 18-nov-2026)
+
+### 9.1 Cómo grafica (tesis, capítulos 5, 6 y 9)
+- **Un panel por año.** Casi todo lo muestra así: los datos crudos (fig. 5.8), las curvas suavizadas con su promedio y desviación (figs. 6.2 y 6.3), las regiones (fig. 5.12) y hasta el coeficiente del satélite (fig. 9.2). Para él, el año es la unidad natural: la lluvia de un año depende del ENSO, y el panel por año lo deja ver sin una sola cifra.
+- **Mismo eje en todos los paneles**, para comparar un año con otro de un vistazo.
+- **Blanco y negro, con R base:**
+  - curvas individuales en gris claro;
+  - promedio en negro grueso;
+  - desviación estándar en línea punteada;
+  - bandas de confianza como sombra gris;
+  - línea punteada horizontal en 0 en los coeficientes.
+- **El año, en negrita, como título del panel**, y ejes en el lenguaje del problema: "Tiempo (día pentadal)" y "Precipitación acumulada (mm)".
+- **Trabaja en lluvia acumulada.** Así las curvas siempre suben y se ven el total y las temporadas: donde la curva se aplana, es tiempo seco.
+
+### 9.2 Lo que adoptamos de su estilo
+- Las cuatro figuras por año del catálogo (sección 3), en su mismo estilo. A cada una le agregamos la fase ENSO en el título, porque es lo que explica las diferencias entre años.
+- En la figura acumulada, el texto "satélite = x % de la estación" de cada año: es la "frase con números" de cada figura (regla 2.1).
+
+### 9.3 ¿Usar sus metodologías para todas las decisiones?
+
+Sí, donde el problema es el mismo. No, donde el enunciado del curso nos pide otra cosa: su tesis interpola en el espacio dentro de un mismo año, y nuestro proyecto debe **predecir años nuevos** (prueba 2001–2003) a partir de 1981–1995. Decisión por decisión:
+
+| Su decisión en la tesis | La nuestra | Por qué |
+|---|---|---|
+| Graficar por año | **Adoptada** (cuatro figuras nuevas) | Es su forma de presentar y deja ver el ENSO |
+| Elegir K por VCG | **Adoptada**, con una K para toda la muestra en lugar de una por año | Todas las curvas deben estar en la misma base para compararlas y para la red (sección 6) |
+| Precipitación acumulada y `smooth.monotone` | **Como vista** (`F4_acumulada`, `12_acumulada_por_anio`); el modelo se queda en √P | El enunciado pide √P o log(1+P) y la fecha de los dos picos (sección 6) |
+| Imputar faltantes con kriging | No | Las reglas R5 y R7 y el experimento de huecos: no hace falta imputar |
+| Modelo concurrente | **Adoptado** (`regresion_concurrente.R`) | Es su modelo; queda como contraste del de función a función |
+| Ajustar el modelo año por año | **Como descriptivo** (`C7_b1_por_anio`) | Un ajuste por año no puede predecir un año nuevo: necesita las estaciones de ese año. Sirve para ver cómo cambia el aporte del satélite con el ENSO, y confirma su conclusión (b₁ mayor en La Niña, r = −0,44) |
+| Altura y altura² | Altura sí, altura² no | En su tesis ninguna de las dos aportó; en la nuestra la banda de la altitud contiene el 0 (D-57). La altitud se deja porque el enunciado la pide |
+| Traza-variograma de los residuos | **Adoptado** | Mide la correlación espacial que queda |
+| Mínimos cuadrados generalizados con covarianza espacial | No (trabajo futuro) | No se vio en clase; las bandas por bootstrap de estaciones respetan la dependencia |
+| Validación cruzada dejando una estación fuera | No; se usa la partición por años | El enunciado fija entrenamiento, validación y prueba por años |
+| Mann–Whitney para comparar errores | Wilcoxon **pareado** por estación | Es la misma familia de pruebas, en su versión pareada: los dos modelos se evalúan en las mismas estaciones |
+| R²(t), 20 curvas y mapa del error | **Adoptados** (`F5_prueba`, `F5_curvas_20_estaciones`, `F5_mapa_error`) | Así evalúa él |
+| Regiones valle y montaña | Zonas andina y pacífica, más franjas de altitud | Es el mismo criterio físico, aplicado a nuestro territorio |

@@ -2,9 +2,9 @@ anio,fase,modelo,curvas,L2_relativo,KGE,sesgo_anual_pct
 2001,Neutro,Regresión funcional,124,0.519,0.32,21.1
 2001,Neutro,Satélite sin corregir,124,0.604,0.22,31.8
 2001,Neutro,Solo altitud y ONI,124,0.637,0.16,36
-2002,Niño,Regresión funcional,120,0.394,0.54,-14.4
+2002,Niño,Regresión funcional,120,0.394,0.54,-14.3
 2002,Niño,Satélite sin corregir,120,0.5,0.44,28.3
-2002,Niño,Solo altitud y ONI,120,0.451,0.45,14.5
-2003,Neutro,Regresión funcional,126,0.389,0.57,14.5
+2002,Niño,Solo altitud y ONI,120,0.452,0.45,14.5
+2003,Neutro,Regresión funcional,126,0.39,0.57,14.6
 2003,Neutro,Satélite sin corregir,126,0.437,0.51,21.5
-2003,Neutro,Solo altitud y ONI,126,0.427,0.47,8.8
+2003,Neutro,Solo altitud y ONI,126,0.429,0.47,9

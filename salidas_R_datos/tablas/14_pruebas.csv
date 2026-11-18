@@ -23,6 +23,7 @@ La matriz del satélite coincide con 12 TIFF releídos,OK,""
 Todos los píxeles del Valle están,OK,681 píxeles
 Cada estación cae dentro de su píxel,OK,distancia máxima al centro: 3.89 km
 Cada par une el mismo año y el píxel de la estación,OK,""
+Ninguna altitud es imposible en la cuenca del Cauca (D-59),OK,1 altitud(es) oficial(es) reemplazada(s) por el terreno; piso 904 m
 Hay un par por cada curva de estación,OK,""
 Cada par tiene el ONI de su año (entra al vector z),OK,23 años
 "En años completos, la suma por péntadas = la suma diaria",OK,50 curvas

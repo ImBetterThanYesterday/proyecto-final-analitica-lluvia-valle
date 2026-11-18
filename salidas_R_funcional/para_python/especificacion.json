@@ -1,3 +1,3 @@
 {"rango": [1, 365], "orden": 4, "K_estaciones": 8, "K_satelite": 11, "M": 6, "lambda": 3.16228e+08,
 "nodos_estaciones": [1, 1, 1, 1, 73.8, 146.6, 219.4, 292.2, 365, 365, 365, 365], "nodos_satelite": [1, 1, 1, 1, 46.5, 92, 137.5, 183, 228.5, 274, 319.5, 365, 365, 365, 365],
-"altitud_media": 1394.196721, "altitud_de": 559.998183, "escala": "raiz de la curva en mm/dia recortada en 0"}
+"altitud_media": 1400.576872, "altitud_de": 549.639578, "escala": "raiz de la curva en mm/dia recortada en 0"}

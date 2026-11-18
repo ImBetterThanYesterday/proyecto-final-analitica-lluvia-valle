@@ -780,6 +780,36 @@ grafico_base("F3_boxplot_funcional", function() {
 titulo("3.6 Contexto: vertiente, altitud y ENSO")
 id_e[, banda_altitud := cut(altitud, c(-Inf, 1200, 2000, Inf), labels = c("< 1200 m", "1200-2000 m", "> 2000 m"))]
 id_e <- oni[, .(anio, fase)][id_e, on = "anio"]; id_s <- oni[, .(anio, fase)][id_s, on = "anio"]
+
+# Curvas por año, como en la tesis del profesor (figuras 6.2 y 6.3): un panel por año con las
+# curvas en gris, el promedio en negro y la desviación estándar punteada. Todos los paneles
+# tienen el mismo eje, para que los años se comparen a simple vista; el título lleva la fase ENSO.
+por_anio <- function(M, anios, fases, cada, titulo_fig) {
+  lim <- c(0, quantile(M, .995))
+  par(mfrow = c(6, 4), mar = c(3, 3.2, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
+  for (a in ANIOS) {
+    k <- anios == a
+    matplot(T_DIA, t(M[k, , drop = FALSE]), type = "l", lty = 1, col = "grey80", ylim = lim, xaxt = "n", xlab = "Día del año",
+            ylab = "Precipitación (mm/día)", main = sprintf("%d · %s", a, fases[which(k)[1]]), cex.axis = .75, cex.lab = .8)
+    axis(1, at = c(1, 91, 182, 274, 365), labels = c("ene", "abr", "jul", "oct", "dic"), cex.axis = .75)
+    lines(T_DIA, colMeans(M[k, , drop = FALSE]), lwd = 2); lines(T_DIA, apply(M[k, , drop = FALSE], 2, sd), lwd = 1.5, lty = 2)
+  }
+  plot.new(); legend("center", c(cada, "Promedio", "Desviación estándar"), col = c("grey70", "black", "black"),
+                     lty = c(1, 1, 2), lwd = c(1, 2, 1.5), bty = "n", cex = 1)
+  mtext(titulo_fig, outer = TRUE, cex = 1.1, font = 2)
+}
+grafico_base("F3_por_anio_estaciones", function() por_anio(Ye, id_e$anio, id_e$fase, "Cada estación",
+             "Datos funcionales de las estaciones: promedio y desviación estándar por año, 1981–2003"), ancho = 11, alto = 15)
+grafico_base("F3_por_anio_satelite", function() por_anio(Xs, id_s$anio, id_s$fase, "Cada píxel del Valle",
+             "Datos funcionales del satélite: promedio y desviación estándar por año, 1981–2003"), ancho = 11, alto = 15)
+resumen_anio <- oni[data.table(anio = ANIOS, estaciones = sapply(ANIOS, function(a) sum(id_e$anio == a)),
+                               P_estaciones = sapply(ANIOS, function(a) round(mean(Ye[id_e$anio == a, ]) * 365)),
+                               P_satelite = sapply(ANIOS, function(a) round(mean(Xs[id_s$anio == a, ]) * 365)),
+                               DE_estaciones = sapply(ANIOS, function(a) round(mean(apply(Ye[id_e$anio == a, , drop = FALSE], 2, sd)), 2)),
+                               DE_satelite = sapply(ANIOS, function(a) round(mean(apply(Xs[id_s$anio == a, , drop = FALSE], 2, sd)), 2))), on = "anio"]
+print(tabla_f(resumen_anio, "F3_por_anio_resumen"))
+cat(sprintf("Lluvia anual media vs ONI (23 años): estaciones r = %.2f | satélite r = %.2f\n",
+            cor(resumen_anio$P_estaciones, resumen_anio$ONI_anual), cor(resumen_anio$P_satelite, resumen_anio$ONI_anual)))
 # Orden de los grupos fijo (niveles del factor u orden "radix", que no depende del locale):
 # así las tablas salen con las mismas filas en cualquier máquina.
 niveles_de <- function(g) if (is.factor(g)) levels(droplevels(g)) else sort(unique(g[!is.na(g)]), method = "radix")

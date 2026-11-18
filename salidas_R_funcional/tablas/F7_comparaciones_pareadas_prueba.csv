@@ -1,43 +1,43 @@
 comparacion,metrica,media_a,media_b,diferencia,ic_inf,ic_sup,p_wilcoxon,ic_excluye_0,gana
-kan − lineal,l2_rel,0.434,0.44,-0.0063,-0.0282,0.016,0.66,FALSE,ninguna (IC con 0)
-kan − lineal,rmse,2.093,2.187,-0.0947,-0.2479,0.0283,0.61,FALSE,ninguna (IC con 0)
-kan − lineal,kge,0.471,0.454,0.0163,-0.0144,0.0473,0.79,FALSE,ninguna (IC con 0)
-kan − lineal,|sesgo_pct|,23.066,27.082,-4.0154,-7.648,-0.5275,0.051,TRUE,kan
-kan − lineal,err_pico_1,19.494,19.109,0.3848,-0.6126,1.1383,1.8e-07,FALSE,ninguna (IC con 0)
-kan − lineal,err_pico_2,19.141,17.125,2.0158,1.2372,2.8346,1.1e-13,TRUE,lineal
-mlp − lineal,l2_rel,0.42,0.44,-0.0201,-0.0396,-0.0016,0.048,TRUE,mlp
-mlp − lineal,rmse,1.973,2.187,-0.2142,-0.4371,-0.0352,0.13,TRUE,mlp
-mlp − lineal,kge,0.485,0.454,0.0301,0.0031,0.0577,0.066,TRUE,mlp
-mlp − lineal,|sesgo_pct|,24.889,27.082,-2.1928,-5.4561,1.474,0.066,FALSE,ninguna (IC con 0)
-mlp − lineal,err_pico_1,19.816,19.109,0.7068,0.1642,1.1688,4.8e-07,TRUE,lineal
-mlp − lineal,err_pico_2,17.386,17.125,0.2603,-0.217,0.8229,0.84,FALSE,ninguna (IC con 0)
-kan − mlp,l2_rel,0.434,0.42,0.0138,-3e-04,0.0261,1.1e-06,FALSE,ninguna (IC con 0)
-kan − mlp,rmse,2.093,1.973,0.1196,0.0267,0.2587,6.1e-06,TRUE,mlp
-kan − mlp,kge,0.471,0.485,-0.0138,-0.0318,0.005,2e-04,FALSE,ninguna (IC con 0)
-kan − mlp,|sesgo_pct|,23.066,24.889,-1.8226,-3.8546,0.0973,0.31,FALSE,ninguna (IC con 0)
-kan − mlp,err_pico_1,19.494,19.816,-0.322,-0.935,0.1943,0.71,FALSE,ninguna (IC con 0)
-kan − mlp,err_pico_2,19.141,17.386,1.7555,0.6888,2.708,1.1e-11,TRUE,mlp
-lineal − regresión (R),l2_rel,0.44,0.437,0.0037,-0.005,0.0124,0.1,FALSE,ninguna (IC con 0)
-lineal − regresión (R),rmse,2.187,2.18,0.007,-0.0271,0.0423,0.088,FALSE,ninguna (IC con 0)
-lineal − regresión (R),kge,0.454,0.467,-0.013,-0.0235,-0.0022,0.04,TRUE,regresión (R)
-lineal − regresión (R),|sesgo_pct|,27.082,25.045,2.0363,0.9468,3.1535,0.0096,TRUE,regresión (R)
-lineal − regresión (R),err_pico_1,19.109,18.054,1.0556,0.6131,1.4981,8e-06,TRUE,regresión (R)
-lineal − regresión (R),err_pico_2,17.125,17.431,-0.3054,-0.6591,0.0418,0.14,FALSE,ninguna (IC con 0)
-lineal − satélite sin corregir,l2_rel,0.44,0.513,-0.073,-0.0923,-0.0538,9.3e-10,TRUE,lineal
-lineal − satélite sin corregir,rmse,2.187,2.423,-0.2359,-0.3069,-0.1667,3e-08,TRUE,lineal
-lineal − satélite sin corregir,kge,0.454,0.382,0.0723,0.0486,0.0961,1.4e-05,TRUE,lineal
-lineal − satélite sin corregir,|sesgo_pct|,27.082,37.791,-10.7096,-13.3007,-8.1995,1.9e-11,TRUE,lineal
-lineal − satélite sin corregir,err_pico_1,19.109,23.073,-3.9639,-5.0871,-2.8475,5.9e-11,TRUE,lineal
-lineal − satélite sin corregir,err_pico_2,17.125,18.024,-0.899,-1.6517,-0.1841,0.045,TRUE,lineal
-kan − satélite sin corregir,l2_rel,0.434,0.513,-0.0793,-0.1135,-0.0438,0.00059,TRUE,kan
-kan − satélite sin corregir,rmse,2.093,2.423,-0.3306,-0.5049,-0.1745,0.0015,TRUE,kan
-kan − satélite sin corregir,kge,0.471,0.382,0.0885,0.0463,0.1329,0.0026,TRUE,kan
-kan − satélite sin corregir,|sesgo_pct|,23.066,37.791,-14.725,-19.3773,-10.3383,1.5e-07,TRUE,kan
-kan − satélite sin corregir,err_pico_1,19.494,23.073,-3.5791,-4.633,-2.62,1.6e-10,TRUE,kan
-kan − satélite sin corregir,err_pico_2,19.141,18.024,1.1168,0.1808,2.0933,0.0029,TRUE,satélite sin corregir
-mlp − satélite sin corregir,l2_rel,0.42,0.513,-0.0931,-0.1244,-0.0626,1e-06,TRUE,mlp
-mlp − satélite sin corregir,rmse,1.973,2.423,-0.4502,-0.7002,-0.2543,5.2e-06,TRUE,mlp
-mlp − satélite sin corregir,kge,0.485,0.382,0.1023,0.0632,0.1417,5.1e-05,TRUE,mlp
-mlp − satélite sin corregir,|sesgo_pct|,24.889,37.791,-12.9024,-17.6057,-8.3685,2.1e-06,TRUE,mlp
-mlp − satélite sin corregir,err_pico_1,19.816,23.073,-3.2571,-4.2257,-2.3109,3.8e-10,TRUE,mlp
-mlp − satélite sin corregir,err_pico_2,17.386,18.024,-0.6387,-1.4839,0.1977,0.14,FALSE,ninguna (IC con 0)
+kan − lineal,l2_rel,0.436,0.441,-0.0047,-0.0263,0.0173,0.58,FALSE,ninguna (IC con 0)
+kan − lineal,rmse,2.102,2.188,-0.0861,-0.2333,0.0319,0.58,FALSE,ninguna (IC con 0)
+kan − lineal,kge,0.469,0.454,0.0154,-0.0149,0.0459,0.77,FALSE,ninguna (IC con 0)
+kan − lineal,|sesgo_pct|,23.331,27.078,-3.747,-7.256,-0.3303,0.057,TRUE,kan
+kan − lineal,err_pico_1,19.543,19.128,0.4152,-0.6052,1.1614,7.9e-08,FALSE,ninguna (IC con 0)
+kan − lineal,err_pico_2,19.046,17.12,1.9258,1.1669,2.72,4.5e-13,TRUE,lineal
+mlp − lineal,l2_rel,0.42,0.441,-0.0206,-0.0401,-0.0015,0.038,TRUE,mlp
+mlp − lineal,rmse,1.972,2.188,-0.2164,-0.4382,-0.037,0.13,TRUE,mlp
+mlp − lineal,kge,0.486,0.454,0.032,0.0052,0.0594,0.055,TRUE,mlp
+mlp − lineal,|sesgo_pct|,24.789,27.078,-2.2891,-5.6278,1.4368,0.061,FALSE,ninguna (IC con 0)
+mlp − lineal,err_pico_1,19.793,19.128,0.665,0.1008,1.1404,9.8e-07,TRUE,lineal
+mlp − lineal,err_pico_2,17.393,17.12,0.2729,-0.1928,0.82,0.83,FALSE,ninguna (IC con 0)
+kan − mlp,l2_rel,0.436,0.42,0.0159,0.0019,0.0277,4e-07,TRUE,mlp
+kan − mlp,rmse,2.102,1.972,0.1303,0.0343,0.2734,3.5e-06,TRUE,mlp
+kan − mlp,kge,0.469,0.486,-0.0166,-0.0335,0.0014,4.5e-05,FALSE,ninguna (IC con 0)
+kan − mlp,|sesgo_pct|,23.331,24.789,-1.4579,-3.4316,0.4129,0.49,FALSE,ninguna (IC con 0)
+kan − mlp,err_pico_1,19.543,19.793,-0.2498,-0.8488,0.2519,0.43,FALSE,ninguna (IC con 0)
+kan − mlp,err_pico_2,19.046,17.393,1.6529,0.5802,2.6137,5.9e-11,TRUE,mlp
+lineal − regresión (R),l2_rel,0.441,0.437,0.0037,-0.005,0.0124,0.13,FALSE,ninguna (IC con 0)
+lineal − regresión (R),rmse,2.188,2.181,0.0073,-0.0267,0.0427,0.1,FALSE,ninguna (IC con 0)
+lineal − regresión (R),kge,0.454,0.467,-0.0133,-0.0238,-0.0025,0.032,TRUE,regresión (R)
+lineal − regresión (R),|sesgo_pct|,27.078,25.031,2.047,0.9628,3.1594,0.0074,TRUE,regresión (R)
+lineal − regresión (R),err_pico_1,19.128,18.054,1.0742,0.626,1.5308,7.3e-06,TRUE,regresión (R)
+lineal − regresión (R),err_pico_2,17.12,17.429,-0.3094,-0.6683,0.0398,0.15,FALSE,ninguna (IC con 0)
+lineal − satélite sin corregir,l2_rel,0.441,0.513,-0.0728,-0.092,-0.0535,1e-09,TRUE,lineal
+lineal − satélite sin corregir,rmse,2.188,2.423,-0.2353,-0.3058,-0.166,3e-08,TRUE,lineal
+lineal − satélite sin corregir,kge,0.454,0.382,0.0716,0.048,0.0955,1.8e-05,TRUE,lineal
+lineal − satélite sin corregir,|sesgo_pct|,27.078,37.791,-10.7127,-13.2725,-8.232,1.6e-11,TRUE,lineal
+lineal − satélite sin corregir,err_pico_1,19.128,23.073,-3.9453,-5.0569,-2.8215,7.9e-11,TRUE,lineal
+lineal − satélite sin corregir,err_pico_2,17.12,18.024,-0.9043,-1.6563,-0.1833,0.044,TRUE,lineal
+kan − satélite sin corregir,l2_rel,0.436,0.513,-0.0775,-0.1112,-0.0425,0.00062,TRUE,kan
+kan − satélite sin corregir,rmse,2.102,2.423,-0.3214,-0.489,-0.1719,0.0012,TRUE,kan
+kan − satélite sin corregir,kge,0.469,0.382,0.087,0.0451,0.1305,0.0023,TRUE,kan
+kan − satélite sin corregir,|sesgo_pct|,23.331,37.791,-14.4597,-18.9692,-10.2176,1.1e-07,TRUE,kan
+kan − satélite sin corregir,err_pico_1,19.543,23.073,-3.53,-4.5658,-2.5742,2.9e-10,TRUE,kan
+kan − satélite sin corregir,err_pico_2,19.046,18.024,1.0215,0.0669,1.9883,0.0058,TRUE,satélite sin corregir
+mlp − satélite sin corregir,l2_rel,0.42,0.513,-0.0933,-0.1245,-0.0628,7.7e-07,TRUE,mlp
+mlp − satélite sin corregir,rmse,1.972,2.423,-0.4516,-0.7028,-0.2566,4.8e-06,TRUE,mlp
+mlp − satélite sin corregir,kge,0.486,0.382,0.1036,0.0649,0.1428,4.1e-05,TRUE,mlp
+mlp − satélite sin corregir,|sesgo_pct|,24.789,37.791,-13.0018,-17.7625,-8.4531,1.3e-06,TRUE,mlp
+mlp − satélite sin corregir,err_pico_1,19.793,23.073,-3.2802,-4.2495,-2.3329,3.7e-10,TRUE,mlp
+mlp − satélite sin corregir,err_pico_2,17.393,18.024,-0.6314,-1.4758,0.2037,0.14,FALSE,ninguna (IC con 0)

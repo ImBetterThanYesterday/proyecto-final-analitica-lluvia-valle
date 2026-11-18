@@ -698,6 +698,35 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   - Con ellas, el funcional pasa 16 de 16 pruebas y la concurrente 9 de 9.
 - **Fecha y responsable:** 2026-11-17, Gus y Claude.
 
+### D-58 · Documento de datos: nombre de las zonas, gráficas que se quedan y cobertura con nombres ✅ (revisión de Gus)
+- **Problema:** en la revisión de `EXPLICACION_DATOS.docx` no quedaba claro qué era "Cauca (interandina)" frente a "Pacífico". Se leía como si hubiera dos departamentos, aunque todo es el Valle. Además había gráficas sin un propósito claro (preferencia de dígitos), el mapa de cobertura no tenía los nombres de las estaciones, y faltaba contexto para leer las gráficas.
+- **Decisión:**
+  - **Nombres de las zonas en las gráficas de datos:** "Zona andina (valle del río Cauca)" y "Zona pacífica (hacia el océano)". El valor interno de la variable `vertiente` no cambia, porque la parte funcional compara con "Pacífico".
+  - **Mapa de la sección 1:** pinta el fondo con la zona de la estación más cercana, la regla verificada en la parte funcional (97,7 % de acierto dejando cada estación fuera), y agrega seis ciudades de referencia.
+  - **Mapa de cobertura con cuatro niveles** en lugar de una escala continua, separado por zona y con los nombres de los conjuntos encima.
+  - **Gráfica nueva `3_curvas_validas_parte1/2`:** las 176 estaciones incluidas, con nombre y código, en 1981–2003, con el estado de cada curva. Hay 3 299 válidas (2 257 / 672 / 370), 376 años con datos insuficientes y 373 sin datos.
+  - **Preferencia de dígitos:** pasa de gráfica a tabla (`2_ultimo_digito.csv`); la conclusión se mantiene en el texto.
+  - **`EXPLICACION_DATOS`:** se reescribe con una sección 0 de contexto (objetivo, fuentes, partición y las dos zonas, con los datos de por qué se distinguen). Cada gráfica lleva "Para qué está / Cómo se lee / Qué muestra / Qué decidimos". 12 gráficas de respaldo pasan al anexo A, y el anexo B ordena las de la presentación.
+- **Hallazgo pendiente:** El Alcázar (Zarzal, `2614500102`) tiene una altitud de 17 m (fuente: CNE), pero el terreno SRTM en su coordenada da 977 m, y en la zona andina nada está tan bajo. No quedó marcada "a revisar" aunque la diferencia pasa de 300 m. Como la altitud entra al modelo, corregirla obliga a volver a correr la parte funcional.
+- **Verificación:** `lluvia_valle_datos.R` pasa sus 27 pruebas. Las tablas y los `.rds` no cambian, salvo en el último decimal. `lluvia_valle.R` recibe los mismos cambios.
+- **Fecha y responsable:** 2026-11-18, Gus y Claude.
+
+### D-59 · Altitud imposible de El Alcázar y figuras por año como en la tesis del profesor ✅
+- **Altitud (resuelve el pendiente de D-58).** El catálogo oficial del IDEAM (CNE 0026100400) da 17 m para El Alcázar (Zarzal, `2614500102`). El terreno SRTM en su coordenada da 977 m, y El Medio, la estación oficial más cercana (3 km), está a 952 m.
+  - **Regla:** en la cuenca del Cauca (código 26), una altitud oficial más de 300 m por debajo del piso de la cuenca se reemplaza por el terreno en la coordenada. El piso es el mínimo SRTM de sus estaciones, 904 m. Los 300 m son la tolerancia de D-35.
+  - Es la lógica de R0: un valor imposible no se usa. Solo afecta a El Alcázar (977 m). Hay una prueba nueva, y el archivo de datos pasa 28 de 28.
+  - No se aplica una regla más amplia por vecinas: en la montaña marcaría estaciones en las que no se sabe si falla la altitud o la coordenada (D-35).
+- **Efecto:** M = 6 y λ = 3,2e8 no cambian. En prueba, el sesgo de la regresión pasa de +7,2 % a +7,3 % y las demás métricas no cambian en el segundo decimal. En la concurrente B, el KGE pasa de 0,46 a 0,45.
+- **Red:** se volvió a entrenar en un Mac Intel (CPU, Python 3.12, torch 2.2.2, numpy 1.26), porque las predicciones anteriores ya no coincidían con la regresión de R. En prueba, L² relativo: lineal 0,441, KAN 0,436 y MLP 0,420 (antes 0,440, 0,434 y 0,420). La evaluación pasa 5 de 5.
+- **Figuras por año, como en la tesis del profesor** (en R base y en blanco y negro, con la fase ENSO en el título):
+  - **`12_acumulada_por_anio`** (tesis, figs. 5.8 y 5.12): el satélite da el 92 % de lo que miden las estaciones en años Niña, el 120 % en años Niño y el 108 % en neutros. La correlación con el ONI es 0,76.
+  - **`12_correlacion_por_anio`** (tesis, cap. 5): la correlación estación–satélite va de 0,39 a 0,58 y casi no depende del ENSO. El satélite sigue el ritmo, pero no la cantidad.
+  - **`F3_por_anio_estaciones` y `F3_por_anio_satelite`** (tesis, figs. 6.2 y 6.3): la lluvia anual de las estaciones tiene r = −0,62 con el ONI; la del satélite, +0,47.
+  - **`C7_b1_por_anio`** (tesis, fig. 9.2): el concurrente ajustado en cada año, descriptivo. El b₁ medio tiene r = −0,44 con el ONI (p = 0,036): el satélite "aporta más" en La Niña, como concluye la tesis. El R² no depende del ONI. Una prueba nueva lo compara con `lm()`, y la concurrente pasa 10 de 10.
+- **Qué metodologías suyas se adoptan y cuáles no:** tabla en la sección 9 de `docs/BASE_CONOCIMIENTO_PROFESOR.md`.
+- **ENSO y ONI:** se explican en la sección 0.4 de `EXPLICACION_DATOS`.
+- **Fecha y responsable:** 2026-11-18, Gus y Claude.
+
 ---
 
 ## Plantilla para nuevas decisiones

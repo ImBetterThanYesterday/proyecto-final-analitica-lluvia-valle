@@ -136,7 +136,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Partición 1981–1995 / 1996–2000 / 2001–2003 sin fuga | ✅ | Datos preparados; prueba de no fuga del funcional (prueba 9) |
 | Estaciones reservadas | 🟡 | El profesor dijo que ya no van (P-10), pero la fe de erratas aún pide el CSV `station_id, year, day, value_mm`. **Confirmar con él** |
 | Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `F7_ablacion_media_DE_semillas.csv` (tres cabezas) |
-| Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420 |
+| Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,441, KAN 0,436, MLP 0,420 |
 | IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
 | Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 cerrada (D-56): ONI anual = media de los 12 trimestres |
 
@@ -215,7 +215,7 @@ Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `
 - **Por qué no se quitan años del satélite:** lo pidió el profesor (D-47); quitarlos solo se mide como sensibilidad (sección 5.6).
 - **Que no hay fuga de prueba:** la prueba 9 reemplaza validación y prueba por ruido y todo lo ajustado sale idéntico.
 - **La cabeza lineal es la regresión funcional:** demostración escrita y verificada (1,5e-14); la red cargada con los coeficientes de R da sus predicciones.
-- **La ventaja de KAN y MLP es pequeña** (L² 0,434 y 0,420 frente a 0,440) **y depende de la fase ENSO:** ayudan en años Niño, estorban en años Niña; la prueba no tiene años Niña (D-54).
+- **La ventaja de KAN y MLP es pequeña** (L² 0,436 y 0,420 frente a 0,441) **y depende de la fase ENSO:** ayudan en años Niño, estorban en años Niña; la prueba no tiene años Niña (D-54).
 - **Las neuronas sueltas de la cabeza lineal no se interpretan** (se pueden rotar); lo estable es β(s,t), correlación 0,98–0,99 entre semillas (D-55).
 - **La corrección satura** (activaciones tanh) y **la altitud es la entrada más no lineal** (D-55).
 - **Los peores casos son de representatividad del píxel**, no del modelo: estaciones secas del fondo del valle del Cauca y del Dagua (D-55).

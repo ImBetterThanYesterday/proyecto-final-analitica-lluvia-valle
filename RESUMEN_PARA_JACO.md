@@ -23,7 +23,7 @@ Pruebas automáticas: 27 (datos) + 13 (funcional) + 5 (red en R) + 13 (Python), 
 
 ## 2. Resultados clave (para el informe y la sustentación)
 
-- **Prueba 2001-2003, L² relativo:** satélite sin corregir 0,513 → regresión 0,437 → red lineal 0,440, KAN 0,434, MLP 0,420. Sesgo anual del satélite +26 % → +7 % a +10 %.
+- **Prueba 2001-2003, L² relativo:** satélite sin corregir 0,513 → regresión 0,437 → red lineal 0,441, KAN 0,436, MLP 0,420. Sesgo anual del satélite +26 % → +7 % a +10 %.
 - **La regresión es el método de clase:** frente a la versión del taller y a `fda.usc::fregre.basis.fr` da el mismo error y mejor KGE (D-53).
 - **KAN y MLP ganan poco y depende del ENSO:** mejores en años Niño (1997, 2002), peores en años Niña (1999-2000). La prueba no tiene años Niña.
 - **Qué aprendió la red:** KAN y MLP contrastan las dos temporadas de lluvia; la corrección satura cuando el satélite marca mucha lluvia; la altitud es la entrada más no lineal.

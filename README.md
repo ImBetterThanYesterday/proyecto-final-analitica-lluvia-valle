@@ -20,7 +20,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 | `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `cabeza_lineal_pesos.csv`, `kan_activaciones_capa1.csv`, `kan_importancia_aristas.csv`, `modelos/`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
 | `BITACORA_CAMBIOS.md` | **Qué cambió en cada sesión y por qué**, para ponerse al día. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
-| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-57), con su justificación, y preguntas para el profesor. |
+| `DECISIONES.md` | Bitácora de decisiones (D-01 a D-59), con su justificación, y preguntas para el profesor. |
 | `EXPLICACION_FUNCIONAL.md` y `.docx` | Qué sale de la parte funcional (construcción, EDA, comparación y regresiones) y cómo se interpreta. |
 | `docs/BASE_CONOCIMIENTO_PROFESOR.md` | Cómo trabaja y presenta el profesor (su tesis, las clases y los videos) y qué se aplicó al proyecto (D-57). |
 | `CONTEXTO_EDA.md` | Resumen para retomar el trabajo, también con Claude Code. |
@@ -76,7 +76,7 @@ El detalle criterio por criterio está en `CONTROL_RUBRICA.md`.
 | 8. EDA funcional de cada fuente (media, varianza, profundidad, boxplot, ENSO) | ✅ sección 3 |
 | 8b. Comparación funcional estación vs. satélite (d(t), correlación cruzada, covarianzas, altitud, ENSO) | ✅ sección 4, con todos los años |
 | 9. Regresión funcional función a función | ✅ sección 5: FPCA M = 6, λ por validación; en prueba baja el error L² relativo de 0,51 a 0,44 frente al satélite (D-48) |
-| 9b. Red funcional (cabezas lineal, KAN y MLP) y ablación | ✅ `lluvia_valle_red.py` (D-52): la lineal reproduce a R; en prueba L² relativo 0,440 / 0,434 / 0,420 (lineal / KAN / MLP) frente a 0,513 del satélite |
+| 9b. Red funcional (cabezas lineal, KAN y MLP) y ablación | ✅ `lluvia_valle_red.py` (D-52): la lineal reproduce a R; en prueba L² relativo 0,441 / 0,436 / 0,420 (lineal / KAN / MLP) frente a 0,513 del satélite |
 | 9c. Evaluación por fase ENSO e interpretación (w_k, activaciones KAN, ajuste simbólico, peores casos) | ✅ secciones 7 y 8 del funcional (D-54, D-55) |
 | Años 1985, 1988 y 2000 del satélite | ✅ entran al modelo, por indicación del profesor y verificado con datos (D-47, D-48) |
 | 10. Entrega: un archivo R, un archivo Python, el informe y el anexo de IA | ⏳ |

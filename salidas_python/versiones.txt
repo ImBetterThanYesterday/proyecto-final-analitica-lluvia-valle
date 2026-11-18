@@ -1,2 +1,2 @@
-python 3.13.18 | Linux-6.18.44-fc-v470-x86_64-with-glibc2.39
-numpy 2.5.3 | pandas 3.0.5 | torch 2.15.0+cu132
+python 3.12.3 | macOS-26.5.2-x86_64-i386-64bit
+numpy 1.26.4 | pandas 3.0.6 | torch 2.2.2

@@ -114,12 +114,17 @@ SALIDA <- "salidas_R_datos"
 dir.create(file.path(SALIDA, "tablas"), showWarnings = FALSE, recursive = TRUE)
 dir.create(file.path(SALIDA, "graficos"), showWarnings = FALSE, recursive = TRUE)
 tabla   <- function(x, nombre) { fwrite(x, file.path(SALIDA, "tablas", paste0(nombre, ".csv"))); invisible(x) }
-grafico <- function(p, nombre, ancho = 9, alto = 5) {
-  ggsave(file.path(SALIDA, "graficos", paste0(nombre, ".png")), p, width = ancho, height = alto, dpi = 110, bg = "white")
+grafico <- function(p, nombre, ancho = 9, alto = 5, dpi = 110) {
+  ggsave(file.path(SALIDA, "graficos", paste0(nombre, ".png")), p, width = ancho, height = alto, dpi = dpi, bg = "white")
   if (interactive()) print(p)
   invisible(p)
 }
 titulo <- function(x) cat("\n", strrep("=", 78), "\n", x, "\n", strrep("=", 78), "\n", sep = "")
+# Gráficas con R base, en el estilo de la tesis del profesor (paneles por año, blanco y negro)
+grafico_r <- function(nombre, dibujar, ancho = 11, alto = 15) {
+  png(file.path(SALIDA, "graficos", paste0(nombre, ".png")), width = ancho, height = alto, units = "in", res = 110)
+  on.exit(dev.off()); dibujar(); invisible(NULL)
+}
 
 dist_km <- function(lat1, lon1, lat2, lon2) {   # distancia de gran círculo
   r <- pi / 180
@@ -156,6 +161,18 @@ finales <- finales[, .(codigo, nombre, municipio, lat, lon, altitud = alt, nivel
 # (CNE 0026055120, 996 m, a 1,6 km). El SRTM en su coordenada da 977 m: 19 m de
 # diferencia, dentro del error típico del SRTM en Cali (mediana 15 m). D-46.
 finales[codigo == "2622320201", `:=`(altitud = 996, fuente_alt = "CNE IDEAM: estación 0026055120 del mismo campus (D-46)")]
+# Altitud imposible → terreno (D-59). En la cuenca del Cauca (código 26) ningún terreno de
+# estación baja de PISO_CAUCA, el mínimo del SRTM en las estaciones de esa cuenca (904 m). Con la
+# misma tolerancia de 300 m del control de coordenadas (D-35), una altitud oficial por debajo de
+# PISO_CAUCA − 300 no puede ser real: es un error de la fuente, como un valor de lluvia imposible
+# (R0). Solo cae El Alcázar (Zarzal): el CNE del IDEAM (0026100400) le da 17 m, el terreno en su
+# coordenada está a 977 m y El Medio Hda., la estación oficial más cercana (3 km), a 952 m.
+PISO_CAUCA <- finales[substr(codigo, 1, 2) == "26", min(srtm, na.rm = TRUE)]
+alt_imposible <- finales[substr(codigo, 1, 2) == "26" & !is.na(altitud) & altitud < PISO_CAUCA - 300,
+                         .(codigo, nombre, altitud_oficial = altitud, srtm)]
+cat("Piso de la cuenca del Cauca (mínimo SRTM en sus estaciones):", PISO_CAUCA, "m. Altitudes imposibles:\n"); print(alt_imposible)
+finales[alt_imposible, on = "codigo", `:=`(altitud = i.srtm,
+        fuente_alt = sprintf("SRTM en la coordenada: la oficial (%g m) es imposible en la cuenca del Cauca (D-59)", i.altitud_oficial))]
 
 est <- merge(merge(cobertura_cruda, inventario, by = "codigo", all.x = TRUE), finales, by = "codigo", all = TRUE)
 est[is.na(dias_con_dato), `:=`(dias_con_dato = 0L, anios_con_dato = 0L)]
@@ -184,17 +201,43 @@ stopifnot(est[grupo == "Valle del Cauca", all(depto_geo == "Valle del Cauca")])
 
 valle <- est[grupo == "Valle del Cauca" & dias_con_dato > 0]
 valle[, vertiente := fifelse(substr(codigo, 1, 2) == "26", "Cauca (interandina)", "Pacífico")]
+# Nombre de cada zona en las gráficas. Las dos zonas están DENTRO del Valle del Cauca:
+# "Cauca" es el río, no el departamento. El valor interno no cambia porque lo usan las
+# partes funcionales (comparan con "Pacífico").
+ETQ_VERT <- c("Cauca (interandina)" = "Zona andina (valle del río Cauca)", "Pacífico" = "Zona pacífica (hacia el océano)")
+COL_VERT <- setNames(c("#B8860B", "#1F78B4"), ETQ_VERT)
 cat("Valle con datos en 1981–2003:", nrow(valle), "de 232 | sin altitud:", valle[is.na(altitud), .N],
     "| coordenada a revisar:", valle[revisar != "", .N], "| a ≤2 km de otro departamento:", valle[km_borde <= 2, .N], "\n")
 print(valle[, .N, by = .(nivel_c, vertiente)])
 
-grafico(ggplot(est[grupo == "Valle del Cauca"], aes(lon, lat, colour = dias_con_dato > 0)) +
-          geom_sf(data = deptos[deptos$shapeName == "Valle del Cauca", ], inherit.aes = FALSE, fill = NA, colour = "grey50") +
-          geom_point(size = 1.8, alpha = .8) +
-          scale_colour_manual(values = c(`TRUE` = "steelblue", `FALSE` = "orange"),
-                              labels = c(`TRUE` = "con datos 1981–2003", `FALSE` = "sin datos en el periodo"), name = NULL) +
-          labs(title = "Las 232 estaciones del Valle y el polígono DANE", x = NULL, y = NULL),
-        "1_mapa_estaciones", ancho = 7, alto = 7)
+# Mapa de las dos zonas. El fondo pinta cada punto del Valle con la zona de la estación con
+# datos más cercana: la parte funcional verifica esa regla (acierta la zona del 97,7 % de las
+# estaciones dejando cada una fuera; ningún corte en longitud pasa de 89,2 %). Las ciudades
+# son solo referencia, con su coordenada aproximada.
+poli_valle <- deptos[deptos$shapeName == "Valle del Cauca", ]
+rej <- st_make_grid(poli_valle, cellsize = 0.02, what = "centers")
+rej <- st_coordinates(rej[lengths(st_intersects(rej, poli_valle)) > 0])
+cerca <- apply(rej, 1, function(p) which.min(((valle$lon - p[1]) * cos(p[2] * pi / 180))^2 + (valle$lat - p[2])^2))
+fondo <- data.table(lon = rej[, 1], lat = rej[, 2], zona = ETQ_VERT[valle$vertiente[cerca]])
+ciudades <- data.table(ciudad = c("Buenaventura", "Cali", "Palmira", "Buga", "Tuluá", "Cartago"),
+                       lon = c(-77.03, -76.53, -76.30, -76.30, -76.20, -75.91),
+                       lat = c(3.88, 3.45, 3.54, 3.90, 4.08, 4.75))
+print(valle[, .(estaciones_con_datos = .N), by = .(zona = ETQ_VERT[vertiente])])
+grafico(ggplot() +
+          geom_tile(data = fondo, aes(lon, lat, fill = zona), width = .02, height = .02, alpha = .35) +
+          geom_sf(data = poli_valle, inherit.aes = FALSE, fill = NA, colour = "grey30") +
+          geom_point(data = est[grupo == "Valle del Cauca"], aes(lon, lat, shape = dias_con_dato > 0), size = 1.5) +
+          geom_point(data = ciudades, aes(lon, lat), shape = 23, size = 3, fill = "red", colour = "black") +
+          geom_text(data = ciudades, aes(lon, lat, label = ciudad), size = 3.6, fontface = "bold", nudge_y = .08) +
+          scale_fill_manual(values = COL_VERT, name = NULL) +
+          scale_shape_manual(values = c(`TRUE` = 16, `FALSE` = 1), name = NULL,
+                             labels = c(`TRUE` = "estación con datos en 1981–2003 (220)", `FALSE` = "estación sin datos en el periodo (12)")) +
+          guides(fill = guide_legend(override.aes = list(alpha = .6))) +
+          labs(title = "Las dos zonas del Valle del Cauca y sus 232 estaciones",
+               subtitle = "Ambas zonas están dentro del departamento; las separa la Cordillera Occidental.\nRombos rojos: ciudades de referencia.",
+               x = NULL, y = NULL) +
+          theme(legend.position = "bottom", legend.box = "vertical"),
+        "1_mapa_estaciones", ancho = 7, alto = 8.5)
 
 # Matriz de distancias entre las estaciones del Valle con datos
 DK <- outer(seq_len(nrow(valle)), seq_len(nrow(valle)),
@@ -250,10 +293,11 @@ decimales <- d[P > 0, .(pct_decimales = round(100 * mean(P != round(P)), 1), dia
                by = .(tipo = substr(codigo, 7, 8))]
 print(tabla(decimales, "2_decimales_por_tipo"))
 
-grafico(ggplot(d[P > 0 & P == round(P)], aes(factor(P %% 10))) + geom_bar() +
-          labs(x = "Último dígito del valor (mm, lluvia > 0)", y = "Días",
-               title = "Preferencia de dígitos (si la lectura fuera exacta, los 10 dígitos serían parecidos)"),
-        "2_preferencia_digitos")
+# Redondeo de los observadores: cuántos días con lluvia (en mm enteros) terminan en cada
+# dígito. El 5 y el 0 sobresalen frente a sus vecinos. No cambia la curva anual, así que
+# queda solo como tabla de respaldo.
+digitos <- d[P > 0 & P == round(P), .(dias = .N), by = .(ultimo_digito = P %% 10)][order(ultimo_digito)]
+print(tabla(digitos, "2_ultimo_digito"))
 
 # QUÉ DICEN LOS DATOS (H2)
 #   Un faltante es una FILA AUSENTE: no hay NA, negativos ni duplicados, y no
@@ -289,14 +333,23 @@ cob[, pct := 100 * obs / 365]
 cob <- valle[, .(codigo, nombre, vertiente)][cob, on = "codigo"]
 tabla(cob, "3_cobertura_estacion_anio")
 
+# Cuatro niveles en vez de una escala continua: así se ve de inmediato qué años sirven.
+NIV_COB <- c("completo (100 %)", "casi completo (90–99 %)", "incompleto (menos de 90 %)", "sin datos: no operaba")
+cob[, nivel := factor(fcase(pct == 0, NIV_COB[4], pct < 90, NIV_COB[3], pct < 100, NIV_COB[2], default = NIV_COB[1]), levels = NIV_COB)]
+print(cob[, .N, by = nivel][, pct := round(100 * N / sum(N), 1)][order(nivel)])
+EJE_PARTICION <- scale_x_continuous(breaks = c(1981, 1985, 1990, 1995, 2000, 2003), expand = c(0, 0),
+                                    sec.axis = dup_axis(breaks = c(1988, 1998, 2002), name = NULL,
+                                                        labels = c("ENTRENAMIENTO\n1981–1995", "VALIDACIÓN\n1996–2000", "PRUEBA\n2001–2003")))
 orden <- cob[, .(m = mean(pct)), by = codigo][order(m), codigo]
-grafico(ggplot(cob, aes(anio, factor(codigo, levels = orden), fill = pct)) + geom_tile() +
-          scale_fill_viridis_c(name = "% días\ncon dato") +
-          geom_vline(xintercept = c(1995.5, 2000.5), colour = "red", linetype = 2) +
-          labs(x = NULL, y = "Estación (ordenada por cobertura)", title = "Cobertura por estación y año",
-               subtitle = "Líneas rojas: entrenamiento 1981–1995 | validación 1996–2000 | prueba 2001–2003") +
-          theme(axis.text.y = element_blank(), panel.grid = element_blank()),
-        "3_cobertura_heatmap", alto = 8)
+grafico(ggplot(cob, aes(anio, factor(codigo, levels = orden), fill = nivel)) + geom_tile() +
+          facet_grid(ETQ_VERT[vertiente] ~ ., scales = "free_y", space = "free_y", labeller = label_wrap_gen(16)) +
+          scale_fill_manual(values = setNames(c("#1A9850", "#A6D96A", "#FDAE61", "grey85"), NIV_COB), name = "Días con dato\nen ese año") +
+          geom_vline(xintercept = c(1995.5, 2000.5), colour = "black", linetype = 2) + EJE_PARTICION +
+          labs(x = NULL, y = "Cada fila es una estación (arriba, las que tienen más datos)",
+               title = "¿Qué estaciones tienen datos y en qué años? (las 220 del Valle con datos)",
+               subtitle = "Cada casilla es un año de una estación. El nombre de cada estación incluida está en la figura siguiente.") +
+          theme(axis.text.y = element_blank(), panel.grid = element_blank(), strip.text.y = element_text(angle = 0, face = "bold")),
+        "3_cobertura_heatmap", alto = 8.5)
 grafico(ggplot(cob[pct > 0], aes(pct)) + geom_histogram(binwidth = 2) +
           labs(x = "% de días con dato en el año", y = "Estación-años", title = "La cobertura es bimodal"),
         "3_cobertura_histograma")
@@ -363,10 +416,10 @@ extremos$vecina_max <- mapply(function(cod, f) {
 extremos <- valle[, .(codigo, nombre)][extremos, on = "codigo"]
 print(tabla(extremos, "4_extremos_vs_vecinas"))
 
-grafico(ggplot(valle[, .(codigo, vertiente)][d[P > 0], on = "codigo"], aes(P, colour = vertiente)) +
-          stat_ecdf() + scale_x_log10() +
-          labs(x = "Lluvia diaria (mm, días con lluvia, log)", y = "F(x)", colour = "Vertiente",
-               title = "Distribución de la lluvia diaria por vertiente"),
+grafico(ggplot(valle[, .(codigo, vertiente)][d[P > 0], on = "codigo"], aes(P, colour = ETQ_VERT[vertiente])) +
+          stat_ecdf() + scale_x_log10() + scale_colour_manual(values = COL_VERT) +
+          labs(x = "Lluvia diaria (mm, días con lluvia, log)", y = "Fracción de días con esa lluvia o menos", colour = NULL,
+               title = "Distribución de la lluvia diaria por zona"),
         "4_distribucion_lluvia")
 
 # QUÉ DICEN LOS DATOS (H4)
@@ -416,9 +469,9 @@ rz[, `:=`(ini = a_fecha(ini), fin = a_fecha(fin))]
 rz <- valle[, .(codigo, nombre, vertiente)][rz, on = "codigo"]
 tabla(rz, "5b_rachas_ceros_15d")
 print(rz[, .(rachas = .N, de_30_o_mas = sum(largo >= 30), sin_vecinas = sum(is.na(p_lluvia_vecinas)))])
-grafico(ggplot(rz[!is.na(p_lluvia_vecinas)], aes(largo, p_lluvia_vecinas, colour = vertiente)) +
-          geom_point(alpha = .5) + scale_x_log10() +
-          labs(x = "Largo de la racha de ceros (días, log)", y = "Fracción de días-vecina con lluvia (≤25 km)",
+grafico(ggplot(rz[!is.na(p_lluvia_vecinas)], aes(largo, p_lluvia_vecinas, colour = ETQ_VERT[vertiente])) +
+          geom_point(alpha = .5) + scale_x_log10() + scale_colour_manual(values = COL_VERT) +
+          labs(x = "Largo de la racha de ceros (días, log)", y = "Fracción de días-vecina con lluvia (≤25 km)", colour = NULL,
                title = "Rachas ≥15 días de ceros: ¿las vecinas también estaban secas?"),
         "5b_rachas_ceros")
 
@@ -501,15 +554,22 @@ cat("Lluvia media anual: de", round(min(clim$P_media)), "a", round(max(clim$P_me
 grafico(ggplot(clim, aes(lon, lat, colour = P_media)) + geom_point(size = 2.5) + coord_equal() +
           scale_colour_viridis_c(trans = "log10", name = "mm/año") + labs(title = "Lluvia media anual por estación"),
         "6_mapa_lluvia_anual", ancho = 7, alto = 7)
-grafico(ggplot(clim[!is.na(altitud)], aes(altitud, P_media, colour = vertiente)) + geom_point() +
-          scale_y_log10() + geom_smooth(se = FALSE, method = "loess", formula = y ~ x) +
-          labs(x = "Altitud (m)", y = "mm/año (log)", title = "Lluvia anual vs. altitud"),
+grafico(ggplot(clim[!is.na(altitud)], aes(altitud, P_media, colour = ETQ_VERT[vertiente])) + geom_point() +
+          scale_y_log10() + geom_smooth(se = FALSE, method = "loess", formula = y ~ x) + scale_colour_manual(values = COL_VERT) +
+          labs(x = "Altitud de la estación (m)", y = "Lluvia media anual (mm, escala log)", colour = NULL,
+               title = "La lluvia anual depende de la altitud, y distinto en cada zona",
+               subtitle = "Cada punto es una estación; la línea es la tendencia de su zona") +
+          theme(legend.position = "bottom"),
         "6_lluvia_altitud")
 
 men <- d[buenos, on = .(codigo, anio), nomatch = 0][, .(P = mean(P)), by = .(codigo, mes)]
 men <- valle[, .(codigo, vertiente)][men, on = "codigo"]
-grafico(ggplot(men, aes(factor(mes), P)) + geom_boxplot(outlier.size = .5) + facet_wrap(~vertiente, scales = "free_y") +
-          labs(x = "Mes", y = "mm/día", title = "Ciclo anual: bimodal en la vertiente del Cauca"),
+grafico(ggplot(men, aes(factor(mes), P)) + geom_boxplot(outlier.size = .5, fill = "grey92") +
+          facet_wrap(~vertiente, scales = "free_y", labeller = as_labeller(ETQ_VERT)) +
+          scale_x_discrete(labels = c("E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D")) +
+          labs(x = "Mes", y = "Lluvia media diaria (mm/día)",
+               title = "Ciclo anual por zona: dos temporadas de lluvia en la zona andina",
+               subtitle = "Cada caja resume las estaciones de la zona en ese mes. Ojo: el eje de la zona pacífica llega a más del doble."),
         "6_ciclo_anual")
 
 oni <- fread("datos_web/oni_anual_fase.csv")
@@ -518,7 +578,7 @@ reg[, anom := P_anual / clim$P_media[match(codigo, clim$codigo)] - 1]
 reg <- reg[, .(anom = median(anom)), by = .(vertiente, anio)]
 reg <- oni[reg, on = "anio"]
 print(reg[, .(r_ONI_anomalia = round(cor(ONI_anual, anom), 2)), by = vertiente])
-grafico(ggplot(reg, aes(anio, 100 * anom, fill = fase)) + geom_col() + facet_wrap(~vertiente, ncol = 1) +
+grafico(ggplot(reg, aes(anio, 100 * anom, fill = fase)) + geom_col() + facet_wrap(~vertiente, ncol = 1, labeller = as_labeller(ETQ_VERT)) +
           labs(x = NULL, y = "% respecto a la media de la estación (mediana)", title = "Anomalía anual y fase ENSO"),
         "6_anomalia_anual_ENSO", alto = 6)
 
@@ -534,6 +594,7 @@ vert <- valle$vertiente[match(colnames(M), valle$codigo)]
 pares <- data.table(r = C[ut], km = D[ut], misma_vertiente = outer(vert, vert, "==")[ut])
 print(pares[, .(r_mediana = round(median(r), 2), pares = .N), by = .(rango_km = cut(km, c(0, 10, 20, 40, 80, Inf)))][order(rango_km)])
 grafico(ggplot(pares, aes(km, r, colour = misma_vertiente)) + geom_point(alpha = .15, size = .6) +
+          scale_colour_discrete(labels = c(`FALSE` = "pares de zonas distintas", `TRUE` = "pares de la misma zona"), name = NULL) +
           geom_smooth(se = FALSE, method = "gam", formula = y ~ s(x, bs = "cs")) +
           labs(x = "Distancia (km)", y = "r de anomalías mensuales", title = "Las estaciones cercanas se parecen más"),
         "6_coherencia_distancia")
@@ -787,6 +848,42 @@ grafico(ggplot(valle, aes(lon, lat, colour = codigo %in% estaciones$codigo)) + g
           labs(title = "Estaciones incluidas en el dataset final", x = NULL, y = NULL),
         "8_mapa_incluidas", ancho = 7, alto = 7)
 
+# Qué curvas entran al análisis: las estaciones incluidas × 1981–2003, con el nombre de cada
+# una. Cada casilla es una curva estación-año: el color dice si es válida (R5) y a qué
+# conjunto va. Se parte en dos imágenes para que los nombres se puedan leer.
+ESTADO_CURVA <- c("válida: entrenamiento", "válida: validación", "válida: prueba",
+                  "no válida: menos de 90 % de días o hueco > 15", "sin datos ese año")
+ver <- anios[, .(codigo, anio, n_obs, valido)][CJ(codigo = estaciones$codigo, anio = ANIOS), on = .(codigo, anio)]
+ver[, estado := factor(fcase(valido %in% TRUE, paste("válida:", PARTICION(anio)), !is.na(n_obs) & n_obs > 0, ESTADO_CURVA[4],
+                             default = ESTADO_CURVA[5]), levels = ESTADO_CURVA)]
+ver <- estaciones[, .(codigo, nombre, lat, zona = ETQ_VERT[vertiente])][ver, on = "codigo"]
+ver[, etq := sprintf("%s · %s", tools::toTitleCase(tolower(nombre)), codigo)]
+ver[, zona := factor(zona, levels = rev(ETQ_VERT))]                       # zona pacífica arriba
+orden_v <- unique(ver[order(zona == ETQ_VERT[1], -lat), etq])          # zona pacífica primero, de norte a sur
+n_val <- ver[, .(n = sum(valido %in% TRUE)), by = .(etq, zona)]
+stopifnot(sum(n_val$n) == anios[codigo %in% estaciones$codigo, sum(valido)], !anyDuplicated(orden_v))
+print(ver[, .N, by = estado][order(estado)])
+partes <- split(orden_v, ceiling(seq_along(orden_v) / ceiling(length(orden_v) / 2)))
+for (k in seq_along(partes)) {
+  vk <- ver[etq %in% partes[[k]]]; vk[, etq := factor(etq, levels = rev(partes[[k]]))]
+  grafico(ggplot(vk, aes(anio, etq, fill = estado)) + geom_tile(colour = "white", linewidth = .2) +
+            geom_text(data = n_val[etq %in% partes[[k]]], aes(x = 2004.4, y = etq, label = n), inherit.aes = FALSE, size = 2.3) +
+            facet_grid(zona ~ ., scales = "free_y", space = "free_y", labeller = label_wrap_gen(14)) +
+            scale_fill_manual(values = setNames(c("#2166AC", "#F4A582", "#B2182B", "grey70", "grey95"), ESTADO_CURVA),
+                              name = NULL, drop = FALSE) +
+            geom_vline(xintercept = c(1995.5, 2000.5), colour = "black", linetype = 2) + EJE_PARTICION +
+            coord_cartesian(xlim = c(1980.5, 2005), clip = "off") +
+            labs(x = NULL, y = NULL,
+                 title = sprintf("Curvas que entran al análisis (parte %d de %d)", k, length(partes)),
+                 subtitle = "Cada fila es una estación incluida (nombre · código), de norte a sur.\nNúmero a la derecha: curvas válidas que aporta la estación.") +
+            theme(axis.text.y = element_text(size = 6.2), panel.grid = element_blank(), legend.position = "bottom",
+                  plot.title = element_text(size = 11), plot.subtitle = element_text(size = 8.5), legend.text = element_text(size = 8),
+                  axis.text.x.top = element_text(size = 6.5),
+                  strip.text.y = element_text(angle = 0, face = "bold")) +
+            guides(fill = guide_legend(nrow = 3)),
+          sprintf("3_curvas_validas_parte%d", k), ancho = 6.2, alto = 8.8, dpi = 200)
+}
+
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ┃ RÚBRICA 4.1 / 3 — Satélite: lectura y fuente (insumo de la comparación por fuente)
@@ -1007,7 +1104,7 @@ grafico(ggplot(melt(serie_tope[, .(t, anio, `Estación` = mm_est, `Satélite (su
           geom_hline(yintercept = 200, linetype = 2) +
           geom_point(data = serie_tope[mm_sat == 200], aes(t, mm_sat), inherit.aes = FALSE, colour = "red", size = 1) +
           labs(x = NULL, y = "mm por péntada", colour = NULL,
-               title = paste0("Serie péntada a péntada de ", tope_est$nombre[1], " (", tope_est$vertiente[1], "), 1981–2003"),
+               title = paste0("Serie péntada a péntada de ", tope_est$nombre[1], " (", ETQ_VERT[tope_est$vertiente[1]], "), 1981–2003"),
                subtitle = "Línea punteada: tope de 200 mm del satélite; puntos rojos: péntadas en el tope"),
         "12_serie_tope_200", ancho = 11, alto = 4.5)
 
@@ -1020,13 +1117,14 @@ print(por_est_sat[, .(estaciones = .N, r_mediana = round(median(r), 2), r_p10 = 
                       sesgo_mediano = round(median(sesgo), 2), sobreestima = sum(sesgo > 1.25), subestima = sum(sesgo < 0.8)), by = vertiente])
 cat("r entre el sesgo y la lluvia anual de la estación (log):", round(por_est_sat[, cor(log(sesgo), log(mm_anual_est))], 2), "\n")
 print(por_est_sat[order(r)][1:8, .(codigo, nombre, vertiente, r = round(r, 2), sesgo = round(sesgo, 2), mm_anual_est = round(mm_anual_est), revisar)])
-grafico(ggplot(por_est_sat, aes(mm_anual_est, mm_anual_sat, colour = vertiente)) + geom_point() + geom_abline() +
-          scale_x_log10() + scale_y_log10() +
-          labs(x = "Estación (mm/año, log)", y = "Satélite en su píxel (mm/año, log)",
+grafico(ggplot(por_est_sat, aes(mm_anual_est, mm_anual_sat, colour = ETQ_VERT[vertiente])) + geom_point() + geom_abline() +
+          scale_x_log10() + scale_y_log10() + scale_colour_manual(values = COL_VERT) + theme(legend.position = "bottom") +
+          labs(x = "Lluvia anual medida en la estación (mm/año, log)", y = "Lluvia anual del satélite en su píxel (mm/año, log)", colour = NULL,
+               subtitle = "Cada punto es una estación. Sobre la diagonal, el satélite da más lluvia que la estación; debajo, menos.",
                title = "El satélite aplana: sobreestima donde llueve poco y subestima donde llueve mucho"),
         "12_sesgo_por_estacion")
-grafico(ggplot(por_est_sat, aes(r, fill = vertiente)) + geom_histogram(bins = 30) +
-          labs(x = "r entre satélite y estación (péntadas)", y = "Estaciones", title = "Correlación por estación"),
+grafico(ggplot(por_est_sat, aes(r, fill = ETQ_VERT[vertiente])) + geom_histogram(bins = 30) + scale_fill_manual(values = COL_VERT) +
+          labs(x = "r entre satélite y estación (péntadas)", y = "Estaciones", fill = NULL, title = "Correlación por estación"),
         "12_correlacion_por_estacion")
 
 # Ciclo anual: satélite y estación en los mismos pares
@@ -1058,6 +1156,45 @@ grafico(ggplot(an_cmp, aes(ONI_anual, dif)) + geom_text(aes(label = anio, colour
           labs(x = "ONI anual", y = "Anomalía del satélite − anomalía de las estaciones (puntos %)",
                title = "El satélite se queda corto en La Niña y se pasa en El Niño"),
         "12_diferencia_vs_ONI")
+
+# Por año, como en la tesis del profesor (cap. 5: figuras 5.8 y 5.12, y la correlación
+# estación–satélite de cada año). Solo estación-años con las 72 péntadas completas, para que
+# el acumulado de la estación y el de su píxel sumen exactamente las mismas péntadas.
+completos <- cmp[, .N, by = .(codigo, anio)][N == 72, .(codigo, anio)]
+acu <- cmp[completos, on = .(codigo, anio)][order(codigo, anio, pentada)]
+acu[, `:=`(acu_est = cumsum(mm_est), acu_sat = cumsum(mm_sat)), by = .(codigo, anio)]
+acu_anio <- acu[pentada == 72, .(estaciones = .N, P_est = mean(acu_est), P_sat = mean(acu_sat)), by = anio]
+acu_anio <- oni[acu_anio, on = "anio"][order(anio)]
+acu_anio[, sat_sobre_est_pct := round(100 * P_sat / P_est)]
+r_anio <- oni[cmp[, .(r = cor(mm_sat, mm_est), pares = .N), by = anio], on = "anio"][order(anio)]
+acu_anio <- r_anio[, .(anio, r_pentadas = round(r, 2))][acu_anio, on = "anio"]
+print(tabla(acu_anio[, .(anio, fase, ONI_anual, estaciones, P_est = round(P_est), P_sat = round(P_sat), sat_sobre_est_pct, r_pentadas)], "12_por_anio"))
+cat(sprintf("Satélite / estación al final del año: %d a %d %% | r con el ONI: %.2f | r estación–satélite por año: %.2f a %.2f (mediana %.2f)\n",
+            min(acu_anio$sat_sobre_est_pct), max(acu_anio$sat_sobre_est_pct), cor(acu_anio$sat_sobre_est_pct, acu_anio$ONI_anual),
+            min(r_anio$r), max(r_anio$r), median(r_anio$r)))
+lim_acu <- c(0, quantile(acu[pentada == 72, acu_est], .95))   # las pocas estaciones de la costa (hasta ~10 000 mm) se salen por arriba
+grafico_r("12_acumulada_por_anio", function() {
+  par(mfrow = c(6, 4), mar = c(3, 3.4, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
+  for (a in ANIOS) {
+    d <- acu[anio == a]; f <- acu_anio[anio == a]
+    plot(NA, xlim = c(1, 72), ylim = lim_acu, xlab = "Tiempo (péntada)", ylab = "Precipitación acumulada (mm)",
+         main = sprintf("%d · %s", a, f$fase), cex.axis = .75, cex.lab = .8)
+    for (k in split(d, d$codigo)) lines(k$pentada, k$acu_est, col = "grey80", lwd = .6)
+    m <- d[, .(e = mean(acu_est), s = mean(acu_sat)), by = pentada][order(pentada)]
+    lines(m$pentada, m$e, lwd = 2); lines(m$pentada, m$s, lwd = 2, lty = 2)
+    text(1, lim_acu[2] * .95, sprintf("satélite = %d %% de la estación", f$sat_sobre_est_pct), adj = 0, cex = .8)
+  }
+  plot.new(); legend("center", c("Cada estación", "Promedio de las estaciones", "Promedio del satélite\nen sus píxeles"),
+                     col = c("grey70", "black", "black"), lty = c(1, 1, 2), lwd = c(1, 2, 2), bty = "n", cex = 1)
+  mtext("Precipitación acumulada por año: estaciones y satélite en los mismos pares (1981–2003)", outer = TRUE, cex = 1.1, font = 2)
+})
+grafico_r("12_correlacion_por_anio", function() {
+  par(mar = c(4, 6, 3, 1)); tonos <- c("Niña" = "grey20", "Neutro" = "grey60", "Niño" = "grey90")
+  b <- barplot(r_anio$r, names.arg = r_anio$anio, col = tonos[r_anio$fase], ylim = c(0, 1), las = 2, cex.names = .8,
+               ylab = "Correlación estación–satélite\n(péntadas del año)", main = "Correlación entre estación y satélite, año por año")
+  abline(h = median(r_anio$r), lty = 3); text(b, r_anio$r + .03, sprintf("%.2f", r_anio$r), cex = .65)
+  legend("topright", names(tonos), fill = tonos, bty = "n", horiz = TRUE, title = "Fase ENSO")
+}, ancho = 10, alto = 4.5)
 
 # ¿De dónde sale lo que el satélite sí acierta? Se separan tres componentes
 cmp[, mes := (pentada - 1L) %/% 6L + 1L]
@@ -1257,6 +1394,9 @@ prueba("Cada estación cae dentro de su píxel", meta_est[pix, on = "pixel", nom
 prueba("Cada par une el mismo año y el píxel de la estación",
        all(id_sat$anio[pares_fun$fila_sat] == id_est$anio[pares_fun$fila_est]) &&
        all(id_sat$pixel[pares_fun$fila_sat] == meta_est[match(id_est$codigo[pares_fun$fila_est], codigo), pixel]))
+prueba("Ninguna altitud es imposible en la cuenca del Cauca (D-59)",
+       valle[substr(codigo, 1, 2) == "26" & !is.na(altitud), all(altitud >= PISO_CAUCA - 300)],
+       paste(nrow(alt_imposible), "altitud(es) oficial(es) reemplazada(s) por el terreno; piso", PISO_CAUCA, "m"))
 prueba("Hay un par por cada curva de estación", nrow(pares_fun) == nrow(Y) && !anyDuplicated(pares_fun$fila_est))
 prueba("Cada par tiene el ONI de su año (entra al vector z)", !anyNA(pares_fun$ONI) && pares_fun[oni, on = "anio", nomatch = 0][, all(ONI == ONI_anual)], paste(uniqueN(pares_fun$anio), "años"))
 
@@ -2105,6 +2245,36 @@ grafico_base("F3_boxplot_funcional", function() {
 titulo("3.6 Contexto: vertiente, altitud y ENSO")
 id_e[, banda_altitud := cut(altitud, c(-Inf, 1200, 2000, Inf), labels = c("< 1200 m", "1200-2000 m", "> 2000 m"))]
 id_e <- oni[, .(anio, fase)][id_e, on = "anio"]; id_s <- oni[, .(anio, fase)][id_s, on = "anio"]
+
+# Curvas por año, como en la tesis del profesor (figuras 6.2 y 6.3): un panel por año con las
+# curvas en gris, el promedio en negro y la desviación estándar punteada. Todos los paneles
+# tienen el mismo eje, para que los años se comparen a simple vista; el título lleva la fase ENSO.
+por_anio <- function(M, anios, fases, cada, titulo_fig) {
+  lim <- c(0, quantile(M, .995))
+  par(mfrow = c(6, 4), mar = c(3, 3.2, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
+  for (a in ANIOS) {
+    k <- anios == a
+    matplot(T_DIA, t(M[k, , drop = FALSE]), type = "l", lty = 1, col = "grey80", ylim = lim, xaxt = "n", xlab = "Día del año",
+            ylab = "Precipitación (mm/día)", main = sprintf("%d · %s", a, fases[which(k)[1]]), cex.axis = .75, cex.lab = .8)
+    axis(1, at = c(1, 91, 182, 274, 365), labels = c("ene", "abr", "jul", "oct", "dic"), cex.axis = .75)
+    lines(T_DIA, colMeans(M[k, , drop = FALSE]), lwd = 2); lines(T_DIA, apply(M[k, , drop = FALSE], 2, sd), lwd = 1.5, lty = 2)
+  }
+  plot.new(); legend("center", c(cada, "Promedio", "Desviación estándar"), col = c("grey70", "black", "black"),
+                     lty = c(1, 1, 2), lwd = c(1, 2, 1.5), bty = "n", cex = 1)
+  mtext(titulo_fig, outer = TRUE, cex = 1.1, font = 2)
+}
+grafico_base("F3_por_anio_estaciones", function() por_anio(Ye, id_e$anio, id_e$fase, "Cada estación",
+             "Datos funcionales de las estaciones: promedio y desviación estándar por año, 1981–2003"), ancho = 11, alto = 15)
+grafico_base("F3_por_anio_satelite", function() por_anio(Xs, id_s$anio, id_s$fase, "Cada píxel del Valle",
+             "Datos funcionales del satélite: promedio y desviación estándar por año, 1981–2003"), ancho = 11, alto = 15)
+resumen_anio <- oni[data.table(anio = ANIOS, estaciones = sapply(ANIOS, function(a) sum(id_e$anio == a)),
+                               P_estaciones = sapply(ANIOS, function(a) round(mean(Ye[id_e$anio == a, ]) * 365)),
+                               P_satelite = sapply(ANIOS, function(a) round(mean(Xs[id_s$anio == a, ]) * 365)),
+                               DE_estaciones = sapply(ANIOS, function(a) round(mean(apply(Ye[id_e$anio == a, , drop = FALSE], 2, sd)), 2)),
+                               DE_satelite = sapply(ANIOS, function(a) round(mean(apply(Xs[id_s$anio == a, , drop = FALSE], 2, sd)), 2))), on = "anio"]
+print(tabla_f(resumen_anio, "F3_por_anio_resumen"))
+cat(sprintf("Lluvia anual media vs ONI (23 años): estaciones r = %.2f | satélite r = %.2f\n",
+            cor(resumen_anio$P_estaciones, resumen_anio$ONI_anual), cor(resumen_anio$P_satelite, resumen_anio$ONI_anual)))
 # Orden de los grupos fijo (niveles del factor u orden "radix", que no depende del locale):
 # así las tablas salen con las mismas filas en cualquier máquina.
 niveles_de <- function(g) if (is.factor(g)) levels(droplevels(g)) else sort(unique(g[!is.na(g)]), method = "radix")

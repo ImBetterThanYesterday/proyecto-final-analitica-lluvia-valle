@@ -282,6 +282,54 @@ figura("C6_concurrente_estilo_clase", function() {
   contour(T_DIA, T_DIA, cor(Res_A), nlevels = 10, xlab = "Día s", ylab = "Día t", main = "Correlación de los residuos")
 }, ancho = 14, alto = 8.5)
 
+# ---- 5b. EL MODELO CONCURRENTE AÑO POR AÑO (COMO LA TESIS DEL PROFESOR) -------
+# La tesis (figura 9.2) ajusta y_i(t) = b0(t) + b1(t) x_i(t) por separado en cada año, con
+# todas las estaciones de ese año, y muestra b1(t) con su banda. Aquí se hace igual con los
+# 23 años: mínimos cuadrados en cada día t (con curvas suaves, b(t) sale suave) y banda
+# ±2 EE punto a punto. Es DESCRIPTIVO: usa todos los años, incluidos validación y prueba,
+# y no se usa para predecir ni para escoger nada. Las bandas suponen estaciones independientes
+# dentro del año; con la correlación espacial de los residuos (traza-variograma, 5.6b del
+# funcional) son algo optimistas.
+titulo("5b. Modelo concurrente año por año")
+anios_c <- sort(unique(pares$anio[pares$usar]))
+por_anio_c <- lapply(anios_c, function(a) {
+  i <- which(pares$usar & pares$anio == a); n <- length(i)
+  x <- X_r[i, , drop = FALSE]; y <- Y_r[i, , drop = FALSE]
+  xc <- sweep(x, 2, colMeans(x)); yc <- sweep(y, 2, colMeans(y))
+  b1 <- colSums(xc * yc) / colSums(xc^2); b0 <- colMeans(y) - b1 * colMeans(x)
+  res <- y - (rep(1, n) %o% b0 + sweep(x, 2, b1, "*"))
+  ee <- sqrt(colSums(res^2) / (n - 2) / colSums(xc^2))
+  list(anio = a, n = n, b1 = b1, ee = ee, R2 = 1 - colSums(res^2) / colSums(yc^2))
+})
+b1_anio <- do.call(rbind, lapply(por_anio_c, function(p) data.frame(anio = p$anio, estaciones = p$n, b1_medio = round(mean(p$b1), 3),
+  dias_b1_excluye_0 = sum(p$b1 - 2 * p$ee > 0 | p$b1 + 2 * p$ee < 0), dias_b1_excluye_1 = sum(p$b1 - 2 * p$ee > 1 | p$b1 + 2 * p$ee < 1),
+  R2_medio = round(mean(p$R2), 3))))
+b1_anio <- merge(unique(pares[, c("anio", "fase", "ONI_anual")]), b1_anio, by = "anio")
+tabla_f(b1_anio, "C7_concurrente_por_anio")
+print(b1_anio)
+ct_b1 <- cor.test(b1_anio$b1_medio, b1_anio$ONI_anual); ct_R2 <- cor.test(b1_anio$R2_medio, b1_anio$ONI_anual)
+cat(sprintf("Con el ONI (23 años): b1 medio r = %.2f (p = %.3f) | R² medio r = %.2f (p = %.3f)\n",
+            ct_b1$estimate, ct_b1$p.value, ct_R2$estimate, ct_R2$p.value))
+print(aggregate(cbind(b1_medio, R2_medio) ~ fase, data = b1_anio, FUN = function(v) round(mean(v), 3)))
+lim_b <- c(-0.5, 2)
+figura("C7_b1_por_anio", function() {
+  par(mfrow = c(6, 4), mar = c(3, 3.4, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
+  for (p in por_anio_c) {
+    f <- b1_anio$fase[b1_anio$anio == p$anio]
+    plot(NA, xlim = RANGO, ylim = lim_b, xaxt = "n", xlab = "Día del año", ylab = expression(b[1](t)),
+         main = sprintf("%d · %s (R² medio %.2f)", p$anio, f, mean(p$R2)), cex.main = .95, cex.axis = .75, cex.lab = .8)
+    axis(1, at = c(1, 91, 182, 274, 365), labels = c("ene", "abr", "jul", "oct", "dic"), cex.axis = .75)
+    polygon(c(T_DIA, rev(T_DIA)), pmin(pmax(c(p$b1 + 2 * p$ee, rev(p$b1 - 2 * p$ee)), lim_b[1]), lim_b[2]), col = "grey85", border = NA)
+    abline(h = 0, lty = 3); abline(h = 1, lty = 2, col = "grey40"); lines(T_DIA, p$b1, lwd = 1.5)
+  }
+  par(mar = c(3.5, 3.4, 2, .6))
+  plot(b1_anio$ONI_anual, b1_anio$b1_medio, pch = 19, xlab = "ONI del año", ylab = "b1 medio del año", cex.axis = .75, cex.lab = .8,
+       main = sprintf("b1 medio vs ONI: r = %.2f", ct_b1$estimate), cex.main = .95)
+  abline(lm(b1_medio ~ ONI_anual, data = b1_anio), lty = 2)
+  mtext("Coeficiente del satélite b1(t) del modelo concurrente ajustado en cada año (banda: ±2 EE punto a punto; punteada: 0; discontinua: 1)",
+        outer = TRUE, cex = .95, font = 2)
+}, ancho = 11, alto = 15)
+
 # ---- 6. EVALUACIÓN EN PRUEBA CON LAS MÉTRICAS DE LA RÚBRICA 4.4 --------------
 titulo("6. Evaluación en prueba (2001-2003)")
 kge <- function(P, Yo) {
@@ -393,6 +441,10 @@ titulo("8. Pruebas")
 pruebas <- character(0)
 chk <- function(nombre, cond) { pruebas <<- c(pruebas, sprintf("%s %s", if (isTRUE(cond)) "OK  " else "FALLA", nombre)); stopifnot(isTRUE(cond)) }
 chk("las filas de pares, coeficientes y curvas están alineadas", nrow(pares) == nrow(Y_r) && nrow(Y_r) == nrow(X_r))
+chk("el b1(t) por año coincide con lm() en un año y un día (diferencia < 1e-10), y hay un ajuste por cada uno de los 23 años", {
+  p <- por_anio_c[[which(anios_c == 1999)]]; i <- which(pares$usar & pares$anio == 1999)
+  cf <- summary(lm(Y_r[i, 105] ~ X_r[i, 105]))$coefficients
+  length(por_anio_c) == 23 && abs(cf[2, 1] - p$b1[105]) < 1e-10 && abs(cf[2, 2] - p$ee[105]) < 1e-10 })
 chk("la partición temporal no se cruza (entrenamiento < validación < prueba)",
     max(pares$anio[ent]) < min(pares$anio[val]) && max(pares$anio[val]) < min(pares$anio[pru]))
 chk("el ajuste usa solo filas de entrenamiento (la matriz normal no cambia si se alteran validación y prueba)", {

@@ -14,7 +14,7 @@ Para cada paso explica qué muestra cada tabla y gráfica, qué significa y qué
   - el archivo unido `lluvia_valle.R` tiene las mismas secciones, idénticas salvo los encabezados de rúbrica, desde su línea 1535;
   - la regresión concurrente está en `regresion_concurrente.R`.
 - **Las cifras** son de la corrida del 17-nov-2026:
-  - `lluvia_valle_funcional.R` pasa sus 16 pruebas y `regresion_concurrente.R` las 9 suyas;
+  - `lluvia_valle_funcional.R` pasa sus 16 pruebas y `regresion_concurrente.R` las 10 suyas;
   - incluyen lo que se agregó a partir del material del profesor (D-57, `docs/BASE_CONOCIMIENTO_PROFESOR.md`): las secciones 4.4 a 4.6, las bandas de 5.4, la sección 5.9 y las bandas de 6.2;
   - las tablas salen iguales a las que están en el repositorio.
 - **Salidas:** gráficas en `salidas_R_funcional/graficos/` y tablas en `salidas_R_funcional/tablas/`, con prefijos F1 a F6. La concurrente deja las suyas en `salidas_R_concurrente/`, con prefijos C1 a C5.
@@ -341,6 +341,27 @@ Arriba están las estaciones (todas, Cauca y Pacífico) y el satélite; abajo, l
 - **La Niña se nota en la segunda temporada** (7,1 frente a 6,3 mm/día) y en una sequía de mitad de año más húmeda (2,4 frente a 1,4 mm/día).
 - **El satélite no muestra la señal ENSO:** da menos lluvia en años Niña (1 664 mm) que en neutros (1 767). Si se quitan 1985, 1988 y 2000, el satélite pasa a dar 1 838 mm en La Niña. Es el mismo error ligado al ENSO de la sección 1, y la razón para darle el ONI al modelo.
 
+### 3.5b Año por año, como en la tesis del profesor
+
+En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figuras 5.8, 6.2, 6.3 y 9.2): las curvas en gris, el promedio en negro y la desviación estándar punteada, con el mismo eje en todos los paneles. Aquí se hace igual con nuestras curvas (mm/día, 1981–2003). El título de cada panel lleva la fase ENSO del año.
+
+![Estaciones por año](salidas_R_funcional/graficos/F3_por_anio_estaciones.png)
+
+![Satélite por año](salidas_R_funcional/graficos/F3_por_anio_satelite.png)
+
+**Cómo se lee:**
+- Cada panel es un año.
+- Las líneas grises son las curvas de ese año: una por estación, o una por píxel del Valle en la del satélite.
+- La línea negra es el promedio y la punteada la desviación estándar.
+- Como todos los paneles tienen el mismo eje, se compara un año con otro mirando la altura de la línea negra.
+
+**Cifras** (`F3_por_anio_resumen.csv`):
+- **Estaciones:** los años más lluviosos son de La Niña: 1999 (2 204 mm), 1984 (2 145) y 1988 (2 129). Los más secos son de El Niño: 1992 (1 379) y 1997 (1 532). La lluvia anual media de las estaciones tiene correlación **−0,62** con el ONI.
+- **Satélite:** sus años más secos son 1985, 1988 y 2000, los tres de La Niña. Su correlación con el ONI es **+0,47**, al revés que las estaciones.
+- El satélite promedia todos los píxeles del Valle, y el 43 % son de la zona pacífica. Por eso su nivel no se compara directamente con el de las estaciones; lo que se compara es **cómo cambia de un año a otro**.
+
+**Interpretación.** La gráfica por año deja ver lo que las medias de todo el periodo esconden. La forma bimodal se repite casi todos los años, pero su altura cambia con el ENSO, y el satélite responde al revés que las estaciones. Es la razón, ya vista en el EDA de datos, para darle el ONI al modelo.
+
 ### 3.6 Lista de la rúbrica 2
 
 | La rúbrica pide | Dónde está |
@@ -606,7 +627,7 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 | Modelo | L² relativo | KGE | Sesgo anual | Error pico 1 | Error pico 2 |
 |---|---|---|---|---|---|
 | Satélite sin corregir | 0,51 [0,47; 0,56] | 0,38 | +26,0 % | 23,1 días | 18,0 días |
-| **Regresión funcional** | **0,44 [0,41; 0,46]** | **0,47** | **+7,2 %** | **18,1 días** | **17,4 días** |
+| **Regresión funcional** | **0,44 [0,41; 0,46]** | **0,47** | **+7,3 %** | **18,1 días** | **17,4 días** |
 | Solo altitud y ONI | 0,51 [0,47; 0,54] | 0,35 | +19,3 % | 21,7 días | 19,4 días |
 
 **Pareado por estación** (`F5_regresion_vs_satelite_pareado.csv`):
@@ -634,7 +655,7 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 - Es el **punto débil de la referencia lineal**, y lo que una cabeza no lineal (KAN o MLP) podría mejorar.
 
 **Sensibilidad a 1985, 1988 y 2000** (`F5_sensibilidad_anios_marcados.csv`). Sin esos años en el entrenamiento, la prueba empeora:
-- L² relativo de 0,434 a 0,439 y sesgo de 7,4 % a 8,9 %;
+- L² relativo de 0,435 a 0,439 y sesgo de 7,4 % a 9,0 %;
 - en 79 de 137 estaciones (Wilcoxon p = 0,003).
 
 Confirma con datos la indicación del profesor de no quitarlos (D-47).
@@ -647,7 +668,7 @@ Se compararon tres formas de hacer la regresión vista en clase (`F5_contraste_m
 
 | Método | L² relativo | KGE | Sesgo anual |
 |---|---|---|---|
-| Nuestra regresión (penalización de rugosidad) | 0,44 | **0,47** | +7,2 % |
+| Nuestra regresión (penalización de rugosidad) | 0,44 | **0,47** | +7,3 % |
 | Taller de clase: regresión sobre componentes principales (l = 4) | 0,44 | 0,44 | +6,9 % |
 | `fda.usc::fregre.basis.fr` | 0,44 | 0,44 | +7,6 % |
 
@@ -719,7 +740,7 @@ Es un modelo más simple y más fácil de leer, porque dice en qué época del a
 - modelo A: K_b = 12 y λ = 0;
 - modelo B: K_b = 8 y λ = 10⁸.
 
-Usa las mismas curvas en escala raíz, la misma partición y las mismas métricas que la sección 5. Pasa sus 8 pruebas, entre ellas que no hay fuga de datos y que las ecuaciones normales dan lo mismo que mínimos cuadrados directos. Además se contrastó con `fda::fRegress`: la diferencia del error de ajuste es del 0,4 %.
+Usa las mismas curvas en escala raíz, la misma partición y las mismas métricas que la sección 5. Pasa sus 10 pruebas, entre ellas que no hay fuga de datos y que las ecuaciones normales dan lo mismo que mínimos cuadrados directos. Además se contrastó con `fda::fRegress`: la diferencia del error de ajuste es del 0,4 %.
 
 ### 6.2 Qué dice b1(t)
 
@@ -750,8 +771,8 @@ Usa las mismas curvas en escala raíz, la misma partición y las mismas métrica
 |---|---|---|---|---|---|
 | Satélite sin corregir | 0,51 | 0,38 | +26,0 % | 23,1 días | 18,0 días |
 | Concurrente A (clase) | 0,44 | 0,47 | +10,6 % | 18,9 días | **23,0 días** |
-| Concurrente B (+ altitud y ONI) | 0,45 | 0,46 | +10,3 % | 20,8 días | 19,4 días |
-| De función a función (sección 5) | 0,44 | 0,47 | **+7,2 %** | **18,1 días** | **17,4 días** |
+| Concurrente B (+ altitud y ONI) | 0,45 | 0,45 | +10,3 % | 20,9 días | 19,4 días |
+| De función a función (sección 5) | 0,44 | 0,47 | **+7,3 %** | **18,1 días** | **17,4 días** |
 
 Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_pareado.csv`, `F5_metricas_prueba.csv`.
 
@@ -771,6 +792,32 @@ Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_pareado.csv`, `F5_
 **Qué muestra.** La misma figura que la clase arma para el modelo concurrente, aquí con nuestros datos:
 - arriba, las curvas del satélite x_i(t) y de la estación y_i(t), y R²(t) en prueba;
 - abajo, b0(t) y b1(t) con las dos bandas (sombreada, bootstrap de estaciones; roja, sándwich) y la correlación de los residuos entre días.
+
+### 6.4 El modelo concurrente año por año, como en la tesis
+
+En la tesis (figura 9.2), el profesor ajusta el modelo concurrente **por separado en cada año**, con todas las estaciones de ese año, y muestra b1(t) con su banda. Aquí se hace lo mismo con los 23 años:
+- en cada día t se ajusta por mínimos cuadrados y_i(t) = b0(t) + b1(t)·x_i(t), en escala raíz;
+- la banda es ±2 errores estándar punto a punto;
+- una prueba automática verifica que coincide con `lm()` (diferencia < 1e-10).
+
+Es **descriptivo**: usa todos los años, incluidos validación y prueba, y no se usa para predecir ni para escoger nada. Un ajuste por año no sirve para predecir un año nuevo, porque necesita las estaciones de ese mismo año. Además, la banda supone estaciones independientes dentro del año; con la correlación espacial de los residuos (sección 5.9) es algo optimista.
+
+![b1(t) por año](salidas_R_concurrente/figuras/C7_b1_por_anio.png)
+
+**Cómo se lee:**
+- Cada panel es un año, con su fase ENSO y su R² medio en el título.
+- La línea negra es b1(t) y la sombra gris su banda.
+- La línea punteada es 0: debajo de ella, el satélite no informa.
+- La discontinua es 1: en ella, la estación sube lo mismo que el satélite.
+- El último panel cruza el b1 medio de cada año con el ONI.
+
+**Cifras** (`C7_concurrente_por_anio.csv`):
+- b1(t) excluye el 0 en 346 a 365 días según el año: **el satélite informa siempre, todos los años**.
+- El b1 medio va de 0,72 (1997, El Niño) a 1,25 (1988, La Niña).
+- **Con el ONI, r = −0,44 (p = 0,036).** En promedio, b1 vale 1,02 en años Niña, 0,97 en neutros y 0,91 en años Niño.
+- El R² medio va de 0,23 a 0,45 y **no** depende del ONI (r = −0,12, p = 0,60).
+
+**Interpretación.** Es la misma conclusión de la tesis del profesor: el satélite "aporta más" en los años La Niña. En esos años, cada milímetro de más en el satélite corresponde a más lluvia en la estación, porque el satélite se queda corto justo cuando más llueve. Lo que cambia con el ENSO es la **pendiente**, no qué tan bien explica el satélite (R²). Por eso el modelo de función a función recibe el ONI, y por eso las no lineales pueden ganar algo según la fase (sección 7 del archivo funcional).
 
 ---
 
