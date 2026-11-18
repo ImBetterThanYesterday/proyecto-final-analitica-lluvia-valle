@@ -6,3 +6,12 @@ __pycache__/
 *.pkl
 # Datos crudos entregados por el curso (se descargan del aula; ~100 MB): van en datos_curso/
 datos_curso/
+# KAN: predicciones de cada entrenamiento y modelos intermedios (~190 MB). Se quedan en local;
+# los scripts de KAN/codigo los regeneran. En el repositorio van los resúmenes, figuras e informes.
+KAN/salidas/corridas/
+KAN/salidas/cv_bloques/
+KAN/salidas/cv_mlp/
+KAN/salidas/cv_nuevas/nv*.csv
+KAN/salidas/auditoria_kan/corridas/
+KAN/salidas/auditoria_kan/modelos/
+KAN/salidas/auditoria_kan/logs/

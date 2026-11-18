@@ -1,0 +1,144 @@
+{
+  "casos": {
+    "Lluvia alta": {
+      "codigo": "5420410112",
+      "anio": 1999,
+      "anual_mm": 2066.212618012527,
+      "anomalia_pct": 127.66000212020492
+    },
+    "Lluvia baja": {
+      "codigo": "5420410113",
+      "anio": 1998,
+      "anual_mm": 1149.9999999999993,
+      "anomalia_pct": -40.35300263149127
+    },
+    "Variacional (sube y baja frente a su clima)": {
+      "codigo": "2614100202",
+      "anio": 1996,
+      "anual_mm": 1346.9999999999968,
+      "anomalia_pct": 7.377557176525196
+    }
+  },
+  "activacion": {
+    "mlp_neuronas_casi_muertas": 0,
+    "kan_pct_fuera_rejilla_capa2": [
+      8.125640150221919,
+      15.158757255035848,
+      24.650051212017754,
+      14.13451689996586
+    ],
+    "kan_corr_activacion_vs_anomalia": [
+      -0.2401100751350383,
+      -0.10468343018934499,
+      0.04873496989619708,
+      -0.29547322487558947
+    ]
+  },
+  "desfase": {
+    "desfase_mediano_KAN_entrenamiento_dias": 0,
+    "desfase_mediano_KAN_validacion_dias": 1.0,
+    "desfase_mediano_satelite_validacion_dias": 0.0,
+    "desfase_armonico_anual_mediano_validacion_dias": -14.06810628438173,
+    "desfase_armonico_semestral_mediano_validacion_dias": 2.1974821626037144,
+    "L2_validacion_sin_correccion": 0.41787500644552383,
+    "L2_validacion_con_correccion": 0.41787500644552383
+  },
+  "top_conexiones": [
+    {
+      "capa": 2,
+      "desde": "h3",
+      "hacia": "FPCA1",
+      "importancia_DE": 8.144092270472655,
+      "pct_de_su_capa": 28.189258903461603
+    },
+    {
+      "capa": 2,
+      "desde": "h2",
+      "hacia": "FPCA2",
+      "importancia_DE": 2.75460749287559,
+      "pct_de_su_capa": 9.534560908109496
+    },
+    {
+      "capa": 2,
+      "desde": "h4",
+      "hacia": "FPCA1",
+      "importancia_DE": 2.5855818764726037,
+      "pct_de_su_capa": 8.949510210762172
+    },
+    {
+      "capa": 2,
+      "desde": "h1",
+      "hacia": "FPCA3",
+      "importancia_DE": 2.4158240148058074,
+      "pct_de_su_capa": 8.361924982783707
+    },
+    {
+      "capa": 2,
+      "desde": "h1",
+      "hacia": "FPCA1",
+      "importancia_DE": 1.4531706359171537,
+      "pct_de_su_capa": 5.029879565006352
+    },
+    {
+      "capa": 1,
+      "desde": "z6",
+      "hacia": "h3",
+      "importancia_DE": 1.4390450730930502,
+      "pct_de_su_capa": 7.013196264983317
+    },
+    {
+      "capa": 1,
+      "desde": "z1",
+      "hacia": "h3",
+      "importancia_DE": 1.3839657838933686,
+      "pct_de_su_capa": 6.744766962443906
+    },
+    {
+      "capa": 1,
+      "desde": "z4",
+      "hacia": "h3",
+      "importancia_DE": 1.0266401978627737,
+      "pct_de_su_capa": 5.003338210704799
+    },
+    {
+      "capa": 1,
+      "desde": "z6",
+      "hacia": "h1",
+      "importancia_DE": 1.0149086910314393,
+      "pct_de_su_capa": 4.946164629813896
+    },
+    {
+      "capa": 1,
+      "desde": "z3",
+      "hacia": "h3",
+      "importancia_DE": 0.9964382971651796,
+      "pct_de_su_capa": 4.856149035655194
+    }
+  ],
+  "gradientes_kan_inicio_fin": {
+    "codificador": [
+      136.2425421493881,
+      3.3003686177043354
+    ],
+    "capa 1: splines (coef)": [
+      4.6157563365373075,
+      1.4398772075366912
+    ],
+    "capa 1: w_b y w_s": [
+      9.437558841003208,
+      0.8460346626441057
+    ],
+    "capa 2: splines (coef)": [
+      4.284218064939127,
+      1.1258708940010593
+    ],
+    "capa 2: w_b y w_s": [
+      6.791395518628302,
+      1.3213404672645788
+    ]
+  },
+  "epocas": {
+    "kan": 107,
+    "mlp": 101
+  }
+}

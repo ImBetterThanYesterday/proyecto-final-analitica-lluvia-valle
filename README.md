@@ -18,6 +18,7 @@ El trabajo tiene tres partes: construir las curvas con B-splines, hacer el EDA f
 | `salidas_R_funcional/` | Lo que produce ese archivo: `tablas/` y `graficos/` (prefijos `F1_` a `F6_`), `para_python/` (insumos de la red) y `resultados_funcional.rds`. |
 | `lluvia_valle_red.py` | **La red neuronal funcional y la ablación de la cabeza (lineal, KAN y MLP), en Python.** Solo lee `salidas_R_funcional/para_python/`. Solo entrena y exporta las predicciones; R las evalúa en la sección 7 del funcional (D-54). Orden: `Rscript lluvia_valle_funcional.R` → `python lluvia_valle_red.py` (~15 min; `torch`, `numpy`, `pandas`) → `Rscript lluvia_valle_funcional.R`. |
 | `salidas_python/` | Lo que produce: `predicciones_coef_raiz.csv` (lo lee R), `pesos_codificador.csv`, `cabeza_lineal_pesos.csv`, `kan_activaciones_capa1.csv`, `kan_importancia_aristas.csv`, `modelos/`, `tablas/` (prefijos `P1_` a `P6_`, construcción y entrenamiento) y `versiones.txt`. |
+| `KAN/` | **Todo el trabajo de la cabeza KAN:** cómo se llegó a la KAN oficial, las variantes prometedoras, la ablación contra el MLP, la interpretabilidad y la auditoría de parámetros. Empieza por `KAN/README.md`. |
 | `BITACORA_CAMBIOS.md` | **Qué cambió en cada sesión y por qué**, para ponerse al día. |
 | `CONTROL_RUBRICA.md` | **Lista de lo que pide el enunciado y cómo vamos**, ítem por ítem. |
 | `DECISIONES.md` | Bitácora de decisiones (D-01 a D-59), con su justificación, y preguntas para el profesor. |

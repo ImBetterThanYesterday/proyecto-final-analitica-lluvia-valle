@@ -1,0 +1,7 @@
+prueba,valor,pasa
+12 ajustes (4 bloques x 3 semillas) emparejados con la CV anterior,12.0,True
+"max |dif| de predicciones frente a la CV anterior (tolerancia 1e-6, orden de suma de los hilos)",1.3239999763214882e-08,True
+misma epoca optima en los 12 ajustes,12.0,True
+L2 relativo CV (antes 0.4397),0.4397080440051078,True
+"script oficial de Federico, semilla 2026: L2 0.417875",0.41787500644552494,True
+"script oficial de Federico, semilla 2026: epoca 107",107.0,True

@@ -1,0 +1,13 @@
+,valor
+L2_lineal,0.4588453845421605
+L2_KAN_oficial,0.4397080440022898
+L2_mejor_MLP_sin_reg,0.4298861089038592
+mejor_MLP_sin_reg,M44 MLP 3 capas 20-12-8
+L2_mediana_MLP_sin_reg,0.4325102370233238
+n_MLP_sin_reg,14
+MLP_sin_reg_peores_que_KAN,1
+ganancia_no_lineal_KAN,0.019137340539870706
+ganancia_no_lineal_mejor_MLP,0.028959275638301307
+pct_ganancia_capturada_por_KAN,66.08362991842176
+costo_interpretabilidad_abs,0.0098219350984306
+costo_interpretabilidad_pct,2.2337401447173555

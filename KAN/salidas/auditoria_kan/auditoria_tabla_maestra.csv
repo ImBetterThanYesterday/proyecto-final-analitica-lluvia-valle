@@ -1,0 +1,14 @@
+parametro,valor_oficial,origen,valores_probados,L2_CV_oficial,mejor_alternativa,dif_mejor_alternativa,IC_mejor_alternativa,alternativas_significativamente_mejores,alternativas_significativamente_peores,veredicto
+ancho oculto,4,Decisión del grupo,"5 (0.4319), 6 (0.4347), 3 (0.4415), 2 (0.4494)",0.4397080440051078,5,-0.0075603270263951,[-0.0098; -0.0052],"5, 6",2,revisar cambio
+profundidad,"[10,4,6]",Decisión del grupo,"[10,4,4,6] (0.4360), [10,6] (0.4373)",0.4397080440051078,"[10,4,4,6]",-0.003921977160322925,[-0.0068; -0.0009],"[10,4,4,6]",ninguna,revisar cambio
+intervalos G,5,Decisión del grupo,"3 (0.4342), 4 (0.4369), 6 (0.4413), 8 (0.4457)",0.4397080440051078,3,-0.005439852861367429,[-0.0080; -0.0029],"3, 4",8,revisar cambio
+grado B-spline,3,Decisión del grupo,"2 (0.4429), 1 (0.4524)",0.4397080440051078,2,0.0028652919618553097,[+0.0002; +0.0057],ninguna,"2, 1",se mantiene el valor oficial
+rango de la rejilla,"[-3,3]",Decisión del grupo,"[-4,4] (0.4376), [-2,2] (0.4486)",0.4397080440051078,"[-4,4]",-0.002041762661046541,[-0.0036; -0.0003],"[-4,4]","[-2,2]",revisar cambio
+estandarizar z,sí,Decisión del grupo,no (0.4709),0.4397080440051078,no,0.031486974181969156,[+0.0249; +0.0384],ninguna,no,se mantiene el valor oficial
+regularización D2,0,Decisión del grupo,"100 (0.4292), 30 (0.4297), 10 (0.4318)",0.4397080440051078,100,-0.010463496785030627,[-0.0137; -0.0073],"100, 30, 10",ninguna,revisar cambio
+tasa de aprendizaje,0.01,Decisión del grupo,"0.003 (0.4396), 0.03 (0.4418)",0.4397080440051078,0.003,0.00013087341629815116,[-0.0012; +0.0015],ninguna,ninguna,se mantiene el valor oficial
+paciencia,1000,Decisión del grupo,"2000 (0.4397), 300 (0.4397)",0.4397080440051078,2000,0.0,[+0.0000; +0.0000],ninguna,ninguna,se mantiene el valor oficial
+tamaño de lote,completo,Decisión del grupo,256 (0.4363),0.4397080440051078,256,-0.0031794189593320286,[-0.0056; -0.0004],256,ninguna,revisar cambio
+neuronas funcionales,8,Rango del enunciado (6 a 8),"7 (0.4359), 6 (0.4447)",0.4397080440051078,7,-0.003922510841686746,[-0.0059; -0.0019],7,6,revisar cambio
+componentes FPCA M,6,Rango del enunciado (4 a 6),"4 (0.4340), 5 (0.4469)",0.4397080440051078,4,-0.005878139172825176,[-0.0079; -0.0038],4,5,revisar cambio
+rugosidad lambda_w,1e+06,Decisión del grupo,"100000 (0.4399), 0 (0.4435), 1e+07 (0.4494), 1e+08 (0.4509)",0.4397080440051078,100000,4.2743057677638856e-05,[-0.0028; +0.0029],ninguna,"1e+07, 1e+08",se mantiene el valor oficial
