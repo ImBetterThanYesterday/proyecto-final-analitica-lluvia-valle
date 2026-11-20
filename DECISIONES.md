@@ -727,6 +727,23 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **ENSO y ONI:** se explican en la sección 0.4 de `EXPLICACION_DATOS`.
 - **Fecha y responsable:** 2026-11-18, Gus y Claude.
 
+### D-60 · Asesoría del 19-nov: sin lluvia acumulada ni t pareada; la regresión concurrente pasa a la comparación por fuente ✅
+- **Problema:** en la asesoría del 19-nov el profesor pidió no trabajar la lluvia acumulada y dijo que la prueba t pareada no aplica a estación y satélite: la entiende para un mismo individuo medido antes y después. También pidió no usar pruebas como Wilcoxon o Welch sobre datos funcionales.
+- **Decisión:**
+  - **Se quita la vista acumulada** (sección 4.6 y `F4_acumulada`). En su lugar, la sección 4.1b muestra la lluvia puntual: el dato diario de un año con el dato pentadal del píxel y las dos curvas, y el ciclo anual medio de la estación frente a su píxel, para una estación de la costa Pacífica, una del fondo del valle y una de ladera alta.
+  - **Se quita la t pareada** (sección 4.4 y `F4_prueba_t_pareada*`). La pregunta de en qué época falla el satélite la responde la **regresión concurrente** y(t) = b0(t) + b1(t)·x(t), que es el ejercicio 3 del script de regresión de clase. En la regresión el satélite es la covariable y no se supone que sea el mismo individuo. La igualdad de medias la sigue respondiendo la banda d̄(t) ± 2 EE (rúbrica 3) y el efecto del ENSO, la vertiente y la altitud el ANOVA funcional (4.5).
+  - **La concurrente se integra** como sección 4.4 de `lluvia_valle_funcional.R` y de `lluvia_valle.R`. Se borra `regresion_concurrente.R` y `salidas_R_concurrente/`: el enunciado pide un solo R. Reproduce los resultados anteriores exactamente.
+  - **Wilcoxon se mantiene** en las secciones 5.5, 5.5c y 7: la rúbrica 4.4 lo exige ("IC bootstrap del 95 % y prueba de Wilcoxon pareada por estación") y ahí compara un número por estación, no curvas.
+  - **Sensibilidad por píxel** (varias estaciones comparten píxel): la banda de d(t), las bandas de b(t) de la concurrente, las bandas de los efectos de la sección 5 y la comparación con el satélite en prueba se repiten con el píxel como unidad. No cambia ninguna conclusión.
+  - **Concurrente frente a función a función** en prueba (5.5c): empatan en L², RMSE y KGE; la de función a función gana en el sesgo anual y en el segundo pico, que la concurrente empeora 5 días. La referencia lineal de la red sigue siendo la de función a función, como pide el enunciado.
+- **Hallazgos nuevos:**
+  - El satélite explica mejor a la estación de mayo a octubre (R²(t) de 0,44 a 0,59) y peor de enero a marzo (0,17). b1(t) < 1 del 10-feb al 29-abr y del 1-nov al 1-dic: en las temporadas lluviosas hay que encoger la señal del satélite.
+  - La banda sándwich de clase es 4 veces más angosta que la del bootstrap de estaciones (b1 ≠ 1 en 262 días frente a 119). Se reportan las de bootstrap.
+  - Diagnóstico de linealidad de la concurrente: el residuo medio por quintil del satélite se aparta de 0 hasta 0,16 raíz(mm/día) (DE 0,63). Es una no linealidad moderada que respalda probar la cabeza KAN.
+- **Pendiente:** `12_acumulada_por_anio`, en el archivo de datos, todavía muestra la lluvia acumulada. Ese archivo lo está cambiando el compañero que trabaja las reglas de limpieza; hay que cambiarla por la versión en mm/día cuando se integren sus cambios.
+- **Verificación:** `lluvia_valle_funcional.R` pasa 17 de 17 pruebas y la concurrente sus 7 comprobaciones (igual a `lm()` año por año, igual a mínimos cuadrados directos, sin fuga, rugosidad nula en una recta, b1 lineal con λ enorme, reconstrucción no negativa y réplicas suficientes). Los resultados existentes de la sección 5 no cambian: los remuestreos nuevos usan su propia semilla. `lluvia_valle.R` completo corre igual.
+- **Fecha y responsable:** 2026-11-19, Jacobo.
+
 ---
 
 ## Plantilla para nuevas decisiones

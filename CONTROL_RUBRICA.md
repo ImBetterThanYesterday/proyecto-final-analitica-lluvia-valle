@@ -35,8 +35,8 @@ Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se p
 | Construcción | B-splines paso a paso, ECM/VC/VCG (taller, ej. 1–2); bandas punto a punto (ej. 3) | Igual, sin librerías; `splines` solo para verificar | ✅ |
 | Media, varianza, covarianza, correlación | Paso a paso y contraste con `fda::mean.fd`, `var.fd` (ej. 4) | Paso a paso; media verificada con `fda::mean.fd` | ✅ |
 | Profundidad y boxplot funcional | `fda.usc` (`depth.FM`, …) y `fda::fbplot` | FM y MBD propios; MBD y atípicas verificadas con `fbplot`. **FM no verificada con `fda.usc::depth.FM`** | 🟡 |
-| Inferencia por grupos (ENSO, altitud, fuente) | `fda::tperm.fd` (t funcional) y `fdANOVA` | Bandas ± 2EE (lo pide la rúbrica) y tablas por grupo; **sin prueba t ni ANOVA funcional de clase** | 🟡 recomendado |
-| Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
+| Inferencia por grupos (ENSO, altitud, fuente) | `fda::tperm.fd` (t funcional) y `fdANOVA` | Bandas ± 2EE (lo pide la rúbrica), ANOVA funcional de clase por ENSO, vertiente y altitud (4.5) y regresión concurrente de clase (4.4). Sin t pareada, por indicación del profesor (D-60) | ✅ |
+| Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` (sección 4.4, contrastada con `fRegress`, D-60) | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
 | Red (codificador, cabezas) | No se vio; el enunciado permite PyTorch y pykan | PyTorch; KAN programada con la fórmula del enunciado y verificada con una función sintética | ✅ |
 | Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` solo para leer y escribir (D-54) | ✅ |
 | Métricas, bootstrap, Wilcoxon, ENSO de la red | Funciones de R (5.5) y `wilcox.test` | Sección 7 de `lluvia_valle_funcional.R`, con las predicciones exportadas por Python (D-54) | ✅ |
@@ -75,7 +75,7 @@ Para el informe: los días faltantes no se imputan; cada curva se ajusta con sus
 | Interpretación climatológica (bimodal, orografía, ENSO) | 🟡 | Escrita en el bloque "Qué dicen los datos"; falta pasarla al informe |
 | Tope: subconjunto sin justificar → máximo 2 | ✅ no aplica | Se usan las 176 estaciones y los 23 años; representatividad en la sección 8 de `lluvia_valle_datos.R` |
 
-Falta justificar por qué se modela la tasa en mm/día y no la lluvia acumulada que usa el ejemplo de clase `Script_AnalisisExploratorio.R`.
+Se modela la tasa en mm/día y no la lluvia acumulada, como pidió el profesor en la asesoría del 19-nov (D-60). La vista acumulada se quitó de la parte funcional.
 
 ## 3. Comparación funcional por fuente (15 %) — secciones 1 y 4 de `lluvia_valle_funcional.R`
 
@@ -194,8 +194,8 @@ Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `
 ### B. Detalles técnicos rápidos
 
 1. Verificar la profundidad FM con `fda.usc::depth.FM` (herramienta de clase).
-2. Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`) para ENSO, altitud y satélite frente a estación (recomendado, refuerza "como en clase").
-3. Justificar por qué se modela la tasa en mm/día y no la lluvia acumulada del ejemplo de clase `Script_AnalisisExploratorio.R`.
+2. ~~Prueba t funcional o ANOVA funcional~~ — hecho: ANOVA funcional (4.5) y regresión concurrente (4.4); la t pareada se quitó (D-60).
+3. ~~Justificar mm/día frente a acumulada~~ — hecho (D-60).
 4. Ventanas de temporada en el Pacífico: el fin de la 2.ª temporada no se puede fechar en el 62 % de las curvas; separar el Pacífico o justificarlo.
 5. Sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
 
