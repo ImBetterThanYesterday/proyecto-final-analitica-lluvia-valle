@@ -258,6 +258,74 @@ Los dos métodos estiman el día como un promedio ponderado de las vecinas ese m
 
 **Lectura:** rellenar con vecinas es mucho mejor que dejar que la curva cubra el hueco. Entre los métodos con vecinas las diferencias son pequeñas; el kriging con la razón es el mejor y además sus pesos salen de los datos.
 
+### Cómo lo han hecho otros, mirado con lupa (D-64)
+
+| Trabajo | Escala y zona | Cómo usa el kriging | Qué tomamos y qué no |
+|---|---|---|---|
+| **Tesis del profesor** (Ospina 2016, Univalle; código del anexo C) | Diaria → péntadas; 82 estaciones del Valle, 1993–2011 | Un semivariograma **por año**, ajustado a la **lluvia media anual** de las estaciones (coordenadas en grados); compara exponencial, esférico, gaussiano y Matérn por ECM de validación cruzada. Para rellenar, el código usa `ksline` sobre `prec_prom` (la media anual), con `cov.model = "wave"`, distinto de los modelos comparados | Tomamos la elección del modelo por validación cruzada. **No** tomamos el relleno: como el kriging ordinario es un interpolador exacto y la estación está entre los datos de su año, cada día faltante recibe **la media anual de la propia estación**. En nuestra prueba eso queda 60 % peor que R7 (tabla de abajo). Para su objetivo (lluvia acumulada por péntadas) el efecto era pequeño; para curvas diarias no lo es |
+| **Russi y Larrahondo** (2017, Univalle; **dirigida por el profesor Ospina**) | Diaria; 88 estaciones del Valle en 1997, por zona (valle y montaña) | Kriging ordinario con semivariogramas de **sumas quincenales** por zona, porque «encontrar un modelo que explique la variación diaria [...] no aseguraría una estimación óptima debido a la alta variabilidad»; pesos negativos a 0 (Deutsch 1996) | Confirma no ajustar un semivariograma por día. Comparan con IDW, vecinos y regresión: el mejor cambia según la zona y el % de faltantes, y las diferencias **no son significativas**. Probamos su corrección de pesos negativos: no cambia nada |
+| **Proyecto 1 del curso** (2026) | Semanal, CHIRPS, 686 celdas | Por corte: modelo de la media → Moran → semivariograma (pepita pura) → kriging si baja el RMSE ≥1 % | Aplicamos los mismos filtros a R7. La familia y el semivariograma por corte funcionaron allá porque CHIRPS es suave (R² ≈ 0,96); con lluvia diaria de estaciones, uno por día empeora (tabla de abajo) |
+| **Lebel et al.** (1987, *Water Resources Research* 23:2123) | Diaria y por evento, Cévennes (Francia) | **Kriging climatológico**: una sola forma del semivariograma para todos los días; identificarlo día por día desaprovecha la información y no da parámetros fiables con pocos datos | Es el fundamento de usar **un** semivariograma. Advierten que puede hacer falta uno por tipo de tiempo o temporada: lo probamos (temporada, fase ENSO) y no mejora |
+| **Terán-Chaves et al.** (2021, *Meteorol. Z.* 30:489) | Diaria, IDEAM, toda Colombia | Kriging ordinario tridimensional, vecinas a <100 km | Precedente colombiano del kriging para rellenar lluvia diaria |
+| **Hofstra et al.** (2008, *JGR* 113:D21110) | Diaria, Europa | Compara seis métodos; elige el kriging global para E-OBS | Las diferencias entre métodos son menores que la variación de un mismo método entre zonas y temporadas; manda la densidad de la red. Es lo que vemos: los métodos con vecinas quedan cerca entre sí |
+| **Longman et al.** (2020, *J. Appl. Meteor. Climatol.* 59) | Diaria, Hawái | Razón normal, regresión, IDW y otros | La razón normal fue la mejor para huecos cortos, y la correlación con la vecina importa más que la cercanía. Es la base de nuestro factor; el kriging le agrega pesos que salen de los datos. *(Del resumen; no se leyó el texto completo.)* |
+| **climatol** (Guijarro), el paquete que usa el IDEAM | Diaria o mensual | Rellena con las vecinas normalizadas; para lluvia ofrece `std = 2`, *rates to the mean*; usa hasta `nref = 10` referencias | Es nuestro factor (la razón de medias) y nuestro número de vecinas |
+| **Haylock et al.** (2008, E-OBS) y **Herrera et al.** (2010, Spain02) | Diaria, rejillas de Europa y España | Dos pasos: primero si llueve (kriging indicador), luego cuánto | No lo probamos: sirve para hacer mapas donde no hay estaciones. Nosotros rellenamos el 0,065 % de los días de estaciones que sí miden, y lo que importa es la curva, no la ocurrencia de cada día |
+
+**Ninguno de estos trabajos condiciona el kriging a la fase ENSO.** Russi y Larrahondo usaron solo 1997, un año Niño. Por eso lo probamos con los datos (abajo).
+
+### Validación de cada decisión con nuestros datos (D-64)
+
+**La regla para decidir.** Todo lo que se compara se ajusta con los años **impares** de 1981–1995 (medias mensuales y semivariogramas) y se evalúa quitando días a años completos **pares**, así que ningún método se evalúa con los datos con que se ajustó. Una alternativa se adopta solo si su IC 95 % (bootstrap de estaciones) excluye el 0 **y** baja el error al menos un 1 %, la misma regla `MEJORA_MIN` del proyecto 1.
+
+**1. Los filtros del flujo de la clase** (`8_R7_moran.csv`):
+
+| Filtro | Resultado | ¿Pasa? |
+|---|---|---|
+| ¿Hay dependencia espacial? Moran de la anomalía diaria (P / media del mes), 4 vecinas, 199 permutaciones, 300 días | Significativo en el **65 %** de los días: 86 % de los húmedos, 70 % de los intermedios, 36 % de los secos. I mediano 0,14 | Sí |
+| ¿Es pepita pura? Meseta parcial / total < 0,05 | **0,87** | No es pepita pura: sí hay kriging |
+| ¿Baja el error ≥1 % frente al modelo sin kriging (la media del mes)? | Baja el error de la curva un **31 %** (0,358 frente a 0,521) | Sí |
+
+**2. Cada alternativa frente a R7** (`8_R7_validacion_decisiones.csv`; 400 años pares con el máximo que acepta R5, 120 días al año):
+
+| Alternativa | Error de la curva | Cambio frente a R7 [IC 95 %] | Decisión |
+|---|---|---|---|
+| **R7: un semivariograma, 10 vecinas, razón de medias** | **0,358** | — | **elegido** |
+| Solo la tendencia (media del mes) | 0,521 | +45 % [+40 %; +51 %] | peor |
+| La tesis del profesor (media anual de la estación) | 0,579 | +62 % | peor |
+| Semivariograma por temporada (DEF, MAM, JJA, SON) | 0,369 | +3,0 % | peor |
+| **Semivariograma por fase ENSO** | 0,362 | +0,9 %, IC con el 0 | no mejora |
+| Semivariograma por zona (andina y pacífica) | 0,373 | +4,3 % | peor |
+| 5 vecinas | 0,369 | +3,0 % | peor |
+| 20 vecinas | 0,357 | −0,3 %, IC con el 0 | no mejora ≥1 % |
+| Pesos negativos a 0 (Deutsch 1996) | 0,358 | 0 % | no cambia |
+| Kriging simple (media conocida) | 0,372 | +4,0 % | peor |
+
+Partir los datos por temporada o por zona **empeora**: con menos datos por grupo, el semivariograma se ajusta peor (en la zona pacífica, con 37 estaciones, la pepita casi desaparece y el rango baja a 2 km; `8_R7_semivariogramas_por_grupo.csv`). Es el costo que Lebel et al. señalan para los semivariogramas con pocos datos.
+
+**3. ¿Y el ENSO?** (`8_R7_por_fase_ENSO.csv`):
+
+| Fase del año evaluado | R7 | Solo la tendencia | Semivariograma de la fase |
+|---|---|---|---|
+| Neutro | 0,357 | 0,514 | 0,359 |
+| La Niña | 0,373 | 0,566 | 0,378 |
+| El Niño | 0,342 | 0,481 | 0,347 |
+
+- **Los años Niña son un poco más difíciles de rellenar** (llueve más y de forma más irregular), pero **el kriging gana en las tres fases** (29 a 34 % menos error que la tendencia).
+- **Un semivariograma propio de cada fase no ayuda en ninguna**: la estructura espacial de la lluvia diaria es la misma; lo que cambia con el ENSO es cuánto llueve, y eso ya lo recoge la lluvia de las vecinas ese mismo día.
+
+**4. ¿Un semivariograma por día, como el proyecto 1 por corte?** (`8_R7_un_semivariograma_vs_por_dia.csv`; dejar una estación fuera en 300 días de entrenamiento, 8 956 predicciones en años válidos):
+
+| | RMSE del día |
+|---|---|
+| Solo la tendencia | 10,12 mm |
+| **R7, un semivariograma** | **8,61 mm** |
+| Flujo de la clase por día (Moran del día → semivariograma del día, o la tendencia) | 9,09 mm (+0,48 [+0,19; +0,78]) |
+
+Con un solo día, el semivariograma es inestable: ese día solo hay unas 170 estaciones y, si es seco, casi todas en 0. Por eso el flujo por día usa kriging solo en la mitad de los días y queda peor. Es lo que dicen Lebel et al. (1987) y lo que hicieron Russi y Larrahondo (2017) al usar sumas quincenales.
+
+**5. Un error de datos que encontró esta revisión.** La Perdición (Calima) tiene unos 52 datos al año, casi ninguno en 0 y con mediana de 130 mm: la lluvia de una semana anotada en un solo día. No entra al análisis (no tiene años válidos), pero **se usaba como vecina**. Desde D-64, R7 no usa como vecinas las 7 estaciones sin ningún año válido. Se comprobó que en R2 y R4 esas estaciones no cambiaron ninguna decisión: en R4 nunca contradijeron una racha, y en R2 La Perdición fue la vecina más alta de un extremo de Venecia (octubre de 1983) que igual se marcó.
+
 ### Cuánto se rellena
 - **Conjunto principal (≥10 años):** 719 días de 1 111 790 (0,065 %). Otros 36 días no tienen ninguna vecina con dato ese día: quedan faltantes y los cubre la curva.
 - **Sensibilidad (OMM):** 366 días de 771 245 (0,047 %), sin faltantes que queden.
@@ -278,6 +346,15 @@ Los dos métodos estiman el día como un promedio ponderado de las vecinas ese m
 - Urrea, V., Ochoa, A. y Mesa, O. (2019). Seasonality of rainfall in Colombia. *Water Resources Research*, 55, 4149–4162.
 - WMO (2017). *WMO Guidelines on the Calculation of Climate Normals*. WMO-No. 1203 (secciones 4.4 y 4.6).
 - Cuevas, A., Febrero, M. y Fraiman, R. (2004). An anova test for functional data. *Computational Statistics & Data Analysis*, 47(1), 111–122.
+- Deutsch, C. V. (1996). Correcting for negative weights in ordinary kriging. *Computers & Geosciences*, 22(7), 765–773 (citado por Russi y Larrahondo 2017).
+- Guijarro, J. A. *climatol: Climate Tools (Series Homogenization and Derived Products)*. Paquete de R (CRAN), función `homogen`.
+- Haylock, M. R. et al. (2008). A European daily high-resolution gridded data set of surface temperature and precipitation for 1950–2006. *Journal of Geophysical Research*, 113, D20119.
+- Herrera, S. et al. (2010). Development and analysis of a 50-year high-resolution daily gridded precipitation dataset over Spain (Spain02). *International Journal of Climatology*.
+- Hofstra, N. et al. (2008). Comparison of six methods for the interpolation of daily European climate data. *Journal of Geophysical Research*, 113, D21110.
+- Lebel, T., Bastin, G., Obled, C. y Creutin, J. D. (1987). On the accuracy of areal rainfall estimation: a case study. *Water Resources Research*, 23(11), 2123–2134.
+- Longman, R. J. et al. (2020). Characterizing the uncertainty and assessing the value of gap-filled daily rainfall data in Hawaii. *Journal of Applied Meteorology and Climatology*, 59(7).
+- Ospina Galindez, J. A. (2016). Tesis de maestría, Universidad del Valle: modelación de la precipitación pentadal del Valle del Cauca con datos de estaciones y satélite (capítulo 5 y anexo C).
+- Russi Peña, J. y Larrahondo, E. (2017). *Comparación de métodos de estimación de datos faltantes en series de precipitación diaria en el Valle del Cauca*. Trabajo de grado, Universidad del Valle (director: J. A. Ospina Galindez).
 - Davison, A. C. y Hinkley, D. V. (1997). *Bootstrap Methods and their Application*. Cambridge University Press (sec. 3.8, datos jerárquicos).
 - Durre, I., Menne, M. J., Gleason, B. E., Houston, T. G. y Vose, R. S. (2010). Comprehensive automated quality assurance of daily surface observations. *Journal of Applied Meteorology and Climatology*, 49(8), 1615–1633.
 - Funk, C. et al. (2015). The climate hazards infrared precipitation with stations — a new environmental record for monitoring extremes. *Scientific Data*, 2, 150066.

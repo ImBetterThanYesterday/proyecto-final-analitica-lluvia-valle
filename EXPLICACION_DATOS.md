@@ -556,6 +556,8 @@ La OMM (2017, 4.6) dice lo mismo: para valores diarios, los días de antes y des
 
 El error se mide frente a cuánto varía la curva de esa estación de un año a otro. Rellenar con vecinas casi divide el error a la mitad, y el kriging es el mejor de los métodos con vecinas.
 
+**¿Se validó cada decisión? Sí** (D-64; tablas `8_R7_*`). R7 pasa los tres filtros del flujo de kriging de la clase: hay dependencia espacial (Moran significativo en el 65 % de los días), no es pepita pura y baja el error un 31 % frente a la media del mes. Ninguna alternativa lo mejora al menos un 1 %: ni un semivariograma por temporada, por zona o por fase ENSO, ni 5 o 20 vecinas, ni el kriging simple, ni un semivariograma por día como en el proyecto 1. Los años Niña son algo más difíciles de rellenar, pero el kriging gana en las tres fases. El detalle y la literatura están en `docs/FUNDAMENTOS_REGLAS.md`, sección 6.
+
 **Cada día rellenado queda marcado** (`tablas/8_R7_dias_rellenados.csv` y la matriz `rellenado` de `datos_preparados.rds`), y R5 se mide siempre con los días observados.
 
 ---

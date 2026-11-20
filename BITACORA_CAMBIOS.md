@@ -2,6 +2,16 @@
 
 Qué cambió en cada sesión, en qué commit y por qué. El detalle de cada decisión está en `DECISIONES.md` (D-xx) y el estado frente a la rúbrica en `CONTROL_RUBRICA.md`.
 
+## Sesión del 21-nov-2026 (rama `gus-base-conocimiento-profesor`)
+
+| Archivo | Cambio | Por qué |
+|---|---|---|
+| `lluvia_valle_datos.R` | R7: Moran, revisión de pepita pura, validación de 10 alternativas (años impares para ajustar, pares para evaluar; regla del 1 % del proyecto 1), prueba por fase ENSO y prueba de un semivariograma por día | Validar cada decisión del kriging con el flujo de la clase (D-64) |
+| `lluvia_valle_datos.R` | R7 no usa como vecinas las 7 estaciones sin ningún año válido | La Perdición (Calima) anota la lluvia de la semana en un solo día |
+| Documentos | FUNDAMENTOS_REGLAS (sección 6: literatura y validación), DECISIONES (D-64), EXPLICACION_DATOS (8b) | Tesis del profesor, Russi y Larrahondo 2017, Lebel et al. 1987, Terán-Chaves 2021, Hofstra 2008, climatol |
+
+Resultados en prueba iguales: satélite 0,51 → regresión 0,44 (principal).
+
 ## Sesión del 20-nov-2026 (rama `gus-base-conocimiento-profesor`)
 
 Punto de partida: commit `f7ef057`. Detalle en D-61 y en `docs/FUNDAMENTOS_REGLAS.md` (secciones 2, 3 y 6).

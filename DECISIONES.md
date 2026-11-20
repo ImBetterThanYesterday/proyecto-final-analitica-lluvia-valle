@@ -847,6 +847,23 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 
 ---
 
+### D-64 · R7 validado con el flujo de kriging de la clase, la literatura y el ENSO ✅
+- **Origen.** Gus pidió revisar el kriging con el flujo del proyecto 1, con la tesis del profesor y con otros trabajos que imputan lluvia con kriging, ser muy críticos y validar con datos cada decisión, incluida la fase ENSO.
+- **Decisión:** R7 se queda como estaba (kriging ordinario, un semivariograma exponencial de la lluvia diaria de 1981–1995, hasta 10 vecinas a ≤50 km, razón de medias mensuales), con un solo cambio: **no se usan como vecinas las 7 estaciones sin ningún año válido**.
+- **Cómo se validó** (sección 8 de `lluvia_valle_datos.R`; detalle en `docs/FUNDAMENTOS_REGLAS.md`, sección 6):
+  - **Flujo de la clase (proyecto 1):** Moran significativo en el 65 % de los días; meseta parcial / total = 0,87 (no es pepita pura); el kriging baja el error de la curva un 31 % frente a la media del mes. Pasa los tres filtros.
+  - **Regla de cambio:** ajustar con años impares, evaluar con años pares; adoptar solo si el IC 95 % excluye el 0 y la mejora es ≥1 % (`MEJORA_MIN` del proyecto 1). Ninguna alternativa la cumple: por temporada +3 %, por zona +4 %, 5 vecinas +3 %, kriging simple +4 % (peores); por fase ENSO +0,9 %, 20 vecinas −0,3 % y pesos negativos a 0 (Deutsch 1996) 0 % (sin diferencia).
+  - **ENSO:** los años Niña son algo más difíciles (0,373 frente a 0,342 en Niño), pero el kriging gana en las tres fases y un semivariograma por fase no mejora ninguna.
+  - **Un semivariograma por día** (el flujo del proyecto 1 por corte) queda peor: RMSE del día 9,09 frente a 8,61 mm (IC de la diferencia +0,19 a +0,78).
+  - **La tesis del profesor** rellena con la media anual de la estación (en el anexo C, `ksline` sobre `prec_prom`): queda 62 % peor que R7.
+- **Literatura:** kriging climatológico (Lebel et al. 1987); Russi y Larrahondo (2017, Univalle, dirigida por el profesor) no ajustan semivariogramas diarios por la alta variabilidad; Terán-Chaves et al. (2021), IDEAM; Hofstra et al. (2008); Longman et al. (2020) para la razón normal; climatol (`std = 2`, `nref = 10`). Ninguno condiciona el kriging al ENSO.
+- **Error de datos encontrado:** La Perdición (Calima) anota la lluvia de la semana en un solo día (unos 52 datos al año, mediana de 130 mm). No entraba al análisis, pero era vecina. En R2 y R4 no cambió ninguna decisión.
+- **Efecto:** los 944 días rellenados siguen siendo los mismos; cambian levemente los que tenían a esas estaciones como vecinas. Resultados en prueba iguales: satélite 0,51 → regresión 0,44 (principal) y 0,52 → 0,42 (sensibilidad OMM).
+- **Pruebas:** datos 30/30, red 13/13, evaluación de la red 5/5 y concurrente 10/10, en los dos conjuntos.
+- **Fecha y responsable:** 2026-11-21, Gus y Claude.
+
+---
+
 ## Plantilla para nuevas decisiones
 
 ```

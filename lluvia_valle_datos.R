@@ -881,7 +881,13 @@ pesos_ok <- function(s, v, f, p) {
   sol <- tryCatch(solve(A, b), error = function(e) c(rep(1 / n, n), 0))
   list(w = sol[seq_len(n)], var = sum(sol[seq_len(n)] * b[seq_len(n)]) + sol[n + 1L])
 }
-vecinas_r7 <- lapply(R7_EST, function(s) { v <- setdiff(names(sort(DKv[s, ])), s); v[DKv[s, v] <= R7_RADIO] }); names(vecinas_r7) <- R7_EST
+# Una estación sin NINGÚN año válido (R5) no sirve de vecina: su cobertura no se puede comprobar y
+# puede esconder acumulados. Ejemplo: La Perdición (Calima) anota unos 52 días al año, casi ninguno
+# en 0 y con mediana de 130 mm: la lluvia de la semana en un solo día (Viney y Bates 2004; IDEAM:
+# "solo se aceptan hasta cuatro (4) días acumulados"). Son 7 estaciones (D-64).
+R7_CON_VALIDOS <- intersect(R7_EST, anios[valido == TRUE, unique(codigo)])
+cat("R7: estaciones sin ningún año válido que no se usan como vecinas:", paste(valle[codigo %in% setdiff(R7_EST, R7_CON_VALIDOS), nombre], collapse = ", "), "\n")
+vecinas_r7 <- lapply(R7_EST, function(s) { v <- setdiff(names(sort(DKv[s, ])), s); v[DKv[s, v] <= R7_RADIO & v %in% R7_CON_VALIDOS] }); names(vecinas_r7) <- R7_EST
 estima_ok <- function(s, t, f = VG[[vg_mejor]], p = vg_par[[vg_mejor]], razon = TRUE) {
   v <- vecinas_r7[[s]]; v <- head(v[!is.na(PM[t, v])], R7_MAX_VEC)
   if (!length(v)) return(c(NA_real_, NA_real_, 0))
@@ -944,6 +950,120 @@ for (pt in unique(exp_r7$patron)) for (mt in setdiff(levels(res_r7$metodo), "idw
   res_r7[patron == pt & metodo == mt, pct_casos_mejor_que_idw := round(100 * exp_r7[patron == pt, mean(get(mt) < idw_3_vecinas)])]
 print(tabla(res_r7, "8_R7_metodos_relleno"))
 stopifnot(res_r7[patron == "maximo_R5" & metodo == "kriging_con_razon", error_mediana] < res_r7[patron == "maximo_R5" & metodo == "solo_curva", error_mediana])
+
+# ---- R7: el flujo de kriging de la clase y la validación de cada decisión (D-64) ----
+# El proyecto 1 del curso decide el kriging en pasos: modelo de la media → Moran de lo que queda
+# → semivariograma (¿pepita pura?) → kriging solo si baja el error ≥1 % frente al modelo sin él.
+# Aquí la "media" es la lluvia media de la estación en el mes (la razón de medias quita el nivel).
+# (1) ¿Hay dependencia espacial? Moran de la anomalía diaria (P / media del mes), 4 vecinas más
+#     cercanas y permutación, en días de entrenamiento al azar.
+set.seed(20261122)
+moran_perm <- function(q, D, B = 199L) { n <- length(q); nn <- t(apply(D, 1, function(r) order(r)[2:5])); q <- q - mean(q)
+  f <- function(u) sum(u * rowMeans(matrix(u[nn], n, 4))) / sum(u^2); I <- f(q); c(I = I, p = (1 + sum(replicate(B, f(sample(q))) >= I)) / (B + 1)) }
+R7_ZM <- PM / pmax(R7_MEDIA[cbind(R7_MES, rep(seq_along(R7_EST), each = nrow(PM)))], R7_MIN_MEDIA); dim(R7_ZM) <- dim(PM); dimnames(R7_ZM) <- dimnames(PM)
+dias_moran <- sample(R7_ENT[rowSums(!is.na(PM[R7_ENT, ])) >= 60], 300)
+moran_r7 <- rbindlist(lapply(dias_moran, function(t) { ok <- which(!is.na(R7_ZM[t, ])); z <- R7_ZM[t, ok]
+  m <- if (sd(z) > 0) moran_perm(z, DKv[ok, ok]) else c(I = NA, p = 1)
+  data.table(t, estaciones = length(ok), I = m[["I"]], p = m[["p"]], pct_con_lluvia = mean(PM[t, ok] > 0)) }))
+moran_r7[, tipo_de_dia := cut(pct_con_lluvia, c(-.01, .2, .6, 1), labels = c("seco (<20 % de estaciones con lluvia)", "intermedio", "húmedo (>60 %)"))]
+moran_res <- rbind(moran_r7[, .(tipo_de_dia = "todos", dias = .N, I_mediano = round(median(I, na.rm = TRUE), 2), pct_dias_p_menor_005 = round(100 * mean(p < .05)))],
+                   moran_r7[, .(dias = .N, I_mediano = round(median(I, na.rm = TRUE), 2), pct_dias_p_menor_005 = round(100 * mean(p < .05))), by = tipo_de_dia][order(tipo_de_dia)])
+print(tabla(moran_res, "8_R7_moran"))
+# (2) ¿Es pepita pura? En la clase, meseta parcial / meseta total < 0,05 → no hay kriging
+cat(sprintf("Semivariograma elegido (%s): meseta parcial / meseta total = %.2f (pepita pura si < 0,05)\n",
+            vg_mejor, vg_par[[vg_mejor]][2] / sum(vg_par[[vg_mejor]][1:2])))
+# (3) Validación de cada decisión, sin evaluar con los datos de ajuste: las medias mensuales y los
+#     semivariogramas se ajustan con los años IMPARES de 1981–1995 y se quitan días (el máximo que
+#     acepta R5) a años completos PARES. Un cambio se adopta solo si su IC 95 % (bootstrap de
+#     estaciones) excluye el 0 y baja el error al menos un 1 % (la regla del proyecto 1, MEJORA_MIN).
+R7_ANIO <- rep(ANIOS, each = 365L); R7_AJ <- R7_ENT[R7_ANIO[R7_ENT] %% 2L == 1L]
+R7_FASE <- fread("datos_web/oni_anual_fase.csv")[match(R7_ANIO, anio), fase]
+R7_ESTAC <- c("DEF", "DEF", "MAM", "MAM", "MAM", "JJA", "JJA", "JJA", "SON", "SON", "SON", "DEF")[R7_MES]
+R7_ZONA <- setNames(ifelse(valle$vertiente %in% "Pacífico", "Pacífico", "Andina"), valle$codigo)[R7_EST]
+med_imp <- sapply(R7_EST, function(s) tapply(PM[R7_AJ, s], R7_MES[R7_AJ], function(v) if (sum(!is.na(v)) >= 20) mean(v, na.rm = TRUE) else NA_real_))
+med_imp <- ifelse(is.na(med_imp), R7_MEDIA, med_imp)
+emp_vg <- function(M, filas, zona = NULL) { acc <- matrix(0, length(tramos) - 1L, 2L)
+  for (i in seq_along(R7_EST)) { if (!is.null(zona) && R7_ZONA[i] != zona) next
+    j <- which(DKv[i, ] > 0 & DKv[i, ] <= 100 & (is.null(zona) | R7_ZONA == if (is.null(zona)) "" else zona)); if (!length(j)) next
+    q <- (M[filas, j, drop = FALSE] - M[filas, i])^2; n_c <- colSums(!is.na(q)); m_c <- colSums(q, na.rm = TRUE) / pmax(n_c, 1)
+    b <- findInterval(DKv[i, j], tramos, left.open = TRUE); ok <- n_c >= 60 & b >= 1 & b < length(tramos)
+    for (k in which(ok)) acc[b[k], ] <- acc[b[k], ] + c(m_c[k] / 2, 1) }
+  data.table(km = (tramos[-1] + tramos[-length(tramos)]) / 2, gamma = acc[, 1] / acc[, 2], pares = acc[, 2])[pares > 0] }
+ajusta_exp <- function(e) { ob <- function(w) { p <- c(exp(w[1]), exp(w[2]), 1 + 299 * plogis(w[3])); sum(e$pares * (e$gamma - VG$exponencial(e$km, p))^2) }
+  best <- NULL; for (c0 in c(.3, .6, .9) * min(e$gamma)) for (a in c(10, 40, 150)) {
+    o <- optim(c(log(c0), log(max(e$gamma) - c0 + 1e-6), qlogis((a - 1) / 299)), ob, control = list(maxit = 3000)); if (is.null(best) || o$value < best$value) best <- o }
+  c(exp(best$par[1:2]), 1 + 299 * plogis(best$par[3])) }
+VV <- list(global = ajusta_exp(emp_vg(PM, R7_AJ)))
+for (e in unique(R7_ESTAC)) VV[[paste0("temporada_", e)]] <- ajusta_exp(emp_vg(PM, R7_AJ[R7_ESTAC[R7_AJ] == e]))
+for (f in c("Niño", "Niña", "Neutro")) VV[[paste0("ENSO_", f)]] <- ajusta_exp(emp_vg(PM, R7_AJ[R7_FASE[R7_AJ] == f]))
+for (z in c("Andina", "Pacífico")) VV[[paste0("zona_", z)]] <- ajusta_exp(emp_vg(PM, R7_AJ, z))
+# kriging simple sobre la anomalía (media conocida = 1): necesita la covarianza de la anomalía
+R7_ZI <- PM / pmax(med_imp[cbind(R7_MES, rep(seq_along(R7_EST), each = nrow(PM)))], R7_MIN_MEDIA); dim(R7_ZI) <- dim(PM); dimnames(R7_ZI) <- dimnames(PM)
+VV$anomalia <- ajusta_exp(emp_vg(R7_ZI, R7_AJ))
+tabla(rbindlist(lapply(names(VV), function(n) data.table(semivariograma = n, pepita = VV[[n]][1], meseta_parcial = VV[[n]][2], rango_km = VV[[n]][3]))), "8_R7_semivariogramas_por_grupo")
+est_val <- function(metodo, s, t, media_anual) {
+  m <- R7_MES[t]; tend <- med_imp[m, s]
+  if (metodo == "tendencia (media del mes)") return(tend)
+  if (metodo == "tesis del profesor (media anual de la estación)") return(media_anual)
+  p <- VV$global; k <- R7_MAX_VEC; corr <- FALSE
+  if (metodo == "semivariograma por temporada") p <- VV[[paste0("temporada_", R7_ESTAC[t])]]
+  if (metodo == "semivariograma por fase ENSO") p <- VV[[paste0("ENSO_", R7_FASE[t])]]
+  if (metodo == "semivariograma por zona") p <- VV[[paste0("zona_", R7_ZONA[[s]])]]
+  if (metodo == "5 vecinas") k <- 5L
+  if (metodo == "20 vecinas") k <- 20L
+  if (metodo == "pesos negativos a 0 (Deutsch 1996)") corr <- TRUE
+  v <- vecinas_r7[[s]]; v <- head(v[!is.na(PM[t, v])], k); if (!length(v)) return(tend)
+  zz <- PM[t, v] / pmax(med_imp[m, v], R7_MIN_MEDIA)
+  if (metodo == "kriging simple") { pa <- VV$anomalia; C <- function(h) ifelse(h == 0, pa[1] + pa[2], pa[2] * exp(-h / pa[3]))
+    w <- tryCatch(solve(C(DKv[v, v, drop = FALSE]), C(DKv[s, v])), error = function(e) rep(0, length(v))); return(max(0, tend * (1 + sum(w * (zz - 1))))) }
+  w <- pesos_ok(s, v, VG$exponencial, p)$w; if (corr) { w <- pmax(w, 0); w <- w / sum(w) }
+  max(0, tend * sum(w * zz)) }
+METODOS_R7 <- c("R7 (un semivariograma, 10 vecinas)", "tendencia (media del mes)", "tesis del profesor (media anual de la estación)",
+                "semivariograma por temporada", "semivariograma por fase ENSO", "semivariograma por zona", "5 vecinas", "20 vecinas",
+                "pesos negativos a 0 (Deutsch 1996)", "kriging simple")
+casos_val <- comp_r7[y %% 2L == 0L][sample(.N, min(.N, 400))]
+val_r7 <- rbindlist(lapply(seq_len(nrow(casos_val)), function(r) {
+  s <- casos_val$s[r]; idx <- (casos_val$y[r] - 1L) * 365L + 1:365; obs <- PM[idx, s]; o <- masc_extrema(); f <- which(!o)
+  ref <- ajustar(obs, rep(TRUE, 365), R7_PHI); sdv <- sd_r7$sd[sd_r7$s == s]; ma <- mean(obs[o])
+  rbindlist(lapply(METODOS_R7, function(mt) { z <- obs; z[f] <- vapply(idx[f], function(t) est_val(mt, s, t, ma), 0)
+    data.table(s, anio = ANIOS[casos_val$y[r]], fase = R7_FASE[idx[1]], zona = R7_ZONA[[s]], metodo = mt,
+               curva = sqrt(mean((ajustar(z, rep(TRUE, 365), R7_PHI) - ref)^2)) / sdv, dia = sqrt(mean((z[f] - obs[f])^2))) })) }))
+val_r7 <- val_r7[val_r7[metodo == METODOS_R7[1], .(s, anio, c0 = curva)], on = .(s, anio)][, dif := curva - c0]
+ic_est <- function(dd) { u <- unique(dd$s); q <- replicate(1000, { k <- sample(u, replace = TRUE); dd[data.table(s = k), on = "s", allow.cartesian = TRUE][, mean(dif)] }); quantile(q, c(.025, .975)) }
+dec_r7 <- val_r7[, { ic <- ic_est(.SD); .(casos = .N, error_curva_media = round(mean(curva), 4), rmse_dia_mm = round(mean(dia), 2), dif_vs_R7 = round(mean(dif), 4),
+                 ic_inf = round(ic[1], 4), ic_sup = round(ic[2], 4), cambio_pct = round(100 * mean(dif) / mean(c0), 1)) }, by = metodo]
+dec_r7[, decision := fifelse(metodo == METODOS_R7[1], "elegido",
+                     fifelse(ic_sup < 0 & -cambio_pct >= 100 * 0.01, "mejora ≥1 %: habría que adoptarlo",
+                     fifelse(ic_inf > 0, "peor que R7", "no mejora ≥1 % con IC que excluya el 0")))]
+print(tabla(dec_r7, "8_R7_validacion_decisiones"))
+print(tabla(val_r7[metodo %in% METODOS_R7[c(1, 2, 5)], .(casos = .N, error_curva_media = round(mean(curva), 4)), by = .(fase, metodo)][order(fase, metodo)], "8_R7_por_fase_ENSO"))
+stopifnot(dec_r7[decision == "mejora ≥1 %: habría que adoptarlo", .N] == 0L)
+# (4) ¿Un semivariograma por día, como el proyecto 1 por corte? Dejar una estación fuera en días de
+#     entrenamiento: si ese día Moran no es significativo, o su semivariograma es pepita pura, se usa la
+#     tendencia; si no, kriging con el semivariograma de ESE día (exp, esf o gauss por MCP, menor SSE).
+fam3 <- VG[c("exponencial", "esferico", "gaussiano")]
+ajusta_dia <- function(z, ok) { D <- DKv[ok, ok]; ij <- which(upper.tri(D) & D <= 100, arr.ind = TRUE); h <- D[ij]; g <- (z[ok][ij[, 1]] - z[ok][ij[, 2]])^2 / 2
+  e <- data.table(h, g, b = cut(h, tramos))[, .(km = mean(h), gamma = mean(g), pares = .N), by = b][pares >= 10]
+  if (nrow(e) < 4) return(NULL); best <- NULL
+  for (nm in names(fam3)) { ob <- function(w) { p <- c(exp(w[1]), exp(w[2]), 1 + 299 * plogis(w[3])); sum(e$pares * (e$gamma - fam3[[nm]](e$km, p))^2) }
+    o <- optim(c(log(max(min(e$gamma), 1e-3)), log(max(diff(range(e$gamma)), 1e-3)), 0), ob); if (is.null(best) || o$value < best$sse) best <- list(nm = nm, p = c(exp(o$par[1:2]), 1 + 299 * plogis(o$par[3])), sse = o$value) }
+  best }
+dia_r7 <- rbindlist(lapply(dias_moran, function(t) { m <- R7_MES[t]; ok <- which(!is.na(R7_ZM[t, ])); z <- R7_ZM[t, ]
+  mo <- moran_r7$p[moran_r7$t == t]; fit <- if (mo < 0.05) ajusta_dia(z, ok) else NULL
+  usa <- !is.null(fit) && fit$p[2] / sum(fit$p[1:2]) >= 0.05
+  val_t <- anios[valido == TRUE & anio == R7_ANIO[t], codigo]; obj <- ok[R7_EST[ok] %in% val_t]
+  rbindlist(lapply(obj[sample.int(length(obj), min(30L, length(obj)))], function(si) { s <- R7_EST[si]; v <- setdiff(R7_EST[ok][order(DKv[s, R7_EST[ok]])], s); v <- v[v %in% R7_CON_VALIDOS]; v <- head(v[DKv[s, v] <= R7_RADIO], R7_MAX_VEC)
+    if (!length(v)) return(NULL); tend <- R7_MEDIA[m, s]
+    kg <- max(0, tend * sum(pesos_ok(s, v, VG[[vg_mejor]], vg_par[[vg_mejor]])$w * z[v]))
+    kd <- if (usa) max(0, tend * sum(pesos_ok(s, v, fam3[[fit$nm]], fit$p)$w * z[v])) else tend
+    data.table(t, obs = PM[t, s], tendencia = tend, R7 = kg, por_dia = kd, usa_kriging_ese_dia = usa) })) }))
+rm2 <- function(a, b) sqrt(mean((a - b)^2))
+ud <- unique(dia_r7$t); bs_d <- replicate(1000, { k <- sample(ud, replace = TRUE); w <- dia_r7[data.table(t = k), on = "t", allow.cartesian = TRUE]; rm2(w$por_dia, w$obs) - rm2(w$R7, w$obs) })
+por_dia_r7 <- data.table(validacion = "dejar una estación fuera", dias = length(ud), predicciones = nrow(dia_r7), pct_dias_con_kriging_por_dia = round(100 * dia_r7[!duplicated(t), mean(usa_kriging_ese_dia)]),
+  rmse_tendencia = round(rm2(dia_r7$tendencia, dia_r7$obs), 2), rmse_R7 = round(rm2(dia_r7$R7, dia_r7$obs), 2), rmse_por_dia = round(rm2(dia_r7$por_dia, dia_r7$obs), 2),
+  dif_por_dia_menos_R7 = round(rm2(dia_r7$por_dia, dia_r7$obs) - rm2(dia_r7$R7, dia_r7$obs), 3), ic_inf = round(quantile(bs_d, .025), 3), ic_sup = round(quantile(bs_d, .975), 3))
+print(tabla(por_dia_r7, "8_R7_un_semivariograma_vs_por_dia"))
+rm(R7_ZM, R7_ZI); invisible(gc())
 
 # Aplicar: se rellenan los faltantes de los años válidos de las estaciones del Valle
 diario_todo[, imputado := FALSE]

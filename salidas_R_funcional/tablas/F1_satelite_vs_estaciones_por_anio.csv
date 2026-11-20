@@ -1,6 +1,6 @@
 anio,pares,P_est_mediana,P_sat_mediana,cociente_mediano,ONI,fase,particion,marcado
 1981,108,1530,1798,1.033,-0.25,Neutro,entrenamiento,FALSE
-1982,111,1505,1934,1.181,0.91,Niño,entrenamiento,FALSE
+1982,111,1504,1934,1.181,0.91,Niño,entrenamiento,FALSE
 1983,126,1327,1818,1.278,0.46,Neutro,entrenamiento,FALSE
 1984,136,1905,1842,0.884,-0.55,Niña,entrenamiento,FALSE
 1985,141,1338,1463,1.012,-0.58,Niña,entrenamiento,TRUE

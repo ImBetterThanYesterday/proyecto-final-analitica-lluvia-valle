@@ -1,0 +1,10 @@
+fase,metodo,casos,error_curva_media
+Neutro,"R7 (un semivariograma, 10 vecinas)",186,0.3572
+Neutro,semivariograma por fase ENSO,186,0.3585
+Neutro,tendencia (media del mes),186,0.5137
+Niña,"R7 (un semivariograma, 10 vecinas)",117,0.3726
+Niña,semivariograma por fase ENSO,117,0.3779
+Niña,tendencia (media del mes),117,0.566
+Niño,"R7 (un semivariograma, 10 vecinas)",97,0.3422
+Niño,semivariograma por fase ENSO,97,0.3474
+Niño,tendencia (media del mes),97,0.481

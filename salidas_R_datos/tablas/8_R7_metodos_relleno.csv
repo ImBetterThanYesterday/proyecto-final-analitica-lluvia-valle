@@ -1,9 +1,9 @@
 patron,metodo,casos,faltan_mediana,error_mediana,error_p90,pct_casos_mejor_que_idw
 real,solo_curva,1932,2,0.032,0.136,29
 maximo_R5,solo_curva,1932,120,0.551,0.863,14
-real,idw_3_vecinas,1932,2,0.018,0.107,
+real,idw_3_vecinas,1932,2,0.018,0.108,
 maximo_R5,idw_3_vecinas,1932,120,0.321,0.561,
 real,kriging_sin_razon,1932,2,0.02,0.103,40
-maximo_R5,kriging_sin_razon,1932,120,0.344,0.636,42
+maximo_R5,kriging_sin_razon,1932,120,0.342,0.632,43
 real,kriging_con_razon,1932,2,0.018,0.096,44
-maximo_R5,kriging_con_razon,1932,120,0.3,0.516,59
+maximo_R5,kriging_con_razon,1932,120,0.3,0.516,60

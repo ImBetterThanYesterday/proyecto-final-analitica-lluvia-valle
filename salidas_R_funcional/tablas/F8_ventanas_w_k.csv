@@ -1,28 +1,28 @@
 cabeza,semilla,neurona,dia_max_abs,signo_en_max,ventana,dias_en_ventana,fecha_max
 lineal,2026,1,1,1,01-Jan a 31-Dec,365,01-Jan
-lineal,2026,2,1,-1,01-Jan a 29-Apr; 14-Oct a 31-Dec,198,01-Jan
-lineal,2026,3,1,1,01-Jan a 28-Mar; 09-Dec a 31-Dec,110,01-Jan
-lineal,2026,4,365,1,26-Mar a 31-Dec,281,31-Dec
+lineal,2026,2,1,-1,01-Jan a 25-Apr; 20-Oct a 31-Dec,188,01-Jan
+lineal,2026,3,1,1,01-Jan a 10-Apr,100,01-Jan
+lineal,2026,4,365,1,01-Apr a 31-Dec,275,31-Dec
 lineal,2026,5,365,-1,01-Jan a 31-Dec,365,31-Dec
-lineal,2026,6,365,1,01-Jan a 14-Apr; 07-Oct a 31-Dec,190,31-Dec
-lineal,2026,7,365,1,01-Jan a 23-Mar; 30-Oct a 31-Dec,145,31-Dec
-lineal,2026,8,365,-1,11-Jun a 31-Dec,204,31-Dec
-lineal,2027,1,365,1,14-Jan a 31-Dec,352,31-Dec
-lineal,2027,2,365,-1,01-Jan a 19-Apr; 07-Oct a 31-Dec,195,31-Dec
-lineal,2027,3,365,1,01-Jan a 12-Mar; 01-Nov a 31-Dec,132,31-Dec
-lineal,2027,4,1,1,01-Jan a 02-May; 25-Oct a 31-Dec,190,01-Jan
+lineal,2026,6,365,1,01-Jan a 22-Apr; 07-Oct a 31-Dec,198,31-Dec
+lineal,2026,7,365,1,01-Jan a 26-Mar; 30-Oct a 31-Dec,148,31-Dec
+lineal,2026,8,365,-1,13-Jun a 31-Dec,202,31-Dec
+lineal,2027,1,365,1,01-Jan a 31-Dec,365,31-Dec
+lineal,2027,2,365,-1,01-Jan a 13-Apr; 11-Oct a 31-Dec,185,31-Dec
+lineal,2027,3,365,1,01-Jan a 13-Mar; 01-Nov a 31-Dec,133,31-Dec
+lineal,2027,4,365,-1,01-Jan a 26-Apr; 24-Oct a 31-Dec,185,31-Dec
 lineal,2027,5,365,-1,01-Jan a 31-Dec,365,31-Dec
-lineal,2027,6,1,-1,01-Jan a 11-Jun,162,01-Jan
-lineal,2027,7,1,-1,01-Jan a 31-Dec,365,01-Jan
-lineal,2027,8,365,1,01-Jan a 31-Dec,365,31-Dec
-lineal,2028,1,365,1,01-Jan a 11-Mar; 31-Oct a 31-Dec,132,31-Dec
-lineal,2028,2,1,1,01-Jan a 02-May,122,01-Jan
-lineal,2028,3,1,1,01-Jan a 15-Nov,319,01-Jan
-lineal,2028,4,365,1,01-Jan a 26-Apr; 11-Oct a 31-Dec,198,31-Dec
+lineal,2027,6,1,-1,01-Jan a 12-Jun,163,01-Jan
+lineal,2027,7,1,-1,01-Jan a 25-Dec,359,01-Jan
+lineal,2027,8,1,1,01-Jan a 16-Jul,197,01-Jan
+lineal,2028,1,365,1,01-Jan a 12-Mar; 29-Oct a 31-Dec,135,31-Dec
+lineal,2028,2,1,1,01-Jan a 12-Apr,102,01-Jan
+lineal,2028,3,1,1,01-Jan a 14-Nov,318,01-Jan
+lineal,2028,4,365,1,01-Jan a 22-Apr; 10-Oct a 31-Dec,195,31-Dec
 lineal,2028,5,365,1,01-Jan a 31-Dec,365,31-Dec
-lineal,2028,6,365,1,02-May a 31-Dec,244,31-Dec
-lineal,2028,7,365,1,01-Jan a 14-Apr; 27-Oct a 31-Dec,170,31-Dec
-lineal,2028,8,365,1,02-Sep a 31-Dec,121,31-Dec
+lineal,2028,6,365,1,22-Apr a 31-Dec,254,31-Dec
+lineal,2028,7,365,1,01-Jan a 14-Apr; 29-Oct a 31-Dec,168,31-Dec
+lineal,2028,8,365,1,30-Aug a 31-Dec,124,31-Dec
 kan,2026,1,130,1,26-Jan a 09-Jul; 13-Dec a 31-Dec,184,10-May
 kan,2026,2,211,1,23-Mar a 16-Apr; 11-Jun a 12-Oct,149,30-Jul
 kan,2026,3,82,1,28-Jan a 01-Jun; 08-Aug a 30-Nov,240,23-Mar
@@ -39,14 +39,14 @@ kan,2027,5,365,-1,01-Jan a 30-Jan; 09-Oct a 31-Dec,114,31-Dec
 kan,2027,6,135,-1,05-Feb a 04-Sep; 21-Dec a 31-Dec,223,15-May
 kan,2027,7,230,-1,22-Feb a 07-Nov,259,18-Aug
 kan,2027,8,1,-1,01-Jan a 07-Feb; 08-Oct a 03-Dec,95,01-Jan
-kan,2028,1,296,1,30-Apr a 08-Aug; 16-Sep a 03-Dec,180,23-Oct
-kan,2028,2,169,1,01-Jan a 20-Aug; 14-Dec a 31-Dec,250,18-Jun
-kan,2028,3,124,1,29-Jan a 26-Sep,241,04-May
-kan,2028,4,1,1,01-Jan a 15-Mar; 20-Jun a 05-Jul; 06-Dec a 31-Dec,116,01-Jan
-kan,2028,5,201,1,21-May a 23-Nov,187,20-Jul
-kan,2028,6,365,1,10-Oct a 31-Dec,83,31-Dec
-kan,2028,7,275,1,18-Feb a 27-Jun; 07-Aug a 04-Dec,250,02-Oct
-kan,2028,8,96,-1,17-Feb a 16-Jun; 22-Aug a 20-Dec,241,06-Apr
+kan,2028,1,296,1,28-Apr a 08-Aug; 16-Sep a 03-Dec,182,23-Oct
+kan,2028,2,165,1,04-Jan a 11-Aug; 20-Nov a 31-Dec,262,14-Jun
+kan,2028,3,135,1,31-Jan a 26-Sep,239,15-May
+kan,2028,4,1,1,01-Jan a 13-Mar; 15-Jun a 07-Jul; 07-Dec a 31-Dec,120,01-Jan
+kan,2028,5,213,1,27-May a 04-Dec,192,01-Aug
+kan,2028,6,365,1,14-Oct a 31-Dec,79,31-Dec
+kan,2028,7,275,1,19-Feb a 27-Jun; 07-Aug a 05-Dec,250,02-Oct
+kan,2028,8,96,-1,18-Feb a 17-Jun; 22-Aug a 21-Dec,242,06-Apr
 mlp,2026,1,119,1,02-Feb a 30-Jun; 14-Sep a 28-Sep; 12-Dec a 31-Dec,184,29-Apr
 mlp,2026,2,85,-1,08-Feb a 10-May; 24-Jun a 06-Oct,197,26-Mar
 mlp,2026,3,86,1,26-Jan a 11-Jun; 28-Aug a 13-Nov,215,27-Mar

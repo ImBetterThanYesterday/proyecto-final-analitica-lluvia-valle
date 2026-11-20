@@ -1,3 +1,3 @@
 modelo,pares_entrenamiento,lambda,L2_relativo,RMSE_L2,KGE,sesgo_anual_pct,error_pico_1,error_pico_2
-Regresión con todos los años (la que se usa),2031,316227766.016838,0.439,2.147,0.467,6.757,16.793,17.019
+Regresión con todos los años (la que se usa),2031,316227766.016838,0.439,2.147,0.467,6.757,16.796,17.019
 "Regresión sin 1985, 1988 y 2000",1757,1e+08,0.446,2.177,0.458,7.568,16.843,16.956

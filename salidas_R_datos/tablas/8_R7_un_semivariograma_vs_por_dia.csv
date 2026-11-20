@@ -1,0 +1,2 @@
+validacion,dias,predicciones,pct_dias_con_kriging_por_dia,rmse_tendencia,rmse_R7,rmse_por_dia,dif_por_dia_menos_R7,ic_inf,ic_sup
+dejar una estación fuera,300,8956,49,10.12,8.61,9.09,0.475,0.192,0.784

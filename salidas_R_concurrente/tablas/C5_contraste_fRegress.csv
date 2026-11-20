@@ -1,9 +1,9 @@
 "cantidad","valor"
-"SSE de entrenamiento, solución propia",280991.849224668
-"SSE de entrenamiento, fRegress",282007.931987538
-"diferencia relativa del SSE (%)",0.361605778129714
-"RMS de la diferencia de predicción en prueba (escala raíz)",0.0358702564139964
-"máx. |b0 propio - b0 fRegress|, centro del año",0.37243389755106
-"máx. |b1 propio - b1 fRegress|, centro del año",0.186817581190037
-"RMSE L2 en prueba, mm/día (propio)",2.1775710322876
-"RMSE L2 en prueba, mm/día (fRegress)",2.18092433394546
+"SSE de entrenamiento, solución propia",280992.350258029
+"SSE de entrenamiento, fRegress",282008.435043297
+"diferencia relativa del SSE (%)",0.361605853090108
+"RMS de la diferencia de predicción en prueba (escala raíz)",0.0358703256433959
+"máx. |b0 propio - b0 fRegress|, centro del año",0.372438499752827
+"máx. |b1 propio - b1 fRegress|, centro del año",0.186818743427557
+"RMSE L2 en prueba, mm/día (propio)",2.17757501322514
+"RMSE L2 en prueba, mm/día (fRegress)",2.18092845614718

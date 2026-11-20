@@ -1,0 +1,11 @@
+metodo,casos,error_curva_media,rmse_dia_mm,dif_vs_R7,ic_inf,ic_sup,cambio_pct,decision
+"R7 (un semivariograma, 10 vecinas)",400,0.3581,7.61,0,0,0,0,elegido
+tendencia (media del mes),400,0.5211,9.55,0.163,0.1428,0.1834,45.5,peor que R7
+tesis del profesor (media anual de la estación),400,0.5785,9.64,0.2205,0.1989,0.2403,61.6,peor que R7
+semivariograma por temporada,400,0.3689,7.67,0.0108,0.0027,0.0203,3,peor que R7
+semivariograma por fase ENSO,400,0.3615,7.62,0.0034,-2e-04,0.0077,0.9,no mejora ≥1 % con IC que excluya el 0
+semivariograma por zona,400,0.3734,7.71,0.0153,0.0056,0.0274,4.3,peor que R7
+5 vecinas,400,0.3688,7.83,0.0107,0.0029,0.0206,3,peor que R7
+20 vecinas,400,0.357,7.57,-0.001,-0.0027,7e-04,-0.3,no mejora ≥1 % con IC que excluya el 0
+pesos negativos a 0 (Deutsch 1996),400,0.3579,7.61,-1e-04,-3e-04,0,0,no mejora ≥1 % con IC que excluya el 0
+kriging simple,400,0.3723,7.66,0.0142,0.0012,0.0256,4,peor que R7

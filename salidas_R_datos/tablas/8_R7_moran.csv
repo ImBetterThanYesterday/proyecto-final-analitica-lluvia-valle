@@ -1,0 +1,5 @@
+tipo_de_dia,dias,I_mediano,pct_dias_p_menor_005
+todos,300,0.14,65
+seco (<20 % de estaciones con lluvia),83,0.06,36
+intermedio,145,0.15,70
+húmedo (>60 %),72,0.22,86
