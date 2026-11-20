@@ -1,0 +1,26 @@
+temporada,quintil_satelite,x_medio,residuo_medio,residuo_DE
+dic-feb (seca),1,1.23,0.021,0.602
+dic-feb (seca),2,1.55,0.05,0.665
+dic-feb (seca),3,1.77,0.018,0.702
+dic-feb (seca),4,1.98,-0.073,0.679
+dic-feb (seca),5,2.39,-0.002,0.798
+mar-may (1.a lluviosa),1,1.81,0.079,0.485
+mar-may (1.a lluviosa),2,2.15,0.029,0.51
+mar-may (1.a lluviosa),3,2.4,-0.023,0.506
+mar-may (1.a lluviosa),4,2.67,-0.112,0.51
+mar-may (1.a lluviosa),5,3.12,0.007,0.712
+jun-ago (seca),1,1.1,0.137,0.535
+jun-ago (seca),2,1.46,0.073,0.501
+jun-ago (seca),3,1.73,-0.047,0.496
+jun-ago (seca),4,2,-0.157,0.499
+jun-ago (seca),5,2.52,-0.018,0.781
+sep-oct (transición),1,1.72,0.136,0.432
+sep-oct (transición),2,2.14,0.072,0.498
+sep-oct (transición),3,2.4,-0.017,0.533
+sep-oct (transición),4,2.67,-0.159,0.566
+sep-oct (transición),5,3.19,-0.01,0.876
+nov-dic (2.a lluviosa),1,1.72,0.162,0.666
+nov-dic (2.a lluviosa),2,2.1,0.028,0.665
+nov-dic (2.a lluviosa),3,2.36,-0.055,0.662
+nov-dic (2.a lluviosa),4,2.65,-0.131,0.667
+nov-dic (2.a lluviosa),5,3.27,0.012,0.963

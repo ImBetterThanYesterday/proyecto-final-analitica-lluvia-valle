@@ -1,0 +1,7 @@
+coeficiente,banda,ancho_medio,dias_excluye_0,dias_excluye_1
+b0(t),Sándwich ±2 EE (clase),0.247,305,
+b0(t),Bootstrap de estaciones (176),0.949,88,
+b0(t),Bootstrap de píxeles (148),0.964,68,
+b1(t),Sándwich ±2 EE (clase),0.113,365,262
+b1(t),Bootstrap de estaciones (176),0.463,365,119
+b1(t),Bootstrap de píxeles (148),0.467,365,112

@@ -1,0 +1,9 @@
+cantidad,valor
+"SSE de entrenamiento, solución propia",322100
+"SSE de entrenamiento, fRegress",323300
+Diferencia relativa del SSE (%),0.3948
+RMS de la diferencia de predicción en prueba (raíz),0.03803
+Máx. |b0 propio - b0 fRegress| (centro del año),0.3808
+Máx. |b1 propio - b1 fRegress| (centro del año),0.2035
+"RMSE L2 en prueba, mm/día (propio)",2.14
+"RMSE L2 en prueba, mm/día (fRegress)",2.145

@@ -1,4 +1,0 @@
-grupo,estaciones,T_n,beta,d,p_L2,F_n,gl,p_F,p_permutacion_L2,max_t,c_max,p_permutacion_max,dias_puntual,dias_criterio_maximo
-Todas las estaciones,176,22258,2230,1.28,0.0026,7.73,1.3 y 223.5,0.003,0.0022,11.81,2.56,2e-04,149,129
-Cauca (interandina),150,21337,616,1.39,9.6e-09,24.65,1.4 y 207.3,4.3e-08,2e-04,21.78,2.71,2e-04,266,235
-Pacífico,26,28482,11200,1.16,0.14,2.05,1.2 y 29.0,0.16,0.15,3.29,2.53,0.0072,47,6
