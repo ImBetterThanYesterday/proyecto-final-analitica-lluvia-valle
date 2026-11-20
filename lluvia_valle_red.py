@@ -15,7 +15,7 @@ Todo en escala √P (como la regresión de R); la curva final en mm es max(ŷ, 0
 Entrada única: salidas_R_funcional/para_python/ (sale de lluvia_valle_funcional.R).
 Salidas:       salidas_python/tablas (prefijos P1_ a P6_ por sección) y salidas_python/predicciones_coef_raiz.csv.
 División del trabajo con R (regla del curso: solo herramientas de clase): este archivo ENTRENA la red y
-verifica su construcción; las métricas, el bootstrap, Wilcoxon y la tabla por fase ENSO de las tres
+verifica su construcción; las métricas, el bootstrap por estación y la tabla por fase ENSO de las tres
 cabezas se calculan en R (sección 7 de lluvia_valle_funcional.R) con las mismas funciones que la regresión.
 Uso, desde la raíz del repositorio:  python lluvia_valle_red.py
 Librerías del apartado (enunciado): PyTorch. La KAN se programa aquí con la forma del enunciado,
@@ -33,6 +33,7 @@ Secciones:
 from __future__ import annotations
 
 import json
+import os
 import platform
 import sys
 import time
@@ -46,8 +47,12 @@ torch.set_default_dtype(torch.float64)
 torch.set_num_threads(4)
 
 RAIZ = Path(__file__).resolve().parent
-ENTRADA = RAIZ / "salidas_R_funcional" / "para_python"
-SALIDA = RAIZ / "salidas_python"
+# Conjunto de datos (D-61, D-63): principal (≥10 años) o r6_omm (sensibilidad de R6), con la variable de entorno CONJUNTO
+CONJUNTO = os.environ.get("CONJUNTO", "principal")
+assert CONJUNTO in ("principal", "r6_omm"), "CONJUNTO debe ser 'principal' o 'r6_omm'"
+SUFIJO = "" if CONJUNTO == "principal" else f"_{CONJUNTO}"
+ENTRADA = RAIZ / f"salidas_R_funcional{SUFIJO}" / "para_python"
+SALIDA = RAIZ / f"salidas_python{SUFIJO}"
 TAB = SALIDA / "tablas"
 for d in (TAB,):
     d.mkdir(parents=True, exist_ok=True)
@@ -133,8 +138,8 @@ ent = (pares.particion == "entrenamiento").to_numpy()
 val = (pares.particion == "validación").to_numpy()
 pru = (pares.particion == "prueba").to_numpy()
 print(pares.groupby("particion").agg(pares=("anio", "size"), estaciones=("codigo", "nunique")))
-prueba("Pares: 3 299 = 2 257 + 672 + 370 y todos usables", len(pares) == 3299 and (ent.sum(), val.sum(), pru.sum()) == (2257, 672, 370)
-       and pares.usar.all())
+prueba(f"Pares: {len(pares)} = {ent.sum()} + {val.sum()} + {pru.sum()}, cada uno en una partición y todos usables",
+       len(pares) == ent.sum() + val.sum() + pru.sum() and pares.usar.all())
 prueba("Partición temporal sin cruces (1981-1995 / 1996-2000 / 2001-2003)",
        pares.anio[ent].max() <= 1995 and pares.anio[val].between(1996, 2000).all() and pares.anio[pru].min() >= 2001)
 prueba("W calculada en Python por cuadratura = W de R", max(np.abs(W_e - W_e_R).max(), np.abs(W_s - W_s_R).max()) < 1e-10,
@@ -506,7 +511,7 @@ tabla(pd.DataFrame([{"optimizador": "Adam", "lr": LR, "lote": "completo (entrena
                      "parada_temprana": f"L² de validación, paciencia {PACIENCIA}", "pruebas_hiperparametros_por_cabeza": len(LAMBDAS_W),
                      "rejilla_lambda_w": str(LAMBDAS_W), "semillas": str(SEMILLAS)}]), "P5_presupuesto")
 
-# Exportación para R: los coeficientes √P predichos para las 3 299 curvas por cada cabeza y semilla,
+# Exportación para R: los coeficientes √P predichos para todas las curvas por cada cabeza y semilla,
 # más la regresión de R reconstruida aquí (control cruzado). R calcula todas las métricas.
 todas = np.arange(len(pares))
 pred = [pd.DataFrame(C_R, columns=[f"c{j + 1}" for j in range(K_E)]).assign(modelo="regresión R (en Python)", semilla=0, fila=todas + 1)]
@@ -516,7 +521,7 @@ pred = pd.concat(pred, ignore_index=True)
 pred = pred.merge(pares[["codigo", "anio", "particion"]].assign(fila=todas + 1), on="fila")
 pred[["fila", "codigo", "anio", "particion", "modelo", "semilla"] + [f"c{j + 1}" for j in range(K_E)]].to_csv(
     SALIDA / "predicciones_coef_raiz.csv", index=False, float_format="%.12g")
-print(f"Predicciones exportadas: {len(pred)} filas ({pred.modelo.nunique()} modelos) en salidas_python/predicciones_coef_raiz.csv")
+print(f"Predicciones exportadas: {len(pred)} filas ({pred.modelo.nunique()} modelos) en {SALIDA.name}/predicciones_coef_raiz.csv")
 
 # Pesos del codificador (para graficar w_k(s) en R, rúbrica 4.5) y escala de z en entrenamiento
 cod = []
@@ -587,7 +592,7 @@ prueba("Las tres cabezas tienen el mismo codificador y el mismo decodificador",
        len({(r.A.shape, tuple(r.D.shape)) for r in redes.values()}) == 1 and all(torch.equal(r.D, redes[("lineal", SEMILLAS[0])].D) for r in redes.values()))
 prueba("Tres semillas por cabeza", final.groupby("cabeza").semilla.nunique().eq(3).all())
 prueba("Reconstrucción en mm no negativa", all((a_mm(predecir(r, i_pru))[0] >= 0).all() for r in redes.values()))
-prueba("Predicciones exportadas para las 3 299 curvas de cada modelo", pred.groupby(["modelo", "semilla"]).size().eq(len(pares)).all())
+prueba("Predicciones exportadas para todas las curvas de cada modelo", pred.groupby(["modelo", "semilla"]).size().eq(len(pares)).all())
 pd.DataFrame([{"prueba": k, "pasa": v[0], "detalle": v[1]} for k, v in PRUEBAS.items()]).to_csv(TAB / "P6_pruebas.csv", index=False)
 (SALIDA / "versiones.txt").write_text(f"python {sys.version.split()[0]} | {platform.platform()}\nnumpy {np.__version__} | pandas {pd.__version__} | "
                                       f"torch {torch.__version__}\n", encoding="utf-8")

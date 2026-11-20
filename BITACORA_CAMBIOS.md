@@ -2,6 +2,22 @@
 
 Qué cambió en cada sesión, en qué commit y por qué. El detalle de cada decisión está en `DECISIONES.md` (D-xx) y el estado frente a la rúbrica en `CONTROL_RUBRICA.md`.
 
+## Sesión del 20-nov-2026 (rama `gus-base-conocimiento-profesor`)
+
+Punto de partida: commit `f7ef057`. Detalle en D-61 y en `docs/FUNDAMENTOS_REGLAS.md` (secciones 2, 3 y 6).
+
+| Archivo | Cambio | Por qué |
+|---|---|---|
+| `lluvia_valle_datos.R` | **R4:** decide con las 3 vecinas más cercanas (≥2 deben contradecir la racha) y q de la temporada; cita corregida a Lewis et al. 2021 | La versión con una sola vecina era frágil (30 rachas; ahora 10). Durre (2010) no revisa rachas de ceros |
+| `lluvia_valle_datos.R` | **R7:** kriging ordinario de los faltantes de años válidos, con las vecinas escaladas por la razón de medias mensuales; semivariograma de entrenamiento elegido por validación cruzada (exponencial); prueba contra B-spline sola e IDW | OMM 2017, 4.6: para valores diarios sirve la interpolación espacial, no los días vecinos. En los datos, rellenar baja el error de la curva de 0,55 a 0,30 |
+| Los cuatro scripts | Variable `CONJUNTO` (`principal` o `r6_omm`): R6 con ≥10 años (principal, D-63) o el 80 % de la OMM (sensibilidad), con salidas en carpetas `_r6_omm` | El profesor prefirió ≥10 años; la sensibilidad mide si la conclusión depende de R6 |
+| `lluvia_valle_funcional.R` | "Curva completa" = 365 días observados; la banda del ejemplo de huecos se calcula sin los días rellenados | Con R7 ya no quedan faltantes en la matriz |
+| `lluvia_valle.R` | Reconstruido con los cambios de los componentes | Sigue siendo la unión sin cambios de los dos `.R` |
+| Documentos | FUNDAMENTOS_REGLAS, FALTANTES_E_IMPUTACION, ANTECEDENTES_VALLE, EXPLICACION_DATOS, EXPLICACION_FUNCIONAL (parcial), DECISIONES (D-13 → D-61, D-62, D-63), README, CONTROL_RUBRICA | Cifras nuevas: 163 estaciones y 3 046 curvas (principal); 100 y 2 113 (sensibilidad OMM) |
+| `DECISIONES.md` | D-62: las estaciones se modelan en diario (el enunciado pide curvas diarias y de péntadas en el mismo dominio). D-63: R6 principal con ≥10 años | Revisión del profesor y fundamento en la OMM, NOAA y Urrea et al. 2019 |
+
+Resultados en prueba (error L² relativo): principal (≥10 años), satélite 0,51 → regresión 0,44; sensibilidad (80 % OMM), 0,52 → 0,42. La conclusión no depende de R6.
+
 ## Sesión del 14-nov-2026 (rama `gus-cierre-funcional`)
 
 Punto de partida: commit `fe34b7d` (parte funcional cerrada en un solo archivo, R4 calculada).
@@ -95,7 +111,7 @@ Corrida completa de `lluvia_valle.R` en Windows (R 4.4.2): pruebas 27 de 27, 13 
 
 ```bash
 Rscript lluvia_valle.R              # todo R en uno (o los dos de abajo por separado)
-Rscript lluvia_valle_datos.R        # ~5 min, 27 pruebas (necesita datos_curso/)
+Rscript lluvia_valle_datos.R        # ~8 min, 30 pruebas (necesita datos_curso/)
 Rscript lluvia_valle_funcional.R    # ~1 min, 13 pruebas (necesita fda y fda.usc); deja para_python/
 python lluvia_valle_red.py          # ~15 min, 13 pruebas (pip install torch numpy pandas)
 Rscript lluvia_valle_funcional.R    # otra vez: secciones 7 (evaluación, 5 pruebas más) y 8 (interpretación)

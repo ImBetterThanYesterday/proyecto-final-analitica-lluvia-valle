@@ -1,0 +1,9 @@
+temporada,fase,rachas,a_faltante_R4,pct_a_faltante,largo_mediano,dias_lluvia_vecina_mediana
+lluviosa,Neutro,18,0,0,35.5,5.5
+lluviosa,Niña,5,0,0,32,6
+lluviosa,Niño,14,0,0,35.5,3.5
+seca,Neutro,343,3,0.9,36,3
+seca,Niña,58,2,3.4,35.5,4
+seca,Niño,476,5,1.1,37,2
+sin clima de entrenamiento,Neutro,2,0,0,42.5,1.5
+sin clima de entrenamiento,Niño,1,0,0,90,13

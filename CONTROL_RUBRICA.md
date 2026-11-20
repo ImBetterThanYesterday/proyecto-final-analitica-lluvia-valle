@@ -39,7 +39,7 @@ Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se p
 | Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
 | Red (codificador, cabezas) | No se vio; el enunciado permite PyTorch y pykan | PyTorch; KAN programada con la fórmula del enunciado y verificada con una función sintética | ✅ |
 | Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` solo para leer y escribir (D-54) | ✅ |
-| Métricas, bootstrap, Wilcoxon, ENSO de la red | Funciones de R (5.5) y `wilcox.test` | Sección 7 de `lluvia_valle_funcional.R`, con las predicciones exportadas por Python (D-54) | ✅ |
+| Métricas, bootstrap por estación, ENSO de la red | Funciones de R (5.5); sin Wilcoxon desde D-60 | Sección 7 de `lluvia_valle_funcional.R`, con las predicciones exportadas por Python (D-54) | ✅ |
 
 ### Qué cambiar para quedar 100 % dentro de la regla
 
@@ -61,7 +61,7 @@ Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se p
 | Ambas fuentes en el mismo dominio anual | ✅ | `F2_mismo_dominio.png`: día 1–365, péntadas en su día central |
 | Tope: curvas con librerías → máximo 2 | ✅ no aplica | Las librerías solo verifican |
 
-Para el informe: los días faltantes no se imputan; cada curva se ajusta con sus días observados y su propia S.
+Para el informe: los pocos días faltantes que acepta R5 (719 de 1 111 790) se rellenan por kriging con las vecinas antes de construir las curvas (R7, D-61); cada día rellenado queda marcado.
 
 ## 2. EDA funcional (15 %) — sección 3 de `lluvia_valle_funcional.R`
 
@@ -73,15 +73,15 @@ Para el informe: los días faltantes no se imputan; cada curva se ajusta con sus
 | Derivadas e inicio y fin de las temporadas | 🟡 | `F3_derivada_media.png`, `F3_temporadas_por_curva.png`. Las ventanas suponen régimen bimodal y se aplican también al Pacífico; el fin de la 2.ª temporada no se puede fechar en el 62 % de las curvas. Hay que justificarlo o separar el Pacífico |
 | Profundidad FM y MBD, boxplot funcional, atípicas por estación y año | ✅ | `F3_boxplot_funcional.png`, `F3_atipicas_*.csv`; MBD y atípicas coinciden con `fda::fbplot` (prueba 7). Opcional: verificar FM con `fda.usc::depth.FM` |
 | Interpretación climatológica (bimodal, orografía, ENSO) | 🟡 | Escrita en el bloque "Qué dicen los datos"; falta pasarla al informe |
-| Tope: subconjunto sin justificar → máximo 2 | ✅ no aplica | Se usan las 176 estaciones y los 23 años; representatividad en la sección 8 de `lluvia_valle_datos.R` |
+| Tope: subconjunto sin justificar → máximo 2 | ✅ no aplica | Se usan las 98 estaciones que cumplen la norma de la OMM (D-60) y los 23 años; representatividad en la sección 8 de `lluvia_valle_datos.R` (la zona pacífica queda con 7) |
 
-Falta justificar por qué se modela la tasa en mm/día y no la lluvia acumulada que usa el ejemplo de clase `Script_AnalisisExploratorio.R`.
+Hecho (D-60): el profesor pidió no modelar lluvia acumulada; se quitó la vista acumulada y la razón está en `docs/FUNDAMENTOS_REGLAS.md`, 5.1.
 
 ## 3. Comparación funcional por fuente (15 %) — secciones 1 y 4 de `lluvia_valle_funcional.R`
 
 | Lo que pide la rúbrica | Estado | Dónde se verifica |
 |---|---|---|
-| Emparejamiento estación–píxel: coordenadas, regla y píxeles compartidos | ✅ | `F1_emparejamiento_estacion_pixel.csv`, `F1_pixeles_compartidos.csv`: 176 estaciones en 148 píxeles, píxel que contiene la estación (P-18) |
+| Emparejamiento estación–píxel: coordenadas, regla y píxeles compartidos | ✅ | `F1_emparejamiento_estacion_pixel.csv`, `F1_pixeles_compartidos.csv`: 98 estaciones en 89 píxeles, píxel que contiene la estación (P-18) |
 | d(t) con banda ± 2EE e intervalos donde no contiene el cero | ✅ | `F4_diferencia.png`, `F4_intervalos_diferencia.csv` |
 | Correlación cruzada y su diagonal, interpretadas | ✅ | `F4_correlacion_cruzada.png`, `F4_diagonal_correlacion.png` |
 | Comparación de las covarianzas | ✅ | `F4_covarianzas.png`, `F4_covarianzas_comparadas.csv` |
@@ -96,10 +96,10 @@ El diagnóstico global no depende de usar K distinto por fuente; el veredicto d�
 | Lo que pide la rúbrica | Estado | Dónde se verifica |
 |---|---|---|
 | Regla explícita para valores imposibles y errores de digitación | ✅ | R0: negativos y > 1 825 mm (récord OMM), `2_R0_valores_imposibles.csv` (D-50). R2: extremos sin respaldo de las vecinas |
-| Totales acumulados en un solo día y ceros que son faltantes | ✅ | R3 (totales mensuales) y R4 (rachas de ceros con la vecina y umbral de Bonferroni, D-49) |
-| Cobertura mínima por estación y año, justificada | ✅ | R5 (≥ 90 % y hueco ≤ 15 días) y R6 (≥ 7 años de entrenamiento), con el experimento de huecos (sección 7) |
-| Decisión justificada sobre agregar o eliminar datos | ✅ | Sin imputación (D-13). P-19 (D-56): los 1 250 años válidos de 1930–1979 no se usan; el FPCA de entrenamiento ya explica el 89,8 % de su variabilidad y agregarlos deja iguales las 4 primeras funciones propias (`F5_P19_registros_1930_1979.csv`) |
-| Trazabilidad: estaciones y pares antes y después de cada paso | ✅ | `8_trazabilidad.csv`: 323 → 220 → 176 estaciones, 3 299 pares |
+| Totales acumulados en un solo día y ceros que son faltantes | ✅ | R3 (totales mensuales) y R4 (rachas de ceros que al menos 2 de las 3 vecinas más cercanas contradicen, q de la temporada y umbral de Bonferroni; D-49, D-61) |
+| Cobertura mínima por estación y año, justificada | ✅ | R5 y R6 de la OMM (WMO-No. 1203, 2017, sección 4.4; D-60), verificadas con el experimento de huecos (sección 7) |
+| Decisión justificada sobre agregar o eliminar datos | ✅ | R7 (D-61): kriging ordinario de los huecos que acepta R5, comparado con la B-spline sola, IDW y kriging sin escalar (`8_R7_metodos_relleno.csv`); nunca con el satélite. R6 con ≥10 años válidos (D-63), con sensibilidad del 80 % de la OMM (100 estaciones). P-19 (D-56): los 1 250 años válidos de 1930–1979 no se usan; el FPCA de entrenamiento ya explica el 89,8 % de su variabilidad y agregarlos deja iguales las 4 primeras funciones propias (`F5_P19_registros_1930_1979.csv`) |
+| Trazabilidad: estaciones y pares antes y después de cada paso | ✅ | `8_trazabilidad.csv`: 323 → 220 → 213 → 163 estaciones, 3 046 pares (incluye el paso R7) |
 | Nada usa datos de prueba | ✅ | Umbrales y experimentos solo con 1981–1995; prueba automática |
 
 Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
@@ -125,7 +125,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Tres semillas, media y DE | ✅ | `P5_entrenamiento_por_semilla.csv` (Python), `F7_ablacion_media_DE_semillas.csv` (R) |
 | Mismo presupuesto: épocas, parada temprana, pruebas de hiperparámetros | ✅ | `P5_presupuesto.csv`, `P5_seleccion_lambda_por_cabeza.csv`: 5 pruebas de λ_w por cabeza |
 | KAN verificada con una función sintética (RMSE ≤ 1e-2) | ✅ | `P4_kan_sintetica.csv`: RMSE 2e-3 |
-| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `F7_comparaciones_pareadas_prueba.csv` (columna `gana`) |
+| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `F7_comparaciones_por_estacion_prueba.csv` (columna `gana`) |
 | Conclusiones sobre la no linealidad del sesgo y el costo de la interpretabilidad | 🟡 | Escritas en "Qué dicen los datos" de la sección 7 del funcional: la no linealidad depende de la fase ENSO (ayuda en Niño, estorba en Niña); falta pasarlas al informe |
 | Tope: hiperparámetros con prueba → máximo 1 | ✅ no aplica | λ_w y épocas solo con validación |
 
@@ -136,8 +136,9 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Partición 1981–1995 / 1996–2000 / 2001–2003 sin fuga | ✅ | Datos preparados; prueba de no fuga del funcional (prueba 9) |
 | Estaciones reservadas | 🟡 | El profesor dijo que ya no van (P-10), pero la fe de erratas aún pide el CSV `station_id, year, day, value_mm`. **Confirmar con él** |
 | Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `F7_ablacion_media_DE_semillas.csv` (tres cabezas) |
-| Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,441, KAN 0,436, MLP 0,420 |
-| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
+| Las cuatro métricas | ✅ | Prueba, L² relativo (163 estaciones, D-63): satélite 0,51, regresión 0,44, lineal 0,44, KAN 0,44, MLP 0,42. Sensibilidad de R6 con el 80 % de la OMM (100 estaciones): satélite 0,52, regresión 0,42 |
+| IC bootstrap 95 % (≥ 1 000) de la diferencia por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_por_estacion.csv` y `F7_comparaciones_por_estacion_prueba.csv` (sin Wilcoxon, D-60) |
+| Prueba de Wilcoxon pareada por estación | 🟡 | **La rúbrica 4.4 la pide** («IC bootstrap del 95 % (≥ 1000 remuestreos) y prueba de Wilcoxon pareada por estación»), pero el profesor pidió quitarla en la revisión por Teams (D-60). Confirmar con él por escrito; si la quiere, se agrega como complemento del IC, que es el que decide |
 | Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 cerrada (D-56): ONI anual = media de los 12 trimestres |
 
 ## 4.5 Interpretación climatológica (10 %) — sección 8 de `lluvia_valle_funcional.R` (D-55)
@@ -167,7 +168,7 @@ Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y 
 | Lo que pide la rúbrica | Estado |
 |---|---|
 | Un único R y un único Python | 🟡 `lluvia_valle.R` une los dos R sin cambiar el código, con marcas por ítem de la rúbrica; verificada la unión (parte B: 13 + 5 pruebas). Falta la corrida completa en la Mac. Python: `lluvia_valle_red.py` |
-| Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 13 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
+| Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 30 pruebas en datos y 13 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
 | Solo procedimientos de clase; librerías extra solo donde se permite | ✅ Construcción sin librerías; regresión contrastada con los métodos de clase (D-53); Python solo con PyTorch (+ numpy/pandas para leer y escribir) (D-54) |
 | Cada tabla y figura del informe ubicable en el código | ✅ Prefijos `2_`…`15_` (datos), `F1_`…`F8_` (funcional) y `P1_`…`P6_` (Python); falta citarlas en el informe |
 
@@ -187,7 +188,7 @@ Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `
 
 | Decisión | Opciones | Recomendación y por qué | Dónde |
 |---|---|---|---|
-| **P-19** ¿Usar los registros 1930–1979 (solo para estimar el FPCA)? | (a) No usarlos. (b) Usarlos solo para el FPCA. | **(a)**: la fe de erratas fija 1981–2003; con 2 257 curvas de entrenamiento el FPCA ya explica 94,2 % con M = 6; agregar 50 años de otra época mete cambios de clima e instrumentación que habría que depurar con las mismas reglas. Falta dejarlo respaldado en el código (conteo de cuántas de las 176 tienen esos años) | `DECISIONES.md` §8, P-19 |
+| **P-19** ¿Usar los registros 1930–1979 (solo para estimar el FPCA)? | (a) No usarlos. (b) Usarlos solo para el FPCA. | **(a)**: la fe de erratas fija 1981–2003; con 1 323 curvas de entrenamiento el FPCA ya explica 91,2 % con M = 6 (D-60); agregar 50 años de otra época mete cambios de clima e instrumentación que habría que depurar con las mismas reglas. Falta dejarlo respaldado en el código (conteo de cuántas de las 176 tienen esos años) | `DECISIONES.md` §8, P-19 |
 | **P-16** ¿Qué "ONI del año"? | (a) Media de los 12 trimestres del año (lo que se usa). (b) Un trimestre (p. ej. DEF). | **(a)** mientras el profesor no diga otra cosa: la curva es del año entero y la media resume todo el año; la fase (Niño/Niña/Neutro) sale de esa media | `DECISIONES.md` §8, P-16 |
 | **Estaciones reservadas** | El profesor dijo que ya no van (P-10, 13-nov), pero la fe de erratas aún pide un CSV `station_id, year, day, value_mm` en 4.4 | Confirmarlo por escrito con el profesor | `DECISIONES.md` §8, P-10 y P-11 |
 
@@ -195,7 +196,7 @@ Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `
 
 1. Verificar la profundidad FM con `fda.usc::depth.FM` (herramienta de clase).
 2. Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`) para ENSO, altitud y satélite frente a estación (recomendado, refuerza "como en clase").
-3. Justificar por qué se modela la tasa en mm/día y no la lluvia acumulada del ejemplo de clase `Script_AnalisisExploratorio.R`.
+3. ~~Justificar mm/día frente a lluvia acumulada.~~ Hecho (D-60).
 4. Ventanas de temporada en el Pacífico: el fin de la 2.ª temporada no se puede fechar en el 62 % de las curvas; separar el Pacífico o justificarlo.
 5. Sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
 
@@ -215,7 +216,7 @@ Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `
 - **Por qué no se quitan años del satélite:** lo pidió el profesor (D-47); quitarlos solo se mide como sensibilidad (sección 5.6).
 - **Que no hay fuga de prueba:** la prueba 9 reemplaza validación y prueba por ruido y todo lo ajustado sale idéntico.
 - **La cabeza lineal es la regresión funcional:** demostración escrita y verificada (1,5e-14); la red cargada con los coeficientes de R da sus predicciones.
-- **La ventaja de KAN y MLP es pequeña** (L² 0,436 y 0,420 frente a 0,441) **y depende de la fase ENSO:** ayudan en años Niño, estorban en años Niña; la prueba no tiene años Niña (D-54).
+- **KAN y MLP no ganan en el error global** (L² 0,42 y 0,41 frente a 0,41 de la lineal, IC con el 0): bajan el sesgo unos 3 puntos pero empeoran el segundo pico 1,5 días (D-60).
 - **Las neuronas sueltas de la cabeza lineal no se interpretan** (se pueden rotar); lo estable es β(s,t), correlación 0,98–0,99 entre semillas (D-55).
 - **La corrección satura** (activaciones tanh) y **la altitud es la entrada más no lineal** (D-55).
 - **Los peores casos son de representatividad del píxel**, no del modelo: estaciones secas del fondo del valle del Cauca y del Dagua (D-55).

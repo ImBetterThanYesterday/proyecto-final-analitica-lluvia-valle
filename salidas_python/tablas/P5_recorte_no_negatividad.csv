@@ -1,7 +1,7 @@
 particion,cabeza,pct_valores_recortados,pct_curvas_con_recorte
-prueba,kan,0.0,0.0
+prueba,kan,0.0,0.092
 prueba,lineal,0.0,0.0
 prueba,mlp,0.0,0.0
-validación,kan,0.0,0.0
+validación,kan,0.001,0.102
 validación,lineal,0.0,0.0
 validación,mlp,0.0,0.0

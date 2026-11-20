@@ -12,7 +12,7 @@
 # Entrada única: salidas_R_datos/datos_preparados.rds, que produce
 #   lluvia_valle_datos.R (estaciones depuradas, satélite en mm/día, pares,
 #   altitud y ONI). Aquí no se vuelve a leer ni a limpiar ningún dato crudo:
-#   así las 27 pruebas del archivo de datos cubren todo lo que entra.
+#   así las 30 pruebas del archivo de datos cubren todo lo que entra.
 # Salidas: salidas_R_funcional/tablas, /graficos y /para_python (insumos de la red).
 #
 # Cómo se corre (desde la raíz del repositorio):
@@ -59,7 +59,13 @@ ANIOS_MARCADOS <- c(1985L, 1988L, 2000L)
 COB_MIN_R5 <- 0.90
 HUECO_MAX_R5 <- 15L
 
-SALIDA_F <- "salidas_R_funcional"
+# Conjunto de datos (D-61, D-63): principal (R6 con ≥10 años válidos) o r6_omm (sensibilidad,
+# R6 de la OMM, 19 de 23 años). Se elige con la variable de entorno CONJUNTO, igual que en la parte de datos.
+CONJUNTO_F <- Sys.getenv("CONJUNTO", "principal")
+if (!CONJUNTO_F %in% c("principal", "r6_omm")) stop("CONJUNTO debe ser 'principal' o 'r6_omm'")
+SUFIJO_F <- if (CONJUNTO_F == "principal") "" else paste0("_", CONJUNTO_F)
+SALIDA_F <- paste0("salidas_R_funcional", SUFIJO_F)
+SALIDA_PY <- paste0("salidas_python", SUFIJO_F)
 dir.create(file.path(SALIDA_F, "tablas"), showWarnings = FALSE, recursive = TRUE)
 dir.create(file.path(SALIDA_F, "graficos"), showWarnings = FALSE, recursive = TRUE)
 tabla_f   <- function(x, nombre) { fwrite(x, file.path(SALIDA_F, "tablas", paste0(nombre, ".csv"))); invisible(x) }
@@ -215,7 +221,9 @@ mapa_calor <- function(t, z, titulo, limites = range(z, na.rm = TRUE), paleta = 
 # =============================================================================
 titulo("1. Datos preparados y emparejamiento estación-píxel")
 
-dp  <- readRDS("salidas_R_datos/datos_preparados.rds")
+dp  <- readRDS(file.path(paste0("salidas_R_datos", SUFIJO_F), "datos_preparados.rds"))
+stopifnot(identical(dp$conjunto, CONJUNTO_F))
+cat("Conjunto:", CONJUNTO_F, "| curvas de estación:", nrow(dp$estaciones$Y), "| días rellenados por kriging (R7):", sum(dp$estaciones$rellenado), "\n")
 oni <- fread("datos_web/oni_anual_fase.csv")
 Y <- dp$estaciones$Y; X <- dp$satelite$X; T_SAT <- dp$satelite$t
 storage.mode(Y) <- "double"
@@ -250,16 +258,22 @@ print(compartidos[order(-estaciones)][1:5])
 # píxeles no traen ese dato. Se comparan dos reglas dejando una estación fuera
 # cada vez y prediciendo su vertiente: (a) un corte en la longitud; (b) la
 # vertiente de la estación más cercana.
+# La zona es geografía, no calidad de datos: se usan TODAS las estaciones del Valle con
+# coordenada oficial (232, no solo las 98 que entran al modelo). Si se usaran solo las
+# incluidas, con 7 estaciones pacíficas muchos píxeles de la costa quedarían como "Cauca".
 haversine <- function(la1, lo1, la2, lo2) 12742 * asin(sqrt(sin((la2 - la1) * pi / 360)^2 + cos(la1 * pi / 180) * cos(la2 * pi / 180) * sin((lo2 - lo1) * pi / 360)^2))
-D_ee <- outer(seq_len(nrow(est)), seq_len(nrow(est)), function(i, j) haversine(est$lat[i], est$lon[i], est$lat[j], est$lon[j])); diag(D_ee) <- Inf
+est_zona <- fread("datos_web/estaciones_valle_finales.csv", colClasses = list(character = "codigo"))[!is.na(lat) & !is.na(lon)]
+est_zona[, vertiente := fifelse(substr(codigo, 1, 2) == "26", "Cauca (interandina)", "Pacífico")]
+stopifnot(all(est$codigo %in% est_zona$codigo), all(est_zona[match(est$codigo, codigo), vertiente] == est$vertiente))
+D_ee <- outer(seq_len(nrow(est_zona)), seq_len(nrow(est_zona)), function(i, j) haversine(est_zona$lat[i], est_zona$lon[i], est_zona$lat[j], est_zona$lon[j])); diag(D_ee) <- Inf
 cortes <- seq(-77.1, -76.4, by = .05)
-acierto_corte <- sapply(cortes, function(k) mean((est$lon < k) == (est$vertiente == "Pacífico")))
-acierto_vecina <- mean(est$vertiente[apply(D_ee, 1, which.min)] == est$vertiente)
+acierto_corte <- sapply(cortes, function(k) mean((est_zona$lon < k) == (est_zona$vertiente == "Pacífico")))
+acierto_vecina <- mean(est_zona$vertiente[apply(D_ee, 1, which.min)] == est_zona$vertiente)
 regla_vertiente <- data.table(regla = c(paste0("corte en longitud ", cortes[which.max(acierto_corte)], "° (el mejor corte)"), "corte en longitud -76.8° (el que se usaba)", "estación más cercana (dejando una fuera)"),
                               pct_acierto = round(100 * c(max(acierto_corte), acierto_corte[abs(cortes + 76.8) < 1e-9], acierto_vecina), 1))
 print(tabla_f(regla_vertiente, "F1_regla_vertiente_pixeles"))
-D_pe <- outer(seq_len(nrow(px)), seq_len(nrow(est)), function(i, j) haversine(px$lat[i], px$lon[i], est$lat[j], est$lon[j]))
-px[, `:=`(vertiente = est$vertiente[apply(D_pe, 1, which.min)], km_estacion_cercana = round(apply(D_pe, 1, min), 1))]
+D_pe <- outer(seq_len(nrow(px)), seq_len(nrow(est_zona)), function(i, j) haversine(px$lat[i], px$lon[i], est_zona$lat[j], est_zona$lon[j]))
+px[, `:=`(vertiente = est_zona$vertiente[apply(D_pe, 1, which.min)], km_estacion_cercana = round(apply(D_pe, 1, min), 1))]
 stopifnot(acierto_vecina > max(acierto_corte))
 cat("Píxeles por vertiente (estación más cercana):\n"); print(px[, .(pixeles = .N, km_mediana_a_la_estacion = median(km_estacion_cercana)), by = vertiente])
 
@@ -292,29 +306,9 @@ grafico_f(ggplot(por_anio, aes(ONI, cociente_mediano)) + geom_hline(yintercept =
           "F1_cociente_satelite_estacion_vs_ONI", ancho = 8, alto = 5)
 
 # QUÉ DICEN LOS DATOS
-#   Datos: 3 299 curvas estación-año de 176 estaciones (2 257 de entrenamiento,
-#   672 de validación y 370 de prueba; 2 812 sin ningún día faltante) y 15 663
-#   curvas píxel-año (681 píxeles x 23 años). Todo viene de datos_preparados.rds.
-#   Emparejamiento: cada estación toma la celda de 0,05° que la contiene (se
-#   comprueba que la coordenada cae dentro). Las 176 estaciones caen en 148
-#   píxeles; 23 píxeles tienen 2 a 4 estaciones (51 estaciones), que comparten la
-#   misma curva satelital. El centro del píxel queda a 2,2 km en mediana y nunca
-#   a más de 3,9 km. Cinco píxeles tienen el centro fuera del polígono del Valle,
-#   pero su estación está dentro.
-#   Vertiente de los píxeles: antes se usaba un corte en la longitud -76,8°. Al
-#   comprobarlo con las estaciones, ese corte solo acierta el 88,6 % y deja como
-#   "Cauca" a 20 de las 26 estaciones que la CVC pone en la vertiente Pacífica
-#   (cuencas del Dagua, Calima y Garrapatas, sobre la cordillera Occidental).
-#   Ningún corte en longitud pasa de 89,2 %. La regla "vertiente de la estación
-#   más cercana" acierta el 97,7 % dejando una estación fuera cada vez, así que
-#   se usa esa: una sola definición (la cuenca de la CVC) para las dos fuentes.
-#   1985, 1988 y 2000: no son archivos dañados. El cociente satélite/estación de
-#   cada año sigue al ONI (r = 0,68): en años Niña el satélite se queda corto
-#   (cociente medio 0,99) y en años Niño se pasa (1,29); en neutros da 1,16. Los
-#   cinco cocientes más bajos son de 1988, 1984, 2000, 1999 y 1996: cuatro Niña.
-#   1984 y 1999 se apartan tanto como los tres años marcados y nunca se marcaron.
-#   Es un error sistemático del satélite ligado al ENSO, justo lo que el modelo
-#   debe aprender con el ONI. Por eso no se excluye ningún año (D-47).
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 1 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # =============================================================================
@@ -327,15 +321,17 @@ grafico_f(ggplot(por_anio, aes(ONI, cociente_mediano)) + geom_hline(yintercept =
 # Días faltantes: cada curva se ajusta solo con sus días observados (no se imputa).
 titulo("2. Construcción de datos funcionales")
 
-completas_est <- rowSums(is.na(Y)) == 0
+# "Completa" = los 365 días OBSERVADOS: los días que rellenó el kriging (R7, D-61) no cuentan
+completas_est <- rowSums(is.na(Y)) == 0 & rowSums(dp$estaciones$rellenado) == 0
 stopifnot(all(completas_est == (id_est$n_obs == 365L)))
 
 grafico_base("F2_datos_discretos", function() {
   par(mfrow = c(1, 2))
-  i <- which(completas_est & id_est$codigo == "2622330101")[1]
+  ej_cod <- names(sort(-table(id_est$codigo[completas_est])))[1]   # la estación con más años completos
+  i <- which(completas_est & id_est$codigo == ej_cod)[1]
   plot(T_DIA, Y[i, ], type = "h", col = "grey40", xlab = "Día del año", ylab = "mm/día",
        main = paste("Estación", id_est$codigo[i], id_est$anio[i], "(diario)"))
-  j <- which(id_sat$celda == emparejamiento[codigo == "2622330101", celda] & id_sat$anio == id_est$anio[i])
+  j <- which(id_sat$celda == emparejamiento[codigo == ej_cod, celda] & id_sat$anio == id_est$anio[i])
   plot(T_SAT, X[j, ], type = "b", pch = 16, cex = .6, col = "darkorange", xlab = "Día del año", ylab = "mm/día",
        main = paste("Su píxel, mismo año (péntada en su día central)"))
 })
@@ -465,13 +461,17 @@ ee_banda <- function(Phi_eval, mapa, Sigma) { M <- Phi_eval %*% mapa; sqrt(rowSu
 ee_iid <- ee_banda(Phi_e, e$mapa, e$sigma2[i_ej] * diag(365))
 ee_het <- ee_banda(Phi_e, e$mapa, diag(e$sigma2[i_ej] * forma))
 racha <- function(m) { r <- rle(m); max(c(0, r$lengths[r$values])) }
-inc <- which(!e$completas); ig <- inc[which.max(sapply(inc, function(k) racha(is.na(Y[k, ]))))]
-ag <- ajuste_mco(Y[ig, ], Phi_e)
+# Curva con el hueco más largo que rellenó el kriging (R7): se ajusta SIN esos días para ver
+# cuánto se abriría la banda si no se hubieran rellenado
+Rell <- dp$estaciones$rellenado
+inc <- which(rowSums(Rell) > 0); ig <- inc[which.max(sapply(inc, function(k) racha(Rell[k, ])))]
+y_ig <- replace(Y[ig, ], Rell[ig, ], NA)
+ag <- ajuste_mco(y_ig, Phi_e)
 ee_g <- ee_banda(Phi_e, ag$mapa, ag$sigma2 * diag(sum(ag$obs)))
 ee_g_completa <- ee_banda(Phi_e, e$mapa, ag$sigma2 * diag(365))
 js <- which(id_sat$celda == emparejamiento[codigo == id_est$codigo[i_ej], celda] & id_sat$anio == id_est$anio[i_ej])
 ee_s <- ee_banda(Phi_s365, s$mapa, s$sigma2[js] * diag(72))
-cat(sprintf("Curva %s con hueco de %d días: el EE en los días faltantes es %.2f veces el de la misma curva sin hueco\n",
+cat(sprintf("Curva %s con %d días rellenados por kriging: sin rellenarlos, el EE en esos días sería %.2f veces el de la curva completa\n",
             id_est$curva_id[ig], sum(!ag$obs), mean((ee_g / ee_g_completa)[!ag$obs])))
 cat(sprintf("EE medio de la banda: estación %.2f mm/día (sigma %.1f) | su píxel %.2f mm/día (sigma %.1f)\n",
             mean(ee_iid), sqrt(e$sigma2[i_ej]), mean(ee_s), sqrt(s$sigma2[js])))
@@ -491,8 +491,9 @@ grafico_base("F2_bandas_punto_a_punto", function() {
   plot(T_SAT, X[js, ], pch = 16, cex = .7, col = "grey50", ylim = range(c(X[js, ], cs - 2 * ee_s, cs + 2 * ee_s)),
        xlab = "Día del año", ylab = "mm/día", main = paste("Su píxel, año", id_sat$anio[js]))
   lines(T_DIA, cs, lwd = 2, col = "darkorange"); lines(T_DIA, cs + 2 * ee_s, lty = 2); lines(T_DIA, cs - 2 * ee_s, lty = 2)
-  plot(T_DIA, Y[ig, ], pch = 16, cex = .4, col = "grey50", ylim = c(-5, max(Y[ig, ], na.rm = TRUE)), xlab = "Día del año",
-       ylab = "mm/día", main = paste("Estación", id_est$curva_id[ig], "-", sum(!ag$obs), "días faltantes"))
+  plot(T_DIA, y_ig, pch = 16, cex = .4, col = "grey50", ylim = c(-5, max(Y[ig, ], na.rm = TRUE)), xlab = "Día del año",
+       ylab = "mm/día", main = paste("Estación", id_est$curva_id[ig], "-", sum(!ag$obs), "días rellenados (banda sin ellos)"))
+  points(T_DIA[!ag$obs], Y[ig, !ag$obs], pch = 4, col = 2)
   lines(T_DIA, F_est[ig, ], lwd = 2, col = 4)
   lines(T_DIA, F_est[ig, ] + 2 * ee_g, lty = 2, col = 4); lines(T_DIA, F_est[ig, ] - 2 * ee_g, lty = 2, col = 4)
   rug(T_DIA[!ag$obs], col = 2, lwd = 2)
@@ -519,45 +520,9 @@ grafico_base("F2_mismo_dominio", function() {
 }, ancho = 9, alto = 4.5)
 
 # QUÉ DICEN LOS DATOS
-#   La base propia coincide con splines::splineDesign (3e-16) y el atajo de la VC
-#   con diag(S) da lo mismo que dejar cada día fuera (365 ajustes).
-#   K se elige solo con entrenamiento (1 882 curvas completas de estación y
-#   10 215 de satélite, con todos los años): VC y VCG coinciden, K = 8 en
-#   estaciones y K = 11 en satélite. El ECM de ajuste baja siempre con K, por eso
-#   no sirve para elegir. En el satélite el mínimo es nítido. En estaciones la VC
-#   es casi plana entre K = 5 y 17 (a menos de 1 % del mínimo): la lluvia diaria
-#   es tan ruidosa que más bases solo persiguen aguaceros.
-#   Sensibilidad de K (estaciones): con K = 12, 16 o 24 la fecha mediana de los
-#   picos se mueve a lo sumo 9 días (18 a 27 de abril; 24 a 29 de octubre), mucho
-#   menos que la dispersión entre curvas (29 a 45 días), y los valores negativos
-#   suben de 2,0 % a 5,4 %. Una base más flexible no cambia las conclusiones y
-#   empeora la VC, así que se mantiene K = 8.
-#   P-20 (D-51): frente a una media móvil de 31 días, K = 16 deja el pico a 6 y 6
-#   días por curva y K = 8 a 12 y 9, lo que parecía pedir subir K. Pero el K que
-#   gana depende de la referencia: con 15 y 31 días gana K = 20, con 61 días gana
-#   K = 10 (y K = 16 queda peor que K = 8: 13 y 15 días). Las tres referencias
-#   difieren entre sí 8 a 19 días en la fecha del pico, tanto como lo que se gana
-#   subiendo K, y la fecha varía 32 a 36 días entre curvas. La fecha del pico no
-#   sirve para elegir K: se queda el mínimo de la VCG, K = 8. Así tampoco hay que
-#   rehacer el experimento de huecos de R5, hecho con K = 8.
-#   S es simétrica, idempotente y tr(S) = K hasta 1e-14 en el peor de los ajustes
-#   (también en las curvas con días faltantes, que usan su propia S).
-#   El error de las estaciones no es homogéneo: su varianza va de 26 (mm/día)^2 en
-#   agosto a 264 en octubre, la temporada húmeda. La correlación residual entre
-#   días es casi nula (0,04; 0,08 a un día), así que la banda con sigma^2 I es
-#   razonable. En el satélite es mayor (0,14): la péntada ya promedia cinco días.
-#   Las bandas son punto a punto: cada día tiene 95 % de cobertura por separado,
-#   no la curva completa. Un hueco de 15 días ensancha la banda solo 15 % en esos
-#   días.
-#   Valores negativos: 47 % de las curvas de estación baja de 0 en algún día (2 %
-#   de los puntos), en la temporada seca de julio-agosto y en los bordes 1-ene y
-#   31-dic (efecto de borde de la base no periódica). En el satélite casi no
-#   ocurre (1 % de las curvas). Para modelar, la curva se recorta en 0 (D-23).
-#   Por qué B-splines y no Fourier: una curva de un solo año no es periódica (el
-#   31-dic no tiene por qué empalmar con el 1-ene del mismo año), el ejemplo de
-#   clase con esta lluvia usa B-splines cúbicas y el enunciado las exige en la
-#   red. El costo es el efecto de borde, que queda documentado.
-#   W integra exactamente: 1'W1 = 364 y c'Wc coincide con el trapecio fino.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 2 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 o <- list(id_est = id_est, id_sat = id_sat, coef_est = e$coef, coef_sat = s$coef, K_est = K_EST, K_sat = K_SAT,
              sigma2_est = e$sigma2, sigma2_sat = s$sigma2, n_obs_est = e$n_obs, W_est = W_est, W_sat = W_sat,
@@ -781,7 +746,7 @@ titulo("3.6 Contexto: vertiente, altitud y ENSO")
 id_e[, banda_altitud := cut(altitud, c(-Inf, 1200, 2000, Inf), labels = c("< 1200 m", "1200-2000 m", "> 2000 m"))]
 id_e <- oni[, .(anio, fase)][id_e, on = "anio"]; id_s <- oni[, .(anio, fase)][id_s, on = "anio"]
 
-# Curvas por año, como en la tesis del profesor (figuras 6.2 y 6.3): un panel por año con las
+# Curvas por año (datos funcionales, en mm/día): un panel por año con las
 # curvas en gris, el promedio en negro y la desviación estándar punteada. Todos los paneles
 # tienen el mismo eje, para que los años se comparen a simple vista; el título lleva la fase ENSO.
 por_anio <- function(M, anios, fases, cada, titulo_fig) {
@@ -859,53 +824,9 @@ grafico_base("F3_contexto", function() {
 }, ancho = 15, alto = 4.8)
 
 # QUÉ DICEN LOS DATOS
-#   Representatividad: se usan las 176 estaciones incluidas y sus 3 299 curvas de
-#   1981-2003, sin submuestrear (la sección 8 del archivo de datos muestra que
-#   las incluidas representan a las 220 con datos), y los 676 píxeles del Valle
-#   en los 23 años.
-#   Media: Phi c_barra coincide con fda::mean.fd (5e-15). Ambas fuentes muestran
-#   el régimen bimodal: estaciones con máximos el 22-abr (6,3 mm/día) y el 28-oct
-#   (7,2), mínimos el 25-ene y el 1-ago (2,2). El satélite pone los máximos 1 a 3
-#   semanas después (13-may y 5-nov) y con casi el doble de magnitud, porque su
-#   media pesa por área y la vertiente Pacífica (43 % de los píxeles) llueve
-#   4 000 mm/año. Por vertiente, el satélite supera a las estaciones en ambas:
-#   1 735 frente a 1 551 mm en el Cauca y 3 998 frente a 3 105 en el Pacífico.
-#   Dispersión: la DE de las estaciones es alta en la segunda temporada y mínima
-#   el 27-feb; el máximo del 1-ene es efecto de borde. El CV medio es 0,96: la
-#   variación entre curvas es tan grande como la media.
-#   Qué mide la covarianza: con todas las estaciones juntas la correlación es
-#   positiva todo el año (mínimo 0,39) y la primera componente explica 76 %. Eso
-#   es sobre todo "el nivel de lluvia de cada sitio": el 74 % de la varianza de
-#   las estaciones (88 % en el satélite) es diferencia ENTRE sitios. Dentro del
-#   Cauca la primera componente baja a 50 % y la correlación abril-octubre a
-#   0,54. Con anomalías (cada curva menos la media de su estación) queda la
-#   variación de un año a otro: la primera componente explica solo 29 %, abril y
-#   octubre casi no se relacionan (0,14) y aparecen correlaciones negativas
-#   (-0,27). Es decir: un sitio húmedo lo es todo el año, pero un año con una
-#   primera temporada lluviosa no anuncia una segunda temporada lluviosa.
-#   Derivadas y temporadas: en el Cauca la primera temporada empieza a finales de
-#   febrero, tiene su pico a mediados de abril y termina a mediados de junio; la
-#   segunda empieza a mediados de septiembre y tiene su pico el 1-nov. En 62 % de
-#   las curvas de estación la lluvia sigue bajando hasta el borde del año y el
-#   fin de la segunda temporada no se puede fechar. El satélite fecha el inicio y
-#   el pico de la primera temporada 2 a 3 semanas tarde.
-#   Profundidad: FM y MBD ordenan casi igual (Spearman 0,99 y 1,00). La curva más
-#   profunda es Betania 2002. Boxplot funcional (mismas atípicas que fda::fbplot):
-#   con todas las estaciones juntas hay 63 atípicas, 62 de cinco estaciones de la
-#   costa Pacífica (Bahía Málaga, Yurumanguí, San Francisco, Triana y El Tabano,
-#   7 000 a 12 600 mm/año): no son errores sino otro clima. Por eso se separa por
-#   vertiente: en el Cauca solo quedan Tenjo 1982 (4 482 mm, candidata a revisión)
-#   y Las Brisas 1981. Las 330 atípicas del satélite son todas del Pacífico y 229
-#   tocan el tope de 200 mm. Ningún año es atípico en las curvas medias anuales;
-#   los menos profundos de las estaciones son 1988, 1984, 1983 y 1999 (tres Niña).
-#   Orografía: en el Cauca la franja de 1 200-2 000 m es la más lluviosa
-#   (1 715 mm), por encima de > 2 000 m (1 607) y del fondo del valle (1 333).
-#   ENSO: en las estaciones del Cauca La Niña aporta +11 % (1 718 mm) y El Niño
-#   -10 % (1 387) frente a neutro (1 544); la Niña se nota en la segunda temporada
-#   (7,1 frente a 6,3 mm/día) y en una sequía de mitad de año más húmeda (2,4
-#   frente a 1,4). El satélite NO muestra esa señal: da menos lluvia en años Niña
-#   (1 664) que en neutros (1 767). Es el mismo error ligado al ENSO de la
-#   sección 1, y es la razón para darle el ONI al modelo.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 3.6 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 eda <- list(media_e = media_e, media_s = media_s, me = me, ms = ms, pr_e = pr_e, pr_s = pr_s, atip_e = atip_e, atip_s = atip_s,
              temporadas = resumen_tem, prof_anual = prof_anual, contexto = contexto)
@@ -1082,18 +1003,20 @@ grafico_f(ggplot(curvas_d, aes(dia, d, colour = grupo, fill = grupo)) + geom_hli
                                                       title = "Diferencia estación - satélite por grupo (±2 EE por estación)"),
           "F4_diferencia_por_grupo", ancho = 14, alto = 4.8)
 
-titulo("4.4 Prueba t funcional pareada (clase, semana 14)")
-# ¿Tienen el satélite y la estación la misma función media? Se aplican las pruebas de la clase
-# para muestras pareadas (InferenciaDatosFuncionales.pdf, diapositivas 15 a 21 y ejercicio 3):
-#   - norma L2:  T_n = n ||D̄||², con T_n ≈ β χ²_d (Welch-Satterthwaite);
-#   - tipo F:    F_n = T_n / tr(γ̂_D) ≈ F_{d, (n-1)d};
-#   - t puntual por permutación con el criterio del máximo (Ramsay y Silverman; Cox y Lee),
-#     que controla el error en todo el año y no día por día.
-# β y d salen de las trazas del operador de covarianza con los estimadores insesgados de
-# Zhang (2013). Unidad independiente: la ESTACIÓN (supuesto S1 de la clase). Cada estación
-# aporta la diferencia media de sus años, D_j(t) = estación - satélite; tratar cada año como
-# independiente daría un EE 3,7 veces más chico (sección 4.1). En datos pareados, permutar
-# es cambiar el signo de cada D_j al azar.
+titulo("4.4 ANOVA funcional del error del satélite (clase, semana 14)")
+# Ya no se hace la prueba t (ni la F) funcional PAREADA estación vs satélite. Esa prueba es
+# para el mismo individuo medido antes y después de un tratamiento; aquí la pregunta "¿el
+# satélite está sesgado?" la responde la regresión, con las bandas de sus efectos (5.4):
+# si el satélite midiera lo mismo, alfa(t) = 0 y la integral de beta sobre s = 1
+# (regresión de comparación de métodos; Ramsay y Silverman 2005, cap. 13-14).
+# Aquí queda la pregunta de grupos INDEPENDIENTES: ¿cambia el error del satélite,
+# d(t) = estación - satélite, según la fase ENSO, la vertiente o la altitud?
+# Pruebas de la clase: F puntual F_n(t), tipo F global (Zhang 2013, con la aproximación de
+# dos momentos de Satterthwaite), GPF = ∫ F_n(t) dt y F_max = sup F_n(t), calibradas por
+# permutación de las etiquetas de grupo (Cuevas, Febrero y Fraiman 2004; Górecki y Smaga
+# 2015). Unidades independientes: para el ENSO, los AÑOS (curva media de d de cada año; la
+# fase es del año, no de la estación); para vertiente y altitud, las ESTACIONES (curva media
+# de d de cada estación, porque sus años no son independientes).
 B_PERM <- 5000L
 w_trap <- c(.5, rep(1, 363), .5)                         # regla del trapecio en la malla diaria
 trazas_zhang <- function(G, N, w = w_trap) {             # G: covarianza evaluada en la malla; N: sus grados de libertad
@@ -1102,59 +1025,8 @@ trazas_zhang <- function(G, N, w = w_trap) {             # G: covarianza evaluad
   t1c_ins <- N * (N + 1) / ((N - 1) * (N + 2)) * (t1^2 - 2 * t2 / (N + 1))
   list(tr = t1, beta = t2_ins / t1, d = t1c_ins / t2_ins)
 }
-prueba_pareada <- function(Dj, B_perm = B_PERM) {
-  n <- nrow(Dj); dbar <- colMeans(Dj); z <- trazas_zhang(cov(Dj), n - 1)
-  Tn <- n * sum(w_trap * dbar^2); Fn <- Tn / z$tr
-  S2 <- colSums(Dj^2); t_de <- function(m) m / sqrt(pmax(S2 - n * m^2, 1e-12) / (n - 1) / n)
-  t_obs <- abs(t_de(dbar))
-  signos <- matrix(sample(c(-1, 1), n * B_perm, replace = TRUE), B_perm)
-  Mb <- (signos %*% Dj) / n
-  Tb <- abs(Mb / sqrt(pmax(sweep(-n * Mb^2, 2, S2, "+"), 1e-12) / (n - 1) / n))
-  Tmax_b <- apply(Tb, 1, max); c_alfa <- apply(Tb, 2, quantile, .95); c_max <- quantile(Tmax_b, .95)
-  Tn_b <- n * drop(Mb^2 %*% w_trap)
-  list(n = n, dbar = dbar, t = t_obs, c_alfa = c_alfa, c_max = unname(c_max), Tn = Tn, Fn = Fn, beta = z$beta, d = z$d,
-       p_L2 = pchisq(Tn / z$beta, z$d, lower.tail = FALSE), p_F = pf(Fn, z$d, (n - 1) * z$d, lower.tail = FALSE),
-       p_perm_L2 = (1 + sum(Tn_b >= Tn)) / (B_perm + 1), p_perm_max = (1 + sum(Tmax_b >= max(t_obs))) / (B_perm + 1))
-}
-set.seed(20261117)
 D_est <- rowsum(D, pares$codigo) / as.vector(table(pares$codigo)[rownames(rowsum(D, pares$codigo))])
 vert_est <- pares[, .(vertiente = vertiente[1], banda_altitud = banda_altitud[1]), by = codigo][match(rownames(D_est), codigo)]
-pp <- list(`Todas las estaciones` = prueba_pareada(D_est),
-           `Cauca (interandina)` = prueba_pareada(D_est[vert_est$vertiente != "Pacífico", ]),
-           `Pacífico` = prueba_pareada(D_est[vert_est$vertiente == "Pacífico", ]))
-tabla_pareada <- rbindlist(lapply(names(pp), function(nm) with(pp[[nm]], data.table(
-  grupo = nm, estaciones = n, T_n = round(Tn), beta = signif(beta, 3), d = round(d, 2), p_L2 = signif(p_L2, 2),
-  F_n = round(Fn, 2), gl = sprintf("%.1f y %.1f", d, (n - 1) * d), p_F = signif(p_F, 2), p_permutacion_L2 = signif(p_perm_L2, 2),
-  max_t = round(max(t), 2), c_max = round(c_max, 2), p_permutacion_max = signif(p_perm_max, 2),
-  dias_puntual = sum(t > c_alfa), dias_criterio_maximo = sum(t > c_max)))))
-print(tabla_f(tabla_pareada, "F4_prueba_t_pareada"))
-signo_todas <- ifelse(pp[[1]]$dbar > 0, "estación > satélite", "satélite > estación")
-int_max <- with(pp[[1]], { s <- ifelse(t > c_max, signo_todas, NA); r <- rle(s); fin <- cumsum(r$lengths); ini <- fin - r$lengths + 1
-  data.table(desde = fecha_dia(ini), hasta = fecha_dia(fin), dias = r$lengths, signo = r$values)[!is.na(signo)] })
-print(tabla_f(int_max, "F4_prueba_t_pareada_intervalos"))
-# Comprobación de la clase (ejercicio 2): con curvas constantes, la prueba F es el cuadrado de la t clásica y d = 1.
-Dc <- matrix(rnorm(40, .3), 40, 365); pc <- prueba_pareada(Dc, 10L)
-chequeo_F_t2 <- c(F_menos_t2 = abs(pc$Fn - t.test(Dc[, 1])$statistic^2), d_menos_1 = abs(pc$d - 1))
-cat(sprintf("Comprobación con curvas constantes: |F - t²| = %.1e y |d - 1| = %.1e\n", chequeo_F_t2[1], chequeo_F_t2[2]))
-grafico_base("F4_prueba_t_pareada", function() {
-  par(mfrow = c(1, 2))
-  with(pp[[1]], {
-    plot(T_DIA, dbar, type = "l", lwd = 2, xlab = "Día del año", ylab = "mm/día", main = "Diferencia media por estación: estación - satélite")
-    abline(h = 0, lty = 3); rug(T_DIA[t > c_max], col = "firebrick")
-    plot(T_DIA, t, type = "l", lwd = 2, ylim = c(0, max(t, c_max) * 1.05), xlab = "Día del año", ylab = "|t(t)|",
-         main = sprintf("t pareada por permutación (%d estaciones, %d permutaciones)", n, B_PERM))
-    lines(T_DIA, c_alfa, lty = 2, col = "steelblue", lwd = 2); abline(h = c_max, lty = 2, col = "firebrick", lwd = 2)
-    legend("topright", c("|t(t)| observado", "Crítico puntual (95 %)", "Crítico del máximo (95 %)"), col = c(1, "steelblue", "firebrick"),
-           lty = c(1, 2, 2), lwd = 2, bty = "n", cex = .8)
-  })
-}, ancho = 13, alto = 4.8)
-
-titulo("4.5 ANOVA funcional del error del satélite (clase, semana 14)")
-# ¿Cambia la diferencia estación - satélite según la fase ENSO, la vertiente o la altitud?
-# Pruebas de la clase: F puntual F_n(t), tipo F global (Zhang), GPF = ∫ F_n(t) dt y
-# F_max = sup F_n(t), calibradas por permutación de las etiquetas de grupo.
-# Unidades independientes: para el ENSO, los 23 AÑOS (curva media de d de cada año; la
-# fase es del año, no de la estación); para vertiente y altitud, las ESTACIONES (D_j).
 anova_funcional <- function(Xg, g, B_perm = B_PERM) {
   g <- factor(g); k <- nlevels(g); n <- nrow(Xg)
   estad <- function(gg) {
@@ -1175,9 +1047,10 @@ set.seed(20261118)
 D_anio <- rowsum(D, pares$anio) / as.vector(table(pares$anio)[rownames(rowsum(D, pares$anio))])
 fase_anio <- oni[match(as.integer(rownames(D_anio)), anio), fase]
 cauca_est <- vert_est$vertiente != "Pacífico"
-av <- list(`Fase ENSO (23 años)` = anova_funcional(D_anio, fase_anio),
-           `Vertiente (176 estaciones)` = anova_funcional(D_est, vert_est$vertiente),
-           `Altitud en el Cauca (150 estaciones)` = anova_funcional(D_est[cauca_est, ], vert_est$banda_altitud[cauca_est]))
+av <- setNames(list(anova_funcional(D_anio, fase_anio), anova_funcional(D_est, vert_est$vertiente),
+                    anova_funcional(D_est[cauca_est, ], vert_est$banda_altitud[cauca_est])),
+               c(sprintf("Fase ENSO (%d años)", nrow(D_anio)), sprintf("Vertiente (%d estaciones)", nrow(D_est)),
+                 sprintf("Altitud en el Cauca (%d estaciones)", sum(cauca_est))))
 tabla_anova <- rbindlist(lapply(names(av), function(nm) with(av[[nm]], data.table(
   factor = nm, grupos = paste(niveles, collapse = " / "), k = k, n = n, F_n = round(Fn, 2), d = round(d, 2), p_F = signif(p_F, 2),
   p_F_permutacion = signif(p_F_perm, 2), GPF = round(GPF), p_GPF = signif(p_GPF, 2), F_max = round(Fmax, 2), p_F_max = signif(p_Fmax, 2),
@@ -1202,87 +1075,10 @@ grafico_base("F4_anova_funcional", function() {
   })
 }, ancho = 15, alto = 8)
 
-titulo("4.6 Vista acumulada, como la presenta el profesor (tesis de 2016 y semanas 12-13)")
-# En la tesis del profesor y en las clases la lluvia se trabaja ACUMULADA (mm desde el 1 de
-# enero). Aquí se muestra esa vista con nuestras curvas: A(t) = ∫ x(u) du (curva recortada en 0)
-# y se mide por qué el modelo se queda con la curva de mm/día. La derivada de la curva
-# acumulada es nuestra curva (la "intensidad" de la clase), así que no se pierde nada.
-acumular <- function(M) t(apply(pmax(M, 0), 1, cumsum))
-A_y <- acumular(Y); A_x <- acumular(X); b_acum <- banda_diferencia(A_y - A_x, pares$codigo)
-r_acum <- diag(cor(A_y, A_x)); r_tasa <- diag(cor(Y, X))
-lejos <- outer(T_DIA, T_DIA, function(s, t) abs(s - t) >= 90)
-cor_lejos <- function(M) { R <- cor(M); mean(R[lejos]) }
-acum_vs_tasa <- data.table(
-  medida = c("Acumulado al 31-dic, estaciones (mm)", "Acumulado al 31-dic, satélite (mm)", "d(31-dic) = estación - satélite (mm)", "EE de d(31-dic) por estación (mm)",
-             "Días en que la banda de d(t) excluye el 0", "CV al 31-dic, estaciones", "CV al 31-dic, satélite",
-             "Diagonal r(t,t) estación-satélite: mediana", "Diagonal r(t,t): mínima", "Correlación media entre días separados 90 días o más (estaciones)"),
-  acumulada = c(round(mean(A_y[, 365])), round(mean(A_x[, 365])), round(b_acum$d[365]), round(b_acum$ee[365]),
-                sum((b_acum$d - 2 * b_acum$ee > 0) | (b_acum$d + 2 * b_acum$ee < 0)), round(sd(A_y[, 365]) / mean(A_y[, 365]), 3), round(sd(A_x[, 365]) / mean(A_x[, 365]), 3),
-                round(median(r_acum), 2), round(min(r_acum), 2), round(cor_lejos(A_y), 2)),
-  mm_dia = c(NA, NA, NA, NA, sum((b$d - 2 * b$ee > 0) | (b$d + 2 * b$ee < 0)), NA, NA, round(median(r_tasa), 2), round(min(r_tasa), 2), round(cor_lejos(Y), 2)))
-print(tabla_f(acum_vs_tasa, "F4_acumulada_vs_mm_dia"))
-grafico_base("F4_acumulada", function() {
-  par(mfrow = c(1, 3))
-  set.seed(2); m <- sample(nrow(A_y), 120)
-  matplot(T_DIA, t(A_y[m, ]), type = "l", lty = 1, col = adjustcolor(4, .25), xlab = "Día del año", ylab = "mm acumulados",
-          main = "Precipitación acumulada: estación (azul) y su píxel (naranja)", ylim = range(c(0, quantile(A_y[, 365], .97), quantile(A_x[, 365], .97))))
-  matlines(T_DIA, t(A_x[m, ]), lty = 1, col = adjustcolor("darkorange", .25))
-  lines(T_DIA, colMeans(A_y), lwd = 3, col = 4); lines(T_DIA, colMeans(A_x), lwd = 3, col = "darkorange")
-  plot(T_DIA, b_acum$d, type = "n", ylim = range(c(b_acum$d - 2 * b_acum$ee, b_acum$d + 2 * b_acum$ee, 0)), xlab = "Día del año", ylab = "mm",
-       main = "d(t) acumulada = estación - satélite ±2 EE (por estación)")
-  polygon(c(T_DIA, rev(T_DIA)), c(b_acum$d - 2 * b_acum$ee, rev(b_acum$d + 2 * b_acum$ee)), col = adjustcolor("steelblue", .3), border = NA)
-  lines(T_DIA, b_acum$d, lwd = 2); abline(h = 0, lty = 3)
-  plot(T_DIA, r_acum, type = "l", lwd = 2, ylim = c(0, 1), xlab = "Día del año", ylab = "r(t,t)", main = "Diagonal de la correlación cruzada")
-  lines(T_DIA, r_tasa, lwd = 2, col = "firebrick")
-  legend("bottomright", c("Curvas acumuladas", "Curvas en mm/día"), col = c(1, "firebrick"), lwd = 2, bty = "n")
-}, ancho = 16, alto = 4.8)
-
 # QUÉ DICEN LOS DATOS
-#   Pares: 3 299 estación-año / píxel-año, 176 estaciones en 148 píxeles, todos
-#   los años. El EE se calcula entre estaciones (promedio de cada estación
-#   primero): es 3,7 veces el que saldría tratando cada curva como independiente,
-#   porque los años de una misma estación repiten su sesgo.
-#   d(t): en el promedio anual casi no hay diferencia (el satélite da 22 mm/año
-#   más), pero el signo cambia con la temporada. La estación supera al satélite
-#   del 8-feb al 28-mar (inicio de la primera temporada: el satélite la arranca
-#   tarde); el satélite supera a la estación del 15-abr al 9-jun y del 28-oct al
-#   18-nov, es decir, exagera los picos de las dos temporadas. Es el mismo
-#   retraso que mostraron las derivadas. La banda excluye el 0 en 147 de 365
-#   días. Los tramos del 1 al 12 de enero y del 24 al 31 de diciembre son efecto
-#   de borde de las bases. En 1985, 1988 y 2000 el satélite pierde 337 mm/año
-#   frente a la estación; en el resto de años da 83 mm/año de más.
-#   Correlación cruzada: la diagonal r(t,t) vale 0,62 en promedio (0,78 a
-#   mediados de julio) y la correlación máxima está en el mismo día (desfase
-#   mediano de -1 día). Casi toda viene de que el satélite reconoce qué sitios
-#   son húmedos y cuáles secos: con anomalías (restando la climatología de cada
-#   estación) baja a 0,24, con un máximo de 0,47 en febrero y 0,07 en noviembre.
-#   El satélite sigue mal la variación de un año a otro, sobre todo en la segunda
-#   temporada.
-#   Covarianzas: la forma es casi igual (correlación abril-octubre 0,74 y 0,72;
-#   la primera componente explica 75 % y 77 %), pero la varianza del satélite es
-#   una cuarta parte de la de las estaciones (mediana 0,24 por día): el píxel de
-#   ~5,5 km y la péntada promedian los aguaceros locales.
-#   Mismo K: al construir el satélite también con K = 8, la diferencia media
-#   (-20 frente a -22 mm/año), la diagonal (0,64 frente a 0,62) y el cociente de
-#   varianzas (0,25 frente a 0,24) casi no cambian: el diagnóstico global no sale
-#   de usar K distinto. El veredicto día a día sí es sensible: coincide en 281 de
-#   365 días (77 %) y la banda excluye el 0 en 159 días en vez de 147. Por eso las
-#   fechas exactas de los días significativos se reportan con esa salvedad.
-#   Subregión: en el Cauca el satélite sobreestima 8 % (+109 mm/año) y la banda
-#   excluye el 0 en 263 días. En la vertiente Pacífica el sesgo depende del
-#   sitio. El satélite subestima a la mitad las estaciones más lluviosas (El
-#   Tabano, San Francisco y Bahía Málaga, cociente 0,43 a 0,50) y duplica la
-#   lluvia de los sitios secos a sotavento (Loboguerrero 2,6; La Despensa 2,3;
-#   Puerto Nuevo 2,3; Moravito 1,9). El satélite suaviza hacia la media regional:
-#   sube lo seco y baja lo muy húmedo. Entre estaciones, la lluvia anual del píxel
-#   explica la de la estación con r = 0,79, pero dentro del Cauca solo con 0,42.
-#   Altitud: en el Cauca el cociente satélite/estación baja 15 % por cada 1 000 m
-#   (p = 0,001): el satélite exagera en el fondo del valle y se queda corto en
-#   las laderas altas, donde la lluvia orográfica no se ve a 5 km de resolución.
-#   ENSO: en años Niña las estaciones reciben 1 926 mm y el satélite 1 731
-#   (subestima 10 %); en años Niño 1 570 frente a 1 833 (sobreestima 17 %). El
-#   satélite amortigua la señal ENSO. Esto justifica dar al modelo la altitud y
-#   el ONI junto con la curva satelital, como pide el enunciado.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 4.4 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 comparacion <- list(pares = pares, d = b, d_marcados = b_def, intervalos = int_d, R_YX = R_YX, Cov_YY = Cov_YY, Cov_XX = Cov_XX,
              grupos = grupos, sesgo_estacion = por_est)
@@ -1395,17 +1191,9 @@ cat(sprintf("FPCA con 1930-1979 agregados: %.1f %% con M = %d (sin ellos %.1f %%
 rm(h30, Y30)
 
 # QUÉ DICEN LOS DATOS (P-19)
-#   De las 176 estaciones, 145 tienen registros en 1930-1979 y 140 tienen años que
-#   cumplen R5 (>= 90 % de días y ningún hueco > 15): 1 250 curvas, 963 de ellas
-#   de los años setenta. Sumarían un 55 % a las 2 257 curvas de entrenamiento.
-#   El FPCA de entrenamiento ya las representa: con M = 6 explica el 89,8 % de su
-#   variabilidad, cerca del 91,5 % de validación y del 95,2 % de prueba.
-#   Si se agregan al ajuste, las primeras cuatro funciones propias no cambian
-#   (coseno 1,000), la quinta casi no (0,994) y solo gira algo la sexta (0,912);
-#   la media se mueve un 1,7 %. La varianza explicada con M = 6 baja de 94,2 % a
-#   93,2 %: esas curvas traen variabilidad de otra época, no estructura nueva.
-#   Decisión (P-19): no se usan. La fe de erratas fija 1981-2003, el decodificador
-#   sería prácticamente el mismo y habría que depurar 50 años más con R0 a R7.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 5.2b (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 titulo("5.3 Ajuste y elección de M y lambda con validación")
 alt_m <- mean(pares$altitud[ent]); alt_s <- sd(pares$altitud[ent])
@@ -1487,8 +1275,8 @@ grafico_base("F5_beta_superficie", function() {
   image(T_DIA, T_DIA, BETA, zlim = lim, col = hcl.colors(64, "Blue-Red 3"), xlab = "s: día del satélite", ylab = "t: día de la estación", main = "Curvas de nivel")
   contour(T_DIA, T_DIA, BETA, add = TRUE, nlevels = 10, drawlabels = FALSE, col = "grey30"); abline(0, 1, lty = 2)
 }, ancho = 13, alto = 5.5)
-# Bandas del 95 % de los efectos funcionales. La clase (semana 15) y la tesis del profesor
-# (figuras 7.1, 9.1 y 9.2) presentan cada coeficiente con su banda y leen dónde excluye el 0.
+# Bandas del 95 % de los efectos funcionales. La clase (semana 15) presenta cada coeficiente
+# con su banda y lee dónde excluye el 0 (Ramsay y Silverman 2005, sec. 13.5 y 14.6).
 # Aquí la banda sale de un bootstrap de ESTACIONES: se remuestrean estaciones de entrenamiento
 # (con todos sus años) y se reajusta B con el mismo FPCA, M y lambda. Así la banda respeta que
 # los años de una estación no son independientes (la banda sándwich de clase los trata como tales).
@@ -1532,7 +1320,11 @@ titulo("5.5 Evaluación en prueba (2001-2003) con las métricas de la rúbrica")
 #   - sesgo del acumulado anual en %
 #   - error en la fecha de los dos picos (días)
 # IC del 95 % por bootstrap de ESTACIONES (2 000 remuestreos): las curvas de una
-# misma estación no son independientes. Prueba de Wilcoxon pareada por estación.
+# misma estación no son independientes, así que se remuestrea la estación entera
+# (bootstrap por conglomerados; Davison y Hinkley 1997, sec. 3.8). Para comparar dos
+# modelos se calcula la diferencia de la métrica en cada estación y su IC con el mismo
+# bootstrap: un modelo gana solo si el IC excluye el 0. No se usa Wilcoxon: es una
+# prueba clásica de rangos que no aporta sobre el IC y no mira la estructura funcional.
 kge <- function(P, Yo) {
   r <- sapply(seq_len(nrow(P)), function(k) cor(P[k, ], Yo[k, ]))
   1 - sqrt((r - 1)^2 + (apply(P, 1, sd) / apply(Yo, 1, sd) - 1)^2 + (rowMeans(P) / rowMeans(Yo) - 1)^2)
@@ -1561,7 +1353,7 @@ print(tabla_f(metricas, "F5_metricas_prueba"))
 tabla_f(metricas_curva, "F5_metricas_prueba_por_curva")
 cat(sprintf("Reconstrucción en mm no negativa: %.2f %% de los valores predichos en la escala raíz se recortan en 0\n", recorte_pred))
 
-# ¿La regresión supera al satélite sin corregir? Diferencia pareada por estación.
+# ¿La regresión supera al satélite sin corregir? Diferencia de la métrica en cada estación.
 ancho <- dcast(metricas_curva[modelo != "Solo altitud y ONI"], codigo + anio ~ modelo, value.var = c("l2_rel", "rmse", "kge"))
 por_estacion <- metricas_curva[, lapply(.SD, mean), by = .(modelo, codigo), .SDcols = c("l2_rel", "rmse", "kge", "sesgo_pct", "err_pico_1", "err_pico_2")]
 pe <- dcast(por_estacion, codigo ~ modelo, value.var = c("l2_rel", "rmse", "kge", "sesgo_pct", "err_pico_1", "err_pico_2"))
@@ -1570,15 +1362,14 @@ comparar <- function(v, mejor_si_baja = TRUE, absoluto = FALSE) {
   if (absoluto) { a <- abs(a); s <- abs(s) }
   d <- a - s; q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
   data.table(metrica = v, satelite = mean(s), regresion = mean(a), diferencia = mean(d), ic_inf = q[1], ic_sup = q[2],
-             p_wilcoxon = wilcox.test(a, s, paired = TRUE)$p.value, ic_excluye_0 = q[1] > 0 | q[2] < 0,
+             estaciones_que_mejoran = sum(if (mejor_si_baja) d < 0 else d > 0), ic_excluye_0 = q[1] > 0 | q[2] < 0,
              mejora = if (mejor_si_baja) mean(d) < 0 else mean(d) > 0)
 }
 pareada <- rbind(comparar("l2_rel"), comparar("rmse"), comparar("kge", FALSE), comparar("sesgo_pct", absoluto = TRUE), comparar("err_pico_1"), comparar("err_pico_2"))
 pareada[metrica == "sesgo_pct", metrica := "|sesgo_pct|"]
 pareada[, c("satelite", "regresion", "diferencia", "ic_inf", "ic_sup") := lapply(.SD, round, 3), .SDcols = c("satelite", "regresion", "diferencia", "ic_inf", "ic_sup")]
-pareada[, p_wilcoxon := signif(p_wilcoxon, 2)]
-cat("Regresión frente al satélite sin corregir, pareado por estación (", nrow(pe), "estaciones; IC 95 % bootstrap de la diferencia y Wilcoxon):\n")
-print(tabla_f(pareada, "F5_regresion_vs_satelite_pareado"))
+cat("Regresión frente al satélite sin corregir, por estación (", nrow(pe), "estaciones; IC 95 % bootstrap de la diferencia):\n")
+print(tabla_f(pareada, "F5_regresion_vs_satelite_por_estacion"))
 cat(sprintf("La regresión baja el error L² relativo frente al satélite sin corregir en %.0f %% de las curvas de prueba\n",
             100 * mean(ancho$`l2_rel_Regresión funcional` < ancho$`l2_rel_Satélite sin corregir`)))
 
@@ -1665,13 +1456,13 @@ contraste[, parametros := c("", sprintf("M = %d, λ = %.1e", M, LAMBDA), sprintf
                             sprintf("λs = %.0e, λt = %.0e", mejor_fr$lambda_s, mejor_fr$lambda_t))]
 print(tabla_f(contraste, "F5_contraste_metodos_clase"))
 
-# Diferencias pareadas por estación (IC 95 % bootstrap y Wilcoxon), mismas reglas que 5.5
+# Diferencia de la métrica en cada estación con IC 95 % bootstrap, mismas reglas que 5.5
 pe_c <- mc_clase[, .(l2_rel = mean(l2_rel), kge = mean(kge)), by = .(modelo, codigo)]
 dif_par <- function(a, b, v) {
   x <- pe_c[modelo == a][order(codigo)][[v]]; y <- pe_c[modelo == b][order(codigo)][[v]]; d <- x - y
   q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
   data.table(comparacion = paste(a, "−", b), metrica = v, diferencia = round(mean(d), 4), ic_inf = round(q[1], 4), ic_sup = round(q[2], 4),
-             p_wilcoxon = signif(wilcox.test(x, y, paired = TRUE)$p.value, 2), ic_excluye_0 = q[1] > 0 | q[2] < 0)
+             ic_excluye_0 = q[1] > 0 | q[2] < 0)
 }
 pares_clase <- list(c("Nuestra regresión (con altitud y ONI)", "Taller PC (con altitud y ONI)"),
                     c("Nuestra regresión (sin altitud ni ONI)", "Taller PC (sin altitud ni ONI)"),
@@ -1679,19 +1470,12 @@ pares_clase <- list(c("Nuestra regresión (con altitud y ONI)", "Taller PC (con 
                     c("Taller PC (sin altitud ni ONI)", "fda.usc fregre.basis.fr (sin altitud ni ONI)"),
                     c("Nuestra regresión (con altitud y ONI)", "Nuestra regresión (sin altitud ni ONI)"))
 contraste_par <- rbindlist(lapply(pares_clase, function(p) rbind(dif_par(p[1], p[2], "l2_rel"), dif_par(p[1], p[2], "kge"))))
-print(tabla_f(contraste_par, "F5_contraste_pareado"))
+print(tabla_f(contraste_par, "F5_contraste_por_estacion"))
 
 # QUÉ DICEN LOS DATOS (5.5b)
-#   Los tres métodos de clase llegan a lo mismo en error: en prueba el L² relativo queda
-#   entre 0,43 y 0,44 en todos (satélite sin corregir 0,51), y las diferencias de L² entre
-#   nuestra regresión y la del taller no excluyen el 0. Donde sí hay diferencia es en el
-#   KGE: la nuestra lo sube unos 0,03 frente a la del taller y frente a fregre.basis.fr
-#   (IC que excluyen el 0), porque la penalización de rugosidad conserva mejor la forma y la
-#   amplitud de la curva que truncar X en l = 4 componentes. Conclusión: nuestra regresión
-#   no es un método aparte; es el modelo integral de clase, y frente a sus dos versiones de
-#   clase da el mismo error y mejor KGE. Altitud y ONI no cambian la prueba (IC con el 0;
-#   2001-2003 no tiene años Niña), pero en validación bajan el RMSE de 2,42 a 2,29 mm/día,
-#   por eso se dejan (y la red los usa).
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 5.5b (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 titulo("5.6 Sensibilidad: ¿qué pasa si se quitan 1985, 1988 y 2000?")
 # No se quitan (D-47). Esta sección solo mide cuánto cambia la prueba si el modelo
@@ -1711,8 +1495,9 @@ ps <- merge(sens[modelo %like% "todos", .(a = mean(l2_rel)), by = codigo], mc_se
 sensibilidad[, c("L2_relativo", "RMSE_L2", "KGE", "sesgo_anual_pct", "error_pico_1", "error_pico_2") := lapply(.SD, round, 3), .SDcols = c("L2_relativo", "RMSE_L2", "KGE", "sesgo_anual_pct", "error_pico_1", "error_pico_2")]
 print(tabla_f(sensibilidad, "F5_sensibilidad_anios_marcados"))
 print(sens_anio)
-cat(sprintf("Con todos los años el error L² relativo en prueba es menor en %d de %d estaciones (Wilcoxon pareado p = %.3g)\n",
-            sum(ps$a < ps$s), nrow(ps), wilcox.test(ps$a, ps$s, paired = TRUE)$p.value))
+q_sens <- quantile(replicate(N_BOOT, mean(sample(ps$a - ps$s, replace = TRUE))), c(.025, .975))
+cat(sprintf("Con todos los años el error L² relativo en prueba es menor en %d de %d estaciones (diferencia media %.4f, IC 95 %% [%.4f, %.4f])\n",
+            sum(ps$a < ps$s), nrow(ps), mean(ps$a - ps$s), q_sens[1], q_sens[2]))
 
 R2_t <- function(P, Yo) 1 - colSums((Yo - P)^2) / colSums(sweep(Yo, 2, colMeans(Yo))^2)
 grafico_base("F5_prueba", function() {
@@ -1732,7 +1517,7 @@ grafico_base("F5_prueba", function() {
   boxplot(sesgo_pct ~ modelo, metricas_curva, ylab = "% del acumulado anual", xlab = "", main = "Sesgo anual (prueba)", cex.axis = .8); abline(h = 0, lty = 3)
 }, ancho = 15, alto = 8)
 
-titulo("5.6b Inferencia y diagnóstico como en la tesis del profesor")
+titulo("5.6b Inferencia y diagnóstico de residuos")
 # (a) Prueba F por permutación del aporte del satélite, a la manera de Fperm.fd (clase, semana 15):
 #     F(t) = Σ_i (ŷ_i(t) - ȳ̂(t))² / Σ_i (y_i(t) - ŷ_i(t))², en la escala raíz y en entrenamiento.
 #     H0: la curva del satélite no aporta nada más allá de la altitud y el ONI. Se permutan las
@@ -1754,7 +1539,7 @@ fperm <- data.table(estadistico = c("F máximo", "F integrado (media sobre el a�
                     dias_sobre_el_critico_puntual = c(sum(F_obs > c_alfa_F), NA), permutaciones = B_FPERM)
 print(tabla_f(fperm, "F5_permutacion_satelite"))
 
-# (b) Diagnóstico de residuos (tesis, figuras 9.3 y 9.4; clase, correlación de los residuos):
+# (b) Diagnóstico de residuos (clase, correlación de los residuos; Ramsay y Silverman 2005, cap. 16):
 #     residuos estudentizados por día con la DE de entrenamiento, residuos frente a predichos y
 #     correlación de los residuos entre días.
 res_ent <- Y_raiz[fil_ent, ] - predecir_raiz(B, fil_ent); sig_t <- apply(res_ent, 2, sd)
@@ -1768,10 +1553,10 @@ diag_res <- data.table(medida = c("Residuos estudentizados de prueba fuera de ±
                                        cor(as.vector(res_pru), as.vector(pred_puntajes))), 3))
 print(tabla_f(diag_res, "F5_diagnostico_residuos"))
 
-# (c) Traza-variograma de los residuos (tesis, capítulo 8, Giraldo 2009): γ(h) = ½ E||e_i - e_j||²
+# (c) Traza-variograma de los residuos (Giraldo, Delicado y Mateu 2011): γ(h) = ½ E||e_i - e_j||²
 #     para pares de estaciones del mismo año a distancia h. Si crece con h, los residuos de
 #     estaciones cercanas se parecen: hay correlación espacial que el modelo no recoge. Se ajusta
-#     el modelo exponencial de la tesis, γ(h) = c0 + σ²(1 - exp(-h/φ)), por mínimos cuadrados ponderados.
+#     el modelo exponencial, γ(h) = c0 + σ²(1 - exp(-h/φ)), por mínimos cuadrados ponderados (Cressie 1985).
 coord_par <- est[match(pares$codigo[fil_ent], codigo), .(lat, lon)]
 tv <- rbindlist(lapply(sort(unique(anio_ent)), function(a) {
   k <- which(anio_ent == a); E <- res_ent[k, , drop = FALSE]
@@ -1811,7 +1596,7 @@ grafico_base("F5_permutacion_satelite", function() {
          lty = c(1, 1, 2, 2), lwd = 2, bty = "n", cex = .85)
 }, ancho = 10, alto = 5)
 
-# (d) Curvas observadas y ajustadas de 20 estaciones de un año de prueba (tesis, figura 10.3).
+# (d) Curvas observadas y ajustadas de 20 estaciones de un año de prueba.
 #     Se toma 2002 (año Niño) y 20 estaciones repartidas por cuantiles del error.
 k02 <- i_pru[pares$anio[i_pru] == 2002]
 err02 <- metricas_curva[modelo == "Regresión funcional" & anio == 2002, l2_rel]
@@ -1825,7 +1610,7 @@ grafico_base("F5_curvas_20_estaciones", function() {
   }
 }, ancho = 15, alto = 11)
 
-# (e) Mapa del error por estación en prueba (tesis, figuras 10.4 a 10.6).
+# (e) Mapa del error por estación en prueba.
 mapa_err <- merge(metricas_curva[modelo != "Solo altitud y ONI", .(l2 = mean(l2_rel)), by = .(codigo, modelo)][, dcast(.SD, codigo ~ modelo, value.var = "l2")],
                   est[, .(codigo, nombre, lat, lon, vertiente)], by = "codigo")
 setnames(mapa_err, c("Regresión funcional", "Satélite sin corregir"), c("l2_reg", "l2_sat"))
@@ -1857,58 +1642,9 @@ writeLines(c(sprintf('{"rango": [1, 365], "orden": %d, "K_estaciones": %d, "K_sa
 cat("Archivos para Python en", dir_py, ":", paste(list.files(dir_py), collapse = ", "), "\n")
 
 # QUÉ DICEN LOS DATOS
-#   Escala: al recortar en 0 solo cambia el 2 % de los días de las estaciones y
-#   casi ningún día del satélite; la raíz se reproyecta en la misma base con un
-#   error de 0,09 (estaciones) y 0,03 (satélite) en raíz de mm/día.
-#   Orden de la raíz y el suavizado: suavizar en mm y luego sacar la raíz conserva
-#   el acumulado anual (cociente mediano 1,000 frente al dato diario). Sacar la
-#   raíz al dato diario y luego suavizar lo reduce a un tercio (0,33), porque la
-#   lluvia diaria es intermitente y el cuadrado de la media de raíces no es la
-#   media. Como el sesgo del acumulado anual es una métrica de la rúbrica, se
-#   usa el primer camino.
-#   Datos del modelo: 3 299 pares con todos los años (2 257 de entrenamiento, 672
-#   de validación, 370 de prueba). Univalle entra con 996 m (D-46).
-#   FPCA (solo entrenamiento): la primera componente explica 62 % (el nivel de
-#   lluvia de cada sitio), la segunda 13 % y la tercera 7 %. M y lambda se eligen
-#   juntos con validación: el error deja de bajar desde M = 6 (94,2 % de la
-#   varianza; el enunciado pide M entre 4 y 6), con lambda = 3,2e8 (10 grados de
-#   libertad efectivos de 14).
-#   Equivalencia: la predicción con la integral de beta(s,t) por cuadratura y la
-#   predicción por puntajes FPCA difieren en 4e-15 (criterio 1e-4). Es la
-#   identidad beta(s,t) = sum_m beta_m(s) psi_m(t) que debe reproducir la cabeza
-#   lineal de la red.
-#   Interpretación: lejos de los bordes, la integral de beta sobre s va de 0,62
-#   (diciembre) a 1,03 (1-jun): el modelo traslada el nivel del satélite casi
-#   completo a mitad de año y lo amortigua al final. El ONI resta lluvia todo el
-#   año y sobre todo a mitad de año (-0,24 raíz(mm/día) por unidad el 2-jul): El Niño profundiza la sequía de
-#   junio-julio. La altitud pesa poco una vez que se conoce el píxel.
-#   Prueba (2001-2003, 370 curvas de 137 estaciones, IC 95 % por bootstrap de
-#   estaciones con 2 000 remuestreos). Frente al satélite sin corregir, la
-#   regresión baja el error L² relativo de 0,51 a 0,44, sube el KGE de 0,38 a
-#   0,47, baja el sesgo del acumulado anual de +26 % a +7 % y acerca el pico de
-#   la primera temporada de 23 a 18 días. Pareado por estación, el IC de la
-#   diferencia excluye el cero y el Wilcoxon da p < 0,001 en cinco métricas; en
-#   el pico de la segunda temporada la ganancia es de medio día y no es
-#   significativa (IC con el cero, p = 0,08). Mejora en 65 % de las curvas. Sin
-#   el satélite (solo altitud y ONI) el error queda como el del satélite crudo
-#   (0,51) y lejos del 0,44 de la regresión: el satélite sí aporta.
-#   Por fase ENSO: la prueba solo tiene años neutros (2001, 2003) y un Niño
-#   (2002); no tiene Niña. En 2002 el modelo corrige de más (sesgo -14 % frente a
-#   +28 % del satélite). En validación (orientativa) el Niño de 1997 es donde más
-#   gana (L² 0,61 a 0,46). En los años Niña 1999-2000 casi empata con el
-#   satélite (0,41 a 0,40) y el sesgo empeora (de -0,5 % a -11 %): el modelo baja
-#   el nivel del satélite como en un año normal, y el término del ONI no alcanza
-#   a devolver lo que el satélite ya perdió en La Niña. Es el punto débil de la
-#   referencia lineal y lo que una cabeza no lineal podría mejorar.
-#   Sensibilidad: si el modelo no viera 1985, 1988 y 2000, la prueba empeora (L²
-#   0,439 frente a 0,434; sesgo 8,9 % frente a 7,4 %) en 79 de 137 estaciones
-#   (Wilcoxon p = 0,003). Quitar esos años no ayuda: confirma con
-#   datos la indicación del profesor (D-47).
-#   La reconstrucción en mm es no negativa y solo 0,02 % de los valores se
-#   recorta en 0.
-#   Esta regresión es la referencia lineal. La red funcional (codificador con W,
-#   decodificador FPCA con estas psi_m y cabezas lineal, KAN y MLP) sigue en el
-#   archivo de Python con los insumos de para_python/.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 5.7 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 regresion <- list(M = M, lambda = LAMBDA, B = B, mu_c = mu_c, psi_c = psi_c, var_fpca = var_fpca, BETA = BETA, metricas = metricas,
              metricas_curva = metricas_curva, dif_equivalencia = dif_equiv, alt_m = alt_m, alt_s = alt_s)
@@ -1961,7 +1697,6 @@ pruebas <- list(
   "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)" = dif_equiv <= 1e-4,
   "La reconstrucción en mm no es negativa" = min(modelos[["Regresión funcional"]]) >= 0,
   "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000,
-  "Prueba F pareada: con curvas constantes F = t² y d = 1 (clase, ejercicio 2)" = all(chequeo_F_t2 < 1e-8),
   "ANOVA funcional: SSE_n = (n-k) tr(γ̂) y, con k = 2, F(t) = t² (clase, ejercicio 1)" = all(chequeo_anova < 1e-8),
   "Bandas por bootstrap de estaciones y permutación del satélite con réplicas suficientes" = B_BOOT_EF >= 500 && B_FPERM >= 200 && B_PERM >= 1000,
   "Contraste con los métodos de clase: la B del taller es la de lm() y λ de fregre.basis.fr no queda en el borde" =
@@ -1977,11 +1712,11 @@ writeLines(capture.output(sessionInfo()), file.path(SALIDA_F, "sessionInfo.txt")
 
 titulo("7. Evaluación de la red funcional (predicciones de lluvia_valle_red.py)")
 # Python entrena la red (PyTorch, lo único permitido en ese apartado) y exporta los coeficientes
-# √P predichos para las 3 299 curvas por cada cabeza y semilla. Aquí se evalúan con las MISMAS
-# funciones de la sección 5.5 (métricas, bootstrap por estación, wilcox.test), así la regresión y
+# √P predichos para todas las curvas por cada cabeza y semilla. Aquí se evalúan con las MISMAS
+# funciones de la sección 5.5 (métricas y bootstrap por estación), así la regresión y
 # las tres cabezas se miden exactamente igual y todo el análisis usa herramientas de clase.
 # Orden de ejecución: este archivo → python lluvia_valle_red.py → este archivo otra vez.
-ARCH_PRED <- file.path("salidas_python", "predicciones_coef_raiz.csv")
+ARCH_PRED <- file.path(SALIDA_PY, "predicciones_coef_raiz.csv")
 if (!file.exists(ARCH_PRED)) {
   cat("No está", ARCH_PRED, "→ corra python lluvia_valle_red.py y vuelva a correr este archivo para evaluar la red.\n")
 } else {
@@ -2019,8 +1754,8 @@ if (!file.exists(ARCH_PRED)) {
   ic_red <- mc_prom[, resumir(.SD), by = .(particion, modelo)]
   print(tabla_f(ic_red, "F7_ablacion_IC_bootstrap"))
 
-  # (c) Comparaciones pareadas por estación en PRUEBA: una cabeza supera a otra solo si el IC 95 %
-  #     de la diferencia excluye el 0 (rúbrica 4.3); Wilcoxon pareado como apoyo.
+  # (c) Comparaciones por estación en PRUEBA: una cabeza supera a otra solo si el IC 95 %
+  #     bootstrap de la diferencia por estación excluye el 0 (rúbrica 4.3).
   pe_red <- mc_prom[particion == "prueba", lapply(.SD, mean), by = .(modelo, codigo), .SDcols = vars_m]
   comparar_red <- function(a, b, v) {
     x <- pe_red[modelo == a][order(codigo)][[v]]; y <- pe_red[modelo == b][order(codigo)][[v]]
@@ -2029,13 +1764,13 @@ if (!file.exists(ARCH_PRED)) {
     excl <- q[1] > 0 | q[2] < 0; mejor_a <- if (v == "kge") mean(d) > 0 else mean(d) < 0
     data.table(comparacion = paste(a, "−", b), metrica = if (v == "sesgo_pct") "|sesgo_pct|" else v,
                media_a = round(mean(x), 3), media_b = round(mean(y), 3), diferencia = round(mean(d), 4), ic_inf = round(q[1], 4), ic_sup = round(q[2], 4),
-               p_wilcoxon = signif(wilcox.test(x, y, paired = TRUE, exact = FALSE)$p.value, 2), ic_excluye_0 = excl,
+               estaciones_a_mejor = sum(if (v == "kge") d > 0 else d < 0), ic_excluye_0 = excl,
                gana = if (!excl) "ninguna (IC con 0)" else if (mejor_a) a else b)
   }
   pares_red <- list(c("kan", "lineal"), c("mlp", "lineal"), c("kan", "mlp"), c("lineal", "regresión (R)"),
                     c("lineal", "satélite sin corregir"), c("kan", "satélite sin corregir"), c("mlp", "satélite sin corregir"))
   comp_red <- rbindlist(lapply(pares_red, function(p) rbindlist(lapply(vars_m, function(v) comparar_red(p[1], p[2], v)))))
-  print(tabla_f(comp_red, "F7_comparaciones_pareadas_prueba"))
+  print(tabla_f(comp_red, "F7_comparaciones_por_estacion_prueba"))
 
   # (d) Por fase ENSO (rúbrica 4.4). La prueba no tiene años Niña: la validación se agrega como
   #     ORIENTATIVA (con ella se eligieron λ_w y la parada temprana, no los pesos).
@@ -2047,7 +1782,7 @@ if (!file.exists(ARCH_PRED)) {
   pruebas_red <- list(
     "Las predicciones de Python corresponden a los mismos pares y en el mismo orden" = ok_filas,
     "La regresión de R hecha en Python coincide con la de R (< 1e-8)" = dif_py_R < 1e-8,
-    "Tres semillas por cabeza y las 3 299 curvas en cada una" = cabezas[, .N, by = .(modelo, semilla)][, uniqueN(semilla) == 3 && all(N == nrow(pares)), by = modelo][, all(V1)],
+    "Tres semillas por cabeza y todas las curvas en cada una" = cabezas[, .N, by = .(modelo, semilla)][, uniqueN(semilla) == 3 && all(N == nrow(pares)), by = modelo][, all(V1)],
     "Métricas finitas en todas las curvas de validación y prueba" = mc_red[, all(is.finite(l2_rel) & is.finite(kge))],
     "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000)
   res_red <- data.table(prueba = names(pruebas_red), pasa = unlist(pruebas_red))
@@ -2057,35 +1792,16 @@ if (!file.exists(ARCH_PRED)) {
 }
 
 # QUÉ DICEN LOS DATOS (sección 7)
-#   Control cruzado: la regresión de R rehecha en Python da las mismas curvas (1e-10, la
-#   precisión del CSV), así que Python y R miden lo mismo.
-#   Prueba 2001-2003 (370 curvas, 137 estaciones; media ± DE de 3 semillas):
-#     L² relativo  satélite 0,513 | regresión R 0,437 | lineal 0,440 ± 0,002 | KAN 0,434 ± 0,002 | MLP 0,420 ± 0,010
-#     KGE          satélite 0,382 | regresión R 0,467 | lineal 0,454 ± 0,005 | KAN 0,471 ± 0,009 | MLP 0,485 ± 0,020
-#   Las tres cabezas mejoran al satélite sin corregir en L², KGE, |sesgo| y pico 1 (IC que
-#   excluyen el 0). Entre cabezas (F7_comparaciones_pareadas_prueba.csv):
-#     - MLP supera a la lineal en L² (−0,020 [−0,040, −0,002]) y KGE (+0,030 [0,003, 0,058]),
-#       por poco; la lineal ubica mejor el pico 1 (0,7 días).
-#     - KAN no se distingue de la lineal en L² ni KGE; baja el |sesgo| 4 puntos y ubica peor el
-#       pico 2 (2 días).
-#     - KAN frente a MLP: iguales en L², KGE, sesgo y pico 1; el MLP mejor en RMSE y pico 2.
-#     - La red lineal no se distingue de la regresión de R en L², pero queda algo peor en KGE
-#       (−0,013) y sesgo: la penalización de la red (rugosidad de w_k) no es la de R (de β).
-#   Por fase ENSO (F7_metricas_por_fase_ENSO.csv) aparece lo más interesante:
-#     - Años Niño (1997 en validación, 2002 en prueba): KAN y MLP son las mejores (L² 0,38
-#       frente a 0,40 de la lineal en 2002; 0,45 frente a 0,47 en 1997).
-#     - Años Niña (1999-2000, validación): la lineal es la mejor (0,39) y las no lineales
-#       empeoran (KAN 0,45, MLP 0,42) y sobrestiman la lluvia (+14 % y +7 %).
-#   La no linealidad del sesgo existe, pero depende de la fase: lo que KAN y MLP aprenden ayuda
-#   en años secos (Niño) y estorba en años húmedos (Niña). Con solo 3 años de prueba y ninguno
-#   Niña, la ventaja global de las no lineales es pequeña y no se puede generalizar.
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 7 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 titulo("8. Interpretación de la red (rúbrica 4.5)")
 # Se grafica y se lee lo que aprendió la red. Python solo exporta números (pesos del codificador,
 # de la cabeza lineal y activaciones de la primera capa de la KAN en el rango de los datos);
 # todo el análisis se hace aquí. Se usa la semilla 2026 para las figuras y las tres semillas
 # para ver qué tan estable es cada lectura.
-ARCH_INT <- file.path("salidas_python", c("pesos_codificador.csv", "cabeza_lineal_pesos.csv", "kan_activaciones_capa1.csv", "kan_importancia_aristas.csv"))
+ARCH_INT <- file.path(SALIDA_PY, c("pesos_codificador.csv", "cabeza_lineal_pesos.csv", "kan_activaciones_capa1.csv", "kan_importancia_aristas.csv"))
 if (!all(file.exists(ARCH_INT)) || !exists("mc_prom")) {
   cat("Faltan las salidas de lluvia_valle_red.py → la sección 8 se omite.\n")
 } else {
@@ -2224,35 +1940,6 @@ if (!all(file.exists(ARCH_INT)) || !exists("mc_prom")) {
 }
 
 # QUÉ DICEN LOS DATOS (sección 8, rúbrica 4.5) — semilla 2026, con la estabilidad entre semillas
-#   w_k(s) (F8_pesos_w_k.png, F8_ventanas_w_k.csv):
-#     - Cabeza lineal: las w_k son casi rectas (λ_w = 1e8 las suaviza mucho) y cada una pesa el año
-#       entero con una tendencia. Una neurona suelta no se puede interpretar: con cabeza lineal solo
-#       importa el espacio que generan las 8 w_k (se pueden rotar sin cambiar la predicción), y por
-#       eso la importancia de cada neurona cambia mucho entre semillas. Lo que sí es estable es β(s,t):
-#       correlación 0,98-0,99 entre semillas y 0,81-0,86 con la regresión de R (F8_estabilidad_beta_lineal.csv).
-#     - KAN y MLP (λ_w 1e6-1e7): las w_k contrastan temporadas del régimen bimodal: la 1.ª temporada
-#       de lluvias (mar-may) frente a la 2.ª (oct-nov) (neuronas 3 y 6), la temporada seca de
-#       mitad de año (jun-ago) frente a la de fin de año (neurona 8), comienzo de año frente a
-#       julio-agosto (neurona 5). Es decir, miran la FORMA del año del satélite, no solo su total.
-#   Cabeza lineal frente a regresión (F8_beta_red_vs_regresion.png): la β(s,t) de la red tiene la
-#     misma estructura que la de R (correlación 0,81) pero más suave en s.
-#   Activaciones de la KAN (F8_kan_activaciones.png, F8_kan_aristas.csv):
-#     - Las cuatro aristas más importantes (z6, z1, z4 → oculta 3; z6 → oculta 1) son de SATURACIÓN:
-#       tanh con R² 0,992-0,997 (F8_ajuste_simbolico.csv; z6→3 queda mejor como cuadrática). Cuando el
-#       satélite marca mucha lluvia en esa ventana, la corrección deja de crecer: es la forma de un
-#       sesgo que aumenta con la intensidad (el satélite sobrestima más en los meses más lluviosos).
-#     - La entrada más no lineal es la ALTITUD (1 − R² de una recta: 0,72 en la mediana de sus
-#       aristas; el resto entre 0,14 y 0,36). Su efecto no es monótono: cambia de sentido hacia la
-#       media (≈ 1 400 m) y crece fuerte por encima de +2 DE (≈ 2 500 m). Es coherente con la
-#       orografía andina, donde la lluvia no aumenta sin fin con la altura (hay un máximo a altitudes
-#       medias en las vertientes). La cabeza lineal casi no usa la altitud (importancia 0,04 de 0,56
-#       máx.): ese efecto solo aparece cuando se permite la no linealidad.
-#     - El ONI entra casi monótono y suave (crece y satura): más ONI (Niño) → la corrección cambia
-#       en un sentido estable; coherente con que la ventaja de KAN/MLP sea mayor en años Niño (sección 7).
-#   Peores casos (F8_peores_casos.png/.csv): las seis curvas con más error son estaciones que
-#   registran muy poca lluvia (500-830 mm al año) donde el satélite marca 1 000-2 400 mm: el fondo
-#   seco del valle del Cauca (Guacarí, La Despensa, Aují, 990-1 555 m) y dos estaciones de la cuenca
-#   del Dagua (Loboguerrero, Puerto Nuevo; 700-990 m), una zona más seca que la vertiente Pacífica
-#   que la rodea. El píxel de 5 km promedia laderas más lluviosas y ninguna cabeza puede bajar tanto
-#   desde la curva del satélite: el límite es de representatividad del píxel, no del modelo. Varias
-#   de esas curvas caen a 0 al final de diciembre (borde de la base con días faltantes).
+#   Las cifras y su interpretación están en EXPLICACION_FUNCIONAL.md, sección 8 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.

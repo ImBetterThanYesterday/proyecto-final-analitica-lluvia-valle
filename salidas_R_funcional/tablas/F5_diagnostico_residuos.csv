@@ -1,8 +1,8 @@
 medida,valor
-Residuos estudentizados de prueba fuera de ±2 (%),4.535
-Residuos estudentizados de prueba fuera de ±3 (%),1.051
-Residuo medio de prueba (raíz de mm/día),-0.02
+Residuos estudentizados de prueba fuera de ±2 (%),4.906
+Residuos estudentizados de prueba fuera de ±3 (%),1.138
+Residuo medio de prueba (raíz de mm/día),-0.007
 Correlación de los residuos a 1 día,1
-Correlación de los residuos a 30 días,0.773
-Correlación de los residuos a 90 días,0.4
-Correlación residuo-predicho en prueba,-0.001
+Correlación de los residuos a 30 días,0.762
+Correlación de los residuos a 90 días,0.369
+Correlación residuo-predicho en prueba,0.014

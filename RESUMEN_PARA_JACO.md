@@ -11,10 +11,10 @@ El análisis completo de la rúbrica (ítems 1 a 4.5) está programado, verifica
 | 1. Construcción de datos funcionales | 10 % | ✅ | B-splines paso a paso, K = 8 / 11 por ECM, VC y VCG (D-39, D-51) |
 | 2. EDA funcional | 15 % | ✅ | Media verificada con `fda::mean.fd`, covarianzas, derivadas, profundidad, atípicas verificadas con `fbplot` |
 | 3. Comparación por fuente | 15 % | ✅ | Emparejamiento documentado, d(t) con banda, correlación cruzada, por vertiente, altitud y ENSO |
-| 4.1 Preprocesamiento | 6 % | ✅ | Reglas R0 a R7, trazabilidad 323 → 220 → 176, sin fuga. P-19 cerrada con datos (D-56) |
+| 4.1 Preprocesamiento | 6 % | ✅ | Reglas R0 a R7: R5 de la OMM (D-60), R4 con mayoría de vecinas y R7 con kriging (D-61), R6 con ≥10 años válidos (D-63); trazabilidad 323 → 220 → 163, sin fuga; sensibilidad con el 80 % de la OMM (100 estaciones). P-19 cerrada con datos (D-56) |
 | 4.2 Red funcional | 10 % | ✅ | Gram por cuadratura, FPCA de entrenamiento (94,2 %), equivalencia demostrada y verificada (1,5e-14), no negativa |
 | 4.3 Ablación | 11 % | ✅ | Mismo codificador y decodificador, KAN 640 vs MLP 635 parámetros, 3 semillas, mismo presupuesto, KAN verificada |
-| 4.4 Evaluación | 8 % | ✅ | Cuatro métricas, IC bootstrap, Wilcoxon, por fase ENSO, contra el satélite sin corregir |
+| 4.4 Evaluación | 8 % | ✅ | Cuatro métricas, IC bootstrap por estación (sin Wilcoxon), por fase ENSO, contra el satélite sin corregir |
 | 4.5 Interpretación | 10 % | ✅ | w_k(t), activaciones de la KAN, ajuste simbólico (tanh, R² 0,99), peores casos |
 | 5. Informe | 10 % | ⬜ | Todo |
 | 6. Scripts | 5 % | 🟡 | R unido en `lluvia_valle.R` (falta correrlo completo en la Mac); Python en un solo archivo |
@@ -23,7 +23,8 @@ Pruebas automáticas: 27 (datos) + 13 (funcional) + 5 (red en R) + 13 (Python), 
 
 ## 2. Resultados clave (para el informe y la sustentación)
 
-- **Prueba 2001-2003, L² relativo:** satélite sin corregir 0,513 → regresión 0,437 → red lineal 0,441, KAN 0,436, MLP 0,420. Sesgo anual del satélite +26 % → +7 % a +10 %.
+- **Prueba 2001-2003, L² relativo (163 estaciones, D-63):** satélite sin corregir 0,51 → regresión 0,44 → red lineal 0,44, KAN 0,44, MLP 0,42. Sesgo anual del satélite +26 % → +6 % (regresión) a +10 % (red).
+- **Sensibilidad de R6 (80 % de la OMM, 100 estaciones):** satélite 0,52 → regresión 0,42. La conclusión no depende de R6.
 - **La regresión es el método de clase:** frente a la versión del taller y a `fda.usc::fregre.basis.fr` da el mismo error y mejor KGE (D-53).
 - **KAN y MLP ganan poco y depende del ENSO:** mejores en años Niño (1997, 2002), peores en años Niña (1999-2000). La prueba no tiene años Niña.
 - **Qué aprendió la red:** KAN y MLP contrastan las dos temporadas de lluvia; la corrección satura cuando el satélite marca mucha lluvia; la altitud es la entrada más no lineal.

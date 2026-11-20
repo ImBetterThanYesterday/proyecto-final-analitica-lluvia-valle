@@ -13,10 +13,14 @@ Para cada paso explica qué muestra cada tabla y gráfica, qué significa y qué
   - las secciones 1 a 6 de `lluvia_valle_funcional.R`;
   - el archivo unido `lluvia_valle.R` tiene las mismas secciones, idénticas salvo los encabezados de rúbrica, desde su línea 1535;
   - la regresión concurrente está en `regresion_concurrente.R`.
-- **Las cifras** son de la corrida del 17-nov-2026:
-  - `lluvia_valle_funcional.R` pasa sus 16 pruebas y `regresion_concurrente.R` las 10 suyas;
-  - incluyen lo que se agregó a partir del material del profesor (D-57, `docs/BASE_CONOCIMIENTO_PROFESOR.md`): las secciones 4.4 a 4.6, las bandas de 5.4, la sección 5.9 y las bandas de 6.2;
+- **Cifras actualizadas el 20-nov-2026 (D-61 y D-63):** el conjunto principal pasa a R6 con **≥10 años válidos: 163 estaciones y 3 046 curvas**, con la nueva R4 y el relleno por kriging (R7). Ya tienen las cifras nuevas la tabla de resumen, la sección 1 y las secciones 5.5 y 5.6. **El resto del documento conserva las del 19-nov-2026 (98 estaciones, regla del 80 %) y hay que actualizarlo.** La sensibilidad con el 80 % de la OMM (100 estaciones) está en `salidas_R_funcional_r6_omm/`.
+- **Las cifras anteriores** son de la corrida del 19-nov-2026, con las **98 estaciones** que deja la regla de la OMM (D-60):
+  - `lluvia_valle_funcional.R` pasa sus 15 pruebas, la evaluación de la red sus 5 y `regresion_concurrente.R` sus 10;
   - las tablas salen iguales a las que están en el repositorio.
+- **Qué cambió tras la revisión del profesor por Teams** (fuentes en `docs/FUNDAMENTOS_REGLAS.md`):
+  - se quitaron las pruebas t y F pareadas y la vista de lluvia acumulada;
+  - se quitó Wilcoxon: los modelos se comparan con el IC bootstrap por estación;
+  - la tesis de 2016 ya no es guía.
 - **Salidas:** gráficas en `salidas_R_funcional/graficos/` y tablas en `salidas_R_funcional/tablas/`, con prefijos F1 a F6. La concurrente deja las suyas en `salidas_R_concurrente/`, con prefijos C1 a C5.
 - **Decisiones:** las D-xx están en `DECISIONES.md`.
 - **Conceptos:** la guía de estudio (curva, base, matriz W, FPCA y demás) explica cada concepto con ejemplos.
@@ -27,45 +31,47 @@ Para cada paso explica qué muestra cada tabla y gráfica, qué significa y qué
 
 | Paso | Rúbrica | Qué se hace | Resultado clave | Sección del R |
 |---|---|---|---|---|
-| Emparejar | 3 | Cada estación toma el píxel del satélite que la contiene | 176 estaciones en 148 píxeles; 3 299 pares estación–año | 1 |
+| Emparejar | 3 | Cada estación toma el píxel del satélite que la contiene | 163 estaciones en 142 píxeles; 3 046 pares estación–año | 1 |
 | Reconstruir | 1 (10 %) | B-splines cúbicas y mínimos cuadrados, sin librerías | K = 8 en estaciones y K = 11 en satélite, elegidos con VC y VCG | 2 |
-| EDA funcional | 2 (15 %) | Media, varianza, covarianza, derivadas, profundidad y boxplot | Régimen bimodal; el 74 % de la varianza es diferencia entre sitios | 3 |
-| Comparar fuentes | 3 (15 %) | d(t) con banda, correlación cruzada, por vertiente, altitud y ENSO | El satélite arranca tarde la primera temporada, exagera los picos y amortigua el ENSO | 4 |
-| Pruebas por fuente | 3 | t pareada y ANOVA funcional de la clase, más la vista acumulada | Las medias difieren (p = 0,003); el error depende del ENSO, la vertiente y la altitud | 4.4 a 4.6 |
-| Regresión de función a función | 4.2 y 4.4 | β(s,t) con FPCA de entrenamiento y penalización | En prueba, el error L² relativo baja de 0,51 a 0,44 y el sesgo anual de +26 % a +7 % | 5 |
-| Regresión concurrente | (contraste) | y(t) = b0(t) + b1(t)·x(t), como en el script de clase | El mismo error que la de función a función, pero peor en el sesgo y en el segundo pico | `regresion_concurrente.R` |
+| EDA funcional | 2 (15 %) | Media, varianza, covarianza, derivadas, profundidad y boxplot | Régimen bimodal; la primera componente (el nivel de cada sitio) explica el 55 % | 3 |
+| Comparar fuentes | 3 (15 %) | d(t) con banda, correlación cruzada, por vertiente, altitud y ENSO | El satélite arranca tarde la primera temporada, da 191 mm/año de más y amortigua el ENSO | 4 |
+| Inferencia por grupos | 3 | ANOVA funcional de la clase sobre el error del satélite | El error del satélite cambia con la fase ENSO (p = 0,003), la vertiente y la altitud | 4.4 |
+| Regresión de función a función | 4.2 y 4.4 | β(s,t) con FPCA de entrenamiento y penalización | En prueba, el error L² relativo baja de 0,51 a 0,44 y el sesgo anual de +26 % a +6 %; con el 80 % de la OMM, de 0,52 a 0,42 | 5 |
+| Regresión concurrente | (contraste) | y(t) = b0(t) + b1(t)·x(t), como en el script de clase | El mismo error que la de función a función, pero peor KGE y peor en los dos picos | `regresion_concurrente.R` |
 
 ---
 
 ## 1. Datos y emparejamiento estación–píxel
 
 **De dónde vienen los datos.** Todo sale de `salidas_R_datos/datos_preparados.rds`, que deja el archivo de datos. No se vuelve a leer el satélite.
-- 3 299 curvas estación–año de 176 estaciones: 2 257 de entrenamiento (1981–1995), 672 de validación (1996–2000) y 370 de prueba (2001–2003). De ellas, 2 812 no tienen ningún día faltante.
-- 15 663 curvas píxel–año: 681 píxeles por 23 años. Para el EDA se usan los 676 píxeles del Valle.
+- 3 046 curvas estación–año de 163 estaciones: 2 031 de entrenamiento (1981–1995), 652 de validación (1996–2000) y 363 de prueba (2001–2003). De ellas, 2 750 tienen los 365 días observados; en las otras, el kriging rellenó 719 días (R7, D-61) y quedan 36 sin ninguna vecina con dato.
+- 15 571 curvas píxel–año: 677 píxeles por 23 años. Para el EDA se usan los 676 píxeles del Valle.
 
 **Emparejamiento.** Cada estación toma la celda de 0,05° del satélite que contiene su coordenada, y una prueba comprueba que de verdad cae dentro.
-- Las 176 estaciones caen en 148 píxeles.
-- 23 píxeles tienen de 2 a 4 estaciones (51 estaciones en total), que comparten la misma curva satelital.
+- Las 163 estaciones caen en 142 píxeles.
+- 7 píxeles tienen de 2 a 4 estaciones (16 estaciones en total), que comparten la misma curva satelital.
 - El centro del píxel queda a 2,2 km de la estación en mediana, y nunca a más de 3,9 km.
 
 **Vertiente de cada píxel.** Los píxeles no traen la cuenca de la CVC, así que hay que asignársela con alguna regla. Se compararon dos dejando una estación fuera cada vez:
 
 | Regla | Acierta |
 |---|---|
-| Corte en la longitud −76,8° (la que se usaba) | 88,6 % |
-| El mejor corte en longitud posible | 89,2 % |
-| La vertiente de la estación más cercana | **97,7 %** |
+| Corte en la longitud −76,8° (la que se usaba) | 85,3 % |
+| El mejor corte en longitud posible | 87,1 % |
+| La vertiente de la estación más cercana | **97,0 %** |
 
-Tabla: `F1_regla_vertiente_pixeles.csv`. El corte en longitud dejaba como "Cauca" a 20 de las 26 estaciones del Pacífico: las de las cuencas del Dagua, el Calima y el Garrapatas, sobre la cordillera Occidental. **Decisión:** se usa la estación más cercana. Así las dos fuentes tienen una sola definición de vertiente.
+Tabla: `F1_regla_vertiente_pixeles.csv`. La regla se calcula con **las 232 estaciones del Valle** con coordenada oficial, no solo con las 98 que entran al modelo, porque la zona es geografía y no calidad de datos. Con solo las 98, que tienen 7 estaciones pacíficas, muchos píxeles de la costa habrían quedado como "Cauca". El corte en longitud deja como "Cauca" a las estaciones del Dagua, el Calima y el Garrapatas, sobre la cordillera Occidental.
+
+**Decisión:** se usa la estación más cercana. Así las dos fuentes tienen una sola definición de vertiente: 377 píxeles quedan en el Cauca y 300 en el Pacífico.
 
 ![El error del satélite sigue al ENSO](salidas_R_funcional/graficos/F1_cociente_satelite_estacion_vs_ONI.png)
 
 **Qué muestra.** Cada punto es un año. El eje x es el ONI, y el eje y el cociente satélite/estación de la lluvia anual.
 
 **Cifras.**
-- La correlación es r = 0,68.
-- El cociente medio es 0,99 en años Niña, 1,16 en neutros y 1,29 en años Niño.
-- Los cinco cocientes más bajos son 1988, 1984, 2000, 1999 y 1996: cuatro de ellos son años Niña.
+- La correlación es r = 0,71 (0,70 solo con entrenamiento).
+- El cociente mediano es 1,02 en años Niña, 1,19 en neutros y 1,34 en años Niño. Con las 98 estaciones, casi todas andinas, el satélite da más lluvia que la estación en casi todos los años, y mucho más en El Niño.
+- Los cinco cocientes más bajos son 1984, 2000, 1988, 1981 y 1999: cuatro de ellos son años Niña.
 
 **Interpretación.** 1985, 1988 y 2000 no son archivos dañados del satélite. Son un error sistemático ligado al ENSO: en La Niña el satélite se queda corto y en El Niño se pasa. 1984 y 1999 se apartan igual y nunca se marcaron.
 
@@ -117,18 +123,18 @@ Se arma la matriz Φ (365 × K), donde cada fila es un día y cada columna una b
 
 | Fuente | K | Simetría, máx. ∣S − Sᵀ∣ | Idempotencia, máx. ∣SS − S∣ | ∣tr(S) − K∣ |
 |---|---|---|---|---|
-| Estaciones | 8 | 1 × 10⁻¹⁶ | 9 × 10⁻¹⁶ | 1 × 10⁻¹⁴ |
+| Estaciones | 8 | 7 × 10⁻¹⁷ | 5 × 10⁻¹⁶ | 1 × 10⁻¹⁴ |
 | Satélite | 11 | 8 × 10⁻¹⁷ | 2 × 10⁻¹⁶ | 2 × 10⁻¹⁵ |
 
 Todas son cero hasta el error de redondeo del computador. También se cumplen en las curvas con días faltantes, que tienen cada una su propia S.
 
-**Días faltantes.** No se imputan. Cada curva se ajusta solo con sus días observados: se quitan esas filas de Φ y de y. El archivo de datos ya garantiza que ningún año aceptado tiene un hueco de más de 15 días (regla R5).
+**Días faltantes.** No se imputan. Cada curva se ajusta solo con sus días observados: se quitan esas filas de Φ y de y. El archivo de datos ya garantiza, con la regla de la OMM (R5), que a ningún mes le faltan 11 días o más ni 5 o más seguidos. En total falta el 0,05 % de los días.
 
 ### 2.4 Cuántas bases: elegir K
 
 ![Selección de K](salidas_R_funcional/graficos/F2_seleccion_K.png)
 
-**Qué muestra.** Los tres criterios de clase en función de K, arriba para estaciones y abajo para satélite. Se calculan solo con las curvas completas de entrenamiento: 1 882 de estación y 10 215 de satélite.
+**Qué muestra.** Los tres criterios de clase en función de K, arriba para estaciones y abajo para satélite. Se calculan solo con las curvas completas de entrenamiento: 1 206 de estación y 10 155 de satélite.
 - **ECM:** el error de ajuste. Siempre baja al subir K, así que no sirve para elegir.
 - **VC:** el error al dejar un día fuera. Se calcula con el atajo de la diagonal de S, y se comprobó que da lo mismo que hacer los 365 ajustes.
 - **VCG:** la validación cruzada generalizada.
@@ -136,19 +142,19 @@ Todas son cero hasta el error de redondeo del computador. También se cumplen en
 **Cifras** (`F2_K_elegido.csv`).
 - VC y VCG coinciden: **K = 8 en estaciones y K = 11 en satélite**.
 - En el satélite el mínimo es nítido.
-- En estaciones la VC es casi plana: cualquier K entre 5 y 17 queda a menos de 1 % del mínimo. La lluvia diaria es tan ruidosa que más bases solo persiguen aguaceros.
+- En estaciones la VC es casi plana: cualquier K entre 5 y 15 queda a menos de 1 % del mínimo. La lluvia diaria es tan ruidosa que más bases solo persiguen aguaceros.
 
 **Sensibilidad** (`F2_sensibilidad_K_estaciones.csv`). Como la VC es plana, se probó qué cambia con más bases:
 
 | K | VC sobre el mínimo | Pico 1 (mediana) | Pico 2 (mediana) | Puntos negativos |
 |---|---|---|---|---|
-| **8** | 0 % | 18 abr | 25 oct | 2,0 % |
-| 12 | 0,4 % | 27 abr | 28 oct | 2,1 % |
-| 16 | 0,9 % | 23 abr | 29 oct | 3,3 % |
-| 24 | 2,1 % | 18 abr | 24 oct | 5,4 % |
+| **8** | 0 % | 18 abr | 24 oct | 2,1 % |
+| 12 | 0,5 % | 26 abr | 27 oct | 2,3 % |
+| 16 | 1,2 % | 22 abr | 29 oct | 3,4 % |
+| 24 | 2,4 % | 18 abr | 24 oct | 5,7 % |
 
-- La fecha de los picos se mueve a lo sumo 9 días.
-- Eso es mucho menos que la dispersión entre curvas: el rango intercuartílico de la fecha del pico es de 29 a 45 días.
+- La fecha de los picos se mueve a lo sumo 8 días.
+- Eso es mucho menos que la dispersión entre curvas: el rango intercuartílico de la fecha del pico es de 28 a 44 días.
 - Lo que sí sube con K son los valores negativos.
 
 **P-20 (D-51).** Se probó también elegir K comparando la fecha del pico con una media móvil de los datos. El K que gana depende del ancho de la media móvil:
@@ -163,12 +169,12 @@ Las referencias difieren entre sí tanto como lo que se gana subiendo K, así qu
 
 ![Bandas punto a punto](salidas_R_funcional/graficos/F2_bandas_punto_a_punto.png)
 
-**Qué muestra.** La curva de una estación con su banda de ±2 errores estándar, su píxel con la suya, y una curva con 15 días faltantes (la marca roja).
+**Qué muestra.** La curva de una estación con su banda de ±2 errores estándar, su píxel con la suya, y la curva con el hueco más largo de la muestra (la marca roja): 4 días, porque la regla de la OMM no deja pasar 5 o más seguidos.
 
 **Cifras** (consola y `F2_varianza_error_estaciones.csv`).
-- **El error no es igual todo el año.** Su varianza va de 26 (mm/día)² el 11 de agosto a 264 el 17 de octubre, la temporada húmeda. Por eso se dibujan dos bandas: con σ² constante y con σ²(t).
-- **Los residuos de días seguidos casi no se correlacionan** (0,04 en general y 0,08 a un día; gráfica `F2_covarianza_residual.png`). Eso justifica la banda con σ²I. En el satélite la correlación es mayor (0,14), porque cada péntada ya promedia cinco días.
-- Un hueco de 15 días ensancha la banda solo un 15 % en esos días.
+- **El error no es igual todo el año.** Su varianza va de 13,5 (mm/día)² el 14 de julio a 249 el 17 de octubre, la temporada húmeda. Por eso se dibujan dos bandas: con σ² constante y con σ²(t).
+- **Los residuos de días seguidos casi no se correlacionan** (0,05 en general y 0,07 a un día; gráfica `F2_covarianza_residual.png`). Eso justifica la banda con σ²I. En el satélite la correlación es mayor (0,14), porque cada péntada ya promedia cinco días.
+- Un hueco de 4 días ensancha la banda solo un 6 % en esos días.
 
 **Interpretación.** Las bandas son **punto a punto**: cada día tiene 95 % de cobertura por separado, no la curva completa.
 
@@ -178,7 +184,7 @@ Las referencias difieren entre sí tanto como lo que se gana subiendo K, así qu
 
 | Fuente | Puntos negativos | Curvas con algún negativo | Mínimo |
 |---|---|---|---|
-| Estaciones | 1,9 % | 46,9 % | −12,0 mm/día |
+| Estaciones | 2,0 % | 48,4 % | −6,9 mm/día |
 | Satélite | 0 % | 1 % | −0,5 mm/día |
 
 **Interpretación.** Los negativos aparecen en dos lugares:
@@ -196,7 +202,7 @@ Fourier arma la curva con senos y cosenos, y obliga a que el 31 de diciembre emp
 - el ejemplo de clase con esta misma lluvia usa B-splines cúbicas;
 - una curva de un solo año no es periódica.
 
-**Comprobación con los datos.** Se hizo el 16-nov-2026 con un script aparte y **todavía no está en el R**. Se ajustaron las 1 882 curvas completas de entrenamiento con las dos bases:
+**Comprobación con los datos.** Se hizo el 16-nov-2026 con un script aparte, con la muestra anterior de 176 estaciones, y **todavía no está en el R**. Se ajustaron las 1 882 curvas completas de entrenamiento de esa muestra con las dos bases:
 
 | | B-spline, K = 8 | Fourier, K = 7 |
 |---|---|---|
@@ -217,13 +223,15 @@ W = ∫ φ(t) φ(t)ᵀ dt permite calcular integrales con los coeficientes. Por 
 
 ![Mismo dominio](salidas_R_funcional/graficos/F2_mismo_dominio.png)
 
-**Qué muestra.** Una estación (K = 8) y su píxel (K = 11), ya como curvas, en el mismo dominio de 1 a 365. A partir de aquí las dos fuentes se pueden comparar día a día. Se ve también el efecto de borde: la curva de la estación baja a −2,6 mm/día el 31 de diciembre, y por eso se recorta en 0.
+**Qué muestra.** Una estación (K = 8) y su píxel (K = 11), ya como curvas, en el mismo dominio de 1 a 365. A partir de aquí las dos fuentes se pueden comparar día a día. Se ve también el efecto de borde: cerca del 1 de enero y del 31 de diciembre la curva de la estación puede bajar de 0, y por eso se recorta en 0.
 
 ---
 
 ## 3. EDA funcional (rúbrica 2)
 
-**Qué se usa.** Las 176 estaciones con sus 3 299 curvas de 1981–2003, sin submuestrear, y los 676 píxeles del Valle en los 23 años. La sección 8 del archivo de datos muestra que las estaciones incluidas representan a las 220 con datos. Esto evita el tope de la rúbrica por analizar solo un subconjunto.
+**Qué se usa.** Las 98 estaciones que cumplen la regla de la OMM, con sus 2 066 curvas de 1981–2003, sin submuestrear, y los 676 píxeles del Valle en los 23 años.
+- La sección 8 del archivo de datos muestra que en la zona andina las incluidas representan a las 220 con datos.
+- La zona pacífica queda con 7 estaciones (7 % frente a 19 %). Esa subrepresentación sale de una norma publicada, no de una elección propia, y se dice en cada resultado por zona.
 
 ### 3.1 Media, varianza y desviación estándar
 
@@ -237,16 +245,17 @@ W = ∫ φ(t) φ(t)ᵀ dt permite calcular integrales con los coeficientes. Por 
 
 | | Estaciones | Satélite |
 |---|---|---|
-| Primer máximo | 22 abr, 6,3 mm/día | 13 may, 10,7 mm/día |
-| Segundo máximo | 28 oct, 7,2 mm/día | 5 nov, 12,3 mm/día |
-| Mínimo de mitad de año | 1 ago, 2,2 mm/día | 20 jul, 4,6 mm/día |
-| Coeficiente de variación medio | 0,96 | 0,61 |
+| Primer máximo | 17 abr, 5,9 mm/día | 13 may, 10,7 mm/día |
+| Segundo máximo | 28 oct, 6,5 mm/día | 5 nov, 12,3 mm/día |
+| Mínimo de mitad de año | 1 ago, 1,6 mm/día | 20 jul, 4,6 mm/día |
+| Coeficiente de variación medio | 0,61 | 0,61 |
 
 **Interpretación.**
 - **Las dos fuentes muestran el régimen bimodal:** dos temporadas de lluvia (abril–mayo y octubre–noviembre) y dos secas.
-- **El satélite pone los picos de 1 a 3 semanas después y con casi el doble de magnitud.** Su media pesa por área, y el 43 % de los píxeles es de la vertiente Pacífica, donde llueven unos 4 000 mm/año. Por vertiente, el satélite supera a las estaciones en las dos: 1 735 frente a 1 551 mm/año en el Cauca, y 3 998 frente a 3 105 en el Pacífico.
-- **La variación entre curvas es tan grande como la media** (CV de 0,96 en estaciones).
-- **La DE de las estaciones** es alta en la segunda temporada y mínima el 27 de febrero. El máximo del 1 de enero (5,9) es efecto de borde, no un hecho del clima.
+- **El satélite pone los picos de 1 a 4 semanas después y con casi el doble de magnitud.** Su media pesa por área, y el 44 % de los píxeles es de la vertiente Pacífica, donde llueven unos 4 000 mm/año.
+- **Por vertiente, el satélite supera a las estaciones en las dos:** 1 706 frente a 1 551 mm/año en el Cauca, y 3 958 frente a 1 552 en el Pacífico. En el Pacífico la diferencia es tan grande porque las 7 estaciones que quedan son de sitios relativamente secos, mientras el satélite promedia toda la vertiente.
+- **La variación entre curvas es más de la mitad de la media** (CV de 0,61 en las dos fuentes).
+- **La DE de las estaciones** es alta en la segunda temporada y mínima el 17 de agosto. El máximo del 1 de enero (4,3) es efecto de borde, no un hecho del clima.
 
 ### 3.2 Covarianza y correlación
 
@@ -258,14 +267,15 @@ W = ∫ φ(t) φ(t)ᵀ dt permite calcular integrales con los coeficientes. Por 
 
 | Grupo | 1.ª componente | Correlación abril–octubre | Correlación mínima |
 |---|---|---|---|
-| Estaciones, todas | 76 % | 0,74 | 0,39 |
-| Estaciones del Cauca | 50 % | 0,54 | −0,14 |
-| Estaciones, anomalías por estación | 29 % | 0,14 | −0,27 |
+| Estaciones, todas | 55 % | 0,58 | −0,10 |
+| Estaciones del Cauca | 54 % | 0,58 | −0,13 |
+| Estaciones, anomalías por estación | 26 % | 0,13 | −0,35 |
 | Satélite, todos los píxeles | 88 % | 0,83 | 0,43 |
 
 **Interpretación.**
-- Con todas las estaciones juntas, todo se correlaciona positivamente y una sola componente explica el 76 %. Eso es sobre todo **el nivel de lluvia de cada sitio**: el 74 % de la varianza de las estaciones, y el 88 % de la del satélite, es diferencia *entre* sitios.
-- Al quitar el nivel de cada estación queda la variación de un año a otro. Ahí la primera componente baja a 29 % y abril y octubre casi no se relacionan (0,14).
+- Con todas las estaciones juntas, una sola componente explica el 55 %, y abril y octubre se correlacionan 0,58. Eso es sobre todo **el nivel de lluvia de cada sitio**. Antes, con las estaciones de la costa (de 8 000 a 12 000 mm/año), esa componente pesaba 76 %; sin ellas, la diferencia entre sitios pesa menos.
+- En el satélite, que sigue teniendo toda la vertiente Pacífica, la primera componente explica el 88 %.
+- Al quitar el nivel de cada estación queda la variación de un año a otro. Ahí la primera componente baja a 26 % y abril y octubre casi no se relacionan (0,13).
 - **En palabras:** un sitio húmedo es húmedo todo el año, pero un año con una primera temporada lluviosa no anuncia una segunda temporada lluviosa.
 
 ### 3.3 Derivadas y temporadas de lluvia
@@ -283,14 +293,14 @@ La derivada se calcula derivando la base: D x(t) = Σ c_k Dφ_k(t).
 | Momento | Estaciones del Cauca | Satélite en el Cauca |
 |---|---|---|
 | Inicio de la 1.ª temporada | 28 feb | 18 mar |
-| Pico de la 1.ª temporada | 14 abr | 2 may |
+| Pico de la 1.ª temporada | 14 abr | 1 may |
 | Fin de la 1.ª temporada | 14 jun | 11 jun |
-| Inicio de la 2.ª temporada | 15 sep | 25 sep |
-| Pico de la 2.ª temporada | 1 nov | 3 nov |
+| Inicio de la 2.ª temporada | 15 sep | 24 sep |
+| Pico de la 2.ª temporada | 31 oct | 3 nov |
 
 **Interpretación.**
-- **El satélite fecha el inicio y el pico de la primera temporada 2 a 3 semanas tarde.**
-- La gráfica `F3_temporadas_por_curva.png` hace lo mismo curva por curva. En el 62 % de las curvas de estación la lluvia sigue bajando hasta el borde del año, así que el fin de la segunda temporada no se puede fechar en ellas.
+- **El satélite fecha el inicio y el pico de la primera temporada unas 3 semanas tarde**, y el inicio de la segunda unas 10 días tarde.
+- La gráfica `F3_temporadas_por_curva.png` hace lo mismo curva por curva. En el 62 % de las curvas de estación del Cauca la lluvia sigue bajando hasta el borde del año, así que el fin de la segunda temporada no se puede fechar en ellas.
 
 ### 3.4 Profundidad, boxplot funcional y curvas atípicas
 
@@ -310,14 +320,12 @@ Las dos ordenan casi igual (Spearman 0,99 y 1,00). La curva más profunda, la me
 Arriba están las estaciones (todas, Cauca y Pacífico) y el satélite; abajo, las curvas medias de cada año. Las atípicas coinciden con las de `fda::fbplot`, y hay una prueba automática que lo verifica.
 
 **Cifras** (`F3_atipicas_*.csv`, `F3_profundidad_anual.csv`).
-- **Estaciones todas juntas:** 63 curvas atípicas. 62 son de cinco estaciones de la costa Pacífica (Bahía Málaga, Yurumanguí, San Francisco, Triana y El Tabano), con 7 000 a 12 600 mm/año.
-- **Por vertiente:**
-  - en el Cauca solo quedan 2 atípicas, Tenjo 1982 (4 482 mm/año, candidata a revisión) y Las Brisas 1981;
-  - en el Pacífico quedan 44.
-- **Satélite:** 330 atípicas. Todas son del Pacífico, y 229 tocan el tope de 200 mm por péntada.
+- **Estaciones todas juntas:** 1 curva atípica de 2 066, Tenjo 1982 (4 482 mm/año, candidata a revisión). Antes, con 176 estaciones, eran 63, casi todas de cinco estaciones de la costa (Bahía Málaga, Yurumanguí, San Francisco, Triana y El Tabano), que ya no entran.
+- **Por vertiente:** en el Cauca solo Tenjo 1982; en el Pacífico, 8 curvas, todas de Alto Anchicayá, la más lluviosa de las 7.
+- **Satélite:** 330 atípicas de 15 548 curvas (2,1 %). Todas son del Pacífico, y 229 tocan el tope de 200 mm por péntada.
 - **Años:** ninguna curva media anual es atípica. Los años menos profundos de las estaciones son 1988, 1984, 1983 y 1999, tres de ellos Niña.
 
-**Interpretación.** Las atípicas del Pacífico no son errores: son otro clima. Por eso el boxplot se separa por vertiente.
+**Interpretación.** Sin la costa más lluviosa casi no quedan atípicas en las estaciones. Las del satélite siguen siendo de otro clima (el Pacífico), no errores; por eso el boxplot se separa por vertiente.
 
 ### 3.5 Contexto climático: vertiente, altitud y ENSO
 
@@ -329,21 +337,21 @@ Arriba están las estaciones (todas, Cauca y Pacífico) y el satélite; abajo, l
 
 | Grupo (estaciones del Cauca) | Lluvia anual |
 |---|---|
-| Menos de 1 200 m (fondo del valle) | 1 333 mm |
-| 1 200 a 2 000 m | **1 715 mm** |
-| Más de 2 000 m | 1 607 mm |
-| Años neutros | 1 544 mm |
-| Años Niña | 1 718 mm (+11 %) |
-| Años Niño | 1 387 mm (−10 %) |
+| Menos de 1 200 m (fondo del valle) | 1 304 mm |
+| 1 200 a 2 000 m | **1 708 mm** |
+| Más de 2 000 m | 1 616 mm |
+| Años neutros | 1 538 mm |
+| Años Niña | 1 734 mm (+13 %) |
+| Años Niño | 1 388 mm (−10 %) |
 
 **Interpretación.**
 - **Orografía:** las laderas medias son lo más lluvioso del Cauca, más que el fondo del valle y más que lo alto. Por eso la altitud entra al modelo.
 - **La Niña se nota en la segunda temporada** (7,1 frente a 6,3 mm/día) y en una sequía de mitad de año más húmeda (2,4 frente a 1,4 mm/día).
-- **El satélite no muestra la señal ENSO:** da menos lluvia en años Niña (1 664 mm) que en neutros (1 767). Si se quitan 1985, 1988 y 2000, el satélite pasa a dar 1 838 mm en La Niña. Es el mismo error ligado al ENSO de la sección 1, y la razón para darle el ONI al modelo.
+- **El satélite no muestra la señal ENSO:** da menos lluvia en años Niña (1 639 mm) que en neutros (1 738), y casi lo mismo en El Niño (1 716). Si se quitan 1985, 1988 y 2000, el satélite pasa a dar 1 811 mm en La Niña. Es el mismo error ligado al ENSO de la sección 1, y la razón para darle el ONI al modelo.
 
-### 3.5b Año por año, como en la tesis del profesor
+### 3.5b Año por año
 
-En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figuras 5.8, 6.2, 6.3 y 9.2): las curvas en gris, el promedio en negro y la desviación estándar punteada, con el mismo eje en todos los paneles. Aquí se hace igual con nuestras curvas (mm/día, 1981–2003). El título de cada panel lleva la fase ENSO del año.
+Las curvas de cada año en un panel, con el mismo eje en todos: las curvas en gris, el promedio en negro y la desviación estándar punteada. Son **datos funcionales** (las curvas reconstruidas), en **mm/día**, nunca lluvia acumulada. La lluvia observada antes de volverla curva está en `6_serie_diaria_por_anio` del archivo de datos. El título de cada panel lleva la fase ENSO del año.
 
 ![Estaciones por año](salidas_R_funcional/graficos/F3_por_anio_estaciones.png)
 
@@ -356,9 +364,9 @@ En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figura
 - Como todos los paneles tienen el mismo eje, se compara un año con otro mirando la altura de la línea negra.
 
 **Cifras** (`F3_por_anio_resumen.csv`):
-- **Estaciones:** los años más lluviosos son de La Niña: 1999 (2 204 mm), 1984 (2 145) y 1988 (2 129). Los más secos son de El Niño: 1992 (1 379) y 1997 (1 532). La lluvia anual media de las estaciones tiene correlación **−0,62** con el ONI.
+- **Estaciones:** los años más lluviosos son de La Niña: 1999 (2 048 mm), 1984 (1 999) y 1988 (1 769). Los más secos son de El Niño: 1992 (1 175) y 1991 (1 272). La lluvia anual media de las estaciones tiene correlación **−0,60** con el ONI.
 - **Satélite:** sus años más secos son 1985, 1988 y 2000, los tres de La Niña. Su correlación con el ONI es **+0,47**, al revés que las estaciones.
-- El satélite promedia todos los píxeles del Valle, y el 43 % son de la zona pacífica. Por eso su nivel no se compara directamente con el de las estaciones; lo que se compara es **cómo cambia de un año a otro**.
+- El satélite promedia todos los píxeles del Valle, y el 44 % son de la zona pacífica. Por eso su nivel no se compara directamente con el de las estaciones; lo que se compara es **cómo cambia de un año a otro**.
 
 **Interpretación.** La gráfica por año deja ver lo que las medias de todo el periodo esconden. La forma bimodal se repite casi todos los años, pero su altura cambia con el ENSO, y el satélite responde al revés que las estaciones. Es la razón, ya vista en el EDA de datos, para darle el ONI al modelo.
 
@@ -372,15 +380,15 @@ En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figura
 | Derivadas e inicio y fin de las temporadas | 3.3: `F3_derivada_media.png`, `F3_temporadas_*.csv` |
 | Profundidad FM y MBD, boxplot y atípicas por estación y año | 3.4: `F3_centralidad.png`, `F3_boxplot_funcional.png`, `F3_atipicas_*.csv` |
 | Interpretación climatológica (bimodal, orografía, ENSO) | 3.1 a 3.5 |
-| Sin subconjuntos sin justificar | Se usan todas las estaciones y todos los años |
+| Sin subconjuntos sin justificar | Se usan todas las estaciones que cumplen la norma de la OMM y todos los años |
 
 ---
 
 ## 4. Comparación funcional por fuente (rúbrica 3)
 
-**Pares.** 3 299 pares estación–año y píxel–año: 176 estaciones en 148 píxeles, todos los años.
+**Pares.** 2 066 pares estación–año y píxel–año: 98 estaciones en 89 píxeles, todos los años.
 
-**El error estándar se calcula entre estaciones.** Primero se promedia cada estación y luego se compara entre estaciones. Así el EE sale 3,7 veces más grande que si cada curva fuera independiente, porque los años de una misma estación repiten su sesgo. Usar el EE ingenuo daría bandas falsamente estrechas.
+**El error estándar se calcula entre estaciones.** Primero se promedia cada estación y luego se compara entre estaciones. Así el EE sale 3 veces más grande que si cada curva fuera independiente, porque los años de una misma estación repiten su sesgo. Usar el EE ingenuo daría bandas falsamente estrechas.
 
 ### 4.1 La diferencia media d(t)
 
@@ -390,19 +398,21 @@ En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figura
 - **A la izquierda**, la media de las estaciones y la de sus píxeles.
 - **A la derecha**, la diferencia d(t) = estación − satélite, con su banda de ±2 EE. Las marcas rojas abajo son los días en que la banda excluye el 0. La línea roja discontinua es la diferencia solo en 1985, 1988 y 2000.
 
+Es una **descripción**, no una prueba: la banda dice en qué días las dos fuentes se separan. La pregunta formal de si el satélite está sesgado la responde la regresión (sección 5.4). Allí se ve si su intercepto es 0 y la integral de β es 1, que es lo que pasaría si el satélite midiera lo mismo que la estación. Por eso ya no se usa la prueba t pareada (`docs/FUNDAMENTOS_REGLAS.md`, 5.3).
+
 **Cifras** (`F4_intervalos_diferencia.csv`).
 
 | Tramo | Días | Quién da más |
 |---|---|---|
-| 8 feb – 28 mar | 49 | La estación: el satélite arranca tarde la primera temporada |
-| 15 abr – 9 jun | 56 | El satélite: exagera el primer pico |
-| 28 oct – 18 nov | 22 | El satélite: exagera el segundo pico |
-| 1–12 ene y 24–31 dic | 20 | Efecto de borde, no se interpreta |
+| 12 feb – 20 mar | 37 | La estación: el satélite arranca tarde la primera temporada |
+| 6 abr – 21 sep | 169 | El satélite: exagera la primera temporada y la sequía de mitad de año |
+| 5 oct – 29 nov | 56 | El satélite: exagera la segunda temporada |
+| 1–7 ene, 16–30 ene y 16–31 dic | 38 | Bordes del año; se interpretan con cuidado |
 
 **Interpretación.**
-- **En el promedio anual casi no hay diferencia:** el satélite da 22 mm/año más. Pero el signo cambia con la temporada, y la banda excluye el 0 en 147 de los 365 días.
-- Es el mismo retraso que mostraron las derivadas.
-- En 1985, 1988 y 2000 el satélite pierde 337 mm/año frente a la estación; en el resto de años da 83 mm/año de más.
+- **Con las 98 estaciones, casi todas andinas, el satélite da más lluvia que la estación la mayor parte del año:** 191 mm/año de más en promedio. La banda excluye el 0 en 300 de los 365 días.
+- La excepción es febrero–marzo, donde el satélite arranca tarde la primera temporada. Es el mismo retraso que mostraron las derivadas.
+- En 1985, 1988 y 2000, años La Niña, el satélite da 136 mm/año **menos** que la estación; en el resto de años da 241 mm/año de más.
 
 ### 4.2 Correlación cruzada y covarianzas
 
@@ -411,17 +421,22 @@ En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figura
 **Qué muestra.** La correlación entre la estación en el día t y su píxel en el día s. La diagonal (s = t) dice qué tanto sigue el satélite a la estación el mismo día. La diagonal sola está en `F4_diagonal_correlacion.png`.
 
 **Cifras.**
-- **La diagonal** vale 0,62 en promedio, con un máximo de 0,78 a mediados de julio. La correlación máxima está en el mismo día (desfase mediano de −1 día).
-- **Con anomalías**, restando la climatología de cada estación, la diagonal baja a 0,24: máximo 0,47 en febrero y apenas 0,07 en noviembre.
+- **La diagonal** vale 0,41 en promedio, con un máximo de 0,52 el 11 de junio. La correlación máxima está casi en el mismo día (desfase mediano de +1 día).
+- **Con anomalías**, restando la climatología de cada estación, la diagonal vale 0,30: máximo 0,54 en febrero y apenas 0,04 en noviembre.
 - **Covarianzas** (`F4_covarianzas.png`, `F4_covarianzas_comparadas.csv`):
-  - la forma es casi igual: la correlación abril–octubre es 0,74 en estaciones y 0,72 en satélite, y la primera componente explica 76 % y 77 %;
-  - la varianza del satélite es **una cuarta parte** de la de las estaciones (cociente mediano 0,24 por día).
+  - la forma se parece: la correlación abril–octubre es 0,58 en estaciones y 0,70 en satélite, y la primera componente explica 54 % y 67 %;
+  - la varianza del satélite es **la mitad** de la de las estaciones (cociente mediano 0,48 por día).
 
 **Interpretación.**
-- Casi toda la correlación viene de que el satélite reconoce qué sitios son húmedos y cuáles secos. Sigue mal la variación de un año a otro, sobre todo en la segunda temporada.
+- Antes, con las estaciones de la costa, la diagonal valía 0,62. Esa correlación salía sobre todo de que el satélite distingue un sitio muy húmedo de uno seco. Con las 98 estaciones, todas con lluvias parecidas, esa ventaja se pierde, y queda a la vista lo que el satélite sigue mal: la variación de un año a otro, sobre todo en la segunda temporada.
 - Un píxel de unos 5,5 km y una péntada de 5 días promedian los aguaceros locales. Por eso el satélite varía menos.
 
-**¿Sale esto de usar K distinto?** No. Con el satélite también en K = 8 (`F4_sensibilidad_mismo_K.csv`), la diferencia media (−20 frente a −22 mm/año), la diagonal (0,64 frente a 0,62) y el cociente de varianzas (0,25 frente a 0,24) casi no cambian. El veredicto día a día sí es algo sensible: coincide en 281 de 365 días. Por eso las fechas exactas se reportan con esa salvedad.
+**¿Sale esto de usar K distinto?** No. Con el satélite también en K = 8 (`F4_sensibilidad_mismo_K.csv`):
+- la diferencia media pasa de −191 a −188 mm/año;
+- la diagonal, de 0,41 a 0,42;
+- el cociente de varianzas, de 0,48 a 0,48.
+
+El veredicto día a día sí es algo sensible: coincide en 272 de 365 días. Por eso las fechas exactas se reportan con esa salvedad.
 
 ### 4.3 Por vertiente, altitud y fase ENSO
 
@@ -429,106 +444,58 @@ En su tesis, el profesor presenta casi todo **en paneles, uno por año** (figura
 
 **Cifras** (`F4_comparacion_por_grupo.csv`, `F4_sesgo_por_estacion.csv`).
 
-| Grupo | Estación (mm/año) | Satélite (mm/año) | Cociente satélite/estación | Días con la banda sin el 0 |
-|---|---|---|---|---|
-| Cauca | 1 551 | 1 669 | 1,08 | 263 |
-| Pacífico | 3 105 | 2 827 | 0,91 | 46 |
-| Años Niña | 1 926 | 1 731 | 0,90 | 273 |
-| Años Niño | 1 570 | 1 833 | 1,17 | 269 |
+| Grupo | Estaciones | Estación (mm/año) | Satélite (mm/año) | Cociente satélite/estación | Días con la banda sin el 0 |
+|---|---|---|---|---|---|
+| Cauca | 91 | 1 551 | 1 690 | 1,09 | 265 |
+| Pacífico | 7 | 1 552 | 2 443 | 1,57 | 357 |
+| Menos de 1 200 m | 37 | 1 345 | 1 687 | 1,25 | 321 |
+| 1 200 a 2 000 m | 55 | 1 682 | 1 805 | 1,07 | 235 |
+| Más de 2 000 m | 6 | 1 616 | 1 486 | 0,92 | 31 |
+| Años Niña | 98 | 1 733 | 1 667 | 0,96 | 161 |
+| Años Niño | 98 | 1 383 | 1 754 | 1,27 | 313 |
 
 **Interpretación.**
-- **En el Cauca el satélite sobreestima un 8 %** (+109 mm/año).
-- **En el Pacífico el sesgo depende del sitio:**
-  - subestima a la mitad las estaciones más lluviosas (El Tabano, San Francisco y Bahía Málaga, cocientes de 0,43 a 0,50);
-  - duplica la lluvia de los sitios secos a sotavento (Loboguerrero 2,6; La Despensa 2,3; Puerto Nuevo 2,3; Moravito 1,9).
-  - Es decir, el satélite suaviza hacia la media regional: sube lo seco y baja lo muy húmedo.
-- **Lluvia anual:** entre estaciones, la del píxel explica la de la estación con r = 0,79, pero dentro del Cauca solo con 0,42 (`F4_anual_estacion_vs_pixel.png`).
-- **Altitud:** en el Cauca el cociente satélite/estación baja un 15 % por cada 1 000 m (p = 0,001). El satélite exagera en el fondo del valle y se queda corto en las laderas altas, donde la lluvia orográfica no se ve a 5 km.
-- **ENSO:** el satélite subestima un 10 % en La Niña y sobreestima un 17 % en El Niño. Amortigua la señal.
+- **En el Cauca el satélite sobreestima un 9 %** (+137 mm/año).
+- **En el Pacífico quedan 7 estaciones, de sitios relativamente secos** (1 552 mm/año, como el Cauca), y el satélite les da 57 % de más. Las estaciones de la costa muy lluviosa, donde antes el satélite se quedaba corto a la mitad, ya no entran (R6). Por eso el resultado del Pacífico no se puede generalizar a toda la vertiente.
+- **El satélite suaviza hacia la media regional:** sube lo seco. Entre estaciones, la lluvia anual del píxel explica la de la estación con r = 0,47 (0,50 en el Cauca).
+- **Altitud:** en el Cauca el cociente satélite/estación baja un 15 % por cada 1 000 m (p = 0,03). El satélite exagera en el fondo del valle (25 % de más) y se queda corto arriba de 2 000 m, donde la lluvia orográfica no se ve a 5 km.
+- **ENSO:** en La Niña el satélite da casi lo justo (cociente 0,96), y en El Niño un 27 % de más. Amortigua la señal: no sube la lluvia en La Niña ni la baja en El Niño.
 
 **Decisión.** Esto justifica darle al modelo la **altitud** y el **ONI** junto con la curva del satélite, como pide el enunciado. La gráfica `F4_diferencia_por_grupo.png` muestra d(t) por grupo.
 
 ---
 
-### 4.4 Prueba t funcional pareada (como en la clase de la semana 14)
+### 4.4 ANOVA funcional del error del satélite
 
-La banda d̄(t) ± 2 EE dice día por día dónde difieren las fuentes, pero no da una decisión para todo el año. La clase propone, para datos pareados, tres pruebas (ejercicio 3 de la semana 14, que pide justo esto con `X_sat` y `Y_est`):
-- **norma L²**, T_n = n‖D̄‖², que se compara con β χ²_d (aproximación de Welch–Satterthwaite);
-- **tipo F**, F_n = T_n / tr(γ̂), con distribución F_{d,(n−1)d};
-- **t puntual por permutación con el criterio del máximo**, que controla el error en todo el año y no solo día por día.
-
-La unidad independiente es la **estación**: cada una aporta la diferencia media de sus años (176 curvas). β y d salen de las trazas del operador de covarianza, con los estimadores insesgados de Zhang (2013) que muestra la clase.
-
-![Prueba t pareada](salidas_R_funcional/graficos/F4_prueba_t_pareada.png)
-
-**Qué muestra.** A la izquierda, la diferencia media por estación. A la derecha, |t(t)| frente al crítico puntual (azul) y al crítico del máximo (rojo), calculados con 5 000 permutaciones de signo.
-
-**Cifras** (`F4_prueba_t_pareada.csv`, `F4_prueba_t_pareada_intervalos.csv`).
-
-| Grupo | d̂ | F (p) | Permutación con el máximo (p) | Días significativos: puntual / con el máximo |
-|---|---|---|---|---|
-| Todas las estaciones | 1,28 | 7,7 (0,003) | 0,0002 | 149 / 129 |
-| Cauca | 1,39 | 24,7 (4 × 10⁻⁸) | 0,0002 | 266 / 235 |
-| Pacífico | 1,16 | 2,1 (0,16) | 0,007 | 47 / 6 |
-
-**Interpretación.**
-- **El satélite y la estación no tienen la misma media funcional.**
-- Con el criterio del máximo la diferencia es significativa en 129 días:
-  - 9 de febrero a 25 de marzo, donde la estación llueve más;
-  - 18 de abril a 6 de junio y 1 a 15 de noviembre, donde el satélite exagera los picos;
-  - más los bordes del año, que son efecto de borde.
-- d̂ ≈ 1,3 dice que la diferencia vive casi en una sola dirección: es como comparar un solo número por estación.
-- En el Pacífico la prueba global no rechaza: allí el sesgo cambia de signo según el sitio (sección 4.3) y se compensa.
-- **Comprobación de la clase (ejercicio 2):** con curvas constantes, la F coincide con el cuadrado de la t clásica y d = 1, con una diferencia de 10⁻¹⁶.
-
-### 4.5 ANOVA funcional del error del satélite
-
-¿Cambia la diferencia estación − satélite según la fase ENSO, la vertiente o la altitud? Se usan las pruebas de la clase:
+¿Cambia el error del satélite, d(t) = estación − satélite, según la fase ENSO, la vertiente o la altitud? Son grupos **independientes**, que es el caso para el que se hizo el ANOVA funcional de la clase (Cuevas, Febrero y Fraiman 2004; Zhang 2013):
 - la F puntual F(t);
 - la F global, con grados de libertad multiplicados por d̂;
 - la **GPF**, que integra F(t) y es mejor cuando la diferencia es pequeña pero extendida;
 - la **F_max**, que es mejor cuando la diferencia es localizada.
 
-Todas se calibran con permutaciones. **Unidades:** para el ENSO, los 23 años (la fase es del año); para la vertiente y la altitud, las estaciones.
+Las decisiones se toman con valores p **por permutación** (Górecki y Smaga 2015), que no dependen de ninguna aproximación.
+
+**Unidades:**
+- para el ENSO, los 23 años (la fase es del año);
+- para la vertiente y la altitud, las estaciones, con la curva media de cada una, porque sus años no son independientes.
 
 ![ANOVA funcional](salidas_R_funcional/graficos/F4_anova_funcional.png)
 
 **Cifras** (`F4_anova_funcional.csv`).
 
-| Factor | F (p) | GPF (p) | F_max (p) | Días con el criterio del máximo |
+| Factor | F (p por permutación) | GPF (p) | F_max (p) | Días con el criterio del máximo |
 |---|---|---|---|---|
-| Fase ENSO (23 años) | 2,9 (0,0003) | 0,005 | 0,22 | 0 |
-| Vertiente (176 estaciones) | 10,1 (0,0007) | 0,005 | 0,0004 | 189 |
-| Altitud en el Cauca (150 estaciones) | 5,9 (0,0009) | 0,001 | 0,0004 | 202 |
+| Fase ENSO (23 años) | 2,7 (0,003) | 0,011 | 0,34 | 0 |
+| Vertiente (98 estaciones) | 14,2 (0,0002) | 0,0002 | 0,0002 | 338 |
+| Altitud en el Cauca (91 estaciones) | 4,3 (0,013) | 0,02 | 0,0002 | 106 |
 
 **Interpretación.**
-- **El error del satélite depende del ENSO.** El efecto es pequeño en cada día y por eso F_max no lo detecta, pero se extiende por todo el año, y por eso lo detectan F y GPF. En La Niña la estación supera al satélite casi todo el año. Esto respalda con una prueba formal la decisión de darle el ONI al modelo.
-- **También depende de la vertiente y de la altitud**, con diferencias fuertes y localizadas. El satélite no ve la orografía, que es la misma conclusión de la tesis del profesor.
+- **El error del satélite depende del ENSO.** El efecto es pequeño en cada día y por eso F_max no lo detecta, pero se extiende por todo el año, y por eso lo detectan F y GPF. Es la respuesta con datos que pidió el profesor («ustedes pueden hacer inferencia funcional, entonces eso lo tienen que demostrar»), y respalda darle el ONI al modelo.
+- **También depende de la vertiente y de la altitud**, con diferencias fuertes y localizadas: el satélite no ve la orografía.
+- **Ojo con la vertiente:** el Pacífico tiene solo 7 estaciones. La prueba lo detecta, pero el resultado describe a esas 7 estaciones, no a toda la vertiente.
 - **Comprobaciones de la clase (ejercicio 1):** SSE_n = (n − k) tr(γ̂) y, con k = 2, F(t) = t², las dos exactas.
 
-### 4.6 Vista acumulada, como la presenta el profesor
-
-En la tesis del profesor y en las clases, la lluvia se trabaja **acumulada**: los mm desde el 1 de enero. Aquí se muestra esa vista con nuestras curvas, A(t) = ∫ x(u) du. La derivada de la curva acumulada es nuestra curva en mm/día (la "intensidad" de la clase), así que no se pierde información.
-
-![Vista acumulada](salidas_R_funcional/graficos/F4_acumulada.png)
-
-**Cifras** (`F4_acumulada_vs_mm_dia.csv`).
-
-| Medida | Acumulada | mm/día |
-|---|---|---|
-| Acumulado al 31-dic, estaciones / satélite | 1 748 / 1 813 mm | — |
-| d(31-dic) = estación − satélite | −19 ± 71 mm (no significativo) | — |
-| Días en que la banda de d(t) excluye el 0 | 120 | 147 |
-| CV al 31-dic, estaciones / satélite | 0,75 / 0,37 | — |
-| Diagonal r(t,t), mediana | 0,65 | 0,65 |
-| Correlación media entre días separados 90 días o más | 0,85 | 0,64 |
-
-**Interpretación.**
-- **En el acumulado anual el satélite casi acierta**, porque sus errores se compensan: arranca tarde la primera temporada y luego exagera los picos.
-- La diferencia acumulada solo es significativa hasta abril. La curva en mm/día muestra los errores de cada temporada por separado.
-- La acumulada tiene mucha más memoria (0,85 frente a 0,64): está dominada por el total que se va sumando.
-
-**Decisión (D-57).** El modelo sigue en mm/día. El enunciado pide modelar sobre √P o log(1+P) y fechar los dos picos, que son rasgos de la intensidad y no de la acumulada. La vista acumulada se presenta porque es la escala con que trabaja el profesor.
+**Sobre lo quitado.** La prueba t y la F pareadas y la vista de lluvia acumulada se quitaron tras la revisión del profesor. Las razones y las fuentes están en `docs/FUNDAMENTOS_REGLAS.md` (secciones 5.1 y 5.3).
 
 ---
 
@@ -540,7 +507,7 @@ Se predice **la curva de la estación completa** a partir de **la curva del sat�
 
 y_i(t) = α(t) + ∫ β(s,t) x_i(s) ds + γ(t)·altitud_i + δ(t)·ONI_i + error
 
-- **β(s,t)** dice cuánto pesa la lluvia del satélite en el día s para predecir la estación en el día t. Es el modelo integral de clase.
+- **β(s,t)** dice cuánto pesa la lluvia del satélite en el día s para predecir la estación en el día t. Es el modelo integral de clase (Ramsay y Silverman 2005, cap. 16).
 - **Se resuelve en tres pasos:**
   1. Se hace un **FPCA** de las curvas de estación, solo con entrenamiento: y(t) ≈ μ(t) + Σ_m s_m ψ_m(t).
   2. Cada puntaje s_m se predice con la integral del satélite, que con coeficientes es z = C_x W, más la altitud y el ONI. Es una regresión de cresta en la que λ castiga la curvatura de β.
@@ -551,14 +518,14 @@ y_i(t) = α(t) + ∫ β(s,t) x_i(s) ds + γ(t)·altitud_i + δ(t)·ONI_i + error
 - Recortar en 0 antes de sacar la raíz solo cambia el 2 % de los días de las estaciones.
 - La raíz se reproyecta en la misma base con un error de 0,09 (estaciones) y 0,03 (satélite), en raíz de mm/día.
 
-**Primero se suaviza y luego se saca la raíz** (`F5_orden_raiz_y_suavizado.csv`):
+**Primero se suaviza y luego se saca la raíz** (`F5_orden_raiz_y_suavizado.csv`, 1 206 curvas completas de entrenamiento):
 
-| Camino | Acumulado anual / dato diario (mediana) |
+| Camino | Total anual / dato diario (mediana) |
 |---|---|
 | A. Suavizar en mm, recortar en 0 y sacar la raíz (el que se usa) | **1,000** |
-| B. Sacar la raíz al dato diario, suavizar y elevar al cuadrado | 0,329 |
+| B. Sacar la raíz al dato diario, suavizar y elevar al cuadrado | 0,32 |
 
-El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media de las raíces no es la media. Como el sesgo del acumulado anual es una métrica de la rúbrica, se usa el camino A.
+El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media de las raíces no es la media. Como el sesgo del total anual es una métrica de la rúbrica, se usa el camino A.
 
 ### 5.2 FPCA de las estaciones (solo entrenamiento)
 
@@ -570,15 +537,16 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 
 | Componente | 1 | 2 | 3 | 4 | 5 | 6 |
 |---|---|---|---|---|---|---|
-| Varianza explicada | 62 % | 13 % | 7 % | 5 % | 4 % | 3 % |
-| Acumulada | 62 % | 75 % | 82 % | 87 % | 91 % | **94,2 %** |
+| Varianza explicada | 43 % | 19 % | 12 % | 7 % | 6 % | 5 % |
+| Acumulada | 43 % | 62 % | 73 % | 81 % | 86 % | **91,2 %** |
 
 - **La primera componente** es casi plana: es el nivel de lluvia de cada sitio. Las demás mueven las temporadas.
+  - Pesa menos que antes (62 % con 176 estaciones) porque sin la costa muy lluviosa los sitios se parecen más entre sí.
 - **Se calcula sobre W¹ᐟ² Σ W¹ᐟ²**, para que la varianza se mida como integral y no como suma de coeficientes. Las funciones propias son ortonormales con W, y hay una prueba que lo verifica.
 
 **P-19: ¿usar los registros de 1930–1979?** (D-56, `F5_P19_conteo.csv`).
-- Habría 1 250 curvas válidas de 140 estaciones, 963 de ellas de los años setenta. Sumarían un 55 % a las de entrenamiento.
-- Con ellas las cuatro primeras funciones propias no cambian (coseno 1,000) y la varianza explicada con M = 6 baja de 94,2 % a 93,2 %.
+- Habría 710 curvas válidas de 82 de nuestras estaciones, 562 de ellas de los años setenta. Sumarían un 54 % a las de entrenamiento.
+- Con ellas las cuatro primeras funciones propias no cambian (coseno 1,000), y la varianza explicada con M = 6 pasa de 91,2 % a 91,0 %.
 - **Decisión:** no se usan. Traen variabilidad de otra época, no estructura nueva, y la fe de erratas fija 1981–2003.
 
 ### 5.3 Elegir M y λ con validación
@@ -589,7 +557,11 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 
 **Regla.** Se toma el menor M cuyo mejor error de validación queda a menos de 0,5 % del mínimo.
 
-**Resultado.** **M = 6** (94,2 % de la varianza; el enunciado pide M entre 4 y 6) y **λ = 3,2 × 10⁸**. Con ese λ el modelo usa unos 10 grados de libertad efectivos de 14 parámetros por componente. La prueba (2001–2003) no se usa para elegir nada.
+**Resultado.**
+- **M = 6**, que explica el 91,2 % de la varianza; el enunciado pide M entre 4 y 6.
+- **λ = 3,2 × 10⁸**, los mismos valores que con 176 estaciones.
+- Con ese λ el modelo usa unos 9 grados de libertad efectivos de 14 parámetros por componente.
+- La prueba (2001–2003) no se usa para elegir nada.
 
 ### 5.4 La superficie β(s,t) y la equivalencia
 
@@ -605,74 +577,88 @@ El camino B reduce la lluvia anual a un tercio, porque el cuadrado de la media d
 
 ![Efectos](salidas_R_funcional/graficos/F5_efectos.png)
 
-**Qué muestra.** Cada efecto con su banda del 95 %. Como en la clase y en la tesis del profesor, cada coeficiente va con banda y se lee dónde excluye el 0. La banda sale de un bootstrap de estaciones con 500 remuestreos, que respeta que los años de una estación no son independientes (`F5_efectos_bandas.csv`).
-- **∫β(s,t) ds**, a la izquierda: cuánto pasa a la estación si el satélite sube igual todo el año.
-  - Lejos de los bordes va de 0,62 en diciembre a 1,03 el 1 de junio: el modelo traslada el nivel del satélite casi completo a mitad de año y lo amortigua al final.
-  - La banda excluye el 0 todo el año y excluye el 1 en 173 días.
-- **El efecto del ONI δ(t)** resta lluvia todo el año, y sobre todo a mitad de año (−0,24 por unidad de ONI el 2 de julio). El Niño profundiza la sequía de junio–julio. La banda excluye el 0 en 360 días.
-- **La altitud γ(t):** su banda **contiene el 0 todo el año**. Una vez se conoce el píxel, la altitud no aporta, igual que concluyó la tesis del profesor. Se mantiene porque el enunciado la pide en el vector z de la red.
+**Qué muestra.** Cada efecto con su banda del 95 %, como en la clase (semana 15): se lee dónde excluye el 0. La banda sale de un bootstrap de estaciones con 500 remuestreos, que respeta que los años de una estación no son independientes (`F5_efectos_bandas.csv`).
 
-**Equivalencia.** La predicción con la integral de β por cuadratura y la predicción por puntajes FPCA difieren en 4 × 10⁻¹⁵ (el criterio es 10⁻⁴). Es la identidad β(s,t) = Σ_m β_m(s) ψ_m(t) que la cabeza lineal de la red debe reproducir.
+- **∫β(s,t) ds**, a la izquierda: cuánto pasa a la estación si el satélite sube igual todo el año.
+  - Va de 0,10 (mediados de diciembre) a 0,68 (1 de junio).
+  - **Es la prueba formal de que el satélite está sesgado.** Si el satélite midiera lo mismo que la estación, esta integral valdría 1. Su banda **excluye el 1 los 365 días**: el satélite exagera las variaciones, y el modelo las amortigua siempre, sobre todo al final del año.
+  - La banda excluye el 0 en 318 días: el satélite informa casi todo el año.
+- **El efecto del ONI δ(t)** resta lluvia todo el año, y sobre todo a mitad de año (−0,29 por unidad de ONI el 2 de julio). El Niño profundiza la sequía de junio–julio. La banda excluye el 0 en 363 días.
+- **La altitud γ(t)** es positiva y pequeña: su banda excluye el 0 en 51 días (25 lejos de los bordes del año). Una vez se conoce el píxel, la altitud aporta poco. Se mantiene porque el enunciado la pide en el vector z de la red.
+
+**Equivalencia.** La predicción con la integral de β por cuadratura y la predicción por puntajes FPCA difieren en 3 × 10⁻¹⁵ (el criterio es 10⁻⁴). Es la identidad β(s,t) = Σ_m β_m(s) ψ_m(t) que la cabeza lineal de la red debe reproducir.
 
 ### 5.5 Evaluación en prueba (2001–2003)
 
 ![Prueba](salidas_R_funcional/graficos/F5_prueba.png)
 
 **Qué muestra.**
-- **Arriba**, tres curvas de prueba con la estación, el satélite y la regresión. La Despensa 2001 es un caso difícil: un sitio seco que el satélite ve húmedo.
+- **Arriba**, tres curvas de prueba con la estación, el satélite y la regresión, escogidas en los percentiles 10, 50 y 90 del error.
 - **Abajo**, la varianza explicada por día, el error por curva y el sesgo anual, comparados con el satélite sin corregir y con un modelo que solo usa altitud y ONI.
 
-**Cifras** (`F5_metricas_prueba.csv`: 370 curvas de 137 estaciones; IC del 95 % por bootstrap de estaciones con 2 000 remuestreos).
+**Cifras** (`F5_metricas_prueba.csv`: 363 curvas de 136 estaciones; IC del 95 % por bootstrap de estaciones con 2 000 remuestreos).
 
 | Modelo | L² relativo | KGE | Sesgo anual | Error pico 1 | Error pico 2 |
 |---|---|---|---|---|---|
-| Satélite sin corregir | 0,51 [0,47; 0,56] | 0,38 | +26,0 % | 23,1 días | 18,0 días |
-| **Regresión funcional** | **0,44 [0,41; 0,46]** | **0,47** | **+7,3 %** | **18,1 días** | **17,4 días** |
-| Solo altitud y ONI | 0,51 [0,47; 0,54] | 0,35 | +19,3 % | 21,7 días | 19,4 días |
+| Satélite sin corregir | 0,51 [0,47; 0,56] | 0,38 | +26,0 % | 22,5 días | 17,5 días |
+| **Regresión funcional** | **0,44 [0,41; 0,47]** | **0,46** | **+6,4 %** | **17,4 días** | **17,0 días** |
+| Solo altitud y ONI | 0,50 [0,47; 0,54] | 0,36 | +18,3 % | 20,9 días | 19,1 días |
 
-**Pareado por estación** (`F5_regresion_vs_satelite_pareado.csv`):
-- en cinco métricas el IC de la diferencia excluye el 0 y el Wilcoxon da p < 0,001;
-- en el pico de la segunda temporada la ganancia es de medio día y **no es significativa** (IC de −1,2 a 0,08 días, p = 0,08);
-- la regresión mejora el error en el 65 % de las curvas.
+**Por estación** (`F5_regresion_vs_satelite_por_estacion.csv`). Se calcula la diferencia de la métrica en cada estación y su IC con el mismo bootstrap; ya no se usa Wilcoxon (`docs/FUNDAMENTOS_REGLAS.md`, 5.2).
+
+| Métrica | Satélite | Regresión | Diferencia [IC 95 %] | Estaciones que mejoran |
+|---|---|---|---|---|
+| L² relativo | 0,514 | 0,438 | −0,076 [−0,104; −0,051] | 79 de 136 |
+| KGE | 0,382 | 0,463 | +0,081 [0,050; 0,115] | 70 |
+| \|Sesgo anual\| | 38,5 % | 25,6 % | −12,9 [−16,4; −9,3] | 91 |
+| Error pico 1 | 22,5 días | 17,4 días | −5,1 [−6,2; −3,9] | 111 |
+| Error pico 2 | 17,5 días | 17,0 días | −0,5 [−1,1; 0,2] | 71 |
+
+- En cinco métricas el IC excluye el 0.
+- En el pico de la segunda temporada la ganancia es de medio día y **no es significativa**.
+- La regresión baja el error en el 68 % de las curvas.
 
 **Interpretación.**
-- La regresión corrige sobre todo el **nivel** (sesgo de +26 % a +7 %) y la **fecha del primer pico** (5 días mejor).
-- Sin el satélite, con solo altitud y ONI, el error queda igual que el del satélite crudo. **El satélite sí aporta.**
+- La regresión corrige sobre todo el **nivel** (sesgo de +26 % a +6 %) y la **fecha del primer pico** (5,1 días mejor).
+- **El satélite sí aporta.** Con solo altitud y ONI, sin el satélite, el error L² queda en 0,50, frente a 0,44 de la regresión, y la prueba por permutación de la sección 5.9 lo confirma (p = 0,003). Con el 80 % de la OMM (100 estaciones, casi todas andinas) la diferencia era menor (0,45 frente a 0,42): las 22 estaciones del Pacífico que entran con ≥10 años son las que más necesitan al satélite.
 
 ### 5.6 Por fase ENSO y sensibilidad
 
-**Por fase** (`F5_metricas_por_fase_ENSO.csv`). La prueba solo tiene años neutros (2001 y 2003) y un Niño (2002), ningún año Niña. Por eso se muestra también la validación, de forma orientativa:
+**Por fase** (`F5_metricas_por_fase_ENSO.csv`). La prueba solo tiene años neutros (2001 y 2003) y un Niño (2002), ningún año Niña. Por eso se muestra también la validación, de forma orientativa: con ella se escogieron M y λ.
 
 | Años | Satélite: L² / sesgo | Regresión: L² / sesgo |
 |---|---|---|
-| 1997, Niño (validación) | 0,61 / +29 % | **0,46 / −6 %** |
-| 1999–2000, Niña (validación) | 0,41 / −0,5 % | 0,40 / **−11 %** |
-| 2002, Niño (prueba) | 0,50 / +28 % | 0,39 / −14 % |
+| 1997, Niño (validación) | 0,61 / +31 % | **0,45 / −8 %** |
+| 1999–2000, Niña (validación) | 0,42 / −0,1 % | 0,40 / −11 % |
+| 2002, Niño (prueba) | 0,50 / +28 % | **0,40 / −16 %** |
+| 2001 y 2003, neutros (prueba) | 0,52 / +25 % | 0,46 / +17 % |
 
 **Interpretación.**
-- El modelo gana más en años Niño.
-- En La Niña casi empata con el satélite y el sesgo empeora: baja el nivel del satélite como en un año normal, y el término del ONI no alcanza a devolver lo que el satélite ya perdió.
-- Es el **punto débil de la referencia lineal**, y lo que una cabeza no lineal (KAN o MLP) podría mejorar.
+- **El modelo gana más en años Niño**, cuando el satélite exagera más. En 2002 corrige de más: pasa de +28 % a −16 %.
+- **En La Niña casi empata con el satélite** en el error de la curva (0,40 frente a 0,42), pero el sesgo empeora: el satélite ya da casi la lluvia correcta (−0,1 %) y el modelo la baja a −11 %. Con el 80 % de la OMM no pasaba (+2,3 %). La prueba no tiene años Niña, así que esto solo se ve en validación.
 
-**Sensibilidad a 1985, 1988 y 2000** (`F5_sensibilidad_anios_marcados.csv`). Sin esos años en el entrenamiento, la prueba empeora:
-- L² relativo de 0,435 a 0,439 y sesgo de 7,4 % a 9,0 %;
-- en 79 de 137 estaciones (Wilcoxon p = 0,003).
+**Sensibilidad a 1985, 1988 y 2000** (`F5_sensibilidad_anios_marcados.csv`). Sin esos años en el entrenamiento, la prueba **casi no cambia**:
+- L² relativo de 0,439 a 0,446, y sesgo de 6,8 % a 7,6 %: quitarlos empeora un poco la prueba.
 
-Confirma con datos la indicación del profesor de no quitarlos (D-47).
+Con 176 estaciones quitarlos también empeoraba la prueba; con el 80 % de la OMM daba igual. Se mantienen, como indicó el profesor (D-47), porque no hay razón para quitarlos.
 
-**No negatividad.** La reconstrucción en mm nunca es negativa. Solo el 0,02 % de los valores se recorta en 0.
+**No negatividad.** La reconstrucción en mm nunca es negativa, y ningún valor predicho se recorta en 0.
 
 ### 5.7 Contraste con los métodos de clase (D-53)
 
-Se compararon tres formas de hacer la regresión vista en clase (`F5_contraste_metodos_clase.csv`):
+Se compararon tres formas de hacer la regresión vista en clase (`F5_contraste_metodos_clase.csv` y `F5_contraste_por_estacion.csv`):
 
 | Método | L² relativo | KGE | Sesgo anual |
 |---|---|---|---|
-| Nuestra regresión (penalización de rugosidad) | 0,44 | **0,47** | +7,3 % |
-| Taller de clase: regresión sobre componentes principales (l = 4) | 0,44 | 0,44 | +6,9 % |
-| `fda.usc::fregre.basis.fr` | 0,44 | 0,44 | +7,6 % |
+| Nuestra regresión (penalización de rugosidad) | 0,41 | **0,51** | +10,8 % |
+| Taller de clase: regresión sobre componentes principales (l = 6) | 0,42 | 0,49 | +6,2 % |
+| `fda.usc::fregre.basis.fr` (sin altitud ni ONI) | 0,41 | 0,48 | +7,6 % |
 
-**Interpretación.** Los tres llegan al mismo error. La nuestra sube el KGE unos 0,03 (IC que excluyen el 0), porque la penalización conserva mejor la forma y la amplitud que truncar en 4 componentes. **No es un método aparte:** es el modelo integral de clase. La altitud y el ONI no cambian la prueba, pero en validación bajan el RMSE de 2,42 a 2,29 mm/día, y por eso se dejan.
+**Interpretación.**
+- **Los tres llegan al mismo error:** las diferencias de L² por estación tienen IC con el 0.
+- **La nuestra sube el KGE** entre 0,02 y 0,03, con IC que excluyen el 0, porque la penalización conserva mejor la forma y la amplitud que truncar en componentes.
+- **No es un método aparte:** es el modelo integral de clase.
+- **La altitud y el ONI no cambian la prueba** (IC con el 0). En validación bajan el RMSE de 2,15 a 2,02 mm/día, y por eso se dejan.
 
 ### 5.8 Lo que pasa a la red
 
@@ -683,9 +669,21 @@ La sección 5.7 del R exporta a `salidas_R_funcional/para_python/`:
 - los pares con su partición, altitud y ONI;
 - los coeficientes de esta regresión, y un archivo con la especificación (K, M, λ).
 
-La red (`lluvia_valle_red.py`) usa el mismo codificador (z = A W c) y el mismo decodificador FPCA. Su cabeza lineal reproduce esta regresión al decimal.
+La red (`lluvia_valle_red.py`) usa el mismo codificador (z = A W c) y el mismo decodificador FPCA. Su cabeza lineal reproduce esta regresión al decimal (diferencia de 10⁻¹⁴).
 
-### 5.9 Inferencia y diagnóstico como en la tesis del profesor
+**Resultados de la red en prueba** (`F7_ablacion_IC_bootstrap.csv`, media de 3 semillas):
+
+| Cabeza | L² relativo | KGE | Sesgo anual |
+|---|---|---|---|
+| Lineal | 0,41 | 0,51 | +10,5 % |
+| KAN | 0,42 | 0,50 | +9,3 % |
+| MLP | 0,41 | 0,51 | +9,4 % |
+
+- Entre cabezas, ninguna diferencia de L² ni de KGE excluye el 0 (`F7_comparaciones_por_estacion_prueba.csv`).
+- KAN y MLP bajan el |sesgo| unos 3 puntos frente a la lineal, pero empeoran el segundo pico en 1,5 días. Los dos IC excluyen el 0.
+- Con 98 estaciones, **la no linealidad no aporta en el error global.**
+
+### 5.9 Inferencia y diagnóstico de residuos
 
 **¿Aporta el satélite más allá de la altitud y el ONI?** Se hace una prueba F por permutación, a la manera de `Fperm.fd` de la clase:
 - en cada permutación, las curvas del satélite se intercambian entre estaciones **del mismo año**, así se conserva el año y su fase ENSO;
@@ -693,31 +691,30 @@ La red (`lluvia_valle_red.py`) usa el mismo codificador (z = A W c) y el mismo d
 
 ![Permutación del satélite](salidas_R_funcional/graficos/F5_permutacion_satelite.png)
 
-**Resultado** (`F5_permutacion_satelite.csv`, 300 permutaciones). El F(t) observado supera el crítico en los 365 días: F máximo 1,49 frente a un crítico de 0,35, con p = 0,003, el mínimo posible con 300 permutaciones. **El satélite aporta todo el año.**
+**Resultado** (`F5_permutacion_satelite.csv`, 300 permutaciones). El F(t) observado supera el crítico en los 365 días: F máximo 0,99 frente a un crítico de 0,56, con p = 0,003, el mínimo posible con 300 permutaciones. **El satélite aporta todo el año**, aunque menos que con las 176 estaciones (F máximo 1,49).
 
 ![Diagnóstico](salidas_R_funcional/graficos/F5_diagnostico.png)
 
-**Diagnóstico de residuos** (tesis, figuras 9.3 y 9.4; `F5_diagnostico_residuos.csv`).
-- El 4,5 % de los residuos estudentizados de prueba está fuera de ±2, como en una normal. Pero el 1,1 % está fuera de ±3: hay colas más pesadas por los aguaceros.
-- Los residuos no se correlacionan con lo predicho (−0,001). Su dispersión sí crece con el valor predicho.
-- La correlación de los residuos entre días es alta a corto plazo (0,77 a 30 días): son curvas suaves, como en el ejemplo de la clase.
+**Diagnóstico de residuos** (`F5_diagnostico_residuos.csv`).
+- El 5,9 % de los residuos estudentizados de prueba está fuera de ±2 y el 0,4 % fuera de ±3: cerca de lo que daría una normal.
+- Los residuos casi no se correlacionan con lo predicho (−0,06).
+- La correlación de los residuos entre días es alta a corto plazo (0,71 a 30 días): son curvas suaves.
 
-**Traza-variograma de los residuos** (tesis, capítulo 8; `F5_traza_variograma_residuos.csv`). Mide cuánto se parecen los residuos de dos estaciones según la distancia que las separa.
-- Crece de 43 a 7 km hasta unos 115 entre 60 y 100 km.
-- El ajuste exponencial da una pepita de 21, una meseta parcial de 100 y un rango práctico de **96 km**.
-- **Queda correlación espacial** que el modelo no recoge: estaciones cercanas se equivocan parecido. Es el problema que la tesis del profesor resolvió con mínimos cuadrados generalizados.
-- Aquí se respeta con los IC por bootstrap de estaciones, y modelarla queda como trabajo futuro.
+**Traza-variograma de los residuos** (Giraldo, Delicado y Mateu 2011; `F5_traza_variograma_residuos.csv`). Mide cuánto se parecen los residuos de dos estaciones según la distancia que las separa.
+- Crece de 35 a menos de 10 km hasta unos 74 a 55 km, y luego se estabiliza.
+- El ajuste exponencial (mínimos cuadrados ponderados, Cressie 1985) da una pepita de 6,5, una meseta parcial de 65 y un **rango práctico de 42 km**.
+- **Queda correlación espacial** que el modelo no recoge: estaciones a menos de unos 40 km se equivocan parecido.
+- Aquí se respeta con los IC por bootstrap de estaciones. Modelarla, por ejemplo con mínimos cuadrados generalizados, queda como trabajo futuro.
 
 ![Curvas de 20 estaciones](salidas_R_funcional/graficos/F5_curvas_20_estaciones.png)
 
-**Qué muestra** (tesis, figura 10.3). Veinte estaciones de 2002, repartidas por cuantiles del error, cada una con la estación (negro), el satélite (naranja) y la regresión (azul). El título de cada panel da su error L² relativo.
+**Qué muestra.** Veinte estaciones de 2002, repartidas por cuantiles del error, cada una con la estación (negro), el satélite (naranja) y la regresión (azul). El título de cada panel da su error L² relativo.
 
 ![Mapa del error](salidas_R_funcional/graficos/F5_mapa_error.png)
 
-**Qué muestra** (tesis, figuras 10.4 a 10.6; `F5_error_por_estacion_prueba.csv`). El tamaño de cada punto es el error de la regresión; el color, cuánto mejora frente al satélite.
-- La regresión mejora en 82 de 137 estaciones.
-- El error medio es 0,42 en el Cauca y 0,60 en el Pacífico.
-- La mayor mejora está en el norte del Valle.
+**Qué muestra** (`F5_error_por_estacion_prueba.csv`). El tamaño de cada punto es el error de la regresión; el color, cuánto mejora frente al satélite.
+- La regresión mejora en 66 de 97 estaciones.
+- El error medio es 0,41 en el Cauca y 0,51 en el Pacífico (7 estaciones).
 
 ---
 
@@ -737,10 +734,10 @@ Es el ejercicio 3 del script de regresión funcional de clase. **Cada día t de 
 Es un modelo más simple y más fácil de leer, porque dice en qué época del año el satélite sirve más.
 
 **Cómo se ajusta.** b0 y b1 se escriben en una base B-spline de K_b funciones, con penalización de curvatura λ. El número de bases y λ se eligen con validación:
-- modelo A: K_b = 12 y λ = 0;
-- modelo B: K_b = 8 y λ = 10⁸.
+- modelo A: K_b = 8 y λ = 0;
+- modelo B: K_b = 8 y λ = 10⁹.
 
-Usa las mismas curvas en escala raíz, la misma partición y las mismas métricas que la sección 5. Pasa sus 10 pruebas, entre ellas que no hay fuga de datos y que las ecuaciones normales dan lo mismo que mínimos cuadrados directos. Además se contrastó con `fda::fRegress`: la diferencia del error de ajuste es del 0,4 %.
+Usa las mismas curvas en escala raíz, la misma partición y las mismas métricas que la sección 5. Pasa sus 10 pruebas, entre ellas que no hay fuga de datos y que las ecuaciones normales dan lo mismo que mínimos cuadrados directos. Además se contrastó con `fda::fRegress`: la diferencia del error de ajuste es del 0,02 %.
 
 ### 6.2 Qué dice b1(t)
 
@@ -751,41 +748,40 @@ Usa las mismas curvas en escala raíz, la misma partición y las mismas métrica
 - Si b1 < 1, sube menos.
 
 **Cifras** (`C3_R2_y_b1_por_mes.csv`).
-- b1 vale unos 0,68 en marzo y 0,73 en noviembre: en las temporadas de lluvia la estación sube menos que el satélite.
-- b1 vale unos 1,14 en julio, en la temporada seca.
+- b1 vale unos 0,45 en abril y 0,38 en noviembre: en las temporadas de lluvia la estación sube mucho menos que el satélite.
+- Vale unos 0,68 en julio y agosto, en la temporada seca, y 0,77 en enero.
 
-**Interpretación.** El satélite exagera la lluvia de las temporadas húmedas, y el modelo la amortigua. Es lo mismo que mostró la comparación (sección 4.1).
+**Interpretación.** El satélite exagera las variaciones de lluvia, sobre todo en las temporadas húmedas, y el modelo las amortigua. Es lo mismo que mostró la comparación (sección 4.1) y la integral de β (sección 5.4).
 
 ![R² por día](salidas_R_concurrente/figuras/C3_R2_por_dia.png)
 
 **Qué muestra.** R²(t), qué parte de la variación de la estación explica el modelo cada día de los años de prueba.
 
 **Cifras.**
-- Es mayor a mitad de año: 0,59 en junio y 0,56 en julio.
-- Es bajo en enero y marzo (0,17).
-- En noviembre el satélite solo explica más que el modelo (0,42 frente a 0,35).
+- Es mayor a mitad de año: 0,40 en junio y 0,34 en julio.
+- Es casi 0 en enero.
+- En noviembre el satélite solo explica algo más que el modelo (0,17 frente a 0,15).
 
 ### 6.3 Resultados en prueba y comparación con la de función a función
 
 | Modelo | L² relativo | KGE | Sesgo anual | Error pico 1 | Error pico 2 |
 |---|---|---|---|---|---|
-| Satélite sin corregir | 0,51 | 0,38 | +26,0 % | 23,1 días | 18,0 días |
-| Concurrente A (clase) | 0,44 | 0,47 | +10,6 % | 18,9 días | **23,0 días** |
-| Concurrente B (+ altitud y ONI) | 0,45 | 0,45 | +10,3 % | 20,9 días | 19,4 días |
-| De función a función (sección 5) | 0,44 | 0,47 | **+7,3 %** | **18,1 días** | **17,4 días** |
+| Satélite sin corregir | 0,52 | 0,39 | +28,8 % | 21,8 días | 17,1 días |
+| Concurrente A (clase) | 0,41 | 0,49 | +7,2 % | 18,6 días | 18,7 días |
+| Concurrente B (+ altitud y ONI) | 0,42 | 0,47 | **+6,0 %** | 19,4 días | 18,8 días |
+| De función a función (sección 5) | **0,41** | **0,51** | +10,8 % | **16,2 días** | **16,7 días** |
 
-Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_pareado.csv`, `F5_metricas_prueba.csv`.
+Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_por_estacion.csv`, `F5_metricas_prueba.csv`.
 
 **Interpretación.**
-- **En error L² y KGE la concurrente empata con la de función a función.**
-- **La de función a función gana en el sesgo anual** (+7 % frente a +11 %) y en los picos.
-- **La concurrente A empeora el segundo pico** en 5 días frente al satélite sin corregir, y la diferencia es significativa (IC de 4,1 a 5,9 días). Al mirar solo el mismo día, no puede corregir un retraso de la temporada.
+- **En error L² la concurrente empata con la de función a función.**
+- **La de función a función gana en KGE y en los dos picos.** La concurrente tiene algo menos de sesgo anual.
+- **Las dos concurrentes empeoran el segundo pico** frente al satélite sin corregir: 1,6 y 1,7 días, con IC que excluyen el 0. Al mirar solo el mismo día, no pueden corregir un retraso de la temporada.
 - **Conclusión:** la concurrente sirve como contraste de clase y para leer b1(t) y R²(t). La de función a función sigue siendo la referencia.
 
-**Las bandas de b1(t), corregidas** (`C2_bandas_sandwich_vs_bootstrap.csv`). Las bandas sándwich tratan cada curva como independiente. Al remuestrear estaciones con todos sus años (300 remuestreos), las bandas salen unas **4 veces más anchas**:
-- b1(t) excluye el 1 en 119 días, no en 262;
-- b0(t) excluye el 0 en 88 días, no en 305;
-- b1(t) sigue excluyendo el 0 todo el año: el satélite siempre informa.
+**Las bandas de b1(t), corregidas** (`C2_bandas_sandwich_vs_bootstrap.csv`). Las bandas sándwich tratan cada curva como independiente. Al remuestrear estaciones con todos sus años (300 remuestreos), las bandas salen unas **2,3 veces más anchas**. Aun así:
+- b1(t) excluye el 0 y el 1 los 365 días: el satélite siempre informa, y siempre exagera;
+- b0(t) excluye el 0 en 337 días.
 
 ![Modelo concurrente como en la clase](salidas_R_concurrente/figuras/C6_concurrente_estilo_clase.png)
 
@@ -793,12 +789,12 @@ Tablas: `C4_metricas_prueba.csv`, `C4_concurrente_vs_satelite_pareado.csv`, `F5_
 - arriba, las curvas del satélite x_i(t) y de la estación y_i(t), y R²(t) en prueba;
 - abajo, b0(t) y b1(t) con las dos bandas (sombreada, bootstrap de estaciones; roja, sándwich) y la correlación de los residuos entre días.
 
-### 6.4 El modelo concurrente año por año, como en la tesis
+### 6.4 El modelo concurrente año por año (descriptivo)
 
-En la tesis (figura 9.2), el profesor ajusta el modelo concurrente **por separado en cada año**, con todas las estaciones de ese año, y muestra b1(t) con su banda. Aquí se hace lo mismo con los 23 años:
+¿Cambia con el ENSO cuánto aporta el satélite? Para verlo, el modelo concurrente se ajusta **por separado en cada año**, con todas las estaciones de ese año:
 - en cada día t se ajusta por mínimos cuadrados y_i(t) = b0(t) + b1(t)·x_i(t), en escala raíz;
 - la banda es ±2 errores estándar punto a punto;
-- una prueba automática verifica que coincide con `lm()` (diferencia < 1e-10).
+- una prueba automática verifica que coincide con `lm()` (diferencia < 10⁻¹⁰).
 
 Es **descriptivo**: usa todos los años, incluidos validación y prueba, y no se usa para predecir ni para escoger nada. Un ajuste por año no sirve para predecir un año nuevo, porque necesita las estaciones de ese mismo año. Además, la banda supone estaciones independientes dentro del año; con la correlación espacial de los residuos (sección 5.9) es algo optimista.
 
@@ -812,18 +808,19 @@ Es **descriptivo**: usa todos los años, incluidos validación y prueba, y no se
 - El último panel cruza el b1 medio de cada año con el ONI.
 
 **Cifras** (`C7_concurrente_por_anio.csv`):
-- b1(t) excluye el 0 en 346 a 365 días según el año: **el satélite informa siempre, todos los años**.
-- El b1 medio va de 0,72 (1997, El Niño) a 1,25 (1988, La Niña).
-- **Con el ONI, r = −0,44 (p = 0,036).** En promedio, b1 vale 1,02 en años Niña, 0,97 en neutros y 0,91 en años Niño.
-- El R² medio va de 0,23 a 0,45 y **no** depende del ONI (r = −0,12, p = 0,60).
+- b1(t) excluye el 0 en 224 a 365 días según el año: el satélite informa casi siempre.
+- El b1 medio va de 0,38 (1992, El Niño) a 0,85 (1999, La Niña).
+- En promedio, b1 vale 0,59 en años Niña y neutros, y 0,51 en años Niño.
+- **Con el ONI, r = −0,30 (p = 0,17): no es significativo.** Con 176 estaciones era −0,44 (p = 0,04).
+- El R² medio va de 0,09 a 0,28 y tampoco depende del ONI (r = −0,08).
 
-**Interpretación.** Es la misma conclusión de la tesis del profesor: el satélite "aporta más" en los años La Niña. En esos años, cada milímetro de más en el satélite corresponde a más lluvia en la estación, porque el satélite se queda corto justo cuando más llueve. Lo que cambia con el ENSO es la **pendiente**, no qué tan bien explica el satélite (R²). Por eso el modelo de función a función recibe el ONI, y por eso las no lineales pueden ganar algo según la fase (sección 7 del archivo funcional).
+**Interpretación.** Hay una tendencia a que el satélite "aporte más" en La Niña: los dos b1 más altos son 1999 y 2000. Pero con 98 estaciones no alcanza a ser significativa, así que no se afirma. Donde sí se ve el ENSO con una prueba formal es en el error del satélite (ANOVA funcional, sección 4.4).
 
 ---
 
 ## 7. Pruebas automáticas de la parte funcional
 
-Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 16 de 16 pruebas que pasan.
+Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 15 de 15 pruebas que pasan. La evaluación de la red pasa sus 5 (`F7_pruebas_red.csv`).
 
 | Prueba | Qué protege |
 |---|---|
@@ -839,17 +836,21 @@ Si una prueba falla, el script se detiene. Tabla: `F6_pruebas.csv`, con 16 de 16
 | Equivalencia de β(s,t) con los puntajes FPCA (≤ 10⁻⁴) | La rúbrica 4.2 |
 | La reconstrucción en mm no es negativa | La rúbrica 4.2 |
 | Bootstrap con al menos 1 000 remuestreos | Los IC de la rúbrica 4.4 |
+| SSE_n = (n − k) tr(γ̂) y, con k = 2, F(t) = t² | El ANOVA funcional (sección 4.4) |
+| Réplicas mínimas de bootstrap y permutación | Las bandas y las pruebas por permutación (secciones 4.4, 5.4 y 5.9) |
 | El contraste de clase está bien armado | Que la comparación con los métodos de clase sea justa |
-| F pareada con curvas constantes = t² y d = 1 | La prueba t funcional pareada (sección 4.4) |
-| SSE_n = (n − k) tr(γ̂) y, con k = 2, F(t) = t² | El ANOVA funcional (sección 4.5) |
-| Réplicas mínimas de bootstrap y permutación | Las bandas y las pruebas por permutación (secciones 4.4, 4.5, 5.4 y 5.9) |
+
+La prueba "F pareada con curvas constantes = t²" se quitó junto con la prueba t pareada.
 
 ---
 
 ## 8. Lo que falta o hay que cuidar
 
-1. **Fourier frente a B-spline:** la comprobación de la sección 2.7 está en un script aparte. Hay que pasarla al R y a `DECISIONES.md` para que quede respaldada en el código.
-2. **Correlación espacial de los residuos:** el traza-variograma (sección 5.9) muestra que queda. Se respeta con IC por bootstrap de estaciones. Modelarla con mínimos cuadrados generalizados, como en la tesis del profesor, queda como trabajo futuro.
-3. **El segundo pico:** ninguna regresión lo mejora de forma significativa, y la concurrente lo empeora. Hay que decirlo así en el informe.
-4. **La Niña:** la prueba no tiene años Niña. Lo que se diga de La Niña sale de la validación y es orientativo.
-5. **¿Qué R se edita?** Hay cuatro archivos: `lluvia_valle_datos.R`, `lluvia_valle_funcional.R`, el unido `lluvia_valle.R` y `regresion_concurrente.R`. Hay que decidir cuál es el definitivo para que las copias no se desincronicen.
+1. **La zona pacífica tiene 7 estaciones.** Es el costo de la regla de la OMM (R6). Todo resultado del Pacífico describe a esas 7 estaciones y no a toda la vertiente. Hay que confirmar con el profesor que acepta esta consecuencia de la norma.
+2. **El aporte del satélite es moderado.** Sin satélite, solo con altitud y ONI, el error L² es 0,44, frente a 0,41 de la regresión. La permutación confirma que el satélite aporta (p = 0,003), pero hay que decirlo con esa medida.
+3. **Fourier frente a B-spline:** la comprobación de la sección 2.7 está en un script aparte y con la muestra anterior. Hay que pasarla al R para que quede respaldada en el código.
+4. **Correlación espacial de los residuos:** el traza-variograma (sección 5.9) muestra que queda, con un rango de unos 42 km. Se respeta con IC por bootstrap de estaciones; modelarla queda como trabajo futuro.
+5. **El segundo pico:** ninguna regresión lo mejora de forma significativa, y la concurrente lo empeora. Hay que decirlo así en el informe.
+6. **La Niña:** la prueba no tiene años Niña. Lo que se diga de La Niña sale de la validación y es orientativo.
+7. **¿Qué R se edita?** Hay cuatro archivos: `lluvia_valle_datos.R`, `lluvia_valle_funcional.R`, el unido `lluvia_valle.R` y `regresion_concurrente.R`. Hay que decidir cuál es el definitivo para que las copias no se desincronicen.
+8. **Pregunta para la asesoría:** el ejercicio 3 de la clase de inferencia aplica la prueba F pareada a satélite contra estación. ¿Qué diferencia ve el profesor con nuestro caso? (`docs/FUNDAMENTOS_REGLAS.md`, 5.3)

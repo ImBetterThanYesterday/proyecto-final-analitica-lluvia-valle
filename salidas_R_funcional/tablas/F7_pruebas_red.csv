@@ -1,6 +1,6 @@
 prueba,pasa
 Las predicciones de Python corresponden a los mismos pares y en el mismo orden,TRUE
 La regresión de R hecha en Python coincide con la de R (< 1e-8),TRUE
-Tres semillas por cabeza y las 3 299 curvas en cada una,TRUE
+Tres semillas por cabeza y todas las curvas en cada una,TRUE
 Métricas finitas en todas las curvas de validación y prueba,TRUE
 Bootstrap con al menos 1000 remuestreos,TRUE

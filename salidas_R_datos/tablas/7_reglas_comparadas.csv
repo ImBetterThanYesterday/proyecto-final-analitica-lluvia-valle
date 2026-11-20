@@ -1,0 +1,5 @@
+regla,estacion_anios_ent,mascaras_que_cumplen,mediana_err,p90_err,p99_err
+OMM 2017 (R5): mes con ≤10 faltantes y <5 seguidos,2227,1730,0.03,0.12,0.34
+OMM 1989: mes con ≤5 faltantes y ≤3 seguidos,2191,1505,0.03,0.11,0.3
+Regla propia anterior: ≥90 % de días y hueco ≤15,2361,2620,0.04,0.21,0.64
+Sin regla: cualquier año con ≥40 % de días,2635,4135,0.1,1.88,191.71

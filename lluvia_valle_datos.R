@@ -11,7 +11,7 @@
 #   5. Patrones sospechosos: totales mensuales, rachas de ceros, copias
 #   6. Climatología y coherencia espacial
 #   7. Experimento de huecos: ¿cuánta falta de datos aguanta una curva?
-#   8. Depuración (reglas R0 a R7, D-36) y dataset final
+#   8. Depuración (reglas R0 a R7, D-36 y D-61: R7 rellena por kriging) y dataset final
 #   9. Satélite: lectura, estructura y fuente (D-43)
 #  10. Satélite: recorte al Valle, calendario de péntadas y mm/día
 #  11. Satélite: EDA
@@ -21,6 +21,7 @@
 #  15. Resumen
 #
 # Ejecutar desde la raíz del repositorio:  Rscript lluvia_valle_datos.R
+# Conjunto de sensibilidad de R6 (regla de la OMM, ≥19 de 23 años, D-63):  CONJUNTO=r6_omm Rscript lluvia_valle_datos.R
 # (o abrirlo en RStudio con la raíz del repositorio como directorio de trabajo
 #  y pulsar Source). Tarda unos minutos, sobre todo la sección 7.
 #
@@ -43,7 +44,7 @@
 # Librerías: data.table, ggplot2, readxl, sf y terra (EDA). La base B-spline del
 # experimento de huecos se programa sin librerías (recursión de Cox–de Boor),
 # como pide el curso para la construcción funcional.
-# Decisiones y su justificación: DECISIONES.md (D-01 a D-49).
+# Decisiones y su justificación: DECISIONES.md (D-01 a D-61).
 # =============================================================================
 
 
@@ -70,15 +71,34 @@ if (!file.exists("datos_curso/P_1991_2003.csv")) stop("Ejecute desde la raíz de
 ANIOS       <- 1981:2003                    # fe de erratas
 PARTICION   <- function(anio) fcase(anio <= 1995, "entrenamiento", anio <= 2000, "validación", default = "prueba")
 RADIO_VEC   <- 25                           # km: vecinas para cualquier contraste (H9)
-COB_MIN     <- 0.90                         # R5: fracción mínima de días en el año
-HUECO_MAX   <- 15                           # R5: hueco máximo permitido (días)
-ANIOS_MIN   <- 7                            # R6: años válidos mínimos en entrenamiento
+# R5 y R6 siguen la guía de la OMM para datos faltantes (WMO-No. 1203, 2017, sección 4.4;
+# fundamentos en docs/FUNDAMENTOS_REGLAS.md). Los días faltantes de un año válido se
+# ESTIMAN con las vecinas (R7, kriging); la OMM (4.4.1 c y 4.6) acepta estimar días solo
+# si en el mes no son 11 o más, ni 5 o más seguidos.
+MES_FALT_MAX   <- 10                        # R5: faltantes máximos en un mes (OMM: 11 o más lo anulan)
+MES_SEGUID_MAX <- 4                         # R5: faltantes seguidos máximos en un mes (OMM: 5 o más lo anulan)
+# R6 tiene dos conjuntos (D-61, D-63). Se elige con la variable de entorno CONJUNTO:
+#   principal (por defecto): ≥10 años válidos en 1981–2003. Es el mínimo de la OMM para
+#       cualquier promedio climatológico ("period averages ... for any period of at least ten
+#       years", Reglamento Técnico, citado en WMO-No. 1203, 2017, sección 3) y el de las normales
+#       "representativas" de NOAA 1991–2020 (≥10 años con los huecos rellenados, como hace R7).
+#       Nuestra unidad es la curva estación-año, no la normal de 30 años de una estación.
+#   r6_omm (sensibilidad):   años válidos en ≥80 % de 1981–2003 = 19 de 23 (OMM 2017, 4.4.2,
+#       la regla para normales estándar).
+#   CONJUNTO=r6_omm Rscript lluvia_valle_datos.R   → escribe en salidas_R_datos_r6_omm/
+CONJUNTO <- Sys.getenv("CONJUNTO", "principal")
+if (!CONJUNTO %in% c("principal", "r6_omm")) stop("CONJUNTO debe ser 'principal' o 'r6_omm'")
+SUFIJO   <- if (CONJUNTO == "principal") "" else paste0("_", CONJUNTO)
+PCT_ANIOS_MIN  <- 0.80                      # R6 de sensibilidad: fracción mínima de años válidos (OMM 4.4.2)
+ANIOS_MIN      <- if (CONJUNTO == "principal") 10L else ceiling(PCT_ANIOS_MIN * length(ANIOS))   # 10 o 19 de 23
+R6_TEXTO       <- if (CONJUNTO == "principal") "≥10 años válidos (mínimo OMM para promedios; NOAA)" else "≥80 % de 1981–2003 (19 de 23, OMM, sensibilidad)"
 # R0: máximo físico = récord mundial de lluvia en 24 h reconocido por la OMM: 1 825 mm,
 # Foc-Foc (La Reunión), 7-8 ene 1966, ciclón Denise (WMO Weather and Climate Extremes
 # Archive, https://wmo.asu.edu). Un dato diario por encima no puede ser lluvia real.
 P_MAX_FISICO <- 1825
 
-SALIDA <- "salidas_R_datos"
+SALIDA <- paste0("salidas_R_datos", SUFIJO)
+cat("Conjunto:", CONJUNTO, "| R6:", R6_TEXTO, "| salidas en", SALIDA, "\n")
 dir.create(file.path(SALIDA, "tablas"), showWarnings = FALSE, recursive = TRUE)
 dir.create(file.path(SALIDA, "graficos"), showWarnings = FALSE, recursive = TRUE)
 tabla   <- function(x, nombre) { fwrite(x, file.path(SALIDA, "tablas", paste0(nombre, ".csv"))); invisible(x) }
@@ -88,7 +108,7 @@ grafico <- function(p, nombre, ancho = 9, alto = 5, dpi = 110) {
   invisible(p)
 }
 titulo <- function(x) cat("\n", strrep("=", 78), "\n", x, "\n", strrep("=", 78), "\n", sep = "")
-# Gráficas con R base, en el estilo de la tesis del profesor (paneles por año, blanco y negro)
+# Gráficas con R base en blanco y negro, con un panel por año (Ramsay y Silverman 2005, cap. 1)
 grafico_r <- function(nombre, dibujar, ancho = 11, alto = 15) {
   png(file.path(SALIDA, "graficos", paste0(nombre, ".png")), width = ancho, height = alto, units = "in", res = 110)
   on.exit(dev.off()); dibujar(); invisible(NULL)
@@ -100,6 +120,10 @@ dist_km <- function(lat1, lon1, lat2, lon2) {   # distancia de gran círculo
   12742 * asin(sqrt(a))
 }
 hueco_mas_largo <- function(obs) { r <- rle(!obs); if (any(r$values)) max(r$lengths[r$values]) else 0L }
+MES_DIA <- month(as.IDate("2001-01-01") + 0:364)   # mes de cada día del dominio 1–365
+# R5 (OMM 2017, 4.4.1): el año vale si en TODOS sus meses faltan ≤10 días y no hay 5 o más seguidos
+mes_valido_omm <- function(o, falt = MES_FALT_MAX, seguid = MES_SEGUID_MAX) sum(!o) <= falt && hueco_mas_largo(o) <= seguid
+anio_valido_omm <- function(obs, ...) all(vapply(split(obs, MES_DIA), mes_valido_omm, logical(1), ...))
 
 
 # ---- 1. POBLACIÓN: LAS 232 ESTACIONES DEL VALLE -----------------------------
@@ -211,9 +235,9 @@ dimnames(DK) <- list(valle$codigo, valle$codigo)
 vecinas <- function(cod) setdiff(names(which(DK[cod, ] <= RADIO_VEC)), cod)
 
 # QUÉ DICEN LOS DATOS (H1)
-#   323 códigos con datos en 1981–2003. De las 232 del Valle, 220 tienen datos en
-#   el periodo; las 12 restantes solo tienen datos fuera. Las 232 caen dentro del
-#   polígono DANE del Valle (13 a ≤2 km de otro departamento).
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 1 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # ---- 2. ESTRUCTURA DE LOS ARCHIVOS CRUDOS ------------------------------------
@@ -262,10 +286,9 @@ digitos <- d[P > 0 & P == round(P), .(dias = .N), by = .(ultimo_digito = P %% 10
 print(tabla(digitos, "2_ultimo_digito"))
 
 # QUÉ DICEN LOS DATOS (H2)
-#   Un faltante es una FILA AUSENTE: no hay NA, negativos ni duplicados, y no
-#   aparece el valor imposible (859 375 mm) de otra estación. R0 lo comprueba con
-#   un umbral citado (récord OMM, 1 825 mm en 24 h): en el Valle no quita nada. Hay 832 registros
-#   del 29-feb y 5 144 valores con decimales (estaciones climatológicas).
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 2 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # ---- 3. DISPONIBILIDAD: REJILLA, COBERTURA Y HUECOS --------------------------
@@ -334,10 +357,9 @@ e90 <- cob[anio <= 1995 & pct >= 90, .N, by = codigo]
 cat("Estaciones con ≥7 / ≥10 años de entrenamiento con ≥90 % de días:", e90[N >= 7, .N], "/", e90[N >= 10, .N], "\n")
 
 # QUÉ DICEN LOS DATOS (H3, H8)
-#   El 81 % de los estación-años con datos tiene ≥99 % de días. Los huecos
-#   internos son el 2,7 % de la rejilla y son cortos (mediana de 3 días, p90 de
-#   31, 28 % de un solo día). Con ≥90 %, 180 estaciones tienen ≥7 años en
-#   entrenamiento. El umbral definitivo sale del experimento de la sección 7.
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 3 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # ---- 4. VALORES: DISTRIBUCIÓN, EXTREMOS Y VECINAS ----------------------------
@@ -379,9 +401,9 @@ grafico(ggplot(valle[, .(codigo, vertiente)][d[P > 0], on = "codigo"], aes(P, co
         "4_distribucion_lluvia")
 
 # QUÉ DICEN LOS DATOS (H4)
-#   60,6 % de los días son ceros; p99 ≈ 76 mm; máximo 600 mm. Solo 5 días superan
-#   3·p99 y 150 mm, y en todos las vecinas registran como máximo 78 mm (Pardo 600,
-#   Heraclio Uribe 503, La Cascada 421, Costa Rica 283, Venecia 283) → regla R2.
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 4 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # ---- 5. PATRONES SOSPECHOSOS -------------------------------------------------
@@ -428,43 +450,86 @@ grafico(ggplot(rz[!is.na(p_lluvia_vecinas)], aes(largo, p_lluvia_vecinas, colour
                title = "Rachas ≥15 días de ceros: ¿las vecinas también estaban secas?"),
         "5b_rachas_ceros")
 
-# Prueba de cada racha de ≥30 días en cero (R4). Si la estación de verdad estuvo
-# seca, su vecina más cercana también debió estar seca o casi. Se mide:
-#   k = días en que llovió la vecina más cercana con datos (≥80 % de la racha);
-#   q = P(llueve en la estación | llueve en la vecina), con los días de
-#       entrenamiento (1981–1995) en que ambas tienen dato (sin fuga);
+# Prueba de cada racha de ≥30 días en cero (R4). Si la estación de verdad estuvo seca, sus
+# vecinas también debieron estar secas o casi: es la regla de periodos secos de GSDR-QC
+# (Lewis et al. 2021, Environ. Model. Softw. 144:105169), que pide que VARIAS vecinas la
+# contradigan. Para cada una de las 3 vecinas más cercanas a ≤25 km con datos en ≥80 % de
+# la racha se mide:
+#   k = días en que llovió la vecina durante la racha;
+#   q = P(llueve en la estación | llueve en la vecina), con los días de entrenamiento
+#       (1981–1995, sin fuga) del mes central de la racha y sus dos meses vecinos: q de la
+#       temporada, como la ventana estacional de Durre et al. (2010); exige ≥30 días;
 #   p = (1 - q)^k: probabilidad de que la estación marque 0 todos esos días.
-# Se hacen muchas pruebas a la vez, así que el umbral es 0,05 / número de rachas
-# (Bonferroni). Supone días independientes; como la lluvia viene en rachas, p
-# exagera lo raro, y por eso el umbral es exigente.
-R4_LARGO <- 30L
-ll_ent <- d[anio <= 1995 & !is.na(P), .(codigo, fecha, ll = P > 0)]; setkey(ll_ent, codigo, fecha)
+# Una vecina CONTRADICE la racha si p < 0,05 / número de rachas (Bonferroni). La racha pasa
+# a faltante si la contradicen al menos 2 vecinas (mayoría): una sola vecina en desacuerdo
+# puede ser un aguacero local, y una sequía real (El Niño) deja secas también a las vecinas.
+# Supone días independientes; como la lluvia viene en rachas, p exagera lo raro, y por eso
+# el umbral es exigente. Antes R4 decidía con la vecina más cercana y q de todo el año
+# (D-36); la comparación queda en 5b_rachas_ceros_versiones.csv.
+R4_LARGO <- 30L; R4_VECINAS <- 3L; R4_MAYORIA <- 2L; R4_MIN_DIAS_Q <- 30L
+ll_ent <- d[anio <= 1995 & !is.na(P), .(codigo, fecha, mes = month(fecha), ll = P > 0)]; setkey(ll_ent, codigo, fecha)
 d_obs <- d[!is.na(P), .(codigo, fecha, P)]; setkey(d_obs, codigo, fecha)
-r4 <- rz[largo >= R4_LARGO]
-r4[, c("vecina", "km", "dias_vecina", "dias_lluvia_vecina", "q") := rbindlist(lapply(seq_len(.N), function(i) {
-  cod <- codigo[i]; desde <- ini[i]; hasta <- fin[i]   # copias locales: dentro de d_obs[...] "codigo" sería su columna
+r4 <- rz[largo >= R4_LARGO][, i := .I]
+R4_UMBRAL <- 0.05 / nrow(r4)
+r4_vec <- rbindlist(lapply(seq_len(nrow(r4)), function(i) {
+  cod <- r4$codigo[i]; desde <- r4$ini[i]; hasta <- r4$fin[i]   # copias locales: dentro de d_obs[...] "codigo" sería su columna
+  mc <- month(desde + (hasta - desde) %/% 2L); meses <- (mc + -2:0) %% 12L + 1L   # mes central y sus dos vecinos
+  out <- list()
   for (v in names(sort(DK[cod, vecinas(cod)]))) {
     x <- d_obs[.(v)][fecha %between% c(desde, hasta)]
-    if (nrow(x) >= .8 * largo[i]) {
-      a <- merge(ll_ent[.(cod)], ll_ent[.(v)], by = "fecha")
-      return(data.table(v, round(DK[cod, v], 1), nrow(x), sum(x$P > 0), a[ll.y == TRUE, mean(ll.x)]))
-    }
+    if (nrow(x) < .8 * r4$largo[i]) next
+    a <- merge(ll_ent[.(cod)], ll_ent[.(v)], by = "fecha")[ll.y == TRUE]
+    q_t <- if (a[mes.x %in% meses, .N] >= R4_MIN_DIAS_Q) a[mes.x %in% meses, mean(ll.x)] else NA_real_
+    out[[length(out) + 1L]] <- data.table(i, orden = length(out) + 1L, vecina = v, km = round(DK[cod, v], 1), dias_vecina = nrow(x),
+                                          dias_lluvia_vecina = sum(x$P > 0), q = q_t, q_anual = a[, mean(ll.x)])
+    if (length(out) == R4_VECINAS) break
   }
-  data.table(NA_character_, NA_real_, NA_integer_, NA_integer_, NA_real_)
-}))]
-R4_UMBRAL <- 0.05 / nrow(r4)
-r4[, `:=`(p_azar = (1 - q)^dias_lluvia_vecina, nombre_vecina = valle[match(vecina, codigo), nombre])]
-r4[, falso := !is.na(p_azar) & p_azar < R4_UMBRAL]
-tabla(r4[order(p_azar)], "5b_rachas_ceros_prueba")
-cat(sprintf("Rachas de ≥%d días en 0: %d (%d sin vecina con datos). Umbral 0,05/%d = %.1e → %d rachas falsas en %d estaciones\n",
-            R4_LARGO, nrow(r4), r4[is.na(p_azar), .N], nrow(r4), R4_UMBRAL, r4[falso == TRUE, .N], r4[falso == TRUE, uniqueN(codigo)]))
-print(r4[order(p_azar)][1:12, .(nombre, ini, fin, largo, vecina = nombre_vecina, km, dias_lluvia_vecina, q = round(q, 2), p_azar = signif(p_azar, 2), falso)])
-grafico(ggplot(r4[!is.na(p_azar)], aes(dias_lluvia_vecina, pmax(p_azar, 1e-12), colour = falso)) + geom_point(alpha = .6) +
+  rbindlist(out)
+}))
+r4_vec[, `:=`(p_azar = (1 - q)^dias_lluvia_vecina, nombre_vecina = valle[match(vecina, codigo), nombre])]
+r4_vec[, contradice := !is.na(p_azar) & p_azar < R4_UMBRAL]
+r4 <- r4_vec[, .(n_vecinas_r4 = .N, vecinas_contradicen = sum(contradice),
+                 detalle_vecinas = paste(sprintf("%s (%.0f km): llovió %d días, q %.2f", nombre_vecina, km, dias_lluvia_vecina, q), collapse = "; ")),
+             by = i][r4, on = "i"]
+r4[is.na(n_vecinas_r4), `:=`(n_vecinas_r4 = 0L, vecinas_contradicen = 0L)]
+# la vecina más cercana evaluada, para las tablas y la gráfica
+r4 <- r4_vec[orden == 1L, .(i, vecina, nombre_vecina, km, dias_vecina, dias_lluvia_vecina, q, q_anual, p_azar)][r4, on = "i"]
+r4[, falso := vecinas_contradicen >= R4_MAYORIA]
+tabla(r4[order(-vecinas_contradicen, p_azar)], "5b_rachas_ceros_prueba"); tabla(r4_vec, "5b_rachas_ceros_vecinas")
+cat(sprintf("Rachas de ≥%d días en 0: %d (%d con menos de 2 vecinas con datos). Umbral 0,05/%d = %.1e → %d rachas falsas (%d días) en %d estaciones\n",
+            R4_LARGO, nrow(r4), r4[n_vecinas_r4 < R4_MAYORIA, .N], nrow(r4), R4_UMBRAL, r4[falso == TRUE, .N], r4[falso == TRUE, sum(largo)],
+            r4[falso == TRUE, uniqueN(codigo)]))
+print(r4[falso == TRUE][order(ini), .(nombre, ini, fin, largo, vecinas_contradicen, detalle_vecinas)])
+# Versiones de la regla (evidencia de la elección, D-61)
+r4_versiones <- rbind(
+  r4_vec[orden == 1L, .(version = "Vecina más cercana, q de todo el año (R4 anterior, D-36)", rachas = sum((1 - q_anual)^dias_lluvia_vecina < R4_UMBRAL, na.rm = TRUE))],
+  r4_vec[orden == 1L, .(version = "Vecina más cercana, q de la temporada", rachas = sum(contradice))],
+  r4[, .(version = "Al menos 2 de las 3 vecinas, q de la temporada (R4 vigente)", rachas = sum(falso))],
+  r4[, .(version = "Las 3 vecinas, q de la temporada", rachas = sum(vecinas_contradicen == R4_VECINAS))])
+print(tabla(r4_versiones, "5b_rachas_ceros_versiones"))
+grafico(ggplot(r4_vec[!is.na(p_azar)], aes(dias_lluvia_vecina, pmax(p_azar, 1e-12), colour = i %in% r4[falso == TRUE, i])) + geom_point(alpha = .6) +
           geom_hline(yintercept = R4_UMBRAL, linetype = 2) + scale_y_log10() +
-          scale_colour_manual(values = c(`TRUE` = "firebrick", `FALSE` = "grey50"), labels = c(`TRUE` = "Falsa → faltante", `FALSE` = "Se mantiene"), name = NULL) +
-          labs(x = "Días con lluvia en la vecina más cercana durante la racha", y = "p = (1 - q)^k (log)",
-               title = "R4: rachas de ≥30 días en 0 que la vecina no respalda", subtitle = sprintf("Línea: umbral 0,05 / %d rachas", nrow(r4))),
+          scale_colour_manual(values = c(`TRUE` = "firebrick", `FALSE` = "grey50"), labels = c(`TRUE` = "Racha falsa → faltante", `FALSE` = "Se mantiene"), name = NULL) +
+          labs(x = "Días con lluvia en la vecina durante la racha", y = "p = (1 - q)^k (log)",
+               title = "R4: rachas de ≥30 días en 0 frente a sus 3 vecinas más cercanas",
+               subtitle = sprintf("Un punto por racha y vecina. Bajo la línea (0,05 / %d) la vecina contradice la racha; es falsa si la contradicen ≥2", nrow(r4))),
         "5b_rachas_ceros_prueba")
+
+# Inventario de escenarios de R4. Una racha larga en 0 puede ser una sequía real (temporada
+# seca, El Niño) o un pluviómetro sin leer. Se cruzan la temporada (seca o lluviosa según el
+# ciclo de la PROPIA estación en entrenamiento: mes por debajo o por encima de su media
+# mensual) con la fase ENSO del año en que empieza la racha, y se ve qué fracción vuelve
+# faltante R4 en cada escenario. R4 no usa la fase ENSO: decide con las vecinas, que en una
+# sequía real también están secas (regla de periodos secos de GSDR-QC, Lewis et al. 2021;
+# ninguna de las fuentes revisadas condiciona este control a la fase ENSO).
+clim_mes <- d[anio <= 1995 & !is.na(P), .(m = mean(P)), by = .(codigo, mes = month(fecha))][, seco := m < mean(m), by = codigo]
+inv_r4 <- copy(r4)[, `:=`(mes = month(ini + (fin - ini) %/% 2L), anio = year(ini))]
+inv_r4 <- clim_mes[, .(codigo, mes, seco)][inv_r4, on = .(codigo, mes)]
+inv_r4 <- fread("datos_web/oni_anual_fase.csv")[, .(anio, fase)][inv_r4, on = "anio"]
+inv_r4 <- inv_r4[, .(rachas = .N, a_faltante_R4 = sum(falso), pct_a_faltante = round(100 * mean(falso), 1), largo_mediano = as.double(median(largo)),
+                     dias_lluvia_vecina_mediana = as.double(median(dias_lluvia_vecina, na.rm = TRUE))),
+                 by = .(temporada = fcase(seco, "seca", !seco, "lluviosa", default = "sin clima de entrenamiento"), fase)][order(temporada, fase)]
+print(tabla(inv_r4, "5b_rachas_ceros_escenarios"))
 
 # 5c. Años idénticos entre estaciones (copias)
 huella <- d[, .(n = .N, h = paste(P, collapse = ",")), by = .(codigo, anio)][n >= 300]
@@ -479,17 +544,9 @@ print(repetidos[order(-largo)][1:5])
 rm(dr)
 
 # QUÉ DICEN LOS DATOS (H5–H7)
-#   19 meses con un solo día de lluvia > p99; en varios solo hay un día observado
-#   (se anotó el total mensual) → R3. De 917 rachas de ceros ≥30 días, 30 (en
-#   27 estaciones) no tienen respaldo: su vecina más cercana llovió normal y la
-#   probabilidad de que la estación marcara 0 todos esos días es < 0,05/917 → R4.
-#   Ejemplo: Bella Vista 1982, 49 días en 0 mientras La Ceja (8,7 km) llovió 23
-#   días (p = 7e-10). La mayoría de las 917 son sequías reales: la vecina también
-#   estuvo seca (El Niño de 1997, temporadas secas). Loboguerrero oct–nov 1995,
-#   antes revisada a mano, no pasa el umbral (p = 2e-4): Dagua coincide con ella
-#   solo la mitad de los días de lluvia, y 12 días no alcanzan para descartar
-#   una sequía real en un enclave seco. Se mantiene como dato.
-#   No hay años copiados; lo más repetido son 11 días seguidos de 1 mm (llovizna).
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 5 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 
 # ---- 6. CLIMATOLOGÍA Y COHERENCIA ESPACIAL -----------------------------------
@@ -558,9 +615,9 @@ tabla(coherencia, "6_coherencia_vecinas")
 print(coherencia[order(r_max)][1:5])
 
 # QUÉ DICEN LOS DATOS (H9)
-#   La lluvia anual va de ~700 a ~12 000 mm. La vertiente Pacífica mezcla la costa
-#   muy húmeda con el cañón seco del Dagua. La correlación con las vecinas cae con
-#   la distancia: por eso los contrastes usan vecinas por distancia, no por vertiente.
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 6 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 rm(L, gz, M, W, C, N, D, pares, huella); invisible(gc())
 
 
@@ -668,32 +725,39 @@ grafico(ggplot(expC[!is.na(rel)], aes(hueco_max, rel, colour = pct)) + geom_poin
                title = "Máscaras reales: el hueco más largo explica el error mejor que el % de cobertura"),
         "7C_mascaras_reales")
 
-# Reglas candidatas: cobertura ≥ X % y hueco máximo ≤ G días
-tr <- merge(info[anio <= 1995], inc[, .(clave, hueco_max)], by = "clave", all.x = TRUE)
-tr[is.na(hueco_max), hueco_max := fifelse(n_obs == 365, 0L, 999L)]
-tr[, pct := 100 * n_obs / 365]
-reglas_cand <- CJ(X = c(70, 80, 85, 90, 95), G = c(7, 15, 20, 30, 45, 60, 365))[, {
-  acept <- tr[pct >= X & hueco_max <= G]
-  e <- c8[pct >= X & hueco_max <= G, rel]
-  .(estacion_anios = nrow(acept), estaciones_7anios = acept[, .N, by = codigo][N >= 7, .N],
-    p90_err = round(quantile(e, .9), 2), p99_err = round(quantile(e, .99), 2))
-}, by = .(X, G)]
-print(tabla(reglas_cand, "7_reglas_candidatas")[X == 90])
-grafico(ggplot(reglas_cand, aes(estacion_anios, p99_err, colour = factor(X), label = ifelse(G == 365, "sin límite", G))) +
-          geom_point() + geom_line() + geom_text(nudge_y = .03, size = 3, show.legend = FALSE) +
-          geom_hline(yintercept = .25, colour = "red", linetype = 2) + scale_y_log10() +
-          labs(x = "Estación-años de entrenamiento que se conservan", y = "p99 del error relativo (log)",
-               colour = "Cobertura ≥ %", title = "Datos que se conservan vs. error que se admite",
-               subtitle = "Etiqueta = hueco máximo permitido (días)"),
-        "7_reglas_candidatas")
+# ¿Cuánto mueve la curva cada regla de la literatura? Se comparan la regla de la OMM de
+# 2017 (R5), la más estricta de 1989 (5 faltantes y 3 seguidos por mes, WMO 1989), la regla
+# propia que usábamos antes (≥90 % de días y hueco ≤15) y no exigir nada (≥40 % de días).
+# Para cada regla: cuántos años de entrenamiento conserva y qué error dejan las máscaras
+# reales que la cumplen (experimento C, K = 8).
+reglas_def <- list(
+  "OMM 2017 (R5): mes con ≤10 faltantes y <5 seguidos" = function(o) anio_valido_omm(o),
+  "OMM 1989: mes con ≤5 faltantes y ≤3 seguidos" = function(o) anio_valido_omm(o, falt = 5, seguid = 3),
+  "Regla propia anterior: ≥90 % de días y hueco ≤15" = function(o) sum(o) >= .9 * 365 && hueco_mas_largo(o) <= 15,
+  "Sin regla: cualquier año con ≥40 % de días" = function(o) sum(o) >= .4 * 365)
+obs_ent <- !is.na(Ytodo[info[anio <= 1995, clave], , drop = FALSE])
+masc_ok <- sapply(reglas_def, function(f) apply(mascaras, 1, f))   # máscara × regla
+rownames(masc_ok) <- inc$clave
+reglas_cmp <- rbindlist(lapply(names(reglas_def), function(nm) {
+  e <- c8[masc_ok[mascara, nm], rel]
+  data.table(regla = nm, estacion_anios_ent = sum(apply(obs_ent, 1, reglas_def[[nm]])), mascaras_que_cumplen = length(e),
+             mediana_err = round(median(e), 2), p90_err = round(quantile(e, .9), 2), p99_err = round(quantile(e, .99), 2))
+}))
+print(tabla(reglas_cmp, "7_reglas_comparadas"))
+reglas_cmp[, vj := c(-.9, 1.9, -.9, -.9)]   # la de 1989 va debajo para no encimarse con la de 2017
+grafico(ggplot(reglas_cmp, aes(estacion_anios_ent, p99_err)) + geom_point(size = 2.5) +
+          geom_text(aes(label = regla, vjust = vj), hjust = 0, nudge_x = 6, size = 3) + geom_hline(yintercept = .25, linetype = 2) +
+          scale_y_log10() + scale_x_continuous(expand = expansion(mult = c(.05, .55))) +
+          labs(x = "Estación-años de entrenamiento que conserva la regla", y = "p99 del error relativo (log)",
+               title = "Reglas de la literatura: datos que conservan y error que dejan en la curva",
+               subtitle = "Error = cuánto mueve el hueco la curva, sobre la variación entre años de la estación. Línea: 0,25"),
+        "7_reglas_comparadas", ancho = 10, alto = 4.5)
 
 # QUÉ DICEN LOS DATOS
-#   Un hueco de 15 días mueve la curva 0,12; de 30 días, 0,23; de 60 días, 0,48
-#   (K = 8). Con K = 12 los huecos largos pesan más. Los días sueltos casi no
-#   importan: lo que daña la curva es el HUECO MÁS LARGO (R² 0,58 frente a 0,46
-#   del % de cobertura). Con ≥90 % y hueco ≤15 días el p99 del error es 0,64;
-#   con ≤30 días sube a 0,95 y solo se ganan 2 estaciones → regla R5.
-rm(Ytodo, Ycomp, mascaras, ref, expA, expB, expC, c8, tr); invisible(gc())
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 7 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
+rm(Ytodo, Ycomp, mascaras, ref, expA, expB, expC, c8, obs_ent, masc_ok); invisible(gc())
 
 
 # ---- 8. DEPURACIÓN (D-36) Y DATASET FINAL -------------------------------------
@@ -715,17 +779,17 @@ m_mes <- d[meses_sosp[marcar == TRUE, .(codigo, anio, mes, dias_obs, p_lluvia_ve
       detalle = sprintf("%d días observados; vecinas llovieron %.0f %% de los días%s",
                         dias_obs, 100 * p_lluvia_vecinas, fifelse(mes_vacio, "; mes casi vacío", "")))]
 
-# R4. Racha de ≥30 días en 0 que la vecina más cercana no respalda → faltante
-#     (prueba de la sección 5b, umbral 0,05 / número de rachas).
-m_cero <- r4[falso == TRUE][, d[codigo == .BY$codigo & fecha %between% c(ini, fin), .(fecha, P)], by = .(codigo, ini, fin, nombre_vecina, dias_lluvia_vecina, p_azar)][
+# R4. Racha de ≥30 días en 0 que al menos 2 de sus 3 vecinas más cercanas contradicen →
+#     faltante (prueba de la sección 5b, umbral 0,05 / número de rachas).
+m_cero <- r4[falso == TRUE][, d[codigo == .BY$codigo & fecha %between% c(ini, fin), .(fecha, P)], by = .(codigo, ini, fin, vecinas_contradicen, detalle_vecinas)][
   , .(codigo, fecha, P, regla = "R4 racha de ceros sin respaldo",
-      detalle = sprintf("%s: llovió %d días; p = %.1e", nombre_vecina, dias_lluvia_vecina, p_azar))]
+      detalle = sprintf("%d de 3 vecinas la contradicen: %s", vecinas_contradicen, detalle_vecinas))]
 stopifnot(all(m_cero$P == 0), nrow(m_cero) == r4[falso == TRUE, sum(largo)])
 
 marcas <- valle[, .(codigo, nombre)][rbind(m_r0, m_ext, m_mes, m_cero), on = "codigo"]
 print(marcas[, .(dias = .N, estaciones = uniqueN(codigo)), by = regla])
 
-# Aplicar: un faltante es una fila ausente / NA en la rejilla (R7: no se imputa)
+# Aplicar: un faltante es una fila ausente / NA en la rejilla (R7 rellena después de R5)
 limpio <- d[!marcas, on = .(codigo, fecha), .(codigo, anio, dia, fecha, P)]
 anios_op <- unique(limpio[, .(codigo, anio)])
 diario_todo <- limpio[anios_op[, .(dia = 1:365), by = .(codigo, anio)], on = .(codigo, anio, dia)]
@@ -734,15 +798,180 @@ diario_todo[, particion := PARTICION(anio)]
 setkey(diario_todo, codigo, anio, dia)
 stopifnot(!anyDuplicated(diario_todo[, .(codigo, anio, dia)]), diario_todo[, all(month(fecha) * 100 + mday(fecha) != 229)])
 
-# R5. Año válido: ≥90 % de los 365 días y ningún hueco > 15 días
-anios <- diario_todo[, .(n_obs = sum(!is.na(P)), hueco_max = hueco_mas_largo(!is.na(P))), by = .(codigo, anio, particion)]
-anios[, valido := n_obs >= COB_MIN * 365 & hueco_max <= HUECO_MAX]
+# R5 (OMM 2017, 4.4.1). Año válido: en cada uno de sus 12 meses faltan ≤10 días y no hay
+# 5 o más días faltantes seguidos. Un valor que el control de calidad (R0–R4) volvió
+# faltante cuenta como faltante (OMM 2017, nota 2 de la sección 4.4).
+anios <- diario_todo[, .(n_obs = sum(!is.na(P)), hueco_max = hueco_mas_largo(!is.na(P)), valido = anio_valido_omm(!is.na(P))),
+                     by = .(codigo, anio, particion)]
 
-# R6. Estación incluida: ≥7 años válidos en entrenamiento
-por_est <- anios[, .(validos_ent = sum(valido & particion == "entrenamiento"),
+# R7. Relleno de los días faltantes de los años válidos con kriging ordinario de las vecinas.
+#   - Qué: solo los faltantes de años que pasaron R5 (≤10 por mes y <5 seguidos). Los años
+#     que no pasan R5, las rachas de R4, los meses de R3 y los años sin operar NO se rellenan.
+#   - Por qué con vecinas: para lluvia diaria, "values from other days are rarely useful"
+#     (OMM 2017, 4.6); la OMM pone primero la interpolación espacial, solo para huecos de
+#     ≤10 días por mes y sin sesgo (estima igual días secos y con lluvia). En el Valle la
+#     lluvia del MISMO día en una vecina a ≤5 km se correlaciona 0,54 con la estación; la de
+#     la propia estación el día anterior, 0,12 (EXPLICACION_DATOS.md, sección 8).
+#   - Cómo: kriging ordinario (Cressie 1993), como la tesis del profesor y Terán-Chaves et al.
+#     (2021, datos diarios del IDEAM). Cada vecina entra escalada por la razón entre la
+#     lluvia media de la estación y la suya en ese mes (razón normal), porque vecinas a
+#     ≤25 km llueven en promedio 1,3 veces una lo de la otra y el kriging ordinario supone
+#     media constante. Hasta 10 vecinas a ≤50 km con dato ese día; negativo → 0.
+#   - Sin fuga: el semivariograma y las medias mensuales salen de 1981–1995. El modelo del
+#     semivariograma se elige por validación cruzada (menor ECM), como en la tesis.
+#   - Nunca con el satélite: es lo que el modelo usa para predecir (sería circular).
+#   - Un día sin ninguna vecina con dato queda faltante y lo cubre la curva.
+titulo("8. R7: relleno por kriging")
+R7_RADIO <- 50; R7_MAX_VEC <- 10L; R7_MIN_MEDIA <- 0.05   # mm/día: evita dividir por cero en meses secos
+R7_EST <- valle$codigo; R7_T <- length(ANIOS) * 365L; R7_ENT <- seq_len(sum(ANIOS <= 1995) * 365L)
+PM <- matrix(NA_real_, R7_T, length(R7_EST), dimnames = list(NULL, R7_EST))
+PM[cbind((limpio$anio - ANIOS[1]) * 365L + limpio$dia, match(limpio$codigo, R7_EST))] <- limpio$P
+R7_MES <- rep(MES_DIA, length(ANIOS))
+# Lluvia media de cada estación en cada mes (mm/día), con entrenamiento; si en ese mes tiene
+# <30 días de entrenamiento se usa todo su registro (como el p99 de R2 y R3)
+med_ent <- sapply(R7_EST, function(s) tapply(PM[R7_ENT, s], R7_MES[R7_ENT], function(v) if (sum(!is.na(v)) >= 30) mean(v, na.rm = TRUE) else NA_real_))
+med_todo <- sapply(R7_EST, function(s) tapply(PM[, s], R7_MES, mean, na.rm = TRUE))
+R7_MEDIA <- ifelse(is.na(med_ent), med_todo, med_ent)   # 12 meses × estaciones
+cat("Medias mensuales: de entrenamiento", sum(!is.na(med_ent)), "| de todo el registro", sum(is.na(med_ent) & !is.na(med_todo)), "\n")
+
+# ¿Por qué con vecinas y no con los días de antes y después? Correlación de la lluvia del
+# mismo día entre estaciones, por distancia, frente a la de la estación con su día anterior
+pares_r7 <- which(upper.tri(DK[R7_EST, R7_EST]) & DK[R7_EST, R7_EST] <= 50, arr.ind = TRUE)
+cor_r7 <- rbindlist(lapply(seq_len(nrow(pares_r7)), function(k) {
+  a <- PM[R7_ENT, pares_r7[k, 1]]; b <- PM[R7_ENT, pares_r7[k, 2]]; ok <- !is.na(a) & !is.na(b)
+  if (sum(ok) >= 365) data.table(km = DK[R7_EST, R7_EST][pares_r7[k, , drop = FALSE]], r = cor(a[ok], b[ok]),
+                                 razon_medias = max(mean(a[ok]), mean(b[ok])) / max(min(mean(a[ok]), mean(b[ok])), R7_MIN_MEDIA)) }))
+auto_r7 <- vapply(R7_EST, function(s) { a <- PM[R7_ENT, s]; x <- a[-length(a)]; y <- a[-1]; ok <- !is.na(x) & !is.na(y)
+  if (sum(ok) >= 365) cor(x[ok], y[ok]) else NA_real_ }, 0)
+por_que_r7 <- rbind(
+  cor_r7[, .(tramo = cut(km, c(0, 5, 10, 15, 25, 50)), r = r)][, .(pares = .N, r_mediana = round(median(r), 2)), by = tramo][
+    order(tramo), .(comparacion = paste("Vecina a", tramo, "km, mismo día"), pares, r_mediana)],
+  data.table(comparacion = "La misma estación con su día anterior", pares = sum(!is.na(auto_r7)), r_mediana = round(median(auto_r7, na.rm = TRUE), 2)))
+print(tabla(por_que_r7, "8_R7_por_que_vecinas"))
+cat("Vecinas a ≤25 km: una llueve en promedio", round(cor_r7[km <= 25, median(razon_medias)], 2),
+    "veces lo que la otra (mediana) → cada vecina se escala por la razón de medias mensuales\n")
+
+# Semivariograma empírico de la lluvia diaria (entrenamiento), pares a ≤100 km en tramos de 5 km
+DKv <- DK[R7_EST, R7_EST]; tramos <- seq(0, 100, by = 5); acum <- matrix(0, length(tramos) - 1L, 2L)
+for (i in seq_along(R7_EST)) {
+  j <- which(DKv[i, ] > 0 & DKv[i, ] <= 100); if (!length(j)) next
+  Z <- (PM[R7_ENT, j, drop = FALSE] - PM[R7_ENT, i])^2
+  n_c <- colSums(!is.na(Z)); m_c <- colSums(Z, na.rm = TRUE) / pmax(n_c, 1)
+  b <- findInterval(DKv[i, j], tramos, left.open = TRUE); ok <- n_c >= 365 & b >= 1 & b < length(tramos)
+  for (k in which(ok)) acum[b[k], ] <- acum[b[k], ] + c(m_c[k] / 2, 1)
+}
+vg_emp <- data.table(km = (tramos[-1] + tramos[-length(tramos)]) / 2, gamma = acum[, 1] / acum[, 2], pares = acum[, 2] / 2)[pares > 0]
+print(tabla(vg_emp, "8_R7_semivariograma_empirico")[1:8])
+# Modelos teóricos (pepita c0, meseta parcial c1, rango a en km); γ(0) = 0
+VG <- list(
+  exponencial = function(h, p) ifelse(h == 0, 0, p[1] + p[2] * (1 - exp(-h / p[3]))),
+  esferico    = function(h, p) ifelse(h == 0, 0, p[1] + p[2] * ifelse(h < p[3], 1.5 * h / p[3] - 0.5 * (h / p[3])^3, 1)),
+  gaussiano   = function(h, p) ifelse(h == 0, 0, p[1] + p[2] * (1 - exp(-(h / p[3])^2))),
+  matern_1.5  = function(h, p) ifelse(h == 0, 0, p[1] + p[2] * (1 - (1 + sqrt(3) * h / p[3]) * exp(-sqrt(3) * h / p[3]))))
+ajusta_vg <- function(f) {   # mínimos cuadrados ponderados por el número de pares; rango entre 1 y 300 km
+  par_de <- function(z) c(exp(z[1]), exp(z[2]), 1 + 299 * plogis(z[3]))
+  obj <- function(z) sum(vg_emp$pares * (vg_emp$gamma - f(vg_emp$km, par_de(z)))^2)
+  par_de(optim(c(log(min(vg_emp$gamma)), log(diff(range(vg_emp$gamma)) + 1e-3), 0), obj, control = list(maxit = 5000))$par)
+}
+vg_par <- lapply(VG, ajusta_vg)
+# Pesos del kriging ordinario para estimar en x0 con las vecinas v (devuelve pesos y varianza)
+pesos_ok <- function(s, v, f, p) {
+  n <- length(v); G <- f(DKv[v, v, drop = FALSE], p); diag(G) <- 0
+  A <- rbind(cbind(G, 1), c(rep(1, n), 0)); b <- c(f(DKv[s, v], p), 1)
+  sol <- tryCatch(solve(A, b), error = function(e) c(rep(1 / n, n), 0))
+  list(w = sol[seq_len(n)], var = sum(sol[seq_len(n)] * b[seq_len(n)]) + sol[n + 1L])
+}
+vecinas_r7 <- lapply(R7_EST, function(s) { v <- setdiff(names(sort(DKv[s, ])), s); v[DKv[s, v] <= R7_RADIO] }); names(vecinas_r7) <- R7_EST
+estima_ok <- function(s, t, f = VG[[vg_mejor]], p = vg_par[[vg_mejor]], razon = TRUE) {
+  v <- vecinas_r7[[s]]; v <- head(v[!is.na(PM[t, v])], R7_MAX_VEC)
+  if (!length(v)) return(c(NA_real_, NA_real_, 0))
+  m <- R7_MES[t]; z <- PM[t, v] * if (razon) R7_MEDIA[m, s] / pmax(R7_MEDIA[m, v], R7_MIN_MEDIA) else 1
+  k <- pesos_ok(s, v, f, p); c(max(0, sum(k$w * z)), sqrt(max(k$var, 0)), length(v))
+}
+# Validación cruzada: se quita un dato observado de entrenamiento y se estima con las vecinas
+set.seed(20261120)
+cv_obs <- which(!is.na(PM[R7_ENT, ]), arr.ind = TRUE)
+cv_obs <- cv_obs[sample(nrow(cv_obs), 4000), , drop = FALSE]
+vg_cv <- rbindlist(lapply(names(VG), function(nm) {
+  e <- vapply(seq_len(nrow(cv_obs)), function(r) estima_ok(R7_EST[cv_obs[r, 2]], cv_obs[r, 1], VG[[nm]], vg_par[[nm]])[1], 0)
+  data.table(modelo = nm, pepita = vg_par[[nm]][1], meseta_parcial = vg_par[[nm]][2], rango_km = vg_par[[nm]][3],
+             ECM_validacion_cruzada = mean((e - PM[cbind(cv_obs[, 1], cv_obs[, 2])])^2, na.rm = TRUE), datos = sum(!is.na(e)))
+}))
+vg_mejor <- vg_cv[which.min(ECM_validacion_cruzada), modelo]
+print(tabla(vg_cv, "8_R7_semivariograma_modelos")); cat("Modelo elegido por validación cruzada:", vg_mejor, "\n")
+vg_curva <- CJ(modelo = names(VG), km = seq(0, 100, by = 1))[, gamma := VG[[modelo[1]]](km, vg_par[[modelo[1]]]), by = modelo]
+grafico(ggplot(vg_emp, aes(km, gamma)) + geom_point(aes(size = pares), colour = "grey30") +
+          geom_line(data = vg_curva, aes(colour = modelo == vg_mejor, group = modelo)) +
+          scale_colour_manual(values = c(`TRUE` = "firebrick", `FALSE` = "grey70"), labels = c(`TRUE` = paste("elegido:", vg_mejor), `FALSE` = "otros modelos"), name = NULL) +
+          labs(x = "Distancia entre estaciones (km)", y = "Semivarianza (mm²/día²)", size = "Pares",
+               title = "R7: semivariograma de la lluvia diaria (1981–1995)",
+               subtitle = "Aun a 2,5 km la semivarianza es alta: la lluvia de un día varía mucho entre vecinas"),
+        "8_R7_semivariograma")
+
+# Evidencia de la elección (D-61): años completos de entrenamiento a los que se les quitan días
+# con el patrón real de una curva que pasa R5 o con el máximo que R5 acepta (10 por mes en
+# bloques de 4 + 4 + 2); se compara la curva rellenada con la del año completo. Error = RMSE
+# entre curvas (K = 8) / variación entre años de las curvas de la estación (como en la sección 7).
+R7_PHI <- base_bspline(1:365, 8)
+falt_r5 <- diario_todo[anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio)][, .(o = list(!is.na(P))), by = .(codigo, anio)]
+masc_r7 <- falt_r5[vapply(o, function(z) !all(z), TRUE), o]
+masc_extrema <- function() { o <- rep(TRUE, 365)
+  for (m in 1:12) { k <- which(MES_DIA == m); a <- sample(seq_len(length(k) - 12L), 1); o[k[c(a:(a + 3), (a + 5):(a + 8), (a + 10):(a + 11))]] <- FALSE }; o }
+comp_r7 <- rbindlist(lapply(R7_EST, function(s) { if (!length(vecinas_r7[[s]])) return(NULL)
+  a <- which(vapply(seq_len(sum(ANIOS <= 1995)), function(y) !anyNA(PM[(y - 1L) * 365L + 1:365, s]), TRUE))
+  if (length(a) >= 3) data.table(s, y = a) }))
+sd_r7 <- comp_r7[, .(sd = { X <- vapply(y, function(z) ajustar(PM[(z - 1L) * 365L + 1:365, s[1]], rep(TRUE, 365), R7_PHI), numeric(365))
+                         sqrt(mean((X - rowMeans(X))^2)) }), by = s]
+idw3 <- function(s, t) { v <- vecinas_r7[[s]]; v <- head(v[DKv[s, v] <= RADIO_VEC & !is.na(PM[t, v])], 3)
+  if (!length(v)) return(NA_real_); m <- R7_MES[t]; w <- 1 / DKv[s, v]^2
+  sum(w * PM[t, v] * R7_MEDIA[m, s] / pmax(R7_MEDIA[m, v], R7_MIN_MEDIA)) / sum(w) }
+exp_r7 <- rbindlist(lapply(c("real", "maximo_R5"), function(patron) rbindlist(lapply(seq_len(nrow(comp_r7)), function(r) {
+  s <- comp_r7$s[r]; idx <- (comp_r7$y[r] - 1L) * 365L + 1:365; y <- PM[idx, s]
+  o <- if (patron == "real") masc_r7[[sample(length(masc_r7), 1)]] else masc_extrema()
+  f <- which(!o); ref <- ajustar(y, rep(TRUE, 365), R7_PHI); sdv <- sd_r7$sd[sd_r7$s == s]
+  err <- function(z) { oo <- o | !is.na(z); z[!oo] <- 0; sqrt(mean((ajustar(z, oo, R7_PHI) - ref)^2)) / sdv }
+  rellena <- function(fun) { z <- y; z[f] <- vapply(idx[f], fun, 0); z }
+  data.table(patron, faltan = length(f),
+             solo_curva = err(replace(y, f, NA)),
+             idw_3_vecinas = err(rellena(function(t) idw3(s, t))),
+             kriging_sin_razon = err(rellena(function(t) estima_ok(s, t, razon = FALSE)[1])),
+             kriging_con_razon = err(rellena(function(t) estima_ok(s, t)[1])))
+}))))
+res_r7 <- melt(exp_r7, id.vars = c("patron", "faltan"), variable.name = "metodo", value.name = "error")[
+  , .(casos = .N, faltan_mediana = as.double(median(faltan)), error_mediana = round(median(error), 3), error_p90 = round(quantile(error, .9), 3)), by = .(patron, metodo)]
+res_r7[, pct_casos_mejor_que_idw := NA_real_]   # en qué % de los casos el método deja menos error que IDW
+for (pt in unique(exp_r7$patron)) for (mt in setdiff(levels(res_r7$metodo), "idw_3_vecinas"))
+  res_r7[patron == pt & metodo == mt, pct_casos_mejor_que_idw := round(100 * exp_r7[patron == pt, mean(get(mt) < idw_3_vecinas)])]
+print(tabla(res_r7, "8_R7_metodos_relleno"))
+stopifnot(res_r7[patron == "maximo_R5" & metodo == "kriging_con_razon", error_mediana] < res_r7[patron == "maximo_R5" & metodo == "solo_curva", error_mediana])
+
+# Aplicar: se rellenan los faltantes de los años válidos de las estaciones del Valle
+diario_todo[, imputado := FALSE]
+obj_r7 <- diario_todo[is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0][, .(codigo, anio, dia)]
+obj_r7[, t := (anio - ANIOS[1]) * 365L + dia]
+est_r7 <- t(mapply(estima_ok, obj_r7$codigo, obj_r7$t))
+obj_r7[, `:=`(P = est_r7[, 1], sd_kriging = est_r7[, 2], vecinas = as.integer(est_r7[, 3]))]
+diario_todo[obj_r7[!is.na(P)], on = .(codigo, anio, dia), `:=`(P = i.P, imputado = TRUE)]
+imputados <- valle[, .(codigo, nombre)][obj_r7, on = "codigo"]
+tabla(imputados, "8_R7_dias_rellenados")
+cat(sprintf("R7: %d días faltantes en años válidos; %d rellenados por kriging (mediana %d vecinas), %d sin vecina con dato (quedan para la curva)\n",
+            nrow(obj_r7), obj_r7[!is.na(P), .N], as.integer(obj_r7[!is.na(P), median(vecinas)]), obj_r7[is.na(P), .N]))
+rm(PM, Z, est_r7); invisible(gc())
+
+# R6 (D-63). Estación incluida: ≥10 años válidos en 1981–2003 (mínimo de la OMM para cualquier
+# promedio climatológico; normales "representativas" de NOAA). Un año en que la estación no
+# operaba cuenta como no válido; no se pide que los años sean seguidos (WMO 2007: no reduce la
+# incertidumbre). El conjunto de sensibilidad (CONJUNTO=r6_omm) pide el 80 % de la OMM para
+# normales estándar: 19 de 23 (ver la configuración).
+por_est <- anios[, .(validos = sum(valido), validos_ent = sum(valido & particion == "entrenamiento"),
                      validos_val = sum(valido & particion == "validación"),
                      validos_pru = sum(valido & particion == "prueba")), by = codigo]
-estaciones <- merge(valle, por_est, by = "codigo")[validos_ent >= ANIOS_MIN]
+estaciones <- merge(valle, por_est, by = "codigo")[validos >= ANIOS_MIN]
+r6_umbrales <- rbindlist(lapply(c(19L, 15L, 10L), function(u) {
+  e <- por_est[validos >= u, codigo]
+  data.table(anios_validos_min = u, estaciones = length(e), pacificas = valle[codigo %in% e, sum(vertiente == "Pacífico")],
+             curvas = anios[valido == TRUE & codigo %in% e, .N], usado_en_este_conjunto = u == ANIOS_MIN) }))
+print(tabla(r6_umbrales, "8_R6_umbrales"))
 diario <- diario_todo[anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0][codigo %in% estaciones$codigo]
 
 # Trazabilidad (rúbrica 4.1): estaciones y pares estación-año antes y después de cada paso
@@ -757,9 +986,10 @@ trazabilidad <- rbind(
   cbind(paso = "2. R1: sin 29 de febrero", cuenta(d)),
   cbind(paso = "3. R2: extremos sin respaldo a faltante", cuenta(d_r2)),
   cbind(paso = "4. R3: totales mensuales en un día a faltante", cuenta(d_r3)),
-  cbind(paso = "5. R4: rachas de ceros sin respaldo de la vecina a faltante", cuenta(d_r4)),
-  cbind(paso = "6. R5: años con ≥90 % de días y hueco ≤15", cuenta(diario_todo[!is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
-  cbind(paso = "7. R6: estaciones con ≥7 años válidos en entrenamiento", cuenta(diario[!is.na(P)])))
+  cbind(paso = "5. R4: rachas de ceros que ≥2 de 3 vecinas contradicen a faltante", cuenta(d_r4)),
+  cbind(paso = "6. R5 (OMM): años con todos sus meses con ≤10 faltantes y <5 seguidos", cuenta(diario_todo[!is.na(P) & !imputado][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
+  cbind(paso = "6b. R7: días faltantes de esos años rellenados por kriging (suman)", cuenta(diario_todo[!is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
+  cbind(paso = paste("7. R6: estaciones con", R6_TEXTO), cuenta(diario[!is.na(P)])))
 trazabilidad[, `:=`(estaciones_que_salen = c(NA, -diff(estaciones)), pares_que_salen = c(NA, -diff(pares_estacion_anio)),
                     dias_que_salen = c(NA, -diff(dias_con_dato)))]
 print(tabla(trazabilidad, "8_trazabilidad"))
@@ -770,13 +1000,13 @@ reglas <- c(
   R1 = "Dominio 1–365: se quita el 29 de febrero",
   R2 = "Extremo > 3·p99 y ≥150 mm sin vecina (≤25 km, ±1 día) que supere P/3 → faltante",
   R3 = "Mes con un solo día de lluvia > p99 y (mes con <50 % de días o vecinas con lluvia ≥40 % de los días) → mes faltante",
-  R4 = "Racha ≥30 días en 0 → faltante si la vecina más cercana llovió k días y (1 − q)^k < 0,05/rachas (q de entrenamiento)",
-  R5 = "Año válido: ≥90 % de 365 días y hueco máximo ≤15 días",
-  R6 = "Estación: ≥7 años válidos en entrenamiento (1981–1995)",
-  R7 = "Sin imputación")
+  R4 = "Racha ≥30 días en 0 → faltante si ≥2 de sus 3 vecinas más cercanas (≤25 km) la contradicen: (1 − q)^k < 0,05/rachas, q de la temporada en entrenamiento",
+  R5 = "Año válido (OMM 2017, 4.4.1): en cada mes faltan ≤10 días y no hay 5 o más seguidos",
+  R6 = paste("Estación: años válidos", R6_TEXTO),
+  R7 = sprintf("Faltantes de los años válidos rellenados por kriging ordinario (%s) con ≤10 vecinas a ≤50 km, escaladas por la razón de medias mensuales; sin satélite", vg_mejor))
 
 saveRDS(list(diario = diario, diario_todo = diario_todo, anios = anios, estaciones = estaciones,
-             marcas = marcas, meses_sospechosos = meses_sosp, reglas = reglas),
+             marcas = marcas, imputados = imputados, meses_sospechosos = meses_sosp, reglas = reglas, conjunto = CONJUNTO),
         file.path(SALIDA, "lluvia_valle_limpia.rds"), compress = "xz")
 tabla(marcas, "8_marcas_limpieza"); tabla(anios, "8_anios_validez"); tabla(estaciones, "8_estaciones_incluidas")
 
@@ -796,7 +1026,7 @@ grafico(ggplot(valle, aes(lon, lat, colour = codigo %in% estaciones$codigo)) + g
 # una. Cada casilla es una curva estación-año: el color dice si es válida (R5) y a qué
 # conjunto va. Se parte en dos imágenes para que los nombres se puedan leer.
 ESTADO_CURVA <- c("válida: entrenamiento", "válida: validación", "válida: prueba",
-                  "no válida: menos de 90 % de días o hueco > 15", "sin datos ese año")
+                  "no válida: algún mes con ≥11 faltantes o ≥5 seguidos (OMM)", "sin datos ese año")
 ver <- anios[, .(codigo, anio, n_obs, valido)][CJ(codigo = estaciones$codigo, anio = ANIOS), on = .(codigo, anio)]
 ver[, estado := factor(fcase(valido %in% TRUE, paste("válida:", PARTICION(anio)), !is.na(n_obs) & n_obs > 0, ESTADO_CURVA[4],
                              default = ESTADO_CURVA[5]), levels = ESTADO_CURVA)]
@@ -898,10 +1128,9 @@ cat("r del mapa medio: con CHIRP", round(cor(rowMeans(S_todo[, kk]), rowMeans(ch
     "| píxeles sin dato en CHIRPS (mar):", sum(is.na(chirps[, 1])), "| tope de CHIRP:", round(max(chirp)), "\n")
 
 # QUÉ DICEN LOS DATOS (D-43)
-#   Malla de 0,05° (unos 5,5 km), 39 × 37 píxeles, enteros de 0 a 200 mm por
-#   péntada con tope en 200, sin faltantes, casi sin ceros y con datos sobre el mar.
-#   Se parece a CHIRP (solo infrarrojo) y no a CHIRPS (con estaciones): los
-#   archivos son del 6-may-2013, de una corrida de CHIRP anterior a la publicada.
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 9 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 rm(chirp, chirps, r_sat); invisible(gc())
 
 
@@ -995,7 +1224,7 @@ if (pares[is.na(pixel), .N]) print(pares[is.na(pixel), .(codigo, nombre, lon, la
 tabla(pares, "12_pares_estacion_pixel")
 
 # Estaciones a péntadas: solo péntadas con todos sus días observados
-est_d <- diario[!is.na(P), .(codigo, anio, mes = month(fecha), dm = mday(fecha), P)]
+est_d <- diario[!is.na(P) & !imputado, .(codigo, anio, mes = month(fecha), dm = mday(fecha), P)]   # solo días observados
 est_d[, pentada := (mes - 1L) * 6L + pmin((dm - 1L) %/% 5L, 5L) + 1L]
 est_pen <- est_d[, .(mm_est = sum(P), n = .N), by = .(codigo, anio, pentada)]
 est_pen <- cal[, .(anio, pentada, dias_dominio, dias_reales, dia_centro)][est_pen, on = .(anio, pentada)][n == dias_dominio]
@@ -1029,16 +1258,68 @@ cat("Péntadas estación-satélite con el satélite en 200:", cmp[mm_sat == 200,
     cmp[mm_sat == 200, round(100 * mean(mm_est > 200))], "% |",
     "péntadas de estación sobre 200 mm:", cmp[mm_est > 200, .N], "(satélite en el tope en",
     cmp[mm_est > 200, round(100 * mean(mm_sat == 200))], "% de ellas)\n")
-ej_tope <- tope_est$codigo[1]
-serie_tope <- cmp[codigo == ej_tope][order(anio, pentada)][, t := anio + (dia_centro - 1) / 365]
-grafico(ggplot(melt(serie_tope[, .(t, anio, `Estación` = mm_est, `Satélite (su píxel)` = mm_sat)], id.vars = c("t", "anio")),
-               aes(t, value, colour = variable, group = interaction(variable, anio))) + geom_line(linewidth = .3) +
+# La serie se dibuja con TODOS los años en que la estación midió (también los no válidos) y
+# el satélite completo. Así un vacío en la línea de la estación es un vacío real del registro,
+# y los años que R5 descarta quedan sombreados con su causa.
+# Se dibuja Bahía Málaga, la serie por la que preguntó el profesor (P-15): la estación de la
+# costa con más péntadas del satélite en el tope. Con R6 (OMM) ya no entra al modelo (empezó a
+# medir en 1984), así que su píxel se ubica aquí con la misma regla de las incluidas.
+ej_tope <- "5300000203"; st_tope <- valle[codigo == ej_tope]
+px_tope <- (floor((ext_sat[4] - st_tope$lat) / 0.05)) * ncol_sat + floor((st_tope$lon - ext_sat[1]) / 0.05) + 1L
+pen_de <- function(x) x[, pentada := (month(fecha) - 1L) * 6L + pmin((mday(fecha) - 1L) %/% 5L, 5L) + 1L][]
+tope_dia <- pen_de(diario_todo[codigo == ej_tope & !is.na(P), .(anio, fecha, P)])
+tope_est_p <- cal[, .(anio, pentada, dias_dominio, dia_centro)][tope_dia[, .(mm = sum(P), n = .N), by = .(anio, pentada)], on = .(anio, pentada)][n == dias_dominio]
+tope_sat_p <- cal[, .(anio, pentada, dia_centro, mm = S_todo[px_tope, cols])]
+con_tramo <- function(x) x[, `:=`(t = anio + (dia_centro - 1) / 365, tramo = cumsum(c(1L, diff((anio - 1981L) * 72L + pentada) != 1L)))][]
+tope_est_p <- con_tramo(tope_est_p[order(anio, pentada)]); tope_sat_p <- con_tramo(tope_sat_p)
+tope_anios <- anios[codigo == ej_tope][CJ(anio = ANIOS), on = "anio"]
+tope_anios[, causa := fcase(is.na(n_obs), "sin registro", !valido, sprintf("%d días", n_obs), default = NA_character_)]
+sombra <- tope_anios[!is.na(causa)]
+# Años seguidos sin registro se juntan en un solo rótulo para que no se encimen
+sombra[, grupo := rleid(causa, cumsum(c(1L, diff(anio) != 1L)))]
+sombra_r <- sombra[, .(ini = min(anio), fin = max(anio) + 1L, causa = if (causa[1] == "sin registro" && .N > 1) "sin registro" else causa[1]), by = grupo]
+sombra_r[, causa := sub(" ", "\n", causa)]
+cat("Serie de", st_tope$nombre, "(incluida:", ej_tope %in% estaciones$codigo, "): años sin registro o no válidos:", paste(sombra$anio, sombra$causa, sep = " = ", collapse = "; "), "\n")
+grafico(ggplot() +
+          geom_rect(data = sombra_r, aes(xmin = ini, xmax = fin, ymin = -Inf, ymax = Inf), fill = "grey88") +
+          geom_text(data = sombra_r, aes(x = (ini + fin) / 2, y = Inf, label = causa), vjust = 1.2, size = 2.5, lineheight = .85, colour = "grey30") +
+          geom_line(data = tope_sat_p, aes(t, mm, colour = "Satélite (su píxel)", group = tramo), linewidth = .3) +
+          geom_line(data = tope_est_p, aes(t, mm, colour = "Estación", group = tramo), linewidth = .3) +
           geom_hline(yintercept = 200, linetype = 2) +
-          geom_point(data = serie_tope[mm_sat == 200], aes(t, mm_sat), inherit.aes = FALSE, colour = "red", size = 1) +
+          geom_point(data = tope_sat_p[mm == 200], aes(t, mm), colour = "red", size = 1) +
+          scale_colour_manual(values = c("Estación" = "black", "Satélite (su píxel)" = "#1F78B4")) +
           labs(x = NULL, y = "mm por péntada", colour = NULL,
-               title = paste0("Serie péntada a péntada de ", tope_est$nombre[1], " (", ETQ_VERT[tope_est$vertiente[1]], "), 1981–2003"),
-               subtitle = "Línea punteada: tope de 200 mm del satélite; puntos rojos: péntadas en el tope"),
-        "12_serie_tope_200", ancho = 11, alto = 4.5)
+               title = sprintf("Serie péntada a péntada de %s (%s) y su píxel, 1981–2003", st_tope$nombre, ETQ_VERT[st_tope$vertiente]),
+               subtitle = "Gris: años sin registro o que R5 no acepta (días medidos). Punteada: tope de 200 mm; puntos rojos: péntadas en el tope") +
+          theme(legend.position = "bottom"),
+        "12_serie_tope_200", ancho = 11, alto = 4.8)
+
+# La serie real que se modela: lluvia DIARIA de una estación, año por año, con la lluvia
+# diaria media de su píxel en cada péntada. Es el dato antes de volverlo curva; se escoge la
+# estación incluida con más años válidos (empate: menor código).
+ej_serie <- estaciones[codigo %in% pares[!is.na(pixel), codigo]][order(-validos, codigo)]$codigo[1]
+px_serie <- pares[codigo == ej_serie, pixel]
+serie_dia <- diario_todo[codigo == ej_serie, .(anio, dia, P)]
+serie_sat <- cal[, .(anio, dia_centro, mm_dia = S_todo[px_serie, cols] / dias_reales)]
+fase_de <- setNames(oni$fase, oni$anio)
+lim_serie <- c(0, max(serie_dia$P, na.rm = TRUE))
+grafico_r("6_serie_diaria_por_anio", function() {
+  par(mfrow = c(6, 4), mar = c(3, 3.2, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
+  for (a in ANIOS) {
+    x <- serie_dia[anio == a]; v <- anios[codigo == ej_serie & anio == a, valido]
+    etq <- if (!nrow(x)) "sin registro" else if (!isTRUE(v)) "no válido (R5)" else ""
+    plot(NA, xlim = c(1, 365), ylim = lim_serie, xaxt = "n", xlab = "Día del año", ylab = "mm/día",
+         main = sprintf("%d · %s%s", a, fase_de[as.character(a)], if (nzchar(etq)) paste(" ·", etq) else ""), cex.axis = .75, cex.lab = .8)
+    axis(1, at = c(1, 91, 182, 274, 365), labels = c("ene", "abr", "jul", "oct", "dic"), cex.axis = .75)
+    if (nrow(x)) { lines(x$dia, x$P, type = "h", col = "grey45"); f <- x[is.na(P), dia]; if (length(f)) rug(f, col = "black", lwd = 1) }
+    s <- serie_sat[anio == a]; lines(s$dia_centro, s$mm_dia, type = "s", lwd = 1.6)
+  }
+  plot.new(); legend("center", c("Estación: lluvia de cada día", "Satélite: lluvia diaria media\nde la péntada en su píxel", "Día sin dato (marca abajo)"),
+                     col = c("grey45", "black", "black"), lty = c(1, 1, NA), lwd = c(1, 1.6, NA), pch = c(NA, NA, 124), bty = "n", cex = 1)
+  mtext(sprintf("Lluvia diaria observada de %s (%s) y de su píxel, 1981–2003", estaciones[codigo == ej_serie, nombre], ETQ_VERT[estaciones[codigo == ej_serie, vertiente]]),
+        outer = TRUE, cex = 1.1, font = 2)
+})
+cat("Serie diaria de ejemplo:", estaciones[codigo == ej_serie, paste(nombre, codigo)], "| años válidos:", estaciones[codigo == ej_serie, validos], "\n")
 
 # Por estación: correlación y sesgo; ¿de qué dependen?
 por_est_sat <- cmp[, .(pentadas = .N, r = cor(mm_sat, mm_est), sesgo = sum(mm_sat) / sum(mm_est),
@@ -1089,37 +1370,21 @@ grafico(ggplot(an_cmp, aes(ONI_anual, dif)) + geom_text(aes(label = anio, colour
                title = "El satélite se queda corto en La Niña y se pasa en El Niño"),
         "12_diferencia_vs_ONI")
 
-# Por año, como en la tesis del profesor (cap. 5: figuras 5.8 y 5.12, y la correlación
-# estación–satélite de cada año). Solo estación-años con las 72 péntadas completas, para que
-# el acumulado de la estación y el de su píxel sumen exactamente las mismas péntadas.
+# Por año: el total anual de la estación y el de su píxel en los mismos pares (solo
+# estación-años con las 72 péntadas completas, para sumar exactamente las mismas péntadas)
+# y la correlación estación–satélite de cada año. Son resúmenes escalares del año; la lluvia
+# se analiza en mm/día, nunca acumulada.
 completos <- cmp[, .N, by = .(codigo, anio)][N == 72, .(codigo, anio)]
-acu <- cmp[completos, on = .(codigo, anio)][order(codigo, anio, pentada)]
-acu[, `:=`(acu_est = cumsum(mm_est), acu_sat = cumsum(mm_sat)), by = .(codigo, anio)]
-acu_anio <- acu[pentada == 72, .(estaciones = .N, P_est = mean(acu_est), P_sat = mean(acu_sat)), by = anio]
+tot <- cmp[completos, on = .(codigo, anio)][, .(est = sum(mm_est), sat = sum(mm_sat)), by = .(codigo, anio)]
+acu_anio <- tot[, .(estaciones = .N, P_est = mean(est), P_sat = mean(sat)), by = anio]
 acu_anio <- oni[acu_anio, on = "anio"][order(anio)]
 acu_anio[, sat_sobre_est_pct := round(100 * P_sat / P_est)]
 r_anio <- oni[cmp[, .(r = cor(mm_sat, mm_est), pares = .N), by = anio], on = "anio"][order(anio)]
 acu_anio <- r_anio[, .(anio, r_pentadas = round(r, 2))][acu_anio, on = "anio"]
 print(tabla(acu_anio[, .(anio, fase, ONI_anual, estaciones, P_est = round(P_est), P_sat = round(P_sat), sat_sobre_est_pct, r_pentadas)], "12_por_anio"))
-cat(sprintf("Satélite / estación al final del año: %d a %d %% | r con el ONI: %.2f | r estación–satélite por año: %.2f a %.2f (mediana %.2f)\n",
+cat(sprintf("Total anual del satélite / estación: %d a %d %% | r con el ONI: %.2f | r estación–satélite por año: %.2f a %.2f (mediana %.2f)\n",
             min(acu_anio$sat_sobre_est_pct), max(acu_anio$sat_sobre_est_pct), cor(acu_anio$sat_sobre_est_pct, acu_anio$ONI_anual),
             min(r_anio$r), max(r_anio$r), median(r_anio$r)))
-lim_acu <- c(0, quantile(acu[pentada == 72, acu_est], .95))   # las pocas estaciones de la costa (hasta ~10 000 mm) se salen por arriba
-grafico_r("12_acumulada_por_anio", function() {
-  par(mfrow = c(6, 4), mar = c(3, 3.4, 2, .6), mgp = c(1.9, .5, 0), oma = c(0, 0, 3, 0))
-  for (a in ANIOS) {
-    d <- acu[anio == a]; f <- acu_anio[anio == a]
-    plot(NA, xlim = c(1, 72), ylim = lim_acu, xlab = "Tiempo (péntada)", ylab = "Precipitación acumulada (mm)",
-         main = sprintf("%d · %s", a, f$fase), cex.axis = .75, cex.lab = .8)
-    for (k in split(d, d$codigo)) lines(k$pentada, k$acu_est, col = "grey80", lwd = .6)
-    m <- d[, .(e = mean(acu_est), s = mean(acu_sat)), by = pentada][order(pentada)]
-    lines(m$pentada, m$e, lwd = 2); lines(m$pentada, m$s, lwd = 2, lty = 2)
-    text(1, lim_acu[2] * .95, sprintf("satélite = %d %% de la estación", f$sat_sobre_est_pct), adj = 0, cex = .8)
-  }
-  plot.new(); legend("center", c("Cada estación", "Promedio de las estaciones", "Promedio del satélite\nen sus píxeles"),
-                     col = c("grey70", "black", "black"), lty = c(1, 1, 2), lwd = c(1, 2, 2), bty = "n", cex = 1)
-  mtext("Precipitación acumulada por año: estaciones y satélite en los mismos pares (1981–2003)", outer = TRUE, cex = 1.1, font = 2)
-})
 grafico_r("12_correlacion_por_anio", function() {
   par(mar = c(4, 6, 3, 1)); tonos <- c("Niña" = "grey20", "Neutro" = "grey60", "Niño" = "grey90")
   b <- barplot(r_anio$r, names.arg = r_anio$anio, col = tonos[r_anio$fase], ylim = c(0, 1), las = 2, cex.names = .8,
@@ -1158,18 +1423,9 @@ if (an_cmp[se_aparta == TRUE, .N]) {
 }
 
 # QUÉ DICEN LOS DATOS (secciones 10–12)
-#   - 676 píxeles con centro dentro del Valle. Las 176 estaciones caen en 148
-#     píxeles distintos; 23 píxeles tienen más de una estación.
-#   - El satélite aplana el espacio: va de ~1 100 a ~6 200 mm/año y las estaciones
-#     de ~800 a ~12 100. Sobreestima donde llueve poco y subestima donde llueve mucho.
-#   - Péntada a péntada sigue poco a la estación (r ≈ 0,5; mediana por estación 0,42)
-#     y casi nunca marca cero (las estaciones, el 20–25 % de las péntadas).
-#   - Acierta el clima medio (dónde y cuándo llueve, r ≈ 0,8) pero no las anomalías
-#     (r ≈ 0,3 mensual y 0,25 anual). Su variación de un año a otro es la mitad.
-#   - La diferencia con las estaciones sigue al ENSO (r = 0,74 con el ONI): se queda
-#     corto en La Niña (1984, 1988, 1999, 2000) y se pasa en El Niño (1992). Los
-#     "años defectuosos" de D-16 son en realidad este efecto, no archivos dañados.
-#   - Santa Teresa (2612810102) tiene r = 0 con su píxel y la coordenada "a revisar".
+#   Las cifras y su interpretación están en EXPLICACION_DATOS.md, sección 12 (corrida del
+#   19-nov-2026, con las 98 estaciones de la regla de la OMM); las tablas de esta
+#   sección las imprimen las líneas de arriba.
 
 saveRDS(list(pentadal = sat, pixeles = pix, calendario = cal, pares = pares, pares_pentada = cmp,
              anual = an_cmp, por_estacion = por_est_sat, que_acierta = aciertos),
@@ -1190,7 +1446,10 @@ setkey(id_est, codigo, anio)
 Yw <- dcast(diario, codigo + anio ~ dia, value.var = "P")
 stopifnot(identical(Yw$codigo, id_est$codigo), identical(Yw$anio, id_est$anio), identical(names(Yw)[-(1:2)], as.character(1:365)))
 Y <- as.matrix(Yw[, -(1:2)]); dimnames(Y) <- list(paste(id_est$codigo, id_est$anio, sep = "_"), 1:365); rm(Yw)
+Yimp <- as.matrix(dcast(diario, codigo + anio ~ dia, value.var = "imputado")[, -(1:2)]); dimnames(Yimp) <- dimnames(Y)   # TRUE = rellenado por R7
+Yobs <- !is.na(Y) & !Yimp                                                                                                  # TRUE = observado
 id_est <- anios[, .(codigo, anio, n_obs, hueco_max)][id_est, on = .(codigo, anio)]
+id_est[, dias_rellenados := rowSums(Yimp)]
 id_est[, fila := .I]
 
 # Satélite
@@ -1219,7 +1478,9 @@ meta_est <- por_est[, .(codigo, validos_ent, validos_val, validos_pru)][meta_est
 meta_est <- clim[, .(codigo, mm_anual = round(P_media))][meta_est, on = "codigo"]
 
 preparados <- list(
-  estaciones = list(Y = Y, id = id_est, t = 1:365, unidades = "mm/día; NA = día faltante"),
+  estaciones = list(Y = Y, rellenado = Yimp, id = id_est, t = 1:365,
+                    unidades = "mm/día; NA = día faltante; rellenado = TRUE si el día lo estimó el kriging (R7)"),
+  conjunto = CONJUNTO,
   satelite   = list(X = X, id = id_sat, t = t_sat, dias = cal[anio == ANIOS[1], dias_dominio], unidades = "mm/día; t = día central de la péntada"),
   pares = pares_fun, meta_estaciones = meta_est, pixeles = pix[usar == TRUE],
   particion = c(entrenamiento = "1981–1995", validacion = "1996–2000", prueba = "2001–2003"),
@@ -1232,6 +1493,7 @@ print(rbind(
   id_sat[, .(fuente = "Satélite (curvas píxel-año)", curvas = .N, sitios = uniqueN(pixel)), by = particion],
   pares_fun[, .(fuente = "Pares estación-año ↔ píxel-año", curvas = .N, sitios = uniqueN(codigo)), by = particion]))
 cat("Y:", nrow(Y), "×", ncol(Y), "| faltantes:", sum(is.na(Y)), "(", round(100 * mean(is.na(Y)), 2), "% )",
+    "| rellenados por kriging:", sum(Yimp), "(", round(100 * mean(Yimp), 3), "% )",
     "\nX:", nrow(X), "×", ncol(X), "| faltantes:", sum(is.na(X)), "\n")
 cat("Marcas de sensibilidad: cruce CNE", meta_est[cruce_CNE == TRUE, .N], "| coordenada a revisar", meta_est[coordenada_a_revisar == TRUE, .N],
     "| sin altitud", meta_est[is.na(altitud), .N], "\n")
@@ -1266,13 +1528,20 @@ prueba("Las incluidas tienen altitud (entra al vector z)", !anyNA(meta_est$altit
 # -- Periodo y partición
 prueba("Solo años 1981–2003", all(id_est$anio %in% ANIOS) && all(id_sat$anio %in% ANIOS))
 prueba("Partición correcta por año", id_est[, all((particion == "entrenamiento") == (anio <= 1995) & (particion == "prueba") == (anio >= 2001))])
-prueba("Cada estación tiene ≥7 años válidos en entrenamiento", id_est[particion == "entrenamiento", .N, by = codigo][, .N == uniqueN(id_est$codigo) && min(N) >= ANIOS_MIN],
-       paste("mínimo:", id_est[particion == "entrenamiento", .N, by = codigo][, min(N)]))
+prueba(paste("R6: cada estación tiene años válidos", R6_TEXTO), id_est[, .N, by = codigo][, min(N) >= ANIOS_MIN],
+       paste("mínimo:", id_est[, .N, by = codigo][, min(N)], "de", length(ANIOS)))
 
-# -- Estaciones: reglas recalculadas desde la matriz
-n_obs_Y <- rowSums(!is.na(Y)); hueco_Y <- apply(!is.na(Y), 1, hueco_mas_largo)
-prueba("Cada curva tiene ≥90 % de días", all(n_obs_Y >= COB_MIN * 365), paste("mínimo:", min(n_obs_Y)))
-prueba("Ninguna curva tiene un hueco > 15 días", all(hueco_Y <= HUECO_MAX), paste("máximo:", max(hueco_Y)))
+# -- Estaciones: reglas recalculadas desde la matriz (R5 se mide con los días OBSERVADOS)
+n_obs_Y <- rowSums(Yobs); hueco_Y <- apply(Yobs, 1, hueco_mas_largo)
+falt_mes_Y <- apply(Yobs, 1, function(o) max(tapply(!o, MES_DIA, sum)))
+seg_mes_Y <- apply(Yobs, 1, function(o) max(vapply(split(o, MES_DIA), hueco_mas_largo, 0L)))
+prueba("R5 (OMM): ningún mes de una curva tiene 11 o más días faltantes", all(falt_mes_Y <= MES_FALT_MAX), paste("máximo:", max(falt_mes_Y)))
+prueba("R5 (OMM): ningún mes de una curva tiene 5 o más días faltantes seguidos", all(seg_mes_Y <= MES_SEGUID_MAX), paste("máximo:", max(seg_mes_Y)))
+prueba("R7: solo se rellenan días de años válidos y nunca con valores negativos",
+       imputados[!is.na(P), all(P >= 0)] && nrow(imputados[!is.na(P)][!anios[valido == TRUE], on = .(codigo, anio)]) == 0 && all(id_est$n_obs + id_est$dias_rellenados == rowSums(!is.na(Y))),
+       sprintf("%d días rellenados (%.3f %% de la matriz)", sum(Yimp), 100 * mean(Yimp)))
+prueba("R7: el semivariograma y las medias mensuales usan solo entrenamiento", max(R7_ENT) == sum(ANIOS <= 1995) * 365L,
+       paste("modelo:", vg_mejor))
 prueba("Sin duplicados estación-año", !anyDuplicated(id_est[, .(codigo, anio)]))
 prueba("R0: ningún valor negativo ni sobre el récord OMM de 24 h", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= P_MAX_FISICO,
        sprintf("en el Valle R0 quitó %d valores; en el crudo completo habría quitado %d", nrow(m_r0), sum(r0_resumen[1, .(negativos, sobre_maximo_fisico)])))
@@ -1286,11 +1555,13 @@ crudo2 <- id_est[, .(codigo, anio, fila)][crudo2, on = .(codigo, anio), nomatch 
 crudo2[, P_final := Y[cbind(fila, dia)]]
 m2 <- marcas[, .(codigo, anio = year(fecha), mes = month(fecha), dm = mday(fecha), marcado = TRUE)]
 crudo2 <- m2[crudo2, on = .(codigo, anio, mes, dm)]
-prueba("Cada valor final es igual al crudo (salvo los marcados)", crudo2[is.na(marcado), all(!is.na(P_final) & P_final == P_crudo)],
+crudo2[, rellenado := Yimp[cbind(fila, dia)]]
+prueba("Cada valor final es igual al crudo (salvo los marcados)", crudo2[is.na(marcado), all(!is.na(P_final) & P_final == P_crudo & !rellenado)],
        paste(crudo2[is.na(marcado), .N], "valores comparados"))
-prueba("Los días marcados quedaron como faltante", crudo2[marcado == TRUE, all(is.na(P_final))], paste(crudo2[marcado == TRUE, .N], "marcados dentro de años válidos"))
-prueba("Todo faltante de la matriz es un día ausente en el crudo o marcado", sum(!is.na(Y)) == crudo2[is.na(marcado), .N],
-       paste("observados:", sum(!is.na(Y))))
+prueba("Los días marcados quedaron como faltante (o los rellenó R7)", crudo2[marcado == TRUE, all(is.na(P_final) | rellenado)],
+       paste(crudo2[marcado == TRUE, .N], "marcados dentro de años válidos;", crudo2[marcado == TRUE & rellenado, .N], "rellenados"))
+prueba("Todo día observado de la matriz es un dato del crudo no marcado", sum(Yobs) == crudo2[is.na(marcado), .N],
+       paste("observados:", sum(Yobs), "| rellenados:", sum(Yimp)))
 rm(crudo2)
 
 prueba("La trazabilidad termina en los datos preparados", trazabilidad[.N, estaciones == uniqueN(id_est$codigo) && pares_estacion_anio == nrow(Y) && dias_con_dato == sum(!is.na(Y))])
@@ -1327,7 +1598,7 @@ prueba("Hay un par por cada curva de estación", nrow(pares_fun) == nrow(Y) && !
 prueba("Cada par tiene el ONI de su año (entra al vector z)", !anyNA(pares_fun$ONI) && pares_fun[oni, on = "anio", nomatch = 0][, all(ONI == ONI_anual)], paste(uniqueN(pares_fun$anio), "años"))
 
 # -- Agregación a péntadas
-comp <- which(n_obs_Y == 365)[1:50]
+comp <- which(n_obs_Y == 365)[1:50]   # años con los 365 días observados
 ok_pen <- vapply(comp, function(i) {
   tot <- est_pen[codigo == id_est$codigo[i] & anio == id_est$anio[i], sum(mm_est)]
   abs(tot - sum(Y[i, ])) < 1e-6

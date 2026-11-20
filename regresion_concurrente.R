@@ -31,8 +31,11 @@ for (loc in c("en_US.UTF-8", "es_ES.UTF-8", "C.UTF-8")) if (nzchar(suppressWarni
 set.seed(20261114)
 
 # ---- 0. CONFIGURACIÓN Y UTILIDADES ------------------------------------------
-DIR_IN  <- "salidas_R_funcional/para_python"
-DIR_OUT <- "salidas_R_concurrente"
+# Conjunto de datos (D-61, D-63): principal (≥10 años) o r6_omm (sensibilidad de R6), con la variable CONJUNTO
+CONJUNTO_C <- Sys.getenv("CONJUNTO", "principal")
+SUFIJO_C <- if (CONJUNTO_C == "principal") "" else paste0("_", CONJUNTO_C)
+DIR_IN  <- file.path(paste0("salidas_R_funcional", SUFIJO_C), "para_python")
+DIR_OUT <- paste0("salidas_R_concurrente", SUFIJO_C)
 dir.create(file.path(DIR_OUT, "tablas"),  recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(DIR_OUT, "figuras"), recursive = TRUE, showWarnings = FALSE)
 stopifnot(file.exists(file.path(DIR_IN, "pares.csv")))
@@ -86,7 +89,7 @@ X_mm <- pmax(C_s_m %*% t(Phi_s), 0)
 ent <- pares$usar & pares$particion == "entrenamiento"
 val <- pares$usar & grepl("^valid", pares$particion)
 pru <- pares$usar & pares$particion == "prueba"
-stopifnot(sum(ent) == 2257, sum(val) == 672, sum(pru) == 370)       # los conteos del equipo
+stopifnot(sum(ent) + sum(val) + sum(pru) == sum(pares$usar), all(pares$anio[ent] <= 1995), all(pares$anio[pru] >= 2001))   # partición por años
 cat(sprintf("Curvas: entrenamiento %d, validación %d, prueba %d | estaciones %d | K estación = %d, K satélite = %d\n",
             sum(ent), sum(val), sum(pru), length(unique(pares$codigo)), K_e, K_s))
 
@@ -282,9 +285,10 @@ figura("C6_concurrente_estilo_clase", function() {
   contour(T_DIA, T_DIA, cor(Res_A), nlevels = 10, xlab = "Día s", ylab = "Día t", main = "Correlación de los residuos")
 }, ancho = 14, alto = 8.5)
 
-# ---- 5b. EL MODELO CONCURRENTE AÑO POR AÑO (COMO LA TESIS DEL PROFESOR) -------
-# La tesis (figura 9.2) ajusta y_i(t) = b0(t) + b1(t) x_i(t) por separado en cada año, con
-# todas las estaciones de ese año, y muestra b1(t) con su banda. Aquí se hace igual con los
+# ---- 5b. EL MODELO CONCURRENTE AÑO POR AÑO (DESCRIPTIVO) -----------------------
+# ¿Cambia con el ENSO cuánto aporta el satélite? Se ajusta y_i(t) = b0(t) + b1(t) x_i(t)
+# por separado en cada año, con todas las estaciones de ese año, y se mira b1(t) con su
+# banda (modelo concurrente, Ramsay y Silverman 2005, cap. 14). Se hace con los
 # 23 años: mínimos cuadrados en cada día t (con curvas suaves, b(t) sale suave) y banda
 # ±2 EE punto a punto. Es DESCRIPTIVO: usa todos los años, incluidos validación y prueba,
 # y no se usa para predecir ni para escoger nada. Las bandas suponen estaciones independientes
@@ -363,13 +367,14 @@ print(tabla_f(metricas, "C4_metricas_prueba"))
 cat(sprintf("Reconstrucción en mm no negativa: se recorta en 0 el %.2f %% (A) y el %.2f %% (B) de los valores predichos en escala raíz\n", recorte["A"], recorte["B"]))
 
 # Frente a la regresión función a función del equipo (sección 5.5 de lluvia_valle.R): se lee su tabla, no se recalcula
-ref_f <- file.path("salidas_R_funcional", "tablas", "F5_metricas_prueba.csv")
+ref_f <- file.path(paste0("salidas_R_funcional", SUFIJO_C), "tablas", "F5_metricas_prueba.csv")
 if (file.exists(ref_f)) {
   ref <- read.csv(ref_f, encoding = "UTF-8", check.names = FALSE)
   cat("\nTabla de referencia del equipo (F5_metricas_prueba.csv):\n"); print(ref[, c("modelo", "L2_relativo", "KGE", "sesgo_anual_pct")], row.names = FALSE)
 }
 
-# Diferencias pareadas por estación contra el satélite sin corregir: IC bootstrap y Wilcoxon
+# Diferencia de cada métrica por estación contra el satélite sin corregir, con IC 95 % por
+# bootstrap de estaciones (Davison y Hinkley 1997, sec. 3.8). Sin Wilcoxon: el IC ya decide.
 por_est <- aggregate(cbind(l2_rel, rmse, kge, sesgo_pct, err_pico_1, err_pico_2) ~ modelo + codigo, data = mc, FUN = mean)
 comparar <- function(mod, v, mejor_si_baja = TRUE, absoluto = FALSE) {
   a <- por_est[por_est$modelo == mod, ]; s <- por_est[por_est$modelo == "Satélite sin corregir", ]
@@ -377,16 +382,16 @@ comparar <- function(mod, v, mejor_si_baja = TRUE, absoluto = FALSE) {
   x <- a[[v]]; z <- s[[v]]; if (absoluto) { x <- abs(x); z <- abs(z) }
   d <- x - z; q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
   data.frame(modelo = mod, metrica = if (absoluto) paste0("|", v, "|") else v, satelite = mean(z), concurrente = mean(x), diferencia = mean(d),
-             ic_inf = q[1], ic_sup = q[2], p_wilcoxon = wilcox.test(x, z, paired = TRUE)$p.value, ic_excluye_0 = q[1] > 0 | q[2] < 0,
+             ic_inf = q[1], ic_sup = q[2], estaciones_que_mejoran = sum(if (mejor_si_baja) d < 0 else d > 0), ic_excluye_0 = q[1] > 0 | q[2] < 0,
              mejora = if (mejor_si_baja) mean(d) < 0 else mean(d) > 0)
 }
 pareada <- do.call(rbind, lapply(c("Concurrente A (clase)", "Concurrente B (+ altitud y ONI)"), function(mod)
   rbind(comparar(mod, "l2_rel"), comparar(mod, "rmse"), comparar(mod, "kge", FALSE), comparar(mod, "sesgo_pct", absoluto = TRUE),
         comparar(mod, "err_pico_1"), comparar(mod, "err_pico_2"))))
 pareada[, c("satelite", "concurrente", "diferencia", "ic_inf", "ic_sup")] <- round(pareada[, c("satelite", "concurrente", "diferencia", "ic_inf", "ic_sup")], 3)
-pareada$p_wilcoxon <- signif(pareada$p_wilcoxon, 2); rownames(pareada) <- NULL
-cat("\nFrente al satélite sin corregir, pareado por estación (", length(unique(por_est$codigo)), " estaciones):\n", sep = "")
-print(tabla_f(pareada, "C4_concurrente_vs_satelite_pareado"))
+rownames(pareada) <- NULL
+cat("\nFrente al satélite sin corregir, por estación (", length(unique(por_est$codigo)), " estaciones):\n", sep = "")
+print(tabla_f(pareada, "C4_concurrente_vs_satelite_por_estacion"))
 
 # Por fase ENSO. La prueba (2001-2003) no tiene años Niña; se muestra también la validación, que sí los tiene,
 # solo como referencia (la validación eligió K_b y lambda, no ajustó los coeficientes).
@@ -461,8 +466,8 @@ chk("con lambda enorme b1(t) tiende a una recta", {
   pre <- preparar(i_ent, "A", 12L); b1 <- coef_t(pre, resolver(pre, 1e14))[, 2]; max(abs(diff(b1, differences = 2))) < 1e-6 })
 chk("la reconstrucción en mm es no negativa", all(modelos[[2]] >= 0) && all(modelos[[3]] >= 0))
 chk("bandas de b(t) por bootstrap de estaciones con al menos 300 remuestreos", B_BOOT_B >= 300)
-chk("el modelo A baja el error L² frente al satélite sin corregir en prueba (por estación, Wilcoxon p < 0,05)",
-    with(pareada[pareada$modelo == "Concurrente A (clase)" & pareada$metrica == "l2_rel", ], mejora && p_wilcoxon < 0.05))
+chk("el modelo A baja el error L² frente al satélite sin corregir en prueba (IC 95 % por estación excluye el 0)",
+    with(pareada[pareada$modelo == "Concurrente A (clase)" & pareada$metrica == "l2_rel", ], mejora && ic_excluye_0))
 cat(paste(pruebas, collapse = "\n"), "\n")
 cat(sprintf("\nPruebas: %d de %d\n", sum(grepl("^OK", pruebas)), length(pruebas)))
 cat("Listo. Tablas en", file.path(DIR_OUT, "tablas"), "y figuras en", file.path(DIR_OUT, "figuras"), "\n")

@@ -1,3 +1,3 @@
 camino,curvas,cociente_acumulado_anual_mediano,cociente_p05,cociente_p95
-"A. Suavizar en mm, recortar en 0 y luego raíz (el que se usa)",1882,1,1,1.014
-"B. Raíz al dato diario, suavizar y elevar al cuadrado",1882,0.329,0.207,0.598
+"A. Suavizar en mm, recortar en 0 y luego raíz (el que se usa)",1807,1,1,1.014
+"B. Raíz al dato diario, suavizar y elevar al cuadrado",1807,0.327,0.206,0.581

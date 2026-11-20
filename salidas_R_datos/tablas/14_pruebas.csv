@@ -5,22 +5,24 @@ Las incluidas tienen coordenada,OK,""
 Las incluidas tienen altitud (entra al vector z),OK,Univalle: 996 m
 Solo años 1981–2003,OK,""
 Partición correcta por año,OK,""
-Cada estación tiene ≥7 años válidos en entrenamiento,OK,mínimo: 8
-Cada curva tiene ≥90 % de días,OK,mínimo: 329
-Ninguna curva tiene un hueco > 15 días,OK,máximo: 15
+R6: cada estación tiene años válidos ≥10 años válidos (mínimo OMM para promedios; NOAA),OK,mínimo: 10 de 23
+R5 (OMM): ningún mes de una curva tiene 11 o más días faltantes,OK,máximo: 7
+R5 (OMM): ningún mes de una curva tiene 5 o más días faltantes seguidos,OK,máximo: 4
+R7: solo se rellenan días de años válidos y nunca con valores negativos,OK,719 días rellenados (0.065 % de la matriz)
+R7: el semivariograma y las medias mensuales usan solo entrenamiento,OK,modelo: exponencial
 Sin duplicados estación-año,OK,""
 R0: ningún valor negativo ni sobre el récord OMM de 24 h,OK,en el Valle R0 quitó 0 valores; en el crudo completo habría quitado 1
 Valores entre 0 y el máximo crudo,OK,máximo: 560
-Cada valor final es igual al crudo (salvo los marcados),OK,1201260 valores comparados
-Los días marcados quedaron como faltante,OK,20 marcados dentro de años válidos
-Todo faltante de la matriz es un día ausente en el crudo o marcado,OK,observados: 1201260
+Cada valor final es igual al crudo (salvo los marcados),OK,1111035 valores comparados
+Los días marcados quedaron como faltante (o los rellenó R7),OK,2 marcados dentro de años válidos; 2 rellenados
+Todo día observado de la matriz es un dato del crudo no marcado,OK,observados: 1111035 | rellenados: 719
 La trazabilidad termina en los datos preparados,OK,""
 El p99 de las reglas usa solo entrenamiento,OK,210 estaciones
 Satélite sin faltantes y no negativo,OK,""
 72 péntadas que suman 365 días,OK,""
 mm/día × días reales = mm de la péntada (enteros),OK,""
 La matriz del satélite coincide con 12 TIFF releídos,OK,""
-Todos los píxeles del Valle están,OK,681 píxeles
+Todos los píxeles del Valle están,OK,680 píxeles
 Cada estación cae dentro de su píxel,OK,distancia máxima al centro: 3.89 km
 Cada par une el mismo año y el píxel de la estación,OK,""
 Ninguna altitud es imposible en la cuenca del Cauca (D-59),OK,1 altitud(es) oficial(es) reemplazada(s) por el terreno; piso 904 m

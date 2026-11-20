@@ -1,9 +1,9 @@
 grupo,curvas,DE_media_mm_dia,pct_varianza_1a_componente,pct_varianza_2a_componente,cor_abr_oct,cor_abr_jul,cor_minima
-Estaciones: todas,3299,4.16,75.9,6.7,0.74,0.63,0.39
-Estaciones: Cauca,2889,2.36,49.6,12.7,0.54,0.19,-0.14
-Estaciones: Pacífico,410,8.96,87.1,3.5,0.85,0.82,0.62
-Estaciones: anomalías por estación,3299,2.09,28.7,15.9,0.14,0.12,-0.27
+Estaciones: todas,3046,4.13,75.6,6.8,0.74,0.63,0.38
+Estaciones: Cauca,2693,2.43,52.2,11.8,0.57,0.22,-0.14
+Estaciones: Pacífico,353,9.12,87.8,3.3,0.85,0.84,0.66
+Estaciones: anomalías por estación,3046,2.09,29,15.8,0.14,0.14,-0.25
 Satélite: todos los píxeles,15548,4.38,87.5,4.5,0.83,0.72,0.43
-Satélite: Cauca,8878,1.76,71.8,7.4,0.73,0.64,0.08
-Satélite: Pacífico,6670,4.26,76.9,8.7,0.66,0.49,0.11
+Satélite: Cauca,8648,1.66,69.4,8.1,0.71,0.62,0.05
+Satélite: Pacífico,6900,4.26,77.1,8.7,0.66,0.49,0.11
 Satélite: anomalías por píxel,15548,1.5,31,16.3,0.26,0.04,-0.36

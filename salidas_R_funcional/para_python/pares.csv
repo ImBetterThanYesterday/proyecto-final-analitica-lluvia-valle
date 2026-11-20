@@ -8,7 +8,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2610000103,1987,entrenamiento,TRUE,255,968,1.18,Niño,Cauca (interandina)
 2610000103,1988,entrenamiento,TRUE,255,968,-0.89,Niña,Cauca (interandina)
 2610000103,1989,entrenamiento,TRUE,255,968,-0.62,Niña,Cauca (interandina)
-2610000103,1990,entrenamiento,TRUE,255,968,0.27,Neutro,Cauca (interandina)
 2610000103,1991,entrenamiento,TRUE,255,968,0.65,Niño,Cauca (interandina)
 2610000103,1992,entrenamiento,TRUE,255,968,0.61,Niño,Cauca (interandina)
 2610000103,1993,entrenamiento,TRUE,255,968,0.36,Neutro,Cauca (interandina)
@@ -31,13 +30,11 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2610000104,1989,entrenamiento,TRUE,364,907,-0.62,Niña,Cauca (interandina)
 2610000104,1990,entrenamiento,TRUE,364,907,0.27,Neutro,Cauca (interandina)
 2610000104,1991,entrenamiento,TRUE,364,907,0.65,Niño,Cauca (interandina)
-2610000104,1992,entrenamiento,TRUE,364,907,0.61,Niño,Cauca (interandina)
 2610000104,1994,entrenamiento,TRUE,364,907,0.37,Neutro,Cauca (interandina)
 2610000104,1995,entrenamiento,TRUE,364,907,-0.22,Neutro,Cauca (interandina)
 2610000104,1996,validación,TRUE,364,907,-0.41,Neutro,Cauca (interandina)
 2610000104,1997,validación,TRUE,364,907,1.14,Niño,Cauca (interandina)
 2610000104,1998,validación,TRUE,364,907,0.04,Neutro,Cauca (interandina)
-2610000104,1999,validación,TRUE,364,907,-1.08,Niña,Cauca (interandina)
 2610000104,2000,validación,TRUE,364,907,-0.77,Niña,Cauca (interandina)
 2610000105,1981,entrenamiento,TRUE,290,939,-0.25,Neutro,Cauca (interandina)
 2610000105,1982,entrenamiento,TRUE,290,939,0.91,Niño,Cauca (interandina)
@@ -88,7 +85,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2610000202,1984,entrenamiento,TRUE,218,925,-0.55,Niña,Cauca (interandina)
 2610000202,1985,entrenamiento,TRUE,218,925,-0.58,Niña,Cauca (interandina)
 2610000202,1986,entrenamiento,TRUE,218,925,0.27,Neutro,Cauca (interandina)
-2610000202,1988,entrenamiento,TRUE,218,925,-0.89,Niña,Cauca (interandina)
 2610000202,1989,entrenamiento,TRUE,218,925,-0.62,Niña,Cauca (interandina)
 2610000202,1990,entrenamiento,TRUE,218,925,0.27,Neutro,Cauca (interandina)
 2610000202,1991,entrenamiento,TRUE,218,925,0.65,Niño,Cauca (interandina)
@@ -113,11 +109,11 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612200103,1988,entrenamiento,TRUE,1287,2380,-0.89,Niña,Cauca (interandina)
 2612200103,1989,entrenamiento,TRUE,1287,2380,-0.62,Niña,Cauca (interandina)
 2612200103,1990,entrenamiento,TRUE,1287,2380,0.27,Neutro,Cauca (interandina)
+2612200103,1991,entrenamiento,TRUE,1287,2380,0.65,Niño,Cauca (interandina)
 2612200103,1992,entrenamiento,TRUE,1287,2380,0.61,Niño,Cauca (interandina)
 2612200103,1993,entrenamiento,TRUE,1287,2380,0.36,Neutro,Cauca (interandina)
 2612200103,1994,entrenamiento,TRUE,1287,2380,0.37,Neutro,Cauca (interandina)
 2612200103,1997,validación,TRUE,1287,2380,1.14,Niño,Cauca (interandina)
-2612200103,1998,validación,TRUE,1287,2380,0.04,Neutro,Cauca (interandina)
 2612200103,1999,validación,TRUE,1287,2380,-1.08,Niña,Cauca (interandina)
 2612200103,2000,validación,TRUE,1287,2380,-0.77,Niña,Cauca (interandina)
 2612200103,2001,prueba,TRUE,1287,2380,-0.29,Neutro,Cauca (interandina)
@@ -134,7 +130,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612200105,1993,entrenamiento,TRUE,1325,2472,0.36,Neutro,Cauca (interandina)
 2612200105,1994,entrenamiento,TRUE,1325,2472,0.37,Neutro,Cauca (interandina)
 2612200105,1995,entrenamiento,TRUE,1325,2472,-0.22,Neutro,Cauca (interandina)
-2612200105,2000,validación,TRUE,1325,2472,-0.77,Niña,Cauca (interandina)
 2612200105,2001,prueba,TRUE,1325,2472,-0.29,Neutro,Cauca (interandina)
 2612200105,2002,prueba,TRUE,1325,2472,0.51,Niño,Cauca (interandina)
 2612200105,2003,prueba,TRUE,1325,2472,0.24,Neutro,Cauca (interandina)
@@ -185,7 +180,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612700201,2003,prueba,TRUE,1062,1059,0.24,Neutro,Cauca (interandina)
 2612700202,1981,entrenamiento,TRUE,1098,1018,-0.25,Neutro,Cauca (interandina)
 2612700202,1982,entrenamiento,TRUE,1098,1018,0.91,Niño,Cauca (interandina)
-2612700202,1983,entrenamiento,TRUE,1098,1018,0.46,Neutro,Cauca (interandina)
 2612700202,1985,entrenamiento,TRUE,1098,1018,-0.58,Niña,Cauca (interandina)
 2612700202,1986,entrenamiento,TRUE,1098,1018,0.27,Neutro,Cauca (interandina)
 2612700202,1987,entrenamiento,TRUE,1098,1018,1.18,Niño,Cauca (interandina)
@@ -227,7 +221,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710101,1989,entrenamiento,TRUE,1248,1059,-0.62,Niña,Cauca (interandina)
 2612710101,1990,entrenamiento,TRUE,1248,1059,0.27,Neutro,Cauca (interandina)
 2612710101,1991,entrenamiento,TRUE,1248,1059,0.65,Niño,Cauca (interandina)
-2612710101,1992,entrenamiento,TRUE,1248,1059,0.61,Niño,Cauca (interandina)
 2612710101,1993,entrenamiento,TRUE,1248,1059,0.36,Neutro,Cauca (interandina)
 2612710101,1994,entrenamiento,TRUE,1248,1059,0.37,Neutro,Cauca (interandina)
 2612710101,1995,entrenamiento,TRUE,1248,1059,-0.22,Neutro,Cauca (interandina)
@@ -260,16 +253,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710103,2001,prueba,TRUE,1172,980,-0.29,Neutro,Cauca (interandina)
 2612710103,2002,prueba,TRUE,1172,980,0.51,Niño,Cauca (interandina)
 2612710103,2003,prueba,TRUE,1172,980,0.24,Neutro,Cauca (interandina)
-2612710104,1981,entrenamiento,TRUE,1323,1960,-0.25,Neutro,Cauca (interandina)
-2612710104,1982,entrenamiento,TRUE,1323,1960,0.91,Niño,Cauca (interandina)
-2612710104,1983,entrenamiento,TRUE,1323,1960,0.46,Neutro,Cauca (interandina)
-2612710104,1984,entrenamiento,TRUE,1323,1960,-0.55,Niña,Cauca (interandina)
-2612710104,1985,entrenamiento,TRUE,1323,1960,-0.58,Niña,Cauca (interandina)
-2612710104,1986,entrenamiento,TRUE,1323,1960,0.27,Neutro,Cauca (interandina)
-2612710104,1987,entrenamiento,TRUE,1323,1960,1.18,Niño,Cauca (interandina)
-2612710104,1988,entrenamiento,TRUE,1323,1960,-0.89,Niña,Cauca (interandina)
-2612710104,1989,entrenamiento,TRUE,1323,1960,-0.62,Niña,Cauca (interandina)
-2612710104,1990,entrenamiento,TRUE,1323,1960,0.27,Neutro,Cauca (interandina)
 2612710105,1981,entrenamiento,TRUE,1212,2160,-0.25,Neutro,Cauca (interandina)
 2612710105,1982,entrenamiento,TRUE,1212,2160,0.91,Niño,Cauca (interandina)
 2612710105,1983,entrenamiento,TRUE,1212,2160,0.46,Neutro,Cauca (interandina)
@@ -294,13 +277,11 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710106,1984,entrenamiento,TRUE,1133,940,-0.55,Niña,Cauca (interandina)
 2612710106,1985,entrenamiento,TRUE,1133,940,-0.58,Niña,Cauca (interandina)
 2612710106,1986,entrenamiento,TRUE,1133,940,0.27,Neutro,Cauca (interandina)
-2612710106,1987,entrenamiento,TRUE,1133,940,1.18,Niño,Cauca (interandina)
 2612710106,1988,entrenamiento,TRUE,1133,940,-0.89,Niña,Cauca (interandina)
 2612710106,1989,entrenamiento,TRUE,1133,940,-0.62,Niña,Cauca (interandina)
 2612710106,1990,entrenamiento,TRUE,1133,940,0.27,Neutro,Cauca (interandina)
 2612710106,1991,entrenamiento,TRUE,1133,940,0.65,Niño,Cauca (interandina)
 2612710106,1993,entrenamiento,TRUE,1133,940,0.36,Neutro,Cauca (interandina)
-2612710106,1994,entrenamiento,TRUE,1133,940,0.37,Neutro,Cauca (interandina)
 2612710106,1995,entrenamiento,TRUE,1133,940,-0.22,Neutro,Cauca (interandina)
 2612710106,1996,validación,TRUE,1133,940,-0.41,Neutro,Cauca (interandina)
 2612710106,1998,validación,TRUE,1133,940,0.04,Neutro,Cauca (interandina)
@@ -309,14 +290,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710106,2001,prueba,TRUE,1133,940,-0.29,Neutro,Cauca (interandina)
 2612710106,2002,prueba,TRUE,1133,940,0.51,Niño,Cauca (interandina)
 2612710106,2003,prueba,TRUE,1133,940,0.24,Neutro,Cauca (interandina)
-2612710201,1981,entrenamiento,TRUE,1210,1040,-0.25,Neutro,Cauca (interandina)
-2612710201,1982,entrenamiento,TRUE,1210,1040,0.91,Niño,Cauca (interandina)
-2612710201,1983,entrenamiento,TRUE,1210,1040,0.46,Neutro,Cauca (interandina)
-2612710201,1984,entrenamiento,TRUE,1210,1040,-0.55,Niña,Cauca (interandina)
-2612710201,1985,entrenamiento,TRUE,1210,1040,-0.58,Niña,Cauca (interandina)
-2612710201,1986,entrenamiento,TRUE,1210,1040,0.27,Neutro,Cauca (interandina)
-2612710201,1987,entrenamiento,TRUE,1210,1040,1.18,Niño,Cauca (interandina)
-2612710201,1990,entrenamiento,TRUE,1210,1040,0.27,Neutro,Cauca (interandina)
 2612710202,1982,entrenamiento,TRUE,1209,1013,0.91,Niño,Cauca (interandina)
 2612710202,1983,entrenamiento,TRUE,1209,1013,0.46,Neutro,Cauca (interandina)
 2612710202,1984,entrenamiento,TRUE,1209,1013,-0.55,Niña,Cauca (interandina)
@@ -348,6 +321,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710301,1987,entrenamiento,TRUE,1249,1960,1.18,Niño,Cauca (interandina)
 2612710301,1988,entrenamiento,TRUE,1249,1960,-0.89,Niña,Cauca (interandina)
 2612710301,1989,entrenamiento,TRUE,1249,1960,-0.62,Niña,Cauca (interandina)
+2612710301,1990,entrenamiento,TRUE,1249,1960,0.27,Neutro,Cauca (interandina)
 2612710301,1991,entrenamiento,TRUE,1249,1960,0.65,Niño,Cauca (interandina)
 2612710301,1992,entrenamiento,TRUE,1249,1960,0.61,Niño,Cauca (interandina)
 2612710301,1993,entrenamiento,TRUE,1249,1960,0.36,Neutro,Cauca (interandina)
@@ -362,7 +336,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612710301,2002,prueba,TRUE,1249,1960,0.51,Niño,Cauca (interandina)
 2612710301,2003,prueba,TRUE,1249,1960,0.24,Neutro,Cauca (interandina)
 2612720101,1981,entrenamiento,TRUE,1134,1000,-0.25,Neutro,Cauca (interandina)
-2612720101,1982,entrenamiento,TRUE,1134,1000,0.91,Niño,Cauca (interandina)
 2612720101,1985,entrenamiento,TRUE,1134,1000,-0.58,Niña,Cauca (interandina)
 2612720101,1986,entrenamiento,TRUE,1134,1000,0.27,Neutro,Cauca (interandina)
 2612720101,1987,entrenamiento,TRUE,1134,1000,1.18,Niño,Cauca (interandina)
@@ -431,8 +404,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612800102,1989,entrenamiento,TRUE,1026,1100,-0.62,Niña,Cauca (interandina)
 2612800102,1990,entrenamiento,TRUE,1026,1100,0.27,Neutro,Cauca (interandina)
 2612800103,1981,entrenamiento,TRUE,1031,2875,-0.25,Neutro,Cauca (interandina)
+2612800103,1982,entrenamiento,TRUE,1031,2875,0.91,Niño,Cauca (interandina)
 2612800103,1983,entrenamiento,TRUE,1031,2875,0.46,Neutro,Cauca (interandina)
-2612800103,1984,entrenamiento,TRUE,1031,2875,-0.55,Niña,Cauca (interandina)
 2612800103,1985,entrenamiento,TRUE,1031,2875,-0.58,Niña,Cauca (interandina)
 2612800103,1986,entrenamiento,TRUE,1031,2875,0.27,Neutro,Cauca (interandina)
 2612800103,1987,entrenamiento,TRUE,1031,2875,1.18,Niño,Cauca (interandina)
@@ -459,9 +432,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612800104,1987,entrenamiento,TRUE,1028,1555,1.18,Niño,Cauca (interandina)
 2612800104,1988,entrenamiento,TRUE,1028,1555,-0.89,Niña,Cauca (interandina)
 2612800104,1989,entrenamiento,TRUE,1028,1555,-0.62,Niña,Cauca (interandina)
-2612800104,1991,entrenamiento,TRUE,1028,1555,0.65,Niño,Cauca (interandina)
+2612800104,1990,entrenamiento,TRUE,1028,1555,0.27,Neutro,Cauca (interandina)
 2612800104,1992,entrenamiento,TRUE,1028,1555,0.61,Niño,Cauca (interandina)
-2612800104,1993,entrenamiento,TRUE,1028,1555,0.36,Neutro,Cauca (interandina)
 2612800104,1994,entrenamiento,TRUE,1028,1555,0.37,Neutro,Cauca (interandina)
 2612800104,1995,entrenamiento,TRUE,1028,1555,-0.22,Neutro,Cauca (interandina)
 2612800104,1996,validación,TRUE,1028,1555,-0.41,Neutro,Cauca (interandina)
@@ -487,6 +459,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612800106,2000,validación,TRUE,956,3052,-0.77,Niña,Cauca (interandina)
 2612800106,2003,prueba,TRUE,956,3052,0.24,Neutro,Cauca (interandina)
 2612800107,1985,entrenamiento,TRUE,1173,1075,-0.58,Niña,Cauca (interandina)
+2612800107,1986,entrenamiento,TRUE,1173,1075,0.27,Neutro,Cauca (interandina)
 2612800107,1987,entrenamiento,TRUE,1173,1075,1.18,Niño,Cauca (interandina)
 2612800107,1988,entrenamiento,TRUE,1173,1075,-0.89,Niña,Cauca (interandina)
 2612800107,1989,entrenamiento,TRUE,1173,1075,-0.62,Niña,Cauca (interandina)
@@ -533,12 +506,9 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810102,1997,validación,TRUE,1141,3690,1.14,Niño,Cauca (interandina)
 2612810102,1998,validación,TRUE,1141,3690,0.04,Neutro,Cauca (interandina)
 2612810102,1999,validación,TRUE,1141,3690,-1.08,Niña,Cauca (interandina)
-2612810102,2000,validación,TRUE,1141,3690,-0.77,Niña,Cauca (interandina)
-2612810102,2001,prueba,TRUE,1141,3690,-0.29,Neutro,Cauca (interandina)
-2612810102,2002,prueba,TRUE,1141,3690,0.51,Niño,Cauca (interandina)
+2612810108,1981,entrenamiento,TRUE,1101,1500,-0.25,Neutro,Cauca (interandina)
 2612810108,1982,entrenamiento,TRUE,1101,1500,0.91,Niño,Cauca (interandina)
 2612810108,1983,entrenamiento,TRUE,1101,1500,0.46,Neutro,Cauca (interandina)
-2612810108,1984,entrenamiento,TRUE,1101,1500,-0.55,Niña,Cauca (interandina)
 2612810108,1985,entrenamiento,TRUE,1101,1500,-0.58,Niña,Cauca (interandina)
 2612810108,1986,entrenamiento,TRUE,1101,1500,0.27,Neutro,Cauca (interandina)
 2612810108,1987,entrenamiento,TRUE,1101,1500,1.18,Niño,Cauca (interandina)
@@ -557,9 +527,9 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810108,2001,prueba,TRUE,1101,1500,-0.29,Neutro,Cauca (interandina)
 2612810108,2002,prueba,TRUE,1101,1500,0.51,Niño,Cauca (interandina)
 2612810108,2003,prueba,TRUE,1101,1500,0.24,Neutro,Cauca (interandina)
+2612810109,1982,entrenamiento,TRUE,1101,2100,0.91,Niño,Cauca (interandina)
 2612810109,1983,entrenamiento,TRUE,1101,2100,0.46,Neutro,Cauca (interandina)
 2612810109,1984,entrenamiento,TRUE,1101,2100,-0.55,Niña,Cauca (interandina)
-2612810109,1985,entrenamiento,TRUE,1101,2100,-0.58,Niña,Cauca (interandina)
 2612810109,1986,entrenamiento,TRUE,1101,2100,0.27,Neutro,Cauca (interandina)
 2612810109,1987,entrenamiento,TRUE,1101,2100,1.18,Niño,Cauca (interandina)
 2612810109,1988,entrenamiento,TRUE,1101,2100,-0.89,Niña,Cauca (interandina)
@@ -579,6 +549,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810112,1984,entrenamiento,TRUE,1064,1750,-0.55,Niña,Cauca (interandina)
 2612810112,1985,entrenamiento,TRUE,1064,1750,-0.58,Niña,Cauca (interandina)
 2612810112,1986,entrenamiento,TRUE,1064,1750,0.27,Neutro,Cauca (interandina)
+2612810112,1987,entrenamiento,TRUE,1064,1750,1.18,Niño,Cauca (interandina)
 2612810112,1988,entrenamiento,TRUE,1064,1750,-0.89,Niña,Cauca (interandina)
 2612810112,1990,entrenamiento,TRUE,1064,1750,0.27,Neutro,Cauca (interandina)
 2612810112,1991,entrenamiento,TRUE,1064,1750,0.65,Niño,Cauca (interandina)
@@ -630,8 +601,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810122,2001,prueba,TRUE,1100,1170,-0.29,Neutro,Cauca (interandina)
 2612810122,2002,prueba,TRUE,1100,1170,0.51,Niño,Cauca (interandina)
 2612810122,2003,prueba,TRUE,1100,1170,0.24,Neutro,Cauca (interandina)
-2612810201,1981,entrenamiento,TRUE,1100,1272,-0.25,Neutro,Cauca (interandina)
-2612810201,1982,entrenamiento,TRUE,1100,1272,0.91,Niño,Cauca (interandina)
 2612810201,1983,entrenamiento,TRUE,1100,1272,0.46,Neutro,Cauca (interandina)
 2612810201,1984,entrenamiento,TRUE,1100,1272,-0.55,Niña,Cauca (interandina)
 2612810201,1985,entrenamiento,TRUE,1100,1272,-0.58,Niña,Cauca (interandina)
@@ -653,7 +622,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810201,2001,prueba,TRUE,1100,1272,-0.29,Neutro,Cauca (interandina)
 2612810201,2002,prueba,TRUE,1100,1272,0.51,Niño,Cauca (interandina)
 2612810201,2003,prueba,TRUE,1100,1272,0.24,Neutro,Cauca (interandina)
-2612810203,1988,entrenamiento,TRUE,1102,2605,-0.89,Niña,Cauca (interandina)
 2612810203,1989,entrenamiento,TRUE,1102,2605,-0.62,Niña,Cauca (interandina)
 2612810203,1990,entrenamiento,TRUE,1102,2605,0.27,Neutro,Cauca (interandina)
 2612810203,1991,entrenamiento,TRUE,1102,2605,0.65,Niño,Cauca (interandina)
@@ -669,15 +637,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2612810203,2001,prueba,TRUE,1102,2605,-0.29,Neutro,Cauca (interandina)
 2612810203,2002,prueba,TRUE,1102,2605,0.51,Niño,Cauca (interandina)
 2612810203,2003,prueba,TRUE,1102,2605,0.24,Neutro,Cauca (interandina)
-2613000101,1981,entrenamiento,TRUE,988,1017,-0.25,Neutro,Cauca (interandina)
-2613000101,1982,entrenamiento,TRUE,988,1017,0.91,Niño,Cauca (interandina)
-2613000101,1983,entrenamiento,TRUE,988,1017,0.46,Neutro,Cauca (interandina)
-2613000101,1984,entrenamiento,TRUE,988,1017,-0.55,Niña,Cauca (interandina)
-2613000101,1985,entrenamiento,TRUE,988,1017,-0.58,Niña,Cauca (interandina)
-2613000101,1987,entrenamiento,TRUE,988,1017,1.18,Niño,Cauca (interandina)
-2613000101,1988,entrenamiento,TRUE,988,1017,-0.89,Niña,Cauca (interandina)
-2613000101,1989,entrenamiento,TRUE,988,1017,-0.62,Niña,Cauca (interandina)
-2613000101,1990,entrenamiento,TRUE,988,1017,0.27,Neutro,Cauca (interandina)
 2613000102,1981,entrenamiento,TRUE,1027,1305,-0.25,Neutro,Cauca (interandina)
 2613000102,1982,entrenamiento,TRUE,1027,1305,0.91,Niño,Cauca (interandina)
 2613000102,1983,entrenamiento,TRUE,1027,1305,0.46,Neutro,Cauca (interandina)
@@ -690,16 +649,13 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613000102,1990,entrenamiento,TRUE,1027,1305,0.27,Neutro,Cauca (interandina)
 2613000102,1991,entrenamiento,TRUE,1027,1305,0.65,Niño,Cauca (interandina)
 2613000102,1992,entrenamiento,TRUE,1027,1305,0.61,Niño,Cauca (interandina)
-2613000102,1993,entrenamiento,TRUE,1027,1305,0.36,Neutro,Cauca (interandina)
 2613000102,1994,entrenamiento,TRUE,1027,1305,0.37,Neutro,Cauca (interandina)
 2613000102,1995,entrenamiento,TRUE,1027,1305,-0.22,Neutro,Cauca (interandina)
-2613000102,1997,validación,TRUE,1027,1305,1.14,Niño,Cauca (interandina)
 2613000102,1998,validación,TRUE,1027,1305,0.04,Neutro,Cauca (interandina)
 2613000102,1999,validación,TRUE,1027,1305,-1.08,Niña,Cauca (interandina)
 2613000102,2003,prueba,TRUE,1027,1305,0.24,Neutro,Cauca (interandina)
 2613000103,1981,entrenamiento,TRUE,990,1424,-0.25,Neutro,Cauca (interandina)
 2613000103,1982,entrenamiento,TRUE,990,1424,0.91,Niño,Cauca (interandina)
-2613000103,1983,entrenamiento,TRUE,990,1424,0.46,Neutro,Cauca (interandina)
 2613000103,1984,entrenamiento,TRUE,990,1424,-0.55,Niña,Cauca (interandina)
 2613000103,1985,entrenamiento,TRUE,990,1424,-0.58,Niña,Cauca (interandina)
 2613000103,1986,entrenamiento,TRUE,990,1424,0.27,Neutro,Cauca (interandina)
@@ -763,7 +719,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613100104,2001,prueba,TRUE,913,990,-0.29,Neutro,Cauca (interandina)
 2613100104,2002,prueba,TRUE,913,990,0.51,Niño,Cauca (interandina)
 2613100104,2003,prueba,TRUE,913,990,0.24,Neutro,Cauca (interandina)
-2613100106,1981,entrenamiento,TRUE,916,1826,-0.25,Neutro,Cauca (interandina)
 2613100106,1983,entrenamiento,TRUE,916,1826,0.46,Neutro,Cauca (interandina)
 2613100106,1984,entrenamiento,TRUE,916,1826,-0.55,Niña,Cauca (interandina)
 2613100106,1985,entrenamiento,TRUE,916,1826,-0.58,Niña,Cauca (interandina)
@@ -783,22 +738,20 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613100106,1999,validación,TRUE,916,1826,-1.08,Niña,Cauca (interandina)
 2613100106,2003,prueba,TRUE,916,1826,0.24,Neutro,Cauca (interandina)
 2613100107,1981,entrenamiento,TRUE,915,1192,-0.25,Neutro,Cauca (interandina)
-2613100107,1983,entrenamiento,TRUE,915,1192,0.46,Neutro,Cauca (interandina)
 2613100107,1984,entrenamiento,TRUE,915,1192,-0.55,Niña,Cauca (interandina)
 2613100107,1985,entrenamiento,TRUE,915,1192,-0.58,Niña,Cauca (interandina)
-2613100107,1986,entrenamiento,TRUE,915,1192,0.27,Neutro,Cauca (interandina)
 2613100107,1989,entrenamiento,TRUE,915,1192,-0.62,Niña,Cauca (interandina)
 2613100107,1990,entrenamiento,TRUE,915,1192,0.27,Neutro,Cauca (interandina)
 2613100107,1991,entrenamiento,TRUE,915,1192,0.65,Niño,Cauca (interandina)
 2613100107,1992,entrenamiento,TRUE,915,1192,0.61,Niño,Cauca (interandina)
 2613100107,1993,entrenamiento,TRUE,915,1192,0.36,Neutro,Cauca (interandina)
 2613100107,1994,entrenamiento,TRUE,915,1192,0.37,Neutro,Cauca (interandina)
+2613100107,1995,entrenamiento,TRUE,915,1192,-0.22,Neutro,Cauca (interandina)
 2613100107,1996,validación,TRUE,915,1192,-0.41,Neutro,Cauca (interandina)
 2613100107,1997,validación,TRUE,915,1192,1.14,Niño,Cauca (interandina)
 2613100107,1998,validación,TRUE,915,1192,0.04,Neutro,Cauca (interandina)
 2613100107,1999,validación,TRUE,915,1192,-1.08,Niña,Cauca (interandina)
 2613100107,2000,validación,TRUE,915,1192,-0.77,Niña,Cauca (interandina)
-2613100107,2001,prueba,TRUE,915,1192,-0.29,Neutro,Cauca (interandina)
 2613100107,2002,prueba,TRUE,915,1192,0.51,Niño,Cauca (interandina)
 2613100107,2003,prueba,TRUE,915,1192,0.24,Neutro,Cauca (interandina)
 2613200101,1982,entrenamiento,TRUE,914,1043,0.91,Niño,Cauca (interandina)
@@ -810,16 +763,14 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613200101,1988,entrenamiento,TRUE,914,1043,-0.89,Niña,Cauca (interandina)
 2613200101,1989,entrenamiento,TRUE,914,1043,-0.62,Niña,Cauca (interandina)
 2613200101,1990,entrenamiento,TRUE,914,1043,0.27,Neutro,Cauca (interandina)
-2613200101,1992,entrenamiento,TRUE,914,1043,0.61,Niño,Cauca (interandina)
 2613200101,1994,entrenamiento,TRUE,914,1043,0.37,Neutro,Cauca (interandina)
 2613200101,1997,validación,TRUE,914,1043,1.14,Niño,Cauca (interandina)
 2613200101,1999,validación,TRUE,914,1043,-1.08,Niña,Cauca (interandina)
 2613200101,2000,validación,TRUE,914,1043,-0.77,Niña,Cauca (interandina)
 2613200101,2002,prueba,TRUE,914,1043,0.51,Niño,Cauca (interandina)
-2613200105,1981,entrenamiento,TRUE,878,1950,-0.25,Neutro,Cauca (interandina)
+2613200105,1982,entrenamiento,TRUE,878,1950,0.91,Niño,Cauca (interandina)
 2613200105,1983,entrenamiento,TRUE,878,1950,0.46,Neutro,Cauca (interandina)
 2613200105,1984,entrenamiento,TRUE,878,1950,-0.55,Niña,Cauca (interandina)
-2613200105,1986,entrenamiento,TRUE,878,1950,0.27,Neutro,Cauca (interandina)
 2613200105,1987,entrenamiento,TRUE,878,1950,1.18,Niño,Cauca (interandina)
 2613200105,1990,entrenamiento,TRUE,878,1950,0.27,Neutro,Cauca (interandina)
 2613200105,1991,entrenamiento,TRUE,878,1950,0.65,Niño,Cauca (interandina)
@@ -828,11 +779,11 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613200105,1994,entrenamiento,TRUE,878,1950,0.37,Neutro,Cauca (interandina)
 2613200105,1995,entrenamiento,TRUE,878,1950,-0.22,Neutro,Cauca (interandina)
 2613200105,1996,validación,TRUE,878,1950,-0.41,Neutro,Cauca (interandina)
-2613200105,1997,validación,TRUE,878,1950,1.14,Niño,Cauca (interandina)
 2613200105,1998,validación,TRUE,878,1950,0.04,Neutro,Cauca (interandina)
 2613200105,2002,prueba,TRUE,878,1950,0.51,Niño,Cauca (interandina)
 2613200105,2003,prueba,TRUE,878,1950,0.24,Neutro,Cauca (interandina)
 2613600101,1981,entrenamiento,TRUE,805,1650,-0.25,Neutro,Cauca (interandina)
+2613600101,1982,entrenamiento,TRUE,805,1650,0.91,Niño,Cauca (interandina)
 2613600101,1983,entrenamiento,TRUE,805,1650,0.46,Neutro,Cauca (interandina)
 2613600101,1984,entrenamiento,TRUE,805,1650,-0.55,Niña,Cauca (interandina)
 2613600101,1985,entrenamiento,TRUE,805,1650,-0.58,Niña,Cauca (interandina)
@@ -873,13 +824,13 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613600102,1999,validación,TRUE,843,2360,-1.08,Niña,Cauca (interandina)
 2613600102,2000,validación,TRUE,843,2360,-0.77,Niña,Cauca (interandina)
 2613600102,2001,prueba,TRUE,843,2360,-0.29,Neutro,Cauca (interandina)
+2613600102,2002,prueba,TRUE,843,2360,0.51,Niño,Cauca (interandina)
+2613600102,2003,prueba,TRUE,843,2360,0.24,Neutro,Cauca (interandina)
 2613600103,1981,entrenamiento,TRUE,805,1644,-0.25,Neutro,Cauca (interandina)
 2613600103,1982,entrenamiento,TRUE,805,1644,0.91,Niño,Cauca (interandina)
-2613600103,1983,entrenamiento,TRUE,805,1644,0.46,Neutro,Cauca (interandina)
 2613600103,1984,entrenamiento,TRUE,805,1644,-0.55,Niña,Cauca (interandina)
 2613600103,1985,entrenamiento,TRUE,805,1644,-0.58,Niña,Cauca (interandina)
 2613600103,1986,entrenamiento,TRUE,805,1644,0.27,Neutro,Cauca (interandina)
-2613600103,1987,entrenamiento,TRUE,805,1644,1.18,Niño,Cauca (interandina)
 2613600103,1988,entrenamiento,TRUE,805,1644,-0.89,Niña,Cauca (interandina)
 2613600103,1989,entrenamiento,TRUE,805,1644,-0.62,Niña,Cauca (interandina)
 2613600103,1990,entrenamiento,TRUE,805,1644,0.27,Neutro,Cauca (interandina)
@@ -896,15 +847,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613600103,2001,prueba,TRUE,805,1644,-0.29,Neutro,Cauca (interandina)
 2613600103,2002,prueba,TRUE,805,1644,0.51,Niño,Cauca (interandina)
 2613600103,2003,prueba,TRUE,805,1644,0.24,Neutro,Cauca (interandina)
-2613600104,1981,entrenamiento,TRUE,842,2000,-0.25,Neutro,Cauca (interandina)
-2613600104,1982,entrenamiento,TRUE,842,2000,0.91,Niño,Cauca (interandina)
-2613600104,1983,entrenamiento,TRUE,842,2000,0.46,Neutro,Cauca (interandina)
-2613600104,1984,entrenamiento,TRUE,842,2000,-0.55,Niña,Cauca (interandina)
-2613600104,1986,entrenamiento,TRUE,842,2000,0.27,Neutro,Cauca (interandina)
-2613600104,1987,entrenamiento,TRUE,842,2000,1.18,Niño,Cauca (interandina)
-2613600104,1988,entrenamiento,TRUE,842,2000,-0.89,Niña,Cauca (interandina)
-2613600104,1989,entrenamiento,TRUE,842,2000,-0.62,Niña,Cauca (interandina)
-2613600104,1990,entrenamiento,TRUE,842,2000,0.27,Neutro,Cauca (interandina)
 2613600105,1981,entrenamiento,TRUE,840,960,-0.25,Neutro,Cauca (interandina)
 2613600105,1982,entrenamiento,TRUE,840,960,0.91,Niño,Cauca (interandina)
 2613600105,1983,entrenamiento,TRUE,840,960,0.46,Neutro,Cauca (interandina)
@@ -942,7 +884,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2613600301,1992,entrenamiento,TRUE,841,1360,0.61,Niño,Cauca (interandina)
 2613600301,1993,entrenamiento,TRUE,841,1360,0.36,Neutro,Cauca (interandina)
 2613600301,1995,entrenamiento,TRUE,841,1360,-0.22,Neutro,Cauca (interandina)
-2613600301,1996,validación,TRUE,841,1360,-0.41,Neutro,Cauca (interandina)
 2613600301,1997,validación,TRUE,841,1360,1.14,Niño,Cauca (interandina)
 2613600301,1998,validación,TRUE,841,1360,0.04,Neutro,Cauca (interandina)
 2613600301,1999,validación,TRUE,841,1360,-1.08,Niña,Cauca (interandina)
@@ -1029,9 +970,9 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614100104,1998,validación,TRUE,808,1956,0.04,Neutro,Cauca (interandina)
 2614100104,1999,validación,TRUE,808,1956,-1.08,Niña,Cauca (interandina)
 2614100104,2000,validación,TRUE,808,1956,-0.77,Niña,Cauca (interandina)
+2614100104,2001,prueba,TRUE,808,1956,-0.29,Neutro,Cauca (interandina)
 2614100104,2002,prueba,TRUE,808,1956,0.51,Niño,Cauca (interandina)
 2614100104,2003,prueba,TRUE,808,1956,0.24,Neutro,Cauca (interandina)
-2614100202,1981,entrenamiento,TRUE,694,1014,-0.25,Neutro,Cauca (interandina)
 2614100202,1982,entrenamiento,TRUE,694,1014,0.91,Niño,Cauca (interandina)
 2614100202,1983,entrenamiento,TRUE,694,1014,0.46,Neutro,Cauca (interandina)
 2614100202,1984,entrenamiento,TRUE,694,1014,-0.55,Niña,Cauca (interandina)
@@ -1062,7 +1003,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614100203,1986,entrenamiento,TRUE,770,1861,0.27,Neutro,Cauca (interandina)
 2614100203,1987,entrenamiento,TRUE,770,1861,1.18,Niño,Cauca (interandina)
 2614100203,1988,entrenamiento,TRUE,770,1861,-0.89,Niña,Cauca (interandina)
-2614100203,1989,entrenamiento,TRUE,770,1861,-0.62,Niña,Cauca (interandina)
 2614100203,1990,entrenamiento,TRUE,770,1861,0.27,Neutro,Cauca (interandina)
 2614100203,1991,entrenamiento,TRUE,770,1861,0.65,Niño,Cauca (interandina)
 2614100203,1992,entrenamiento,TRUE,770,1861,0.61,Niño,Cauca (interandina)
@@ -1098,13 +1038,13 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614200101,2002,prueba,TRUE,733,1560,0.51,Niño,Cauca (interandina)
 2614400101,1981,entrenamiento,TRUE,700,2290,-0.25,Neutro,Cauca (interandina)
 2614400101,1982,entrenamiento,TRUE,700,2290,0.91,Niño,Cauca (interandina)
-2614400101,1984,entrenamiento,TRUE,700,2290,-0.55,Niña,Cauca (interandina)
+2614400101,1983,entrenamiento,TRUE,700,2290,0.46,Neutro,Cauca (interandina)
 2614400101,1986,entrenamiento,TRUE,700,2290,0.27,Neutro,Cauca (interandina)
 2614400101,1987,entrenamiento,TRUE,700,2290,1.18,Niño,Cauca (interandina)
 2614400101,1988,entrenamiento,TRUE,700,2290,-0.89,Niña,Cauca (interandina)
 2614400101,1989,entrenamiento,TRUE,700,2290,-0.62,Niña,Cauca (interandina)
 2614400101,1990,entrenamiento,TRUE,700,2290,0.27,Neutro,Cauca (interandina)
-2614400101,1991,entrenamiento,TRUE,700,2290,0.65,Niño,Cauca (interandina)
+2614400101,1992,entrenamiento,TRUE,700,2290,0.61,Niño,Cauca (interandina)
 2614400101,1993,entrenamiento,TRUE,700,2290,0.36,Neutro,Cauca (interandina)
 2614400101,1994,entrenamiento,TRUE,700,2290,0.37,Neutro,Cauca (interandina)
 2614400101,1995,entrenamiento,TRUE,700,2290,-0.22,Neutro,Cauca (interandina)
@@ -1153,6 +1093,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614400103,1997,validación,TRUE,698,1657,1.14,Niño,Cauca (interandina)
 2614400103,1998,validación,TRUE,698,1657,0.04,Neutro,Cauca (interandina)
 2614400103,2001,prueba,TRUE,698,1657,-0.29,Neutro,Cauca (interandina)
+2614400103,2002,prueba,TRUE,698,1657,0.51,Niño,Cauca (interandina)
 2614400103,2003,prueba,TRUE,698,1657,0.24,Neutro,Cauca (interandina)
 2614400104,1981,entrenamiento,TRUE,625,1663,-0.25,Neutro,Cauca (interandina)
 2614400104,1982,entrenamiento,TRUE,625,1663,0.91,Niño,Cauca (interandina)
@@ -1190,7 +1131,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614400105,1991,entrenamiento,TRUE,695,1314,0.65,Niño,Cauca (interandina)
 2614400105,1992,entrenamiento,TRUE,695,1314,0.61,Niño,Cauca (interandina)
 2614400105,1994,entrenamiento,TRUE,695,1314,0.37,Neutro,Cauca (interandina)
-2614400105,1996,validación,TRUE,695,1314,-0.41,Neutro,Cauca (interandina)
 2614400105,1997,validación,TRUE,695,1314,1.14,Niño,Cauca (interandina)
 2614400105,1998,validación,TRUE,695,1314,0.04,Neutro,Cauca (interandina)
 2614400105,2000,validación,TRUE,695,1314,-0.77,Niña,Cauca (interandina)
@@ -1211,7 +1151,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614400201,1992,entrenamiento,TRUE,737,3100,0.61,Niño,Cauca (interandina)
 2614400201,1993,entrenamiento,TRUE,737,3100,0.36,Neutro,Cauca (interandina)
 2614400201,1994,entrenamiento,TRUE,737,3100,0.37,Neutro,Cauca (interandina)
-2614400201,1995,entrenamiento,TRUE,737,3100,-0.22,Neutro,Cauca (interandina)
 2614400201,1996,validación,TRUE,737,3100,-0.41,Neutro,Cauca (interandina)
 2614400201,1997,validación,TRUE,737,3100,1.14,Niño,Cauca (interandina)
 2614400201,1998,validación,TRUE,737,3100,0.04,Neutro,Cauca (interandina)
@@ -1231,7 +1170,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614500102,1992,entrenamiento,TRUE,512,977,0.61,Niño,Cauca (interandina)
 2614500102,1993,entrenamiento,TRUE,512,977,0.36,Neutro,Cauca (interandina)
 2614500102,1994,entrenamiento,TRUE,512,977,0.37,Neutro,Cauca (interandina)
-2614500102,1995,entrenamiento,TRUE,512,977,-0.22,Neutro,Cauca (interandina)
 2614500102,1996,validación,TRUE,512,977,-0.41,Neutro,Cauca (interandina)
 2614500102,1997,validación,TRUE,512,977,1.14,Niño,Cauca (interandina)
 2614500102,1998,validación,TRUE,512,977,0.04,Neutro,Cauca (interandina)
@@ -1239,15 +1177,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614500102,2000,validación,TRUE,512,977,-0.77,Niña,Cauca (interandina)
 2614500102,2001,prueba,TRUE,512,977,-0.29,Neutro,Cauca (interandina)
 2614500102,2002,prueba,TRUE,512,977,0.51,Niño,Cauca (interandina)
-2614500103,1982,entrenamiento,TRUE,623,1433,0.91,Niño,Cauca (interandina)
-2614500103,1983,entrenamiento,TRUE,623,1433,0.46,Neutro,Cauca (interandina)
-2614500103,1984,entrenamiento,TRUE,623,1433,-0.55,Niña,Cauca (interandina)
-2614500103,1985,entrenamiento,TRUE,623,1433,-0.58,Niña,Cauca (interandina)
-2614500103,1986,entrenamiento,TRUE,623,1433,0.27,Neutro,Cauca (interandina)
-2614500103,1987,entrenamiento,TRUE,623,1433,1.18,Niño,Cauca (interandina)
-2614500103,1988,entrenamiento,TRUE,623,1433,-0.89,Niña,Cauca (interandina)
-2614500103,1989,entrenamiento,TRUE,623,1433,-0.62,Niña,Cauca (interandina)
-2614500103,1990,entrenamiento,TRUE,623,1433,0.27,Neutro,Cauca (interandina)
 2614500104,1981,entrenamiento,TRUE,622,1191,-0.25,Neutro,Cauca (interandina)
 2614500104,1982,entrenamiento,TRUE,622,1191,0.91,Niño,Cauca (interandina)
 2614500104,1983,entrenamiento,TRUE,622,1191,0.46,Neutro,Cauca (interandina)
@@ -1270,11 +1199,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614500104,2001,prueba,TRUE,622,1191,-0.29,Neutro,Cauca (interandina)
 2614500104,2002,prueba,TRUE,622,1191,0.51,Niño,Cauca (interandina)
 2614500104,2003,prueba,TRUE,622,1191,0.24,Neutro,Cauca (interandina)
-2614900101,1984,entrenamiento,TRUE,402,1025,-0.55,Niña,Cauca (interandina)
-2614900101,1986,entrenamiento,TRUE,402,1025,0.27,Neutro,Cauca (interandina)
 2614900101,1987,entrenamiento,TRUE,402,1025,1.18,Niño,Cauca (interandina)
 2614900101,1988,entrenamiento,TRUE,402,1025,-0.89,Niña,Cauca (interandina)
-2614900101,1989,entrenamiento,TRUE,402,1025,-0.62,Niña,Cauca (interandina)
 2614900101,1990,entrenamiento,TRUE,402,1025,0.27,Neutro,Cauca (interandina)
 2614900101,1991,entrenamiento,TRUE,402,1025,0.65,Niño,Cauca (interandina)
 2614900101,1993,entrenamiento,TRUE,402,1025,0.36,Neutro,Cauca (interandina)
@@ -1284,7 +1210,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614900101,2000,validación,TRUE,402,1025,-0.77,Niña,Cauca (interandina)
 2614900101,2001,prueba,TRUE,402,1025,-0.29,Neutro,Cauca (interandina)
 2614900101,2002,prueba,TRUE,402,1025,0.51,Niño,Cauca (interandina)
-2614900101,2003,prueba,TRUE,402,1025,0.24,Neutro,Cauca (interandina)
 2614900102,1984,entrenamiento,TRUE,475,962,-0.55,Niña,Cauca (interandina)
 2614900102,1985,entrenamiento,TRUE,475,962,-0.58,Niña,Cauca (interandina)
 2614900102,1986,entrenamiento,TRUE,475,962,0.27,Neutro,Cauca (interandina)
@@ -1311,11 +1236,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2614900201,1984,entrenamiento,TRUE,366,1233,-0.55,Niña,Cauca (interandina)
 2614900201,1985,entrenamiento,TRUE,366,1233,-0.58,Niña,Cauca (interandina)
 2614900201,1986,entrenamiento,TRUE,366,1233,0.27,Neutro,Cauca (interandina)
-2614900201,1987,entrenamiento,TRUE,366,1233,1.18,Niño,Cauca (interandina)
 2614900201,1989,entrenamiento,TRUE,366,1233,-0.62,Niña,Cauca (interandina)
 2614900201,1990,entrenamiento,TRUE,366,1233,0.27,Neutro,Cauca (interandina)
-2614900201,1991,entrenamiento,TRUE,366,1233,0.65,Niño,Cauca (interandina)
-2614900201,1992,entrenamiento,TRUE,366,1233,0.61,Niño,Cauca (interandina)
 2614900201,1993,entrenamiento,TRUE,366,1233,0.36,Neutro,Cauca (interandina)
 2614900201,1994,entrenamiento,TRUE,366,1233,0.37,Neutro,Cauca (interandina)
 2614900201,1995,entrenamiento,TRUE,366,1233,-0.22,Neutro,Cauca (interandina)
@@ -1331,7 +1253,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615000101,1984,entrenamiento,TRUE,328,930,-0.55,Niña,Cauca (interandina)
 2615000101,1985,entrenamiento,TRUE,328,930,-0.58,Niña,Cauca (interandina)
 2615000101,1986,entrenamiento,TRUE,328,930,0.27,Neutro,Cauca (interandina)
-2615000101,1987,entrenamiento,TRUE,328,930,1.18,Niño,Cauca (interandina)
 2615000101,1988,entrenamiento,TRUE,328,930,-0.89,Niña,Cauca (interandina)
 2615000101,1989,entrenamiento,TRUE,328,930,-0.62,Niña,Cauca (interandina)
 2615000101,1990,entrenamiento,TRUE,328,930,0.27,Neutro,Cauca (interandina)
@@ -1343,14 +1264,12 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615000101,1998,validación,TRUE,328,930,0.04,Neutro,Cauca (interandina)
 2615000101,1999,validación,TRUE,328,930,-1.08,Niña,Cauca (interandina)
 2615000102,1983,entrenamiento,TRUE,329,1275,0.46,Neutro,Cauca (interandina)
-2615000102,1985,entrenamiento,TRUE,329,1275,-0.58,Niña,Cauca (interandina)
 2615000102,1986,entrenamiento,TRUE,329,1275,0.27,Neutro,Cauca (interandina)
 2615000102,1987,entrenamiento,TRUE,329,1275,1.18,Niño,Cauca (interandina)
 2615000102,1989,entrenamiento,TRUE,329,1275,-0.62,Niña,Cauca (interandina)
 2615000102,1990,entrenamiento,TRUE,329,1275,0.27,Neutro,Cauca (interandina)
 2615000102,1991,entrenamiento,TRUE,329,1275,0.65,Niño,Cauca (interandina)
 2615000102,1992,entrenamiento,TRUE,329,1275,0.61,Niño,Cauca (interandina)
-2615000102,1993,entrenamiento,TRUE,329,1275,0.36,Neutro,Cauca (interandina)
 2615000102,1994,entrenamiento,TRUE,329,1275,0.37,Neutro,Cauca (interandina)
 2615000102,1995,entrenamiento,TRUE,329,1275,-0.22,Neutro,Cauca (interandina)
 2615000102,1996,validación,TRUE,329,1275,-0.41,Neutro,Cauca (interandina)
@@ -1368,10 +1287,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615400102,1986,entrenamiento,TRUE,551,1540,0.27,Neutro,Cauca (interandina)
 2615400102,1987,entrenamiento,TRUE,551,1540,1.18,Niño,Cauca (interandina)
 2615400102,1988,entrenamiento,TRUE,551,1540,-0.89,Niña,Cauca (interandina)
-2615400102,1989,entrenamiento,TRUE,551,1540,-0.62,Niña,Cauca (interandina)
 2615400102,1990,entrenamiento,TRUE,551,1540,0.27,Neutro,Cauca (interandina)
 2615400102,1991,entrenamiento,TRUE,551,1540,0.65,Niño,Cauca (interandina)
-2615400102,1999,validación,TRUE,551,1540,-1.08,Niña,Cauca (interandina)
 2615400102,2002,prueba,TRUE,551,1540,0.51,Niño,Cauca (interandina)
 2615400102,2003,prueba,TRUE,551,1540,0.24,Neutro,Cauca (interandina)
 2615400103,1981,entrenamiento,TRUE,181,913,-0.25,Neutro,Cauca (interandina)
@@ -1387,7 +1304,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615400103,1991,entrenamiento,TRUE,181,913,0.65,Niño,Cauca (interandina)
 2615400103,1992,entrenamiento,TRUE,181,913,0.61,Niño,Cauca (interandina)
 2615400103,1993,entrenamiento,TRUE,181,913,0.36,Neutro,Cauca (interandina)
-2615400103,1994,entrenamiento,TRUE,181,913,0.37,Neutro,Cauca (interandina)
 2615400103,1995,entrenamiento,TRUE,181,913,-0.22,Neutro,Cauca (interandina)
 2615400104,1981,entrenamiento,TRUE,516,1240,-0.25,Neutro,Cauca (interandina)
 2615400104,1982,entrenamiento,TRUE,516,1240,0.91,Niño,Cauca (interandina)
@@ -1415,8 +1331,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615400105,1982,entrenamiento,TRUE,258,1261,0.91,Niño,Cauca (interandina)
 2615400105,1983,entrenamiento,TRUE,258,1261,0.46,Neutro,Cauca (interandina)
 2615400105,1984,entrenamiento,TRUE,258,1261,-0.55,Niña,Cauca (interandina)
-2615400105,1985,entrenamiento,TRUE,258,1261,-0.58,Niña,Cauca (interandina)
-2615400105,1986,entrenamiento,TRUE,258,1261,0.27,Neutro,Cauca (interandina)
 2615400105,1987,entrenamiento,TRUE,258,1261,1.18,Niño,Cauca (interandina)
 2615400105,1988,entrenamiento,TRUE,258,1261,-0.89,Niña,Cauca (interandina)
 2615400105,1991,entrenamiento,TRUE,258,1261,0.65,Niño,Cauca (interandina)
@@ -1426,7 +1340,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615400105,1996,validación,TRUE,258,1261,-0.41,Neutro,Cauca (interandina)
 2615400105,1997,validación,TRUE,258,1261,1.14,Niño,Cauca (interandina)
 2615400105,1998,validación,TRUE,258,1261,0.04,Neutro,Cauca (interandina)
-2615400105,1999,validación,TRUE,258,1261,-1.08,Niña,Cauca (interandina)
 2615400105,2000,validación,TRUE,258,1261,-0.77,Niña,Cauca (interandina)
 2615400105,2001,prueba,TRUE,258,1261,-0.29,Neutro,Cauca (interandina)
 2615400105,2002,prueba,TRUE,258,1261,0.51,Niño,Cauca (interandina)
@@ -1501,21 +1414,18 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2615400111,1994,entrenamiento,TRUE,219,1100,0.37,Neutro,Cauca (interandina)
 2615400111,1995,entrenamiento,TRUE,219,1100,-0.22,Neutro,Cauca (interandina)
 2615400111,1996,validación,TRUE,219,1100,-0.41,Neutro,Cauca (interandina)
-2615400111,1997,validación,TRUE,219,1100,1.14,Niño,Cauca (interandina)
 2615400111,1998,validación,TRUE,219,1100,0.04,Neutro,Cauca (interandina)
 2615400111,1999,validación,TRUE,219,1100,-1.08,Niña,Cauca (interandina)
 2615400111,2000,validación,TRUE,219,1100,-0.77,Niña,Cauca (interandina)
 2615400111,2001,prueba,TRUE,219,1100,-0.29,Neutro,Cauca (interandina)
 2615400111,2002,prueba,TRUE,219,1100,0.51,Niño,Cauca (interandina)
 2615400111,2003,prueba,TRUE,219,1100,0.24,Neutro,Cauca (interandina)
-2620000103,1981,entrenamiento,TRUE,1169,956,-0.25,Neutro,Cauca (interandina)
 2620000103,1982,entrenamiento,TRUE,1169,956,0.91,Niño,Cauca (interandina)
 2620000103,1983,entrenamiento,TRUE,1169,956,0.46,Neutro,Cauca (interandina)
 2620000103,1984,entrenamiento,TRUE,1169,956,-0.55,Niña,Cauca (interandina)
 2620000103,1985,entrenamiento,TRUE,1169,956,-0.58,Niña,Cauca (interandina)
 2620000103,1986,entrenamiento,TRUE,1169,956,0.27,Neutro,Cauca (interandina)
 2620000103,1987,entrenamiento,TRUE,1169,956,1.18,Niño,Cauca (interandina)
-2620000103,1988,entrenamiento,TRUE,1169,956,-0.89,Niña,Cauca (interandina)
 2620000103,1989,entrenamiento,TRUE,1169,956,-0.62,Niña,Cauca (interandina)
 2620000103,1990,entrenamiento,TRUE,1169,956,0.27,Neutro,Cauca (interandina)
 2620000103,1991,entrenamiento,TRUE,1169,956,0.65,Niño,Cauca (interandina)
@@ -1526,7 +1436,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2620000103,1996,validación,TRUE,1169,956,-0.41,Neutro,Cauca (interandina)
 2620000103,1997,validación,TRUE,1169,956,1.14,Niño,Cauca (interandina)
 2620000103,1998,validación,TRUE,1169,956,0.04,Neutro,Cauca (interandina)
-2620000103,1999,validación,TRUE,1169,956,-1.08,Niña,Cauca (interandina)
 2620000103,2000,validación,TRUE,1169,956,-0.77,Niña,Cauca (interandina)
 2620000103,2001,prueba,TRUE,1169,956,-0.29,Neutro,Cauca (interandina)
 2620000103,2002,prueba,TRUE,1169,956,0.51,Niño,Cauca (interandina)
@@ -1551,18 +1460,15 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2620000109,1981,entrenamiento,TRUE,839,920,-0.25,Neutro,Cauca (interandina)
 2620000109,1982,entrenamiento,TRUE,839,920,0.91,Niño,Cauca (interandina)
 2620000109,1983,entrenamiento,TRUE,839,920,0.46,Neutro,Cauca (interandina)
-2620000109,1984,entrenamiento,TRUE,839,920,-0.55,Niña,Cauca (interandina)
 2620000109,1985,entrenamiento,TRUE,839,920,-0.58,Niña,Cauca (interandina)
 2620000109,1986,entrenamiento,TRUE,839,920,0.27,Neutro,Cauca (interandina)
 2620000109,1987,entrenamiento,TRUE,839,920,1.18,Niño,Cauca (interandina)
-2620000109,1988,entrenamiento,TRUE,839,920,-0.89,Niña,Cauca (interandina)
 2620000109,1989,entrenamiento,TRUE,839,920,-0.62,Niña,Cauca (interandina)
 2620000109,1990,entrenamiento,TRUE,839,920,0.27,Neutro,Cauca (interandina)
 2620000109,1991,entrenamiento,TRUE,839,920,0.65,Niño,Cauca (interandina)
 2620000109,1992,entrenamiento,TRUE,839,920,0.61,Niño,Cauca (interandina)
 2620000109,1993,entrenamiento,TRUE,839,920,0.36,Neutro,Cauca (interandina)
 2620000109,1994,entrenamiento,TRUE,839,920,0.37,Neutro,Cauca (interandina)
-2620000109,1995,entrenamiento,TRUE,839,920,-0.22,Neutro,Cauca (interandina)
 2620000109,1996,validación,TRUE,839,920,-0.41,Neutro,Cauca (interandina)
 2620000109,1998,validación,TRUE,839,920,0.04,Neutro,Cauca (interandina)
 2620000109,1999,validación,TRUE,839,920,-1.08,Niña,Cauca (interandina)
@@ -1622,7 +1528,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2621500103,1984,entrenamiento,TRUE,1386,1156,-0.55,Niña,Cauca (interandina)
 2621500103,1985,entrenamiento,TRUE,1386,1156,-0.58,Niña,Cauca (interandina)
 2621500103,1986,entrenamiento,TRUE,1386,1156,0.27,Neutro,Cauca (interandina)
-2621500103,1989,entrenamiento,TRUE,1386,1156,-0.62,Niña,Cauca (interandina)
+2621500103,1987,entrenamiento,TRUE,1386,1156,1.18,Niño,Cauca (interandina)
 2621500103,1990,entrenamiento,TRUE,1386,1156,0.27,Neutro,Cauca (interandina)
 2621500103,1991,entrenamiento,TRUE,1386,1156,0.65,Niño,Cauca (interandina)
 2621500103,1992,entrenamiento,TRUE,1386,1156,0.61,Niño,Cauca (interandina)
@@ -1641,7 +1547,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2621500301,1982,entrenamiento,TRUE,1349,1527,0.91,Niño,Cauca (interandina)
 2621500301,1983,entrenamiento,TRUE,1349,1527,0.46,Neutro,Cauca (interandina)
 2621500301,1984,entrenamiento,TRUE,1349,1527,-0.55,Niña,Cauca (interandina)
-2621500301,1985,entrenamiento,TRUE,1349,1527,-0.58,Niña,Cauca (interandina)
 2621500301,1986,entrenamiento,TRUE,1349,1527,0.27,Neutro,Cauca (interandina)
 2621500301,1987,entrenamiento,TRUE,1349,1527,1.18,Niño,Cauca (interandina)
 2621500301,1988,entrenamiento,TRUE,1349,1527,-0.89,Niña,Cauca (interandina)
@@ -1650,7 +1555,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2621500301,1992,entrenamiento,TRUE,1349,1527,0.61,Niño,Cauca (interandina)
 2621500301,1993,entrenamiento,TRUE,1349,1527,0.36,Neutro,Cauca (interandina)
 2621500301,1994,entrenamiento,TRUE,1349,1527,0.37,Neutro,Cauca (interandina)
-2621500301,1995,entrenamiento,TRUE,1349,1527,-0.22,Neutro,Cauca (interandina)
 2621500301,1996,validación,TRUE,1349,1527,-0.41,Neutro,Cauca (interandina)
 2621500301,1997,validación,TRUE,1349,1527,1.14,Niño,Cauca (interandina)
 2621500301,1998,validación,TRUE,1349,1527,0.04,Neutro,Cauca (interandina)
@@ -1703,6 +1607,18 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622100103,2001,prueba,TRUE,1277,1442,-0.29,Neutro,Cauca (interandina)
 2622100103,2002,prueba,TRUE,1277,1442,0.51,Niño,Cauca (interandina)
 2622100103,2003,prueba,TRUE,1277,1442,0.24,Neutro,Cauca (interandina)
+2622100104,1981,entrenamiento,TRUE,1276,2100,-0.25,Neutro,Cauca (interandina)
+2622100104,1987,entrenamiento,TRUE,1276,2100,1.18,Niño,Cauca (interandina)
+2622100104,1988,entrenamiento,TRUE,1276,2100,-0.89,Niña,Cauca (interandina)
+2622100104,1989,entrenamiento,TRUE,1276,2100,-0.62,Niña,Cauca (interandina)
+2622100104,1991,entrenamiento,TRUE,1276,2100,0.65,Niño,Cauca (interandina)
+2622100104,1995,entrenamiento,TRUE,1276,2100,-0.22,Neutro,Cauca (interandina)
+2622100104,1996,validación,TRUE,1276,2100,-0.41,Neutro,Cauca (interandina)
+2622100104,1997,validación,TRUE,1276,2100,1.14,Niño,Cauca (interandina)
+2622100104,1998,validación,TRUE,1276,2100,0.04,Neutro,Cauca (interandina)
+2622100104,2000,validación,TRUE,1276,2100,-0.77,Niña,Cauca (interandina)
+2622100104,2002,prueba,TRUE,1276,2100,0.51,Niño,Cauca (interandina)
+2622100104,2003,prueba,TRUE,1276,2100,0.24,Neutro,Cauca (interandina)
 2622100301,1981,entrenamiento,TRUE,1313,1567,-0.25,Neutro,Cauca (interandina)
 2622100301,1982,entrenamiento,TRUE,1313,1567,0.91,Niño,Cauca (interandina)
 2622100301,1983,entrenamiento,TRUE,1313,1567,0.46,Neutro,Cauca (interandina)
@@ -1726,7 +1642,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622110101,1982,entrenamiento,TRUE,1239,1794,0.91,Niño,Cauca (interandina)
 2622110101,1984,entrenamiento,TRUE,1239,1794,-0.55,Niña,Cauca (interandina)
 2622110101,1985,entrenamiento,TRUE,1239,1794,-0.58,Niña,Cauca (interandina)
-2622110101,1986,entrenamiento,TRUE,1239,1794,0.27,Neutro,Cauca (interandina)
 2622110101,1987,entrenamiento,TRUE,1239,1794,1.18,Niño,Cauca (interandina)
 2622110101,1988,entrenamiento,TRUE,1239,1794,-0.89,Niña,Cauca (interandina)
 2622110101,1989,entrenamiento,TRUE,1239,1794,-0.62,Niña,Cauca (interandina)
@@ -1768,14 +1683,10 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622110201,2002,prueba,TRUE,1240,1676,0.51,Niño,Cauca (interandina)
 2622110201,2003,prueba,TRUE,1240,1676,0.24,Neutro,Cauca (interandina)
 2622310101,1983,entrenamiento,TRUE,1204,1180,0.46,Neutro,Cauca (interandina)
-2622310101,1984,entrenamiento,TRUE,1204,1180,-0.55,Niña,Cauca (interandina)
 2622310101,1985,entrenamiento,TRUE,1204,1180,-0.58,Niña,Cauca (interandina)
 2622310101,1986,entrenamiento,TRUE,1204,1180,0.27,Neutro,Cauca (interandina)
-2622310101,1987,entrenamiento,TRUE,1204,1180,1.18,Niño,Cauca (interandina)
 2622310101,1988,entrenamiento,TRUE,1204,1180,-0.89,Niña,Cauca (interandina)
 2622310101,1989,entrenamiento,TRUE,1204,1180,-0.62,Niña,Cauca (interandina)
-2622310101,1990,entrenamiento,TRUE,1204,1180,0.27,Neutro,Cauca (interandina)
-2622310101,1991,entrenamiento,TRUE,1204,1180,0.65,Niño,Cauca (interandina)
 2622310101,1992,entrenamiento,TRUE,1204,1180,0.61,Niño,Cauca (interandina)
 2622310101,1993,entrenamiento,TRUE,1204,1180,0.36,Neutro,Cauca (interandina)
 2622310101,1994,entrenamiento,TRUE,1204,1180,0.37,Neutro,Cauca (interandina)
@@ -1783,8 +1694,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622310101,1996,validación,TRUE,1204,1180,-0.41,Neutro,Cauca (interandina)
 2622310101,1997,validación,TRUE,1204,1180,1.14,Niño,Cauca (interandina)
 2622310101,1998,validación,TRUE,1204,1180,0.04,Neutro,Cauca (interandina)
-2622310101,1999,validación,TRUE,1204,1180,-1.08,Niña,Cauca (interandina)
-2622310101,2000,validación,TRUE,1204,1180,-0.77,Niña,Cauca (interandina)
 2622320101,1983,entrenamiento,TRUE,1204,1298,0.46,Neutro,Cauca (interandina)
 2622320101,1984,entrenamiento,TRUE,1204,1298,-0.55,Niña,Cauca (interandina)
 2622320101,1985,entrenamiento,TRUE,1204,1298,-0.58,Niña,Cauca (interandina)
@@ -1802,7 +1711,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622320101,1997,validación,TRUE,1204,1298,1.14,Niño,Cauca (interandina)
 2622320101,1998,validación,TRUE,1204,1298,0.04,Neutro,Cauca (interandina)
 2622320101,1999,validación,TRUE,1204,1298,-1.08,Niña,Cauca (interandina)
-2622320101,2000,validación,TRUE,1204,1298,-0.77,Niña,Cauca (interandina)
 2622320101,2001,prueba,TRUE,1204,1298,-0.29,Neutro,Cauca (interandina)
 2622320101,2002,prueba,TRUE,1204,1298,0.51,Niño,Cauca (interandina)
 2622320101,2003,prueba,TRUE,1204,1298,0.24,Neutro,Cauca (interandina)
@@ -1840,66 +1748,22 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622320201,1994,entrenamiento,TRUE,1205,996,0.37,Neutro,Cauca (interandina)
 2622320201,1995,entrenamiento,TRUE,1205,996,-0.22,Neutro,Cauca (interandina)
 2622320201,1997,validación,TRUE,1205,996,1.14,Niño,Cauca (interandina)
-2622320201,1999,validación,TRUE,1205,996,-1.08,Niña,Cauca (interandina)
 2622320201,2000,validación,TRUE,1205,996,-0.77,Niña,Cauca (interandina)
-2622320201,2001,prueba,TRUE,1205,996,-0.29,Neutro,Cauca (interandina)
 2622320201,2002,prueba,TRUE,1205,996,0.51,Niño,Cauca (interandina)
-2622320201,2003,prueba,TRUE,1205,996,0.24,Neutro,Cauca (interandina)
 2622330101,1981,entrenamiento,TRUE,1168,1000,-0.25,Neutro,Cauca (interandina)
-2622330101,1982,entrenamiento,TRUE,1168,1000,0.91,Niño,Cauca (interandina)
-2622330101,1983,entrenamiento,TRUE,1168,1000,0.46,Neutro,Cauca (interandina)
 2622330101,1984,entrenamiento,TRUE,1168,1000,-0.55,Niña,Cauca (interandina)
 2622330101,1985,entrenamiento,TRUE,1168,1000,-0.58,Niña,Cauca (interandina)
-2622330101,1986,entrenamiento,TRUE,1168,1000,0.27,Neutro,Cauca (interandina)
 2622330101,1987,entrenamiento,TRUE,1168,1000,1.18,Niño,Cauca (interandina)
-2622330101,1988,entrenamiento,TRUE,1168,1000,-0.89,Niña,Cauca (interandina)
 2622330101,1989,entrenamiento,TRUE,1168,1000,-0.62,Niña,Cauca (interandina)
-2622330101,1990,entrenamiento,TRUE,1168,1000,0.27,Neutro,Cauca (interandina)
 2622330101,1991,entrenamiento,TRUE,1168,1000,0.65,Niño,Cauca (interandina)
-2622330101,1992,entrenamiento,TRUE,1168,1000,0.61,Niño,Cauca (interandina)
-2622330101,1993,entrenamiento,TRUE,1168,1000,0.36,Neutro,Cauca (interandina)
-2622330101,1994,entrenamiento,TRUE,1168,1000,0.37,Neutro,Cauca (interandina)
 2622330101,1995,entrenamiento,TRUE,1168,1000,-0.22,Neutro,Cauca (interandina)
 2622330101,1996,validación,TRUE,1168,1000,-0.41,Neutro,Cauca (interandina)
 2622330101,1997,validación,TRUE,1168,1000,1.14,Niño,Cauca (interandina)
-2622330101,1998,validación,TRUE,1168,1000,0.04,Neutro,Cauca (interandina)
 2622330101,1999,validación,TRUE,1168,1000,-1.08,Niña,Cauca (interandina)
 2622330101,2000,validación,TRUE,1168,1000,-0.77,Niña,Cauca (interandina)
 2622330101,2001,prueba,TRUE,1168,1000,-0.29,Neutro,Cauca (interandina)
 2622330101,2002,prueba,TRUE,1168,1000,0.51,Niño,Cauca (interandina)
 2622330101,2003,prueba,TRUE,1168,1000,0.24,Neutro,Cauca (interandina)
-2622330102,1981,entrenamiento,TRUE,1167,1056,-0.25,Neutro,Cauca (interandina)
-2622330102,1982,entrenamiento,TRUE,1167,1056,0.91,Niño,Cauca (interandina)
-2622330102,1983,entrenamiento,TRUE,1167,1056,0.46,Neutro,Cauca (interandina)
-2622330102,1984,entrenamiento,TRUE,1167,1056,-0.55,Niña,Cauca (interandina)
-2622330102,1985,entrenamiento,TRUE,1167,1056,-0.58,Niña,Cauca (interandina)
-2622330102,1986,entrenamiento,TRUE,1167,1056,0.27,Neutro,Cauca (interandina)
-2622330102,1987,entrenamiento,TRUE,1167,1056,1.18,Niño,Cauca (interandina)
-2622330102,1988,entrenamiento,TRUE,1167,1056,-0.89,Niña,Cauca (interandina)
-2622330102,1989,entrenamiento,TRUE,1167,1056,-0.62,Niña,Cauca (interandina)
-2622330102,1990,entrenamiento,TRUE,1167,1056,0.27,Neutro,Cauca (interandina)
-2622330102,1991,entrenamiento,TRUE,1167,1056,0.65,Niño,Cauca (interandina)
-2622330102,1992,entrenamiento,TRUE,1167,1056,0.61,Niño,Cauca (interandina)
-2622330102,1993,entrenamiento,TRUE,1167,1056,0.36,Neutro,Cauca (interandina)
-2622330102,1994,entrenamiento,TRUE,1167,1056,0.37,Neutro,Cauca (interandina)
-2622330102,1995,entrenamiento,TRUE,1167,1056,-0.22,Neutro,Cauca (interandina)
-2622330102,1996,validación,TRUE,1167,1056,-0.41,Neutro,Cauca (interandina)
-2622330102,1997,validación,TRUE,1167,1056,1.14,Niño,Cauca (interandina)
-2622330102,1998,validación,TRUE,1167,1056,0.04,Neutro,Cauca (interandina)
-2622330102,1999,validación,TRUE,1167,1056,-1.08,Niña,Cauca (interandina)
-2622330102,2001,prueba,TRUE,1167,1056,-0.29,Neutro,Cauca (interandina)
-2622330102,2002,prueba,TRUE,1167,1056,0.51,Niño,Cauca (interandina)
-2622330102,2003,prueba,TRUE,1167,1056,0.24,Neutro,Cauca (interandina)
-2622330104,1981,entrenamiento,TRUE,1203,1172,-0.25,Neutro,Cauca (interandina)
-2622330104,1982,entrenamiento,TRUE,1203,1172,0.91,Niño,Cauca (interandina)
-2622330104,1983,entrenamiento,TRUE,1203,1172,0.46,Neutro,Cauca (interandina)
-2622330104,1984,entrenamiento,TRUE,1203,1172,-0.55,Niña,Cauca (interandina)
-2622330104,1985,entrenamiento,TRUE,1203,1172,-0.58,Niña,Cauca (interandina)
-2622330104,1986,entrenamiento,TRUE,1203,1172,0.27,Neutro,Cauca (interandina)
-2622330104,1987,entrenamiento,TRUE,1203,1172,1.18,Niño,Cauca (interandina)
-2622330104,1988,entrenamiento,TRUE,1203,1172,-0.89,Niña,Cauca (interandina)
-2622330104,1989,entrenamiento,TRUE,1203,1172,-0.62,Niña,Cauca (interandina)
-2622330104,1990,entrenamiento,TRUE,1203,1172,0.27,Neutro,Cauca (interandina)
 2622330105,1981,entrenamiento,TRUE,1167,1312,-0.25,Neutro,Cauca (interandina)
 2622330105,1982,entrenamiento,TRUE,1167,1312,0.91,Niño,Cauca (interandina)
 2622330105,1983,entrenamiento,TRUE,1167,1312,0.46,Neutro,Cauca (interandina)
@@ -1919,7 +1783,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622330105,1998,validación,TRUE,1167,1312,0.04,Neutro,Cauca (interandina)
 2622330105,2000,validación,TRUE,1167,1312,-0.77,Niña,Cauca (interandina)
 2622330105,2001,prueba,TRUE,1167,1312,-0.29,Neutro,Cauca (interandina)
-2622330105,2002,prueba,TRUE,1167,1312,0.51,Niño,Cauca (interandina)
 2622330105,2003,prueba,TRUE,1167,1312,0.24,Neutro,Cauca (interandina)
 2622330106,1981,entrenamiento,TRUE,1167,1228,-0.25,Neutro,Cauca (interandina)
 2622330106,1982,entrenamiento,TRUE,1167,1228,0.91,Niño,Cauca (interandina)
@@ -1939,11 +1802,9 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622330106,2001,prueba,TRUE,1167,1228,-0.29,Neutro,Cauca (interandina)
 2622330106,2002,prueba,TRUE,1167,1228,0.51,Niño,Cauca (interandina)
 2622330106,2003,prueba,TRUE,1167,1228,0.24,Neutro,Cauca (interandina)
-2622330107,1984,entrenamiento,TRUE,1168,985,-0.55,Niña,Cauca (interandina)
 2622330107,1985,entrenamiento,TRUE,1168,985,-0.58,Niña,Cauca (interandina)
 2622330107,1986,entrenamiento,TRUE,1168,985,0.27,Neutro,Cauca (interandina)
 2622330107,1987,entrenamiento,TRUE,1168,985,1.18,Niño,Cauca (interandina)
-2622330107,1988,entrenamiento,TRUE,1168,985,-0.89,Niña,Cauca (interandina)
 2622330107,1989,entrenamiento,TRUE,1168,985,-0.62,Niña,Cauca (interandina)
 2622330107,1990,entrenamiento,TRUE,1168,985,0.27,Neutro,Cauca (interandina)
 2622330107,1991,entrenamiento,TRUE,1168,985,0.65,Niño,Cauca (interandina)
@@ -1953,7 +1814,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622330107,1995,entrenamiento,TRUE,1168,985,-0.22,Neutro,Cauca (interandina)
 2622330107,1996,validación,TRUE,1168,985,-0.41,Neutro,Cauca (interandina)
 2622330107,1997,validación,TRUE,1168,985,1.14,Niño,Cauca (interandina)
-2622330107,1998,validación,TRUE,1168,985,0.04,Neutro,Cauca (interandina)
 2622330107,1999,validación,TRUE,1168,985,-1.08,Niña,Cauca (interandina)
 2622330107,2000,validación,TRUE,1168,985,-0.77,Niña,Cauca (interandina)
 2622330107,2001,prueba,TRUE,1168,985,-0.29,Neutro,Cauca (interandina)
@@ -1966,30 +1826,14 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622400101,1985,entrenamiento,TRUE,1131,1053,-0.58,Niña,Cauca (interandina)
 2622400101,1986,entrenamiento,TRUE,1131,1053,0.27,Neutro,Cauca (interandina)
 2622400101,1987,entrenamiento,TRUE,1131,1053,1.18,Niño,Cauca (interandina)
-2622400101,1988,entrenamiento,TRUE,1131,1053,-0.89,Niña,Cauca (interandina)
-2622400101,1989,entrenamiento,TRUE,1131,1053,-0.62,Niña,Cauca (interandina)
-2622400101,1990,entrenamiento,TRUE,1131,1053,0.27,Neutro,Cauca (interandina)
 2622400101,1991,entrenamiento,TRUE,1131,1053,0.65,Niño,Cauca (interandina)
 2622400101,1992,entrenamiento,TRUE,1131,1053,0.61,Niño,Cauca (interandina)
 2622400101,1993,entrenamiento,TRUE,1131,1053,0.36,Neutro,Cauca (interandina)
 2622400101,1994,entrenamiento,TRUE,1131,1053,0.37,Neutro,Cauca (interandina)
 2622400101,1995,entrenamiento,TRUE,1131,1053,-0.22,Neutro,Cauca (interandina)
-2622400101,1996,validación,TRUE,1131,1053,-0.41,Neutro,Cauca (interandina)
 2622400101,1997,validación,TRUE,1131,1053,1.14,Niño,Cauca (interandina)
-2622400101,1999,validación,TRUE,1131,1053,-1.08,Niña,Cauca (interandina)
 2622400101,2000,validación,TRUE,1131,1053,-0.77,Niña,Cauca (interandina)
 2622400101,2001,prueba,TRUE,1131,1053,-0.29,Neutro,Cauca (interandina)
-2622400101,2003,prueba,TRUE,1131,1053,0.24,Neutro,Cauca (interandina)
-2622400102,1981,entrenamiento,TRUE,1129,1869,-0.25,Neutro,Cauca (interandina)
-2622400102,1983,entrenamiento,TRUE,1129,1869,0.46,Neutro,Cauca (interandina)
-2622400102,1984,entrenamiento,TRUE,1129,1869,-0.55,Niña,Cauca (interandina)
-2622400102,1985,entrenamiento,TRUE,1129,1869,-0.58,Niña,Cauca (interandina)
-2622400102,1987,entrenamiento,TRUE,1129,1869,1.18,Niño,Cauca (interandina)
-2622400102,1988,entrenamiento,TRUE,1129,1869,-0.89,Niña,Cauca (interandina)
-2622400102,1989,entrenamiento,TRUE,1129,1869,-0.62,Niña,Cauca (interandina)
-2622400102,1990,entrenamiento,TRUE,1129,1869,0.27,Neutro,Cauca (interandina)
-2622400103,1981,entrenamiento,TRUE,1168,1070,-0.25,Neutro,Cauca (interandina)
-2622400103,1982,entrenamiento,TRUE,1168,1070,0.91,Niño,Cauca (interandina)
 2622400103,1983,entrenamiento,TRUE,1168,1070,0.46,Neutro,Cauca (interandina)
 2622400103,1984,entrenamiento,TRUE,1168,1070,-0.55,Niña,Cauca (interandina)
 2622400103,1985,entrenamiento,TRUE,1168,1070,-0.58,Niña,Cauca (interandina)
@@ -2023,7 +1867,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622400104,1990,entrenamiento,TRUE,1129,1864,0.27,Neutro,Cauca (interandina)
 2622400104,1991,entrenamiento,TRUE,1129,1864,0.65,Niño,Cauca (interandina)
 2622400104,1992,entrenamiento,TRUE,1129,1864,0.61,Niño,Cauca (interandina)
-2622400104,1993,entrenamiento,TRUE,1129,1864,0.36,Neutro,Cauca (interandina)
 2622400104,1994,entrenamiento,TRUE,1129,1864,0.37,Neutro,Cauca (interandina)
 2622400104,1995,entrenamiento,TRUE,1129,1864,-0.22,Neutro,Cauca (interandina)
 2622400104,1996,validación,TRUE,1129,1864,-0.41,Neutro,Cauca (interandina)
@@ -2035,8 +1878,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622400104,2003,prueba,TRUE,1129,1864,0.24,Neutro,Cauca (interandina)
 2622400201,1982,entrenamiento,TRUE,1165,1950,0.91,Niño,Cauca (interandina)
 2622400201,1983,entrenamiento,TRUE,1165,1950,0.46,Neutro,Cauca (interandina)
-2622400201,1984,entrenamiento,TRUE,1165,1950,-0.55,Niña,Cauca (interandina)
-2622400201,1986,entrenamiento,TRUE,1165,1950,0.27,Neutro,Cauca (interandina)
 2622400201,1987,entrenamiento,TRUE,1165,1950,1.18,Niño,Cauca (interandina)
 2622400201,1988,entrenamiento,TRUE,1165,1950,-0.89,Niña,Cauca (interandina)
 2622400201,1989,entrenamiento,TRUE,1165,1950,-0.62,Niña,Cauca (interandina)
@@ -2066,7 +1907,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622410102,1992,entrenamiento,TRUE,1166,1730,0.61,Niño,Cauca (interandina)
 2622410102,1993,entrenamiento,TRUE,1166,1730,0.36,Neutro,Cauca (interandina)
 2622410102,1994,entrenamiento,TRUE,1166,1730,0.37,Neutro,Cauca (interandina)
-2622410102,1995,entrenamiento,TRUE,1166,1730,-0.22,Neutro,Cauca (interandina)
 2622410102,1996,validación,TRUE,1166,1730,-0.41,Neutro,Cauca (interandina)
 2622410102,1997,validación,TRUE,1166,1730,1.14,Niño,Cauca (interandina)
 2622410102,1998,validación,TRUE,1166,1730,0.04,Neutro,Cauca (interandina)
@@ -2076,10 +1916,8 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622410102,2002,prueba,TRUE,1166,1730,0.51,Niño,Cauca (interandina)
 2622410102,2003,prueba,TRUE,1166,1730,0.24,Neutro,Cauca (interandina)
 2622410104,1981,entrenamiento,TRUE,1165,2158,-0.25,Neutro,Cauca (interandina)
-2622410104,1982,entrenamiento,TRUE,1165,2158,0.91,Niño,Cauca (interandina)
 2622410104,1985,entrenamiento,TRUE,1165,2158,-0.58,Niña,Cauca (interandina)
 2622410104,1987,entrenamiento,TRUE,1165,2158,1.18,Niño,Cauca (interandina)
-2622410104,1988,entrenamiento,TRUE,1165,2158,-0.89,Niña,Cauca (interandina)
 2622410104,1989,entrenamiento,TRUE,1165,2158,-0.62,Niña,Cauca (interandina)
 2622410104,1990,entrenamiento,TRUE,1165,2158,0.27,Neutro,Cauca (interandina)
 2622410104,1991,entrenamiento,TRUE,1165,2158,0.65,Niño,Cauca (interandina)
@@ -2093,7 +1931,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622410104,1999,validación,TRUE,1165,2158,-1.08,Niña,Cauca (interandina)
 2622410104,2000,validación,TRUE,1165,2158,-0.77,Niña,Cauca (interandina)
 2622410104,2001,prueba,TRUE,1165,2158,-0.29,Neutro,Cauca (interandina)
-2622410104,2002,prueba,TRUE,1165,2158,0.51,Niño,Cauca (interandina)
 2622410104,2003,prueba,TRUE,1165,2158,0.24,Neutro,Cauca (interandina)
 2622420101,1981,entrenamiento,TRUE,1130,1260,-0.25,Neutro,Cauca (interandina)
 2622420101,1982,entrenamiento,TRUE,1130,1260,0.91,Niño,Cauca (interandina)
@@ -2139,7 +1976,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622420102,2000,validación,TRUE,1092,1871,-0.77,Niña,Cauca (interandina)
 2622420102,2001,prueba,TRUE,1092,1871,-0.29,Neutro,Cauca (interandina)
 2622420102,2002,prueba,TRUE,1092,1871,0.51,Niño,Cauca (interandina)
-2622420102,2003,prueba,TRUE,1092,1871,0.24,Neutro,Cauca (interandina)
 2622420103,1981,entrenamiento,TRUE,1092,1649,-0.25,Neutro,Cauca (interandina)
 2622420103,1982,entrenamiento,TRUE,1092,1649,0.91,Niño,Cauca (interandina)
 2622420103,1983,entrenamiento,TRUE,1092,1649,0.46,Neutro,Cauca (interandina)
@@ -2151,8 +1987,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622420103,1990,entrenamiento,TRUE,1092,1649,0.27,Neutro,Cauca (interandina)
 2622420103,1991,entrenamiento,TRUE,1092,1649,0.65,Niño,Cauca (interandina)
 2622420103,1992,entrenamiento,TRUE,1092,1649,0.61,Niño,Cauca (interandina)
-2622420103,1993,entrenamiento,TRUE,1092,1649,0.36,Neutro,Cauca (interandina)
-2622420103,1995,entrenamiento,TRUE,1092,1649,-0.22,Neutro,Cauca (interandina)
 2622420103,1996,validación,TRUE,1092,1649,-0.41,Neutro,Cauca (interandina)
 2622420103,1997,validación,TRUE,1092,1649,1.14,Niño,Cauca (interandina)
 2622420103,1998,validación,TRUE,1092,1649,0.04,Neutro,Cauca (interandina)
@@ -2196,7 +2030,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622500101,1995,entrenamiento,TRUE,1056,1716,-0.22,Neutro,Cauca (interandina)
 2622500101,1996,validación,TRUE,1056,1716,-0.41,Neutro,Cauca (interandina)
 2622500101,1997,validación,TRUE,1056,1716,1.14,Niño,Cauca (interandina)
-2622500101,1998,validación,TRUE,1056,1716,0.04,Neutro,Cauca (interandina)
 2622500101,1999,validación,TRUE,1056,1716,-1.08,Niña,Cauca (interandina)
 2622500101,2000,validación,TRUE,1056,1716,-0.77,Niña,Cauca (interandina)
 2622500101,2001,prueba,TRUE,1056,1716,-0.29,Neutro,Cauca (interandina)
@@ -2275,7 +2108,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622600201,1992,entrenamiento,TRUE,1057,1500,0.61,Niño,Cauca (interandina)
 2622600201,1993,entrenamiento,TRUE,1057,1500,0.36,Neutro,Cauca (interandina)
 2622600201,1994,entrenamiento,TRUE,1057,1500,0.37,Neutro,Cauca (interandina)
-2622600201,1995,entrenamiento,TRUE,1057,1500,-0.22,Neutro,Cauca (interandina)
 2622600201,1996,validación,TRUE,1057,1500,-0.41,Neutro,Cauca (interandina)
 2622600201,1997,validación,TRUE,1057,1500,1.14,Niño,Cauca (interandina)
 2622600201,1998,validación,TRUE,1057,1500,0.04,Neutro,Cauca (interandina)
@@ -2311,7 +2143,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622900102,1986,entrenamiento,TRUE,983,1490,0.27,Neutro,Cauca (interandina)
 2622900102,1987,entrenamiento,TRUE,983,1490,1.18,Niño,Cauca (interandina)
 2622900102,1988,entrenamiento,TRUE,983,1490,-0.89,Niña,Cauca (interandina)
-2622900102,1989,entrenamiento,TRUE,983,1490,-0.62,Niña,Cauca (interandina)
 2622900102,1990,entrenamiento,TRUE,983,1490,0.27,Neutro,Cauca (interandina)
 2622900102,1991,entrenamiento,TRUE,983,1490,0.65,Niño,Cauca (interandina)
 2622900102,1992,entrenamiento,TRUE,983,1490,0.61,Niño,Cauca (interandina)
@@ -2328,7 +2159,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622900102,2003,prueba,TRUE,983,1490,0.24,Neutro,Cauca (interandina)
 2622900301,1981,entrenamiento,TRUE,985,990,-0.25,Neutro,Cauca (interandina)
 2622900301,1982,entrenamiento,TRUE,985,990,0.91,Niño,Cauca (interandina)
-2622900301,1983,entrenamiento,TRUE,985,990,0.46,Neutro,Cauca (interandina)
 2622900301,1984,entrenamiento,TRUE,985,990,-0.55,Niña,Cauca (interandina)
 2622900301,1985,entrenamiento,TRUE,985,990,-0.58,Niña,Cauca (interandina)
 2622900301,1986,entrenamiento,TRUE,985,990,0.27,Neutro,Cauca (interandina)
@@ -2337,7 +2167,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2622900301,1989,entrenamiento,TRUE,985,990,-0.62,Niña,Cauca (interandina)
 2622900301,1990,entrenamiento,TRUE,985,990,0.27,Neutro,Cauca (interandina)
 2622900301,1991,entrenamiento,TRUE,985,990,0.65,Niño,Cauca (interandina)
-2622900301,1992,entrenamiento,TRUE,985,990,0.61,Niño,Cauca (interandina)
 2622900301,1993,entrenamiento,TRUE,985,990,0.36,Neutro,Cauca (interandina)
 2622900301,1994,entrenamiento,TRUE,985,990,0.37,Neutro,Cauca (interandina)
 2622900301,1995,entrenamiento,TRUE,985,990,-0.22,Neutro,Cauca (interandina)
@@ -2411,15 +2240,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2623500101,2001,prueba,TRUE,800,1433,-0.29,Neutro,Cauca (interandina)
 2623500101,2002,prueba,TRUE,800,1433,0.51,Niño,Cauca (interandina)
 2623500101,2003,prueba,TRUE,800,1433,0.24,Neutro,Cauca (interandina)
-2623900102,1981,entrenamiento,TRUE,727,1093,-0.25,Neutro,Cauca (interandina)
-2623900102,1982,entrenamiento,TRUE,727,1093,0.91,Niño,Cauca (interandina)
-2623900102,1983,entrenamiento,TRUE,727,1093,0.46,Neutro,Cauca (interandina)
-2623900102,1984,entrenamiento,TRUE,727,1093,-0.55,Niña,Cauca (interandina)
-2623900102,1985,entrenamiento,TRUE,727,1093,-0.58,Niña,Cauca (interandina)
-2623900102,1986,entrenamiento,TRUE,727,1093,0.27,Neutro,Cauca (interandina)
-2623900102,1988,entrenamiento,TRUE,727,1093,-0.89,Niña,Cauca (interandina)
-2623900102,1989,entrenamiento,TRUE,727,1093,-0.62,Niña,Cauca (interandina)
-2623900102,1990,entrenamiento,TRUE,727,1093,0.27,Neutro,Cauca (interandina)
 2624000101,1981,entrenamiento,TRUE,652,1532,-0.25,Neutro,Cauca (interandina)
 2624000101,1982,entrenamiento,TRUE,652,1532,0.91,Niño,Cauca (interandina)
 2624000101,1983,entrenamiento,TRUE,652,1532,0.46,Neutro,Cauca (interandina)
@@ -2434,6 +2254,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624000101,1992,entrenamiento,TRUE,652,1532,0.61,Niño,Cauca (interandina)
 2624000101,1993,entrenamiento,TRUE,652,1532,0.36,Neutro,Cauca (interandina)
 2624000101,1994,entrenamiento,TRUE,652,1532,0.37,Neutro,Cauca (interandina)
+2624000101,1995,entrenamiento,TRUE,652,1532,-0.22,Neutro,Cauca (interandina)
 2624000101,2002,prueba,TRUE,652,1532,0.51,Niño,Cauca (interandina)
 2624000101,2003,prueba,TRUE,652,1532,0.24,Neutro,Cauca (interandina)
 2624000102,1981,entrenamiento,TRUE,655,1000,-0.25,Neutro,Cauca (interandina)
@@ -2471,12 +2292,20 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624000301,1993,entrenamiento,TRUE,616,1380,0.36,Neutro,Cauca (interandina)
 2624000301,1994,entrenamiento,TRUE,616,1380,0.37,Neutro,Cauca (interandina)
 2624000301,1995,entrenamiento,TRUE,616,1380,-0.22,Neutro,Cauca (interandina)
-2624000301,1996,validación,TRUE,616,1380,-0.41,Neutro,Cauca (interandina)
 2624000301,1999,validación,TRUE,616,1380,-1.08,Niña,Cauca (interandina)
 2624000301,2000,validación,TRUE,616,1380,-0.77,Niña,Cauca (interandina)
+2624600101,1990,entrenamiento,TRUE,509,972,0.27,Neutro,Cauca (interandina)
+2624600101,1991,entrenamiento,TRUE,509,972,0.65,Niño,Cauca (interandina)
+2624600101,1992,entrenamiento,TRUE,509,972,0.61,Niño,Cauca (interandina)
+2624600101,1993,entrenamiento,TRUE,509,972,0.36,Neutro,Cauca (interandina)
+2624600101,1994,entrenamiento,TRUE,509,972,0.37,Neutro,Cauca (interandina)
+2624600101,1995,entrenamiento,TRUE,509,972,-0.22,Neutro,Cauca (interandina)
+2624600101,1996,validación,TRUE,509,972,-0.41,Neutro,Cauca (interandina)
+2624600101,1997,validación,TRUE,509,972,1.14,Niño,Cauca (interandina)
+2624600101,1998,validación,TRUE,509,972,0.04,Neutro,Cauca (interandina)
+2624600101,1999,validación,TRUE,509,972,-1.08,Niña,Cauca (interandina)
 2624600102,1982,entrenamiento,TRUE,471,1640,0.91,Niño,Cauca (interandina)
 2624600102,1983,entrenamiento,TRUE,471,1640,0.46,Neutro,Cauca (interandina)
-2624600102,1984,entrenamiento,TRUE,471,1640,-0.55,Niña,Cauca (interandina)
 2624600102,1985,entrenamiento,TRUE,471,1640,-0.58,Niña,Cauca (interandina)
 2624600102,1986,entrenamiento,TRUE,471,1640,0.27,Neutro,Cauca (interandina)
 2624600102,1987,entrenamiento,TRUE,471,1640,1.18,Niño,Cauca (interandina)
@@ -2585,7 +2414,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700108,2001,prueba,TRUE,251,1807,-0.29,Neutro,Cauca (interandina)
 2624700108,2002,prueba,TRUE,251,1807,0.51,Niño,Cauca (interandina)
 2624700108,2003,prueba,TRUE,251,1807,0.24,Neutro,Cauca (interandina)
-2624700109,1981,entrenamiento,TRUE,435,1357,-0.25,Neutro,Cauca (interandina)
 2624700109,1982,entrenamiento,TRUE,435,1357,0.91,Niño,Cauca (interandina)
 2624700109,1983,entrenamiento,TRUE,435,1357,0.46,Neutro,Cauca (interandina)
 2624700109,1984,entrenamiento,TRUE,435,1357,-0.55,Niña,Cauca (interandina)
@@ -2601,7 +2429,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700109,1996,validación,TRUE,435,1357,-0.41,Neutro,Cauca (interandina)
 2624700109,1997,validación,TRUE,435,1357,1.14,Niño,Cauca (interandina)
 2624700109,1998,validación,TRUE,435,1357,0.04,Neutro,Cauca (interandina)
-2624700109,1999,validación,TRUE,435,1357,-1.08,Niña,Cauca (interandina)
 2624700109,2000,validación,TRUE,435,1357,-0.77,Niña,Cauca (interandina)
 2624700109,2001,prueba,TRUE,435,1357,-0.29,Neutro,Cauca (interandina)
 2624700109,2002,prueba,TRUE,435,1357,0.51,Niño,Cauca (interandina)
@@ -2627,25 +2454,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700110,2001,prueba,TRUE,471,1400,-0.29,Neutro,Cauca (interandina)
 2624700110,2002,prueba,TRUE,471,1400,0.51,Niño,Cauca (interandina)
 2624700110,2003,prueba,TRUE,471,1400,0.24,Neutro,Cauca (interandina)
-2624700111,1981,entrenamiento,TRUE,435,1678,-0.25,Neutro,Cauca (interandina)
-2624700111,1982,entrenamiento,TRUE,435,1678,0.91,Niño,Cauca (interandina)
-2624700111,1983,entrenamiento,TRUE,435,1678,0.46,Neutro,Cauca (interandina)
-2624700111,1985,entrenamiento,TRUE,435,1678,-0.58,Niña,Cauca (interandina)
-2624700111,1986,entrenamiento,TRUE,435,1678,0.27,Neutro,Cauca (interandina)
-2624700111,1987,entrenamiento,TRUE,435,1678,1.18,Niño,Cauca (interandina)
-2624700111,1988,entrenamiento,TRUE,435,1678,-0.89,Niña,Cauca (interandina)
-2624700111,1989,entrenamiento,TRUE,435,1678,-0.62,Niña,Cauca (interandina)
-2624700111,1990,entrenamiento,TRUE,435,1678,0.27,Neutro,Cauca (interandina)
-2624700112,1981,entrenamiento,TRUE,289,957,-0.25,Neutro,Cauca (interandina)
-2624700112,1982,entrenamiento,TRUE,289,957,0.91,Niño,Cauca (interandina)
-2624700112,1983,entrenamiento,TRUE,289,957,0.46,Neutro,Cauca (interandina)
-2624700112,1984,entrenamiento,TRUE,289,957,-0.55,Niña,Cauca (interandina)
-2624700112,1985,entrenamiento,TRUE,289,957,-0.58,Niña,Cauca (interandina)
-2624700112,1986,entrenamiento,TRUE,289,957,0.27,Neutro,Cauca (interandina)
-2624700112,1987,entrenamiento,TRUE,289,957,1.18,Niño,Cauca (interandina)
-2624700112,1988,entrenamiento,TRUE,289,957,-0.89,Niña,Cauca (interandina)
-2624700112,1989,entrenamiento,TRUE,289,957,-0.62,Niña,Cauca (interandina)
-2624700112,1990,entrenamiento,TRUE,289,957,0.27,Neutro,Cauca (interandina)
 2624700113,1981,entrenamiento,TRUE,326,1240,-0.25,Neutro,Cauca (interandina)
 2624700113,1982,entrenamiento,TRUE,326,1240,0.91,Niño,Cauca (interandina)
 2624700113,1983,entrenamiento,TRUE,326,1240,0.46,Neutro,Cauca (interandina)
@@ -2701,7 +2509,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700115,1989,entrenamiento,TRUE,398,1460,-0.62,Niña,Cauca (interandina)
 2624700115,1990,entrenamiento,TRUE,398,1460,0.27,Neutro,Cauca (interandina)
 2624700115,1991,entrenamiento,TRUE,398,1460,0.65,Niño,Cauca (interandina)
-2624700115,1992,entrenamiento,TRUE,398,1460,0.61,Niño,Cauca (interandina)
 2624700115,1993,entrenamiento,TRUE,398,1460,0.36,Neutro,Cauca (interandina)
 2624700115,1994,entrenamiento,TRUE,398,1460,0.37,Neutro,Cauca (interandina)
 2624700115,1995,entrenamiento,TRUE,398,1460,-0.22,Neutro,Cauca (interandina)
@@ -2838,9 +2645,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700202,1991,entrenamiento,TRUE,363,934,0.65,Niño,Cauca (interandina)
 2624700202,1992,entrenamiento,TRUE,363,934,0.61,Niño,Cauca (interandina)
 2624700202,1993,entrenamiento,TRUE,363,934,0.36,Neutro,Cauca (interandina)
-2624700202,1994,entrenamiento,TRUE,363,934,0.37,Neutro,Cauca (interandina)
 2624700202,1995,entrenamiento,TRUE,363,934,-0.22,Neutro,Cauca (interandina)
-2624700202,1996,validación,TRUE,363,934,-0.41,Neutro,Cauca (interandina)
 2624700202,1997,validación,TRUE,363,934,1.14,Niño,Cauca (interandina)
 2624700202,1998,validación,TRUE,363,934,0.04,Neutro,Cauca (interandina)
 2624700202,1999,validación,TRUE,363,934,-1.08,Niña,Cauca (interandina)
@@ -2854,7 +2659,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2624700301,1986,entrenamiento,TRUE,362,1643,0.27,Neutro,Cauca (interandina)
 2624700301,1987,entrenamiento,TRUE,362,1643,1.18,Niño,Cauca (interandina)
 2624700301,1988,entrenamiento,TRUE,362,1643,-0.89,Niña,Cauca (interandina)
-2624700301,1989,entrenamiento,TRUE,362,1643,-0.62,Niña,Cauca (interandina)
 2624700301,1990,entrenamiento,TRUE,362,1643,0.27,Neutro,Cauca (interandina)
 2624700301,1991,entrenamiento,TRUE,362,1643,0.65,Niño,Cauca (interandina)
 2624700301,1992,entrenamiento,TRUE,362,1643,0.61,Niño,Cauca (interandina)
@@ -2889,7 +2693,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 2625500102,2002,prueba,TRUE,67,1813,0.51,Niño,Cauca (interandina)
 2625500102,2003,prueba,TRUE,67,1813,0.24,Neutro,Cauca (interandina)
 5300000203,1985,entrenamiento,TRUE,708,50,-0.58,Niña,Pacífico
-5300000203,1987,entrenamiento,TRUE,708,50,1.18,Niño,Pacífico
 5300000203,1988,entrenamiento,TRUE,708,50,-0.89,Niña,Pacífico
 5300000203,1990,entrenamiento,TRUE,708,50,0.27,Neutro,Pacífico
 5300000203,1991,entrenamiento,TRUE,708,50,0.65,Niño,Pacífico
@@ -2904,7 +2707,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5300000203,2001,prueba,TRUE,708,50,-0.29,Neutro,Pacífico
 5300000203,2002,prueba,TRUE,708,50,0.51,Niño,Pacífico
 5300000203,2003,prueba,TRUE,708,50,0.24,Neutro,Pacífico
-5301000104,1985,entrenamiento,TRUE,1375,20,-0.58,Niña,Pacífico
 5301000104,1986,entrenamiento,TRUE,1375,20,0.27,Neutro,Pacífico
 5301000104,1987,entrenamiento,TRUE,1375,20,1.18,Niño,Pacífico
 5301000104,1988,entrenamiento,TRUE,1375,20,-0.89,Niña,Pacífico
@@ -2937,10 +2739,7 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5301400104,1983,entrenamiento,TRUE,1051,320,0.46,Neutro,Pacífico
 5301400104,1984,entrenamiento,TRUE,1051,320,-0.55,Niña,Pacífico
 5301400104,1985,entrenamiento,TRUE,1051,320,-0.58,Niña,Pacífico
-5301400104,1986,entrenamiento,TRUE,1051,320,0.27,Neutro,Pacífico
 5301400104,1987,entrenamiento,TRUE,1051,320,1.18,Niño,Pacífico
-5301400104,1988,entrenamiento,TRUE,1051,320,-0.89,Niña,Pacífico
-5301400104,1989,entrenamiento,TRUE,1051,320,-0.62,Niña,Pacífico
 5301400104,1992,entrenamiento,TRUE,1051,320,0.61,Niño,Pacífico
 5301400104,1993,entrenamiento,TRUE,1051,320,0.36,Neutro,Pacífico
 5301400104,1994,entrenamiento,TRUE,1051,320,0.37,Neutro,Pacífico
@@ -2966,33 +2765,10 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5301400108,2000,validación,TRUE,1050,650,-0.77,Niña,Pacífico
 5301400108,2001,prueba,TRUE,1050,650,-0.29,Neutro,Pacífico
 5301400108,2002,prueba,TRUE,1050,650,0.51,Niño,Pacífico
-5301420102,1981,entrenamiento,TRUE,1089,850,-0.25,Neutro,Pacífico
-5301420102,1985,entrenamiento,TRUE,1089,850,-0.58,Niña,Pacífico
-5301420102,1986,entrenamiento,TRUE,1089,850,0.27,Neutro,Pacífico
-5301420102,1987,entrenamiento,TRUE,1089,850,1.18,Niño,Pacífico
-5301420102,1988,entrenamiento,TRUE,1089,850,-0.89,Niña,Pacífico
-5301420102,1989,entrenamiento,TRUE,1089,850,-0.62,Niña,Pacífico
-5301420102,1990,entrenamiento,TRUE,1089,850,0.27,Neutro,Pacífico
-5301420102,1991,entrenamiento,TRUE,1089,850,0.65,Niño,Pacífico
-5301420102,1995,entrenamiento,TRUE,1089,850,-0.22,Neutro,Pacífico
-5301420201,1983,entrenamiento,TRUE,1089,1496,0.46,Neutro,Pacífico
-5301420201,1984,entrenamiento,TRUE,1089,1496,-0.55,Niña,Pacífico
-5301420201,1985,entrenamiento,TRUE,1089,1496,-0.58,Niña,Pacífico
-5301420201,1986,entrenamiento,TRUE,1089,1496,0.27,Neutro,Pacífico
-5301420201,1987,entrenamiento,TRUE,1089,1496,1.18,Niño,Pacífico
-5301420201,1988,entrenamiento,TRUE,1089,1496,-0.89,Niña,Pacífico
-5301420201,1989,entrenamiento,TRUE,1089,1496,-0.62,Niña,Pacífico
-5301420201,1990,entrenamiento,TRUE,1089,1496,0.27,Neutro,Pacífico
-5301420201,1991,entrenamiento,TRUE,1089,1496,0.65,Niño,Pacífico
-5301420201,1992,entrenamiento,TRUE,1089,1496,0.61,Niño,Pacífico
-5301420201,1994,entrenamiento,TRUE,1089,1496,0.37,Neutro,Pacífico
-5301420201,1995,entrenamiento,TRUE,1089,1496,-0.22,Neutro,Pacífico
-5301500102,1985,entrenamiento,TRUE,906,702,-0.58,Niña,Pacífico
 5301500102,1986,entrenamiento,TRUE,906,702,0.27,Neutro,Pacífico
 5301500102,1987,entrenamiento,TRUE,906,702,1.18,Niño,Pacífico
 5301500102,1988,entrenamiento,TRUE,906,702,-0.89,Niña,Pacífico
 5301500102,1989,entrenamiento,TRUE,906,702,-0.62,Niña,Pacífico
-5301500102,1990,entrenamiento,TRUE,906,702,0.27,Neutro,Pacífico
 5301500102,1991,entrenamiento,TRUE,906,702,0.65,Niño,Pacífico
 5301500102,1992,entrenamiento,TRUE,906,702,0.61,Niño,Pacífico
 5301500102,1993,entrenamiento,TRUE,906,702,0.36,Neutro,Pacífico
@@ -3062,7 +2838,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5420410107,2002,prueba,TRUE,432,1750,0.51,Niño,Pacífico
 5420410107,2003,prueba,TRUE,432,1750,0.24,Neutro,Pacífico
 5420410112,1983,entrenamiento,TRUE,360,1376,0.46,Neutro,Pacífico
-5420410112,1984,entrenamiento,TRUE,360,1376,-0.55,Niña,Pacífico
 5420410112,1985,entrenamiento,TRUE,360,1376,-0.58,Niña,Pacífico
 5420410112,1986,entrenamiento,TRUE,360,1376,0.27,Neutro,Pacífico
 5420410112,1987,entrenamiento,TRUE,360,1376,1.18,Niño,Pacífico
@@ -3087,7 +2862,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5420410113,1991,entrenamiento,TRUE,251,1561,0.65,Niño,Pacífico
 5420410113,1992,entrenamiento,TRUE,251,1561,0.61,Niño,Pacífico
 5420410113,1993,entrenamiento,TRUE,251,1561,0.36,Neutro,Pacífico
-5420410113,1994,entrenamiento,TRUE,251,1561,0.37,Neutro,Pacífico
 5420410113,1996,validación,TRUE,251,1561,-0.41,Neutro,Pacífico
 5420410113,1997,validación,TRUE,251,1561,1.14,Niño,Pacífico
 5420410113,1998,validación,TRUE,251,1561,0.04,Neutro,Pacífico
@@ -3106,7 +2880,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5420410114,1990,entrenamiento,TRUE,287,1395,0.27,Neutro,Pacífico
 5420410114,1991,entrenamiento,TRUE,287,1395,0.65,Niño,Pacífico
 5420410114,1992,entrenamiento,TRUE,287,1395,0.61,Niño,Pacífico
-5420410114,1993,entrenamiento,TRUE,287,1395,0.36,Neutro,Pacífico
 5420410114,1994,entrenamiento,TRUE,287,1395,0.37,Neutro,Pacífico
 5420410114,1995,entrenamiento,TRUE,287,1395,-0.22,Neutro,Pacífico
 5420410114,1996,validación,TRUE,287,1395,-0.41,Neutro,Pacífico
@@ -3121,11 +2894,9 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5420410115,1984,entrenamiento,TRUE,322,990,-0.55,Niña,Pacífico
 5420410115,1985,entrenamiento,TRUE,322,990,-0.58,Niña,Pacífico
 5420410115,1986,entrenamiento,TRUE,322,990,0.27,Neutro,Pacífico
-5420410115,1987,entrenamiento,TRUE,322,990,1.18,Niño,Pacífico
 5420410115,1988,entrenamiento,TRUE,322,990,-0.89,Niña,Pacífico
 5420410115,1989,entrenamiento,TRUE,322,990,-0.62,Niña,Pacífico
 5420410115,1990,entrenamiento,TRUE,322,990,0.27,Neutro,Pacífico
-5420410115,1991,entrenamiento,TRUE,322,990,0.65,Niño,Pacífico
 5420410115,1992,entrenamiento,TRUE,322,990,0.61,Niño,Pacífico
 5420410115,1993,entrenamiento,TRUE,322,990,0.36,Neutro,Pacífico
 5420410115,1994,entrenamiento,TRUE,322,990,0.37,Neutro,Pacífico
@@ -3200,8 +2971,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5421200105,1983,entrenamiento,TRUE,763,1490,0.46,Neutro,Pacífico
 5421200105,1985,entrenamiento,TRUE,763,1490,-0.58,Niña,Pacífico
 5421200105,1986,entrenamiento,TRUE,763,1490,0.27,Neutro,Pacífico
-5421200105,1987,entrenamiento,TRUE,763,1490,1.18,Niño,Pacífico
-5421200105,1988,entrenamiento,TRUE,763,1490,-0.89,Niña,Pacífico
 5421200105,1989,entrenamiento,TRUE,763,1490,-0.62,Niña,Pacífico
 5421200105,1990,entrenamiento,TRUE,763,1490,0.27,Neutro,Pacífico
 5421200105,1991,entrenamiento,TRUE,763,1490,0.65,Niño,Pacífico
@@ -3238,7 +3007,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5421200109,1993,entrenamiento,TRUE,726,1975,0.36,Neutro,Pacífico
 5421200109,1994,entrenamiento,TRUE,726,1975,0.37,Neutro,Pacífico
 5421200109,1995,entrenamiento,TRUE,726,1975,-0.22,Neutro,Pacífico
-5421200111,1981,entrenamiento,TRUE,795,720,-0.25,Neutro,Pacífico
 5421200111,1982,entrenamiento,TRUE,795,720,0.91,Niño,Pacífico
 5421200111,1983,entrenamiento,TRUE,795,720,0.46,Neutro,Pacífico
 5421200111,1984,entrenamiento,TRUE,795,720,-0.55,Niña,Pacífico
@@ -3253,7 +3021,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5421200111,1993,entrenamiento,TRUE,795,720,0.36,Neutro,Pacífico
 5421200111,1994,entrenamiento,TRUE,795,720,0.37,Neutro,Pacífico
 5421200111,1995,entrenamiento,TRUE,795,720,-0.22,Neutro,Pacífico
-5421200114,1983,entrenamiento,TRUE,725,1660,0.46,Neutro,Pacífico
 5421200114,1984,entrenamiento,TRUE,725,1660,-0.55,Niña,Pacífico
 5421200114,1985,entrenamiento,TRUE,725,1660,-0.58,Niña,Pacífico
 5421200114,1986,entrenamiento,TRUE,725,1660,0.27,Neutro,Pacífico
@@ -3264,7 +3031,6 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5421200114,1991,entrenamiento,TRUE,725,1660,0.65,Niño,Pacífico
 5421200114,1992,entrenamiento,TRUE,725,1660,0.61,Niño,Pacífico
 5421200114,1993,entrenamiento,TRUE,725,1660,0.36,Neutro,Pacífico
-5421200114,1994,entrenamiento,TRUE,725,1660,0.37,Neutro,Pacífico
 5421200114,1995,entrenamiento,TRUE,725,1660,-0.22,Neutro,Pacífico
 5421210101,1983,entrenamiento,TRUE,760,1520,0.46,Neutro,Pacífico
 5421210101,1984,entrenamiento,TRUE,760,1520,-0.55,Niña,Pacífico
@@ -3279,22 +3045,3 @@ codigo,anio,particion,usar,celda,altitud,ONI_anual,fase,vertiente
 5421210101,1993,entrenamiento,TRUE,760,1520,0.36,Neutro,Pacífico
 5421210101,1994,entrenamiento,TRUE,760,1520,0.37,Neutro,Pacífico
 5421210101,1995,entrenamiento,TRUE,760,1520,-0.22,Neutro,Pacífico
-5421220101,1982,entrenamiento,TRUE,795,850,0.91,Niño,Pacífico
-5421220101,1983,entrenamiento,TRUE,795,850,0.46,Neutro,Pacífico
-5421220101,1984,entrenamiento,TRUE,795,850,-0.55,Niña,Pacífico
-5421220101,1985,entrenamiento,TRUE,795,850,-0.58,Niña,Pacífico
-5421220101,1986,entrenamiento,TRUE,795,850,0.27,Neutro,Pacífico
-5421220101,1987,entrenamiento,TRUE,795,850,1.18,Niño,Pacífico
-5421220101,1988,entrenamiento,TRUE,795,850,-0.89,Niña,Pacífico
-5421220101,1990,entrenamiento,TRUE,795,850,0.27,Neutro,Pacífico
-5421220101,1991,entrenamiento,TRUE,795,850,0.65,Niño,Pacífico
-5421240201,1982,entrenamiento,TRUE,794,380,0.91,Niño,Pacífico
-5421240201,1983,entrenamiento,TRUE,794,380,0.46,Neutro,Pacífico
-5421240201,1984,entrenamiento,TRUE,794,380,-0.55,Niña,Pacífico
-5421240201,1985,entrenamiento,TRUE,794,380,-0.58,Niña,Pacífico
-5421240201,1986,entrenamiento,TRUE,794,380,0.27,Neutro,Pacífico
-5421240201,1987,entrenamiento,TRUE,794,380,1.18,Niño,Pacífico
-5421240201,1988,entrenamiento,TRUE,794,380,-0.89,Niña,Pacífico
-5421240201,1989,entrenamiento,TRUE,794,380,-0.62,Niña,Pacífico
-5421240201,1990,entrenamiento,TRUE,794,380,0.27,Neutro,Pacífico
-5421240201,1991,entrenamiento,TRUE,794,380,0.65,Niño,Pacífico

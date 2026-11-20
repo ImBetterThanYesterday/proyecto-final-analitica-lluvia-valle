@@ -18,7 +18,19 @@ Las gráficas marcadas con ★ son las que proponemos para la presentación (la 
 **Dónde está todo.**
 - Gráficas: `salidas_R_datos/graficos/`. Tablas: `salidas_R_datos/tablas/`.
 - Decisiones (D-xx) y preguntas al profesor (P-xx): `DECISIONES.md`.
-- Cifras: corrida del 18-nov-2026, en la que las 28 pruebas automáticas pasan.
+- Cifras: corrida del 20-nov-2026 del conjunto principal (R6 con ≥10 años), en la que las 30 pruebas automáticas pasan.
+- **De dónde sale cada regla** (normas de la OMM, libros y artículos): `docs/FUNDAMENTOS_REGLAS.md`.
+
+**Qué cambió tras la revisión del profesor por Teams (19-nov-2026):**
+- Las reglas de qué años y qué estaciones entran (R5 y R6) ya no son umbrales propios: son la norma de la OMM para datos faltantes (WMO-No. 1203, 2017). Al comparar dos versiones de R6, el profesor prefirió la de **≥10 años válidos** (el mínimo de la OMM para cualquier promedio climatológico; D-63): entran **163 estaciones y 3 046 curvas**. El 80 % de la OMM (100 estaciones y 2 113 curvas) queda como sensibilidad.
+- Se quitó la lluvia acumulada.
+- Se agregó la serie diaria real de una estación, año por año.
+- Se explican los huecos de la serie de Bahía Málaga.
+
+**Qué cambió el 20-nov-2026 (D-61):**
+- **R4** decide con las 3 vecinas más cercanas (al menos 2 deben contradecir la racha) y con q de la temporada: 10 rachas en vez de 30.
+- **R7** rellena por kriging los pocos días faltantes que acepta R5 (719 en el conjunto principal).
+- **R6** pide ≥10 años válidos (D-63); el 80 % de la OMM queda como sensibilidad.
 
 ---
 
@@ -69,15 +81,16 @@ Partir por años evita que el modelo "vea" el futuro.
 | | Zona andina | Zona pacífica |
 |---|---|---|
 | Estaciones con datos (de 220) | 179 | 41 |
-| Estaciones en el análisis final (de 176) | 150 | 26 |
+| Estaciones en el análisis final (de 163) | 141 | 22 |
 | Lluvia media anual por estación (mediana) | 1 440 mm | 2 417 mm, con estaciones de la costa que pasan de 8 000 mm |
 | Forma del año | Dos temporadas de lluvia (abril y octubre) | Llueve todo el año, más en octubre–noviembre |
-| Correlación satélite–estación (mediana) | 0,42 | 0,37 |
-| ¿La curva media del satélite difiere de la de las estaciones? (prueba t funcional pareada) | Sí (p < 0,001), en 235 días del año | La prueba global no lo detecta (p = 0,16): son solo 26 estaciones |
-| Error de la curva en prueba, 2001–2003 (L² relativo, mediana por estación): satélite → modelo | 0,40 → 0,38 | 0,77 → 0,58 |
-| Estaciones de prueba en que el modelo mejora al satélite | 69 de 123 | 13 de 14 |
+| Correlación satélite–estación por péntada (mediana) | 0,42 | 0,36 |
+| Satélite / estación en la lluvia anual (mediana) | 1,11: el satélite da 11 % de más | 1,19: da 19 % de más, pero subestima en la costa más lluviosa |
+| ¿El error del satélite depende de la zona? (ANOVA funcional, sección 4.4 de `EXPLICACION_FUNCIONAL`) | Sí, p = 0,0002 | (es la misma prueba) |
+| Error de la curva en prueba, 2001–2003 (L² relativo, mediana por estación): satélite → modelo | 0,40 → 0,38 | 0,77 → 0,57 |
+| Estaciones de prueba en que el modelo mejora al satélite | 66 de 122 | 13 de 14 |
 
-El análisis de varianza funcional confirma que el error del satélite depende de la zona (p = 0,0007; sección 4.5 de `EXPLICACION_FUNCIONAL`). La última fila dice algo importante: el satélite se equivoca mucho más en la zona pacífica, y es ahí donde el modelo más lo corrige.
+**La zona pacífica entra con 22 estaciones.** Sus estaciones tienen registros cortados (varias dejan de medir hacia 1996). Con el 80 % de la OMM quedaban solo 7; con ≥10 años válidos (R6, D-63) entran 22, incluidas las de la costa más lluviosa (Bahía Málaga, Yurumanguí, San Francisco). Aun así es la zona con menos estaciones, y sus resultados se leen con cautela.
 
 Una salvedad: la zona pacífica no es homogénea. Mezcla la costa, muy lluviosa, con las montañas del Calima, más secas. Por eso, cuando se compara una estación con otras (reglas de limpieza R2 a R4), se usan **las vecinas a menos de 25 km**, no la zona.
 
@@ -110,7 +123,7 @@ Por ejemplo, La Niña de 2010–2011 causó las grandes inundaciones del país, 
 
 **Por qué importa para el proyecto:**
 - **Explica la lluvia de un año a otro:** en las estaciones, La Niña da años de +12 a +30 % y El Niño de −7 a −27 % (sección 6).
-- **El satélite no capta este efecto, y hasta lo tiene al revés.** Su error sigue al ONI con correlación de 0,74 (sección 12).
+- **El satélite no capta este efecto, y hasta lo tiene al revés.** Su error sigue al ONI con correlación de 0,73 (sección 12).
 - Por eso **el ONI entra al modelo**: le dice qué tipo de año es, para que corrija al satélite en la dirección correcta.
 
 Una advertencia: la prueba (2001–2003) **no tiene ningún año La Niña**. El comportamiento en esos años solo se ve en la validación, con 1999 y 2000.
@@ -194,6 +207,24 @@ Una advertencia: la prueba (2001–2003) **no tiene ningún año La Niña**. El 
 
 Esta gráfica no lleva los nombres porque son 220 filas y no se alcanzarían a leer. Los nombres están en la siguiente, que muestra solo las estaciones que entran al análisis.
 
+![Serie diaria de una estación, año por año](salidas_R_datos/graficos/6_serie_diaria_por_anio.png)
+
+**★ Para qué está.** Para ver **la lluvia tal como se mide**, antes de volverla curva. Es la serie que el profesor pidió ver en la revisión («yo quiero ver cuál es la serie de la lluvia, al menos en un año»).
+
+**Cómo se lee:**
+- Es Puerto Molina (`2610000105`), la estación con más años válidos: los 23.
+- **Cada panel es un año**, con su fase ENSO en el título. Todos tienen el mismo eje.
+- Cada **barra gris** es la lluvia de un día, en mm.
+- La **línea negra escalonada** es la lluvia diaria media que da el satélite en su píxel, en cada péntada.
+- Las marcas negras abajo son los días sin dato.
+
+**Qué muestra:**
+- La lluvia diaria es muy irregular: muchos días en 0 y aguaceros aislados.
+- El satélite, al promediar cinco días y unos 5,5 km, da una línea mucho más suave.
+- Las dos temporadas de lluvia se ven en casi todos los años.
+- **El ENSO se nota:** en esta estación un año El Niño trae en promedio 1 222 mm, uno neutro 1 460 mm y uno La Niña 1 585 mm. Los más secos son 1991 (974 mm) y 1992 (1 043 mm), los dos El Niño.
+- Esa diferencia de resolución es la razón para comparar las dos fuentes como **curvas** y no día a día.
+
 ![Curvas que entran al análisis, parte 1](salidas_R_datos/graficos/3_curvas_validas_parte1.png)
 
 ![Curvas que entran al análisis, parte 2](salidas_R_datos/graficos/3_curvas_validas_parte2.png)
@@ -201,22 +232,21 @@ Esta gráfica no lleva los nombres porque son 220 filas y no se alcanzarían a l
 **★ Para qué está.** Para ver exactamente qué datos usa el proyecto: qué estación, qué año y en qué conjunto. Es el resultado de toda la limpieza de las secciones 4 a 7, y se pone aquí para compararlo con la gráfica anterior.
 
 **Cómo se lee:**
-- **Cada fila es una de las 176 estaciones incluidas**, con su nombre y su código CVC. Primero va la zona pacífica y luego la andina; dentro de cada una, de norte a sur. La lista se parte en dos imágenes para que los nombres se puedan leer.
+- **Cada fila es una de las 163 estaciones incluidas**, con su nombre y su código CVC. Primero va la zona pacífica y luego la andina; dentro de cada una, de norte a sur. La lista se parte en dos imágenes para que los nombres se puedan leer.
 - **Cada columna es un año.** Arriba está el nombre del conjunto.
 - **Cada casilla es una curva**, es decir, un año completo de lluvia de esa estación:
   - **azul:** curva válida que va a entrenamiento;
   - **salmón:** curva válida que va a validación;
   - **rojo:** curva válida que va a prueba;
-  - **gris:** hay datos ese año, pero no los suficientes (menos del 90 % de los días o un hueco de más de 15 días), así que no se usa;
+  - **gris:** hay datos ese año, pero algún mes no cumple la regla de la OMM (le faltan 11 días o más, o 5 o más seguidos), así que no se usa;
   - **casi blanco:** la estación no tiene datos ese año.
 - **El número a la derecha** es cuántas curvas válidas aporta la estación.
 
 **Qué muestra** (`tablas/8_anios_validez.csv`):
-- Entran **3 299 curvas**: 2 257 de entrenamiento, 672 de validación y 370 de prueba.
-- Las 176 estaciones tienen al menos 7 años válidos en entrenamiento (regla R6).
-- Muchas estaciones dejan de aportar en validación o en prueba. Por eso esos conjuntos tienen menos estaciones: 147 y 137.
-- **En la zona pacífica pesa más.** Las estaciones del Calima (de La Granjita a Limones) y varias del Dagua dejan de medir hacia 1996. Por eso en prueba la zona pacífica tiene solo 14 estaciones, y sus resultados se leen con más cautela.
-- Las casillas grises son pocas y sueltas: 376 años con datos insuficientes, frente a 3 299 curvas válidas. La regla de calidad (R5) quita años puntuales, no estaciones enteras.
+- Entran **3 046 curvas**: 2 031 de entrenamiento, 652 de validación y 363 de prueba.
+- Las 163 estaciones tienen al menos 10 años válidos (regla R6, D-63).
+- Todas aportan al entrenamiento; 146 a validación y 136 a prueba (133 a los tres). Algunas tienen bloques de años vacíos: cada curva es un año completo, así que un año ausente es solo una curva menos.
+- La zona pacífica tiene 22 estaciones (sección 0.3).
 
 ---
 
@@ -280,21 +310,45 @@ Afecta 62 días en 10 estaciones.
 ![Prueba de las rachas de ceros](salidas_R_datos/graficos/5b_rachas_ceros_prueba.png)
 
 **Cómo se lee:**
-- Cada punto es una racha de 30 días o más en 0. Hay 917.
-- **Eje horizontal:** cuántos días llovió la vecina más cercana con datos durante la racha (k).
-- **Eje vertical:** la probabilidad de que la estación marcara 0 todos esos días por azar, p = (1 − q)^k. Aquí q es qué tan seguido llueve en la estación cuando llueve en su vecina, calculado solo con 1981–1995.
-- **La línea punteada es el umbral** (0,05 / 917). Los puntos rojos, debajo de ella, son rachas imposibles de creer.
+- Hay 917 rachas de 30 días o más en 0. **Cada punto es una racha frente a una de sus 3 vecinas más cercanas** (a ≤25 km, con datos en al menos el 80 % de la racha).
+- **Eje horizontal:** cuántos días llovió esa vecina durante la racha (k).
+- **Eje vertical:** la probabilidad de que la estación marcara 0 todos esos días por azar, p = (1 − q)^k. Aquí q es qué tan seguido llueve en la estación cuando llueve en esa vecina, calculado con 1981–1995 y **solo con los meses de la racha** (el mes central y sus dos vecinos), porque en temporada seca la lluvia es más local.
+- **La línea punteada es el umbral** (0,05 / 917). Debajo de ella, la vecina **contradice** la racha.
+- **Los puntos rojos son de rachas falsas:** las que contradicen al menos 2 de sus 3 vecinas.
 
-**Qué muestra** (`tablas/5b_rachas_ceros_prueba.csv`):
-- **30 rachas, en 27 estaciones, no tienen respaldo.** Suman 1 356 días.
-- El caso más claro es Bella Vista en 1982: 49 días en 0 mientras La Ceja, a 8,7 km, llovió 23 días (p = 7e-10).
-- La mayoría de las rachas largas son sequías reales: el El Niño de 1997 y las temporadas secas.
+**Qué muestra** (`tablas/5b_rachas_ceros_prueba.csv` y `5b_rachas_ceros_versiones.csv`):
+- **10 rachas, en 10 estaciones, son falsas.** Suman 469 días.
+- En todas, al menos 2 vecinas a 20 km o menos llovieron entre 8 y 44 días. El caso más claro es **Loboguerrero, de diciembre de 1982 a marzo de 1983:** 67 días en 0 mientras Limones, Triana y El Cusumbo, a 17–20 km, llovieron 39, 44 y 41 días. Otro es **Univalle en enero de 1993:** tres estaciones a 5–7 km llovieron 11 o 12 días.
+- La mayoría de las rachas largas son sequías reales: el El Niño de 1997 y las temporadas secas (ver el inventario abajo).
 
-**Qué decidimos (regla R4).** Una racha de 30 días o más en 0 pasa a faltante si p < 0,05 / 917. El umbral es muy exigente a propósito: la fórmula supone días independientes, pero la lluvia viene en rachas, así que exagera lo raro.
+**Qué decidimos (regla R4, D-61).** Una racha de 30 días o más en 0 pasa a faltante si **al menos 2 de sus 3 vecinas más cercanas** la contradicen (p < 0,05 / 917). Es el principio de la regla de periodos secos de GSDR-QC (Lewis et al. 2021): una sola vecina en desacuerdo puede ser un aguacero local, pero si la mayoría llovió, la racha no es creíble. El umbral es muy exigente a propósito: la fórmula supone días independientes, pero la lluvia viene en rachas, así que exagera lo raro.
 
-Dos casos que muestran que la regla corrige la revisión a mano:
-- **Loboguerrero, octubre–noviembre de 1995, se conserva.** Antes se había quitado a mano, pero Dagua coincide con ella solo la mitad de los días de lluvia y p = 2e-4 no alcanza el umbral.
-- **Loboguerrero, diciembre de 1982 a marzo de 1983, pasa a faltante.** La revisión a mano la había dejado porque Dagua "también estaba seca", pero Dagua casi no tiene datos esos días. La vecina que sí tiene datos, Limones, llovió 39 días.
+**Por qué cambió la regla.** Antes decidía con la vecina más cercana y con q de todo el año, y marcaba 30 rachas (1 356 días). Ese número dependía de una sola vecina:
+
+| Versión | Rachas a faltante |
+|---|---|
+| Vecina más cercana, q de todo el año (antes) | 30 |
+| Vecina más cercana, q de la temporada | 18 |
+| **Al menos 2 de 3 vecinas, q de la temporada (ahora)** | **10** |
+| Las 3 vecinas | 4 |
+
+**Inventario por temporada y fase ENSO.** En la revisión, el profesor advirtió que en un año El Niño es normal no llover durante semanas, y pidió revisar las rachas según la temporada y la fase. Se cruzaron las dos cosas:
+- **La temporada** es la de cada estación: un mes es seco si su lluvia media de entrenamiento está por debajo de la media mensual de esa estación.
+- **La fase ENSO** es la del año en que empieza la racha.
+
+El resultado está en `tablas/5b_rachas_ceros_escenarios.csv`:
+
+| Temporada | Fase | Rachas | R4 las vuelve faltante | Días que llovió la vecina más cercana (mediana) |
+|---|---|---|---|---|
+| Seca | El Niño | 476 | 5 (1,1 %) | 2 |
+| Seca | Neutro | 343 | 3 (0,9 %) | 3 |
+| Seca | La Niña | 58 | 2 (3,4 %) | 4 |
+| Lluviosa | las tres fases | 37 | 0 | 3,5 a 6 |
+
+**Lectura:**
+- El profesor tiene razón en el escenario: el 96 % de las rachas cae en temporada seca, y la mitad en temporada seca de un año El Niño.
+- R4 no las borra. Decide con las vecinas, y en una sequía real las vecinas también están secas (la más cercana llovió 2 días de mediana en las rachas de El Niño). Por eso la regla no necesita conocer la fase.
+- Ninguna de las fuentes de control de calidad revisadas (GSDR-QC, GHCN-Daily, Terán-Chaves et al. 2021 con datos del IDEAM, INQC) condiciona esta revisión a la fase ENSO (`docs/FUNDAMENTOS_REGLAS.md`, sección 3).
 
 **Otros controles:** ningún año está duplicado entre estaciones, y las rachas de un mismo valor distinto de 0 son cortas (máximo 11 días de "1 mm").
 
@@ -372,7 +426,7 @@ Es decir, hay estaciones donde llueve **más de 10 veces** lo que en otras, dent
 
 ## 7. ¿Cuántos días faltantes se pueden tolerar?
 
-**Para qué está.** Una curva anual se puede construir aunque falten algunos días, pero ¿cuántos? En vez de escoger un número a ojo, se hizo un experimento.
+**Para qué está.** Una curva anual se puede construir aunque falten algunos días, pero ¿cuántos? La regla sale de la norma de la OMM para datos faltantes, y un experimento verifica con nuestros datos que esa norma funciona para curvas.
 
 **El experimento:**
 1. Se toman 1 960 años de estación completos de entrenamiento.
@@ -389,21 +443,36 @@ Es decir, hay estaciones donde llueve **más de 10 veces** lo que en otras, dent
 - **Desde 30 días se dispara**, sobre todo con K = 12: 0,32 a 30 días y 3,07 a 90 días. Con más funciones base, la curva se inventa formas dentro del hueco.
 - Un segundo experimento copia los patrones de huecos reales de otras estaciones (gráfica `7C`, anexo A). Muestra que **el hueco más largo explica el error mejor que el porcentaje de días con dato** (R² 0,58 frente a 0,46). Un año con el 92 % de los días pero un hueco de un mes es peor que uno con el 88 % y huecos sueltos.
 
-![Reglas candidatas](salidas_R_datos/graficos/7_reglas_candidatas.png)
+**La norma.** La guía de la OMM para calcular valores climáticos (WMO-No. 1203, 2017, sección 4.4) dice:
+- **Un mes de lluvia** se puede usar si los días faltantes, que se estiman, son menos de 11 y no hay 5 o más seguidos. La curva anual hace justamente eso: estima los días faltantes con la base.
+- **Una estación** necesita datos válidos en al menos el 80 % de los años del periodo.
 
-**Para qué está.** Para escoger la regla comparando lo que se gana con lo que se arriesga.
+![Reglas de la literatura](salidas_R_datos/graficos/7_reglas_comparadas.png)
 
-**Cómo se lee.** Cada punto es una regla posible: una combinación de porcentaje mínimo de días y hueco máximo permitido.
-- El eje horizontal es **cuántos años de estación se conservan** con esa regla.
-- El vertical es **el error en el peor 1 % de las curvas** que deja pasar.
-- Lo ideal es estar a la derecha y abajo.
+**★ Para qué está.** Para comprobar con nuestros datos que la regla de la OMM sirve para curvas, y compararla con otras.
 
-**Qué muestra.** Con "al menos el 90 % de los días y ningún hueco de más de 15" se conservan 2 361 años de estación, y el error del peor 1 % es 0,64. Si se permiten huecos de 45 días o más, se ganan unos 100 años, pero ese error salta a 4,9.
+**Cómo se lee:**
+- Cada punto es una regla.
+- **El eje horizontal** es cuántos años de estación de entrenamiento conserva.
+- **El vertical** es el error de la curva en el peor 1 % de los años que acepta, medido con los huecos reales del experimento. Está en escala logarítmica.
+- Lo ideal es estar abajo: poco error.
 
-**Qué decidimos:**
-- **R5:** un año es válido si tiene al menos el 90 % de los días y ningún hueco de más de 15 días.
-- **R6:** una estación entra si tiene al menos 7 años válidos en entrenamiento.
-- **R7:** no se imputa, es decir, no se rellenan los días faltantes.
+**Qué muestra** (`tablas/7_reglas_comparadas.csv`):
+
+| Regla | Años que conserva | Error del peor 10 % | Error del peor 1 % |
+|---|---|---|---|
+| **OMM 2017 (la que usamos)** | 2 227 | 0,12 | **0,34** |
+| OMM 1989, más estricta (5 faltantes y 3 seguidos por mes) | 2 191 | 0,11 | 0,30 |
+| La regla propia anterior (≥90 % de días y hueco ≤15) | 2 361 | 0,21 | 0,64 |
+| Sin regla (≥40 % de días) | 2 635 | 1,88 | 191,7 |
+
+- La regla de la OMM conserva el 94 % de los años que conservaba la anterior y deja **la mitad del error** en el peor 1 %.
+- Funciona mejor porque mira **cada mes** y no acepta 5 o más días faltantes seguidos. La anterior aceptaba un hueco de hasta 15 días.
+
+**Qué decidimos** (fuentes en `docs/FUNDAMENTOS_REGLAS.md`):
+- **R5 (OMM 2017, 4.4.1):** un año es válido si en cada uno de sus 12 meses faltan como máximo 10 días y no hay 5 o más seguidos.
+- **R6 (OMM 2017, 4.4.2):** una estación entra si tiene años válidos en al menos el 80 % de 1981–2003, es decir, 19 de 23. La OMM 2017 no pide un criterio adicional de años seguidos.
+- **R7 (D-61):** los días faltantes de los años válidos se rellenan por kriging ordinario con las vecinas del mismo día, cada una escalada por la razón de medias mensuales. R5 limita cuántos (los de la OMM para días estimados). Detalle en la sección 8b.
 
 ---
 
@@ -415,32 +484,34 @@ Es decir, hay estaciones donde llueve **más de 10 veces** lo que en otras, dent
 |---|---|---|---|
 | Crudo, 1981–2003 | 323 | 5 514 | — |
 | Solo el Valle, con coordenada | 220 | 3 943 | Solo las del polígono del DANE (D-31 a D-35) |
-| R1 a R4: limpiar días | 220 | 3 943 | 1 423 días pasan a faltante, más los 832 del 29 de febrero, que se quitan |
-| R5: años válidos | 214 | 3 455 | Al menos el 90 % de los días y ningún hueco de más de 15 |
-| R6: estaciones con historia | **176** | **3 299** | Al menos 7 años válidos en entrenamiento |
+| R1 a R4: limpiar días | 220 | 3 943 | 536 días pasan a faltante, más los 832 del 29 de febrero, que se quitan |
+| R5 (OMM): años válidos | 213 | 3 296 | En cada mes, ≤10 días faltantes y menos de 5 seguidos |
+| R7: rellenar esos huecos | 213 | 3 296 | 944 días faltantes de esos años se rellenan por kriging; 36 sin vecina con dato quedan faltantes |
+| R6: estaciones con historia | **163** | **3 046** | ≥10 años válidos (mínimo de la OMM para cualquier promedio; D-63) |
+| R6, sensibilidad | 100 | 2 113 | ≥80 % de 1981–2003, 19 de 23 (OMM; se corre con `CONJUNTO=r6_omm`) |
 
-**Días que pasan a faltante** (`tablas/8_marcas_limpieza.csv`): 1 423 en total.
+**Días que pasan a faltante** (`tablas/8_marcas_limpieza.csv`): 536 en total.
 - R2: 5 extremos sin respaldo.
 - R3: 62 días de totales mensuales.
-- R4: 1 356 días de 30 rachas de ceros sin respaldo.
+- R4: 469 días de 10 rachas de ceros que al menos 2 de 3 vecinas contradicen (antes, con una sola vecina, eran 1 356 días de 30 rachas).
 
 ![Estaciones incluidas](salidas_R_datos/graficos/8_mapa_incluidas.png)
 
 **Para qué está.** Para comprobar que las estaciones que se quedan siguen representando a todo el Valle.
 
-**Cómo se lee.** En azul, las 176 incluidas. En rojo, las 44 excluidas: 38 tienen menos de 7 años válidos en entrenamiento y 6 no tienen ningún año válido.
+**Cómo se lee.** En azul, las 163 incluidas. En rojo, las 57 excluidas: tienen menos de 10 años válidos, casi siempre porque empezaron a medir tarde o dejaron de medir antes de 2003.
 
 **Representatividad** (`tablas/8_representatividad.csv`):
 
 | Grupo | Estaciones | Altitud mediana | % zona pacífica | Lluvia anual mediana |
 |---|---|---|---|---|
 | Las 220 con datos | 220 | 1 330 m | 19 % | 1 515 mm |
-| Las 176 incluidas | 176 | 1 330 m | 15 % | 1 444 mm |
+| Las 163 incluidas | 163 | 1 350 m | 13 % | 1 430 mm |
 
 **Qué muestra:**
-- Las excluidas están repartidas por todo el Valle.
-- Las 176 conservan la misma altitud mediana y una lluvia parecida, así que el conjunto final representa al Valle.
-- Se pierde algo de la zona pacífica (del 19 % al 15 %), que es la más difícil de medir.
+- En la zona andina, las 141 estaciones incluidas conservan una altitud y una lluvia parecidas a las de todas: ahí el conjunto representa bien al Valle.
+- **La zona pacífica queda algo subrepresentada: baja del 19 % al 13 %.** Con el 80 % de la OMM bajaba al 7 %; por eso el profesor prefirió ≥10 años (D-63).
+- Con la regla propia del principio entraban 176 estaciones, 26 de ellas pacíficas. Como sensibilidad se corre todo también con el **80 % de la OMM** (100 estaciones, 7 pacíficas; `CONJUNTO=r6_omm`).
 
 La rúbrica baja la nota si el grupo no muestra que la muestra es representativa, así que **esta tabla hay que citarla en el informe**.
 
@@ -448,9 +519,44 @@ La rúbrica baja la nota si el grupo no muestra que la muestra es representativa
 
 | Conjunto | Años | Curvas | Estaciones | Días faltantes |
 |---|---|---|---|---|
-| Entrenamiento | 1981–1995 | 2 257 | 176 | 2 191 (0,27 %) |
-| Validación | 1996–2000 | 672 | 147 | 465 |
-| Prueba | 2001–2003 | 370 | 137 | 219 |
+| Entrenamiento | 1981–1995 | 2 031 | 163 | 36 (0,003 %): días sin ninguna vecina con dato. R7 rellenó otros 719 (548 en entrenamiento, 120 en validación y 51 en prueba) |
+| Validación | 1996–2000 | 652 | 146 | |
+| Prueba | 2001–2003 | 363 | 136 | |
+
+---
+
+### 8b. R7: cómo se rellenan los días faltantes
+
+**Qué se rellena.** Solo los días faltantes de los años que pasan R5. En el conjunto principal son **719 días de 1 111 790 (0,065 %)**; otros 36 no tienen ninguna vecina con dato ese día y los cubre la curva. No se rellenan los años que no pasan R5, ni los años sin datos, ni nada con el satélite.
+
+**Por qué con las vecinas** (`tablas/8_R7_por_que_vecinas.csv`). La lluvia de una vecina el mismo día dice mucho más sobre el día faltante que la propia estación el día anterior:
+
+| Comparación | Correlación de la lluvia diaria (mediana, 1981–1995) |
+|---|---|
+| Vecina a ≤5 km, mismo día | 0,54 |
+| Vecina a 15–25 km, mismo día | 0,31 |
+| Vecina a 25–50 km, mismo día | 0,26 |
+| La misma estación con su día anterior | 0,12 |
+
+La OMM (2017, 4.6) dice lo mismo: para valores diarios, los días de antes y después «are rarely useful», y propone primero la interpolación espacial.
+
+**Cómo** (`tablas/8_R7_semivariograma_modelos.csv` y gráfica `8_R7_semivariograma`):
+1. Se buscan hasta 10 vecinas a ≤50 km que tengan dato ese día.
+2. Cada vecina se multiplica por la razón entre la lluvia media de la estación y la suya en ese mes (1981–1995). Así se corrige que una estación sea más lluviosa que otra: a ≤25 km, una llueve en promedio 1,28 veces lo que la otra.
+3. Se combinan con los pesos del **kriging ordinario**, que salen del semivariograma de la lluvia diaria de 1981–1995. El modelo se eligió por validación cruzada: el exponencial tuvo el menor error (ECM 88,7).
+4. Un valor negativo se pone en 0.
+
+**La prueba** (`tablas/8_R7_metodos_relleno.csv`). A 1 932 años completos de entrenamiento se les quitaron días, con el patrón real o con el máximo que acepta R5 (120 al año), y se comparó la curva con la del año completo:
+
+| Método | Error con el patrón real | Error con el máximo de R5 |
+|---|---|---|
+| Solo la curva (sin rellenar) | 0,032 | 0,551 |
+| IDW con 3 vecinas | 0,018 | 0,321 |
+| **Kriging con la razón de medias (R7)** | **0,018** | **0,300** |
+
+El error se mide frente a cuánto varía la curva de esa estación de un año a otro. Rellenar con vecinas casi divide el error a la mitad, y el kriging es el mejor de los métodos con vecinas.
+
+**Cada día rellenado queda marcado** (`tablas/8_R7_dias_rellenados.csv` y la matriz `rellenado` de `datos_preparados.rds`), y R5 se mide siempre con los días observados.
 
 ---
 
@@ -510,7 +616,7 @@ Sin dividir, la última péntada de cada mes de 31 días parecería más lluvios
 **Otros resultados del satélite solo** (gráficas en el anexo A):
 - El tope de 200 mm solo se alcanza en la zona pacífica, en hasta el 1,8 % de las péntadas de un píxel; en el valle nunca.
 - Su ciclo anual tiene las mismas dos temporadas que las estaciones.
-- **Sus años "secos" son 1985, 1988 y 2000, todos de La Niña**, que según las estaciones son años húmedos. El satélite tiene la relación con el ENSO al revés: su correlación con el ONI es +0,27, frente a −0,60 en las estaciones. Esto se confirma en la sección 12.
+- **Sus años "secos" son 1985, 1988 y 2000, todos de La Niña**, que según las estaciones son años húmedos. El satélite tiene la relación con el ENSO al revés: en los píxeles de las estaciones, su correlación con el ONI es +0,27, frente a −0,60 en las estaciones. Esto se confirma en la sección 12.
 
 ---
 
@@ -523,14 +629,14 @@ Esta es la parte central: **qué acierta y qué falla el satélite**. Lo que fal
 **Para qué está.** Para ver qué tan bien coincide el satélite con la estación en cada péntada concreta.
 
 **Cómo se lee.**
-- Cada punto es una pareja estación–péntada: hay 238 224.
+- Cada punto es una pareja estación–péntada: hay 148 504.
 - El eje horizontal es lo que midió la estación y el vertical lo que dijo el satélite en su píxel.
 - El color indica cuántos puntos caen en esa zona.
 - La línea roja es la igualdad: si el satélite fuera perfecto, todo estaría sobre ella.
 
 **Qué muestra:**
-- La nube es ancha: correlación de 0,5 aproximadamente.
-- El satélite casi nunca marca 0, mientras que la estación marca 0 en el 22 % de las péntadas.
+- La nube es ancha: correlación de 0,40 en entrenamiento, 0,42 en validación y 0,49 en prueba.
+- El satélite nunca marca 0, mientras que la estación marca 0 en el 23 % de las péntadas.
 - El satélite no llega a los valores altos de la estación.
 
 En una péntada concreta, el satélite es solo una estimación gruesa.
@@ -544,7 +650,8 @@ En una péntada concreta, el satélite es solo una estimación gruesa.
 **Qué muestra. El satélite "aplana":**
 - Donde llueve poco (menos de 2 000 mm al año), los puntos quedan **por encima** de la diagonal: el satélite **da más lluvia** de la que hay.
 - Donde llueve mucho (la costa pacífica), quedan **por debajo**: el satélite **da menos**.
-- La correlación entre el sesgo y la lluvia de la estación es −0,68.
+- La correlación entre el sesgo y la lluvia de la estación es −0,65.
+- Con las 163 estaciones, en la zona andina el satélite sobreestima en 48 estaciones y subestima en 23. En la pacífica sobreestima en 11 y subestima en 7, las de la costa más lluviosa.
 
 ![Ciclo anual en los pares](salidas_R_datos/graficos/12_ciclo_satelite_estacion.png)
 
@@ -552,7 +659,7 @@ En una péntada concreta, el satélite es solo una estimación gruesa.
 
 **Cómo se lee.** Las dos líneas son la lluvia media de cada día del año: una para las estaciones y otra para sus píxeles.
 
-**Qué muestra.** Las dos curvas casi se superponen: **el satélite acierta cuándo llueve en el año** (correlación de 0,78).
+**Qué muestra.** Las dos curvas casi se superponen: **el satélite acierta cuándo llueve en el año** (correlación de 0,80).
 
 ![Anomalías anuales](salidas_R_datos/graficos/12_anomalia_anual_satelite_estaciones.png)
 
@@ -564,9 +671,9 @@ En una péntada concreta, el satélite es solo una estimación gruesa.
 - Las líneas rojas verticales son los cortes de la partición.
 
 **Qué muestra:**
-- Las estaciones varían el doble que el satélite: su desviación es de 13,8 % frente a 7,3 %.
+- Las estaciones varían el doble que el satélite: su desviación es de 13,6 % frente a 7,1 %.
 - En 1984, 1988, 1999 y 2000, años de La Niña, las estaciones suben y el satélite no. En 1992, de El Niño, pasa al revés.
-- **El satélite no capta qué años son más o menos lluviosos** (correlación de 0,25).
+- **El satélite no capta qué años son más o menos lluviosos** (correlación de 0,24).
 
 ![Diferencia contra el ONI](salidas_R_datos/graficos/12_diferencia_vs_ONI.png)
 
@@ -578,62 +685,68 @@ En una péntada concreta, el satélite es solo una estimación gruesa.
 - El eje vertical es cuánto se equivocó el satélite: su anomalía menos la de las estaciones.
 
 **Qué muestra:**
-- La diferencia sigue al ONI, con correlación de 0,74.
-- En La Niña el satélite se queda corto hasta 25 puntos porcentuales, y en El Niño se pasa.
+- La diferencia sigue al ONI, con correlación de 0,73.
+- En La Niña el satélite se queda corto hasta 26 puntos porcentuales (1984), y en El Niño se pasa hasta 30 (1992).
 - No son "años dañados": es un **error sistemático** ligado al ENSO.
 
 **Qué decidimos.** El modelo lo puede corregir si conoce el ONI del año. Por eso el ONI va entre las variables del modelo.
 
-### Año por año, como en la tesis del profesor
+### Año por año
 
-El profesor presenta sus datos **en paneles, uno por año** (tesis, figuras 5.8 y 5.12). Aquí se hace igual con la lluvia acumulada, que es la escala en que él trabaja.
+**La lluvia no se trabaja acumulada.** El profesor lo pidió expresamente en la revisión: para modelar una curva acumulada hacen falta bases monótonas, y el error de cada día se arrastra a todos los siguientes. Por eso la gráfica de lluvia acumulada por año se quitó. Año por año se mira con **totales anuales**, que son un número por año, y con la correlación.
 
-![Acumulada por año](salidas_R_datos/graficos/12_acumulada_por_anio.png)
+**Totales anuales en los mismos pares** (`tablas/12_por_anio.csv`). Solo entran los años de estación con las 72 péntadas completas, para que estación y satélite sumen exactamente los mismos días:
 
-**★ Para qué está.** Para ver, año por año, si el satélite da tanta lluvia como las estaciones, y si eso depende del ENSO.
+| Fase | Satélite / estación en el total del año (media) | Rango entre años |
+|---|---|---|
+| La Niña | 93 % | 77 % (1988) a 115 % (1989) |
+| Neutro | 109 % | 95 % a 122 % |
+| El Niño | 119 % | 109 % a 137 % (1992) |
 
-**Cómo se lee:**
-- Cada panel es un año, con su fase ENSO en el título. Todos tienen el mismo eje.
-- El eje horizontal son las 72 péntadas del año, de enero a diciembre. El vertical es la lluvia **acumulada** desde el 1 de enero: cada curva sube a medida que llueve, y donde se aplana es temporada seca.
-- Las líneas grises son las estaciones, una por estación. Las pocas de la costa, que pasan de 8 000 mm, se salen por arriba.
-- La línea negra continua es el promedio de las estaciones, y la discontinua el promedio del satélite **en los píxeles de esas mismas estaciones**.
-- El texto de arriba dice cuánto da el satélite al final del año, en % de lo que midieron las estaciones.
-- Solo entran los años de estación con las 72 péntadas completas, para que estación y satélite sumen exactamente los mismos días.
-
-**Qué muestra** (`tablas/12_por_anio.csv`):
-- En los años **La Niña** la línea discontinua queda **por debajo**: el satélite da en promedio el **92 %** de lo que midieron las estaciones (77 % en 1988).
-- En los años **El Niño** queda **por encima**: el satélite da el **120 %** en promedio (137 % en 1992).
-- En los neutros da el 108 %.
-- La correlación entre ese porcentaje y el ONI es **0,76**.
-
-**Interpretación.** Es la gráfica más directa del error del satélite ligado al ENSO: se queda corto justo en los años más lluviosos y se pasa en los secos.
+- La correlación entre ese porcentaje y el ONI es **0,73**.
+- Con las 163 estaciones, casi todas andinas, el satélite da más lluvia que las estaciones en casi todos los años. Pero da mucho más en El Niño y casi lo justo en La Niña: su error sigue al ENSO.
 
 ![Correlación por año](salidas_R_datos/graficos/12_correlacion_por_anio.png)
 
-**Para qué está.** El profesor mide en su tesis la correlación estación–satélite de cada año (de 0,33 a 0,67). Aquí se repite con nuestros datos.
+**Para qué está.** Para ver si el satélite sigue igual de bien la lluvia todos los años.
 
 **Cómo se lee.** Cada barra es la correlación entre estación y satélite en las péntadas de ese año. El tono de la barra es la fase ENSO, y la línea punteada es la mediana.
 
-**Qué muestra.** La correlación va de **0,39 a 0,58**, con mediana de 0,52. Casi no cambia con el ENSO: 0,47 en años Niña, 0,49 en Niño y 0,52 en neutros.
+**Qué muestra.** La correlación va de **0,31 a 0,52**, con mediana de 0,42. Cambia poco con el ENSO: 0,39 en años Niña, 0,41 en Niño y 0,45 en neutros.
 
-**Interpretación.** El satélite sigue igual de bien **el ritmo** de la lluvia todos los años. Lo que cambia con el ENSO es **la cantidad**, como mostró la gráfica anterior. Es justo lo que el modelo debe corregir.
+**Interpretación.** El satélite sigue parecido **el ritmo** de la lluvia todos los años. Lo que cambia con el ENSO es sobre todo **la cantidad**, como muestra la tabla de totales. Es justo lo que el modelo debe corregir.
 
-### ¿Qué pasa en el tope de 200 mm? (pregunta del profesor, P-15)
+### ¿Qué pasa en el tope de 200 mm? Y los huecos de Bahía Málaga (P-15)
 
 ![Serie con el tope](salidas_R_datos/graficos/12_serie_tope_200.png)
 
-**Para qué está.** El profesor pidió armar la serie de una estación afectada y dibujarla.
+**Para qué está.** El profesor pidió armar la serie de una estación afectada por el tope y dibujarla. En la revisión preguntó además **por qué la serie tenía huecos**.
 
-**Cómo se lee.**
-- Es la serie completa, péntada a péntada, de Bahía Málaga y de su píxel. Bahía Málaga es la estación de la costa con más péntadas en el tope.
+**Cómo se lee:**
+- Es la serie de Bahía Málaga y de su píxel, péntada a péntada, de 1981 a 2003. Bahía Málaga es la estación de la costa con más péntadas del satélite en el tope.
+- **Ahora se dibujan todos los años en que la estación midió**, también los que la regla no acepta. El satélite se dibuja completo.
+- Los **años sombreados en gris** son los que no entran, con la causa escrita arriba:
+  - "sin registro": la estación todavía no existía;
+  - "N días": el número de días que midió ese año.
 - La línea punteada es el tope de 200 mm, y los puntos rojos son las péntadas en que el satélite lo toca.
 
-**Qué muestra:**
-- La estación pasa de 200 mm casi todas las temporadas, con picos de hasta unos 760 mm. El satélite casi nunca llega a 200: lo toca solo 17 veces en 23 años.
-- En todos los pares, el satélite está en el tope en **33 de 238 224 péntadas**, y solo en 3 estaciones de la costa: Bahía Málaga, Yurumanguí y San Francisco (`tablas/12_tope_200_por_estacion.csv`).
-- De las 1 049 péntadas en que la estación pasa de 200 mm, **el satélite está en el tope solo en el 2 %**.
+**Por qué había huecos.** La gráfica anterior solo mostraba los años que la regla de calidad aceptaba, y por eso el satélite también aparecía cortado. En los datos crudos:
 
-**Qué decidimos.** El tope no es lo que hace que el satélite subestime los aguaceros: por sí mismo casi nunca llega a esos valores. Se documenta y no hace falta corregirlo (D-47).
+| Años | Qué pasó |
+|---|---|
+| 1981–1983 | La estación no existía: empieza en julio de 1984 |
+| 1984 | Solo midió desde julio (170 días) |
+| 1986 | 322 días: le faltan del 17 de enero al 26 de febrero |
+| 1987 | 336 días: varios huecos en febrero, marzo, abril, junio y julio |
+| 1989 | Midió solo hasta junio (186 días) |
+| 2000 | 315 días: le falta casi todo mayo |
+
+**Qué muestra:**
+- La estación pasa de 200 mm casi todas las temporadas, con picos de hasta unos 760 mm. El satélite casi nunca llega a 200.
+- **Bahía Málaga entra al análisis** con 15 años válidos (R6 pide 10; sección 8). También entran las otras dos estaciones de la costa donde el satélite toca el tope: Yurumanguí y San Francisco.
+- **Aun así, el satélite está en el tope en solo 33 de las 218 806 péntadas** estación-satélite (0,015 %). En las 950 péntadas en que la estación pasa de 200 mm, el satélite está en el tope solo en el 2 %. Con el 80 % de la OMM no hay ninguna.
+
+**Qué decidimos.** El tope no afecta los datos con que se ajusta el modelo. Aun en las estaciones de la costa, el tope no era la causa de que el satélite subestime los aguaceros: por sí mismo casi nunca llega a esos valores (D-47).
 
 ### Resumen: qué acierta el satélite
 
@@ -641,12 +754,12 @@ El profesor presenta sus datos **en paneles, uno por año** (tesis, figuras 5.8 
 
 | Componente | Correlación satélite–estación | Lectura |
 |---|---|---|
-| Dónde llueve más | 0,79 | Bien |
-| Cuándo llueve en el año | 0,78 | Bien |
-| Meses más o menos lluviosos de lo normal | 0,30 | Mal |
-| Años más o menos lluviosos de lo normal | 0,25 | Mal |
+| Dónde llueve más | 0,47 | Regular: sin las estaciones de la costa, el rango de lluvia es más estrecho y el satélite lo distingue peor |
+| Cuándo llueve en el año | 0,80 | Bien |
+| Meses más o menos lluviosos de lo normal | 0,36 | Mal |
+| Años más o menos lluviosos de lo normal | 0,24 | Mal |
 
-**★ Esta tabla resume en una línea para qué sirve el proyecto.** El satélite sabe dónde y cuándo llueve, pero no cuánto llueve un año en particular. El modelo tiene que corregir eso.
+**★ Esta tabla resume en una línea para qué sirve el proyecto.** El satélite sabe cuándo llueve, y más o menos dónde, pero no cuánto llueve un año en particular. El modelo tiene que corregir eso.
 
 ---
 
@@ -663,21 +776,22 @@ El profesor presenta sus datos **en paneles, uno por año** (tesis, figuras 5.8 
 **Qué muestra.** Las dos fuentes tienen resoluciones muy distintas. Por eso cada una se convierte en curva con su propia base, y después se comparan como curvas, no día a día. Eso se explica en `EXPLICACION_FUNCIONAL`.
 
 **Qué queda en `datos_preparados.rds`:**
-- **Estaciones:** 3 299 curvas × 365 días, en mm/día, con `NA` en los días faltantes (el 0,24 %).
-- **Satélite:** 15 663 curvas × 72 péntadas, en mm/día, ubicadas en su día central.
+- **Estaciones:** 3 046 curvas × 365 días, en mm/día. R7 rellenó 719 días (la matriz `rellenado` dice cuáles); quedan 36 faltantes (`NA`) sin ninguna vecina con dato.
+- **Satélite:** 15 571 curvas × 72 péntadas, en mm/día, ubicadas en su día central.
 - **Pares:** cada curva de estación con la de su píxel en el mismo año, más el ONI y la fase ENSO.
 - **Metadatos de las estaciones:**
   - coordenada y altitud (Univalle con 996 m, D-46);
   - zona;
-  - marcas para el análisis de sensibilidad: 6 estaciones del cruce con el CNE y 12 con la coordenada "a revisar".
-- **Estaciones y píxeles:** las 176 estaciones caen en 148 píxeles, y 23 píxeles tienen más de una estación.
+  - marcas para el análisis de sensibilidad: 2 estaciones del cruce con el CNE y 3 con la coordenada "a revisar".
+- **Estaciones y píxeles:** las 163 estaciones caen en 142 píxeles, y 17 píxeles tienen más de una estación.
 
 ---
 
 ## 14. Pruebas automáticas
 
-`tablas/14_pruebas.csv`: **28 comprobaciones; si una falla, el script se detiene.** Las más importantes:
-- cada valor final es igual al del archivo crudo, que se vuelve a leer: 1 211 103 valores;
+`tablas/14_pruebas.csv`: **30 comprobaciones; si una falla, el script se detiene.** Las más importantes:
+- cada valor observado es igual al del archivo crudo, que se vuelve a leer: 1 111 035 valores;
+- R7 solo rellena días de años válidos, nunca con valores negativos, y su semivariograma usa solo entrenamiento;
 - la matriz del satélite coincide con 12 imágenes TIFF releídas;
 - cada estación cae dentro de su píxel, a 3,9 km del centro como máximo;
 - los umbrales (p99) usan solo entrenamiento;
@@ -702,28 +816,33 @@ Están en `salidas_R_datos/graficos/` pero no en el cuerpo: repiten algo que ya 
 | `11_satelite_mapa_tope` | Píxeles donde el satélite toca los 200 mm | La cifra está en la sección 11 |
 | `11_satelite_ciclo` | Ciclo anual del satélite solo | La gráfica `12_ciclo_satelite_estacion` lo compara con las estaciones |
 | `11_satelite_anomalia_anual` | Años secos y húmedos del satélite solo | La gráfica `12_anomalia_anual_satelite_estaciones` lo compara con las estaciones |
-| `12_correlacion_por_estacion` | Correlación satélite–estación de cada estación: mediana 0,42 en la zona andina y 0,37 en la pacífica | La cifra está en la tabla de la sección 0 |
+| `12_correlacion_por_estacion` | Correlación satélite–estación de cada estación: mediana 0,42 en la zona andina y 0,36 en la pacífica | La cifra está en la tabla de la sección 0 |
+| `7A_hueco_continuo` | Error de la curva según el largo de un hueco continuo | La regla sale de la OMM; la comparación de reglas (`7_reglas_comparadas`) es la que decide |
 
-La gráfica de preferencia de dígitos se quitó: quedó como tabla (`tablas/2_ultimo_digito.csv`), con la conclusión en la sección 2.
+Se quitaron:
+- **La gráfica de preferencia de dígitos:** quedó como tabla (`tablas/2_ultimo_digito.csv`), con la conclusión en la sección 2.
+- **`7_reglas_candidatas`:** era una rejilla de umbrales propios. La reemplaza `7_reglas_comparadas`, que compara reglas publicadas.
+- **`12_acumulada_por_anio`:** era lluvia acumulada, que no se modela.
 
 ---
 
 ## Anexo B. Gráficas propuestas para la presentación
 
-Este orden cuenta la historia de los datos en unas 12 láminas:
+Este orden cuenta la historia de los datos en unas 13 láminas:
 
 1. **El Valle y sus dos zonas:** `1_mapa_estaciones`.
-2. **Qué datos se usan:** `3_curvas_validas_parte1` (o un recorte de ella), con la tabla de trazabilidad.
-3. **Cómo se limpian:** la tabla de extremos (sección 4) y `5b_rachas_ceros_prueba`.
-4. **Cuántos faltantes se toleran:** `7A_hueco_continuo`.
-5. **Dónde llueve:** `6_mapa_lluvia_anual` junto a `11_satelite_mapa_anual`.
-6. **Por qué la altitud:** `6_lluvia_altitud`.
-7. **Cómo llueve en el año:** `6_ciclo_anual`.
-8. **Por qué el ONI:** `6_anomalia_anual_ENSO`.
-9. **El satélite aplana:** `12_sesgo_por_estacion`.
-10. **El satélite acierta cuándo, pero no cuánto:** `12_ciclo_satelite_estacion` y `12_anomalia_anual_satelite_estaciones`.
-11. **El error del satélite sigue al ENSO:** `12_acumulada_por_anio` (año por año, como en la tesis del profesor) y `12_diferencia_vs_ONI`.
-12. **Qué acierta el satélite:** la tabla resumen de la sección 12, y `13_ejemplos_pares` como puente a lo funcional.
+2. **La lluvia como se mide:** `6_serie_diaria_por_anio`.
+3. **Qué datos se usan:** `3_curvas_validas_parte1`, con la tabla de trazabilidad.
+4. **Cómo se limpian:** la tabla de extremos (sección 4), `5b_rachas_ceros_prueba` y el inventario por temporada y ENSO.
+5. **Cuántos faltantes se toleran, según la OMM:** `7_reglas_comparadas`.
+6. **Dónde llueve:** `6_mapa_lluvia_anual` junto a `11_satelite_mapa_anual`.
+7. **Por qué la altitud:** `6_lluvia_altitud`.
+8. **Cómo llueve en el año:** `6_ciclo_anual`.
+9. **Por qué el ONI:** `6_anomalia_anual_ENSO`.
+10. **El satélite aplana:** `12_sesgo_por_estacion`.
+11. **El satélite acierta cuándo, pero no cuánto:** `12_ciclo_satelite_estacion` y `12_anomalia_anual_satelite_estaciones`.
+12. **El error del satélite sigue al ENSO:** `12_diferencia_vs_ONI` y la tabla de totales por fase.
+13. **Qué acierta el satélite:** la tabla resumen de la sección 12, y `13_ejemplos_pares` como puente a lo funcional.
 
 ---
 
@@ -735,7 +854,8 @@ También están en `DECISIONES.md`, §8.
 |---|---|---|
 | P-12 ✅ | Fuentes externas | **Aceptadas**, sobre todo las oficiales del IDEAM |
 | P-14 ✅ | Univalle con los 996 m de la estación del IDEAM en el mismo campus | **El profesor lo acepta**, porque los datos del curso también salen del IDEAM |
-| P-15 ✅ | Tope de 200 mm del satélite | El profesor pidió armar la serie y dibujarla: está en la sección 12. Afecta solo 33 péntadas de 3 estaciones de la costa |
+| P-15 ✅ | Tope de 200 mm del satélite | El profesor pidió armar la serie y dibujarla: está en la sección 12, ahora con todos los años y la causa de cada hueco. Con la regla de la OMM ninguna estación incluida tiene péntadas en el tope |
+| P-20 🟡 | Reglas de inclusión con respaldo en la literatura | **Hecho:** R5 sigue la OMM (WMO-No. 1203, 2017). R6 con ≥10 años válidos, que el profesor prefirió (D-63): la zona pacífica queda con 22 estaciones |
 | P-16 ✅ | ¿Qué "ONI del año" usar? | **Resuelta (D-56):** la media de los 12 trimestres del año calendario, porque la curva es del año completo |
 | P-17 ✅ | Quitar el 29 de febrero | **Aceptado** |
 | P-18 ✅ | Usar el píxel que contiene la estación | **Aceptado**: el píxel es más grande que el punto, no hay que promediar |

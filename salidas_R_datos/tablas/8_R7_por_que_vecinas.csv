@@ -1,0 +1,7 @@
+comparacion,pares,r_mediana
+"Vecina a (0,5] km, mismo día",162,0.54
+"Vecina a (5,10] km, mismo día",454,0.44
+"Vecina a (10,15] km, mismo día",626,0.37
+"Vecina a (15,25] km, mismo día",1491,0.31
+"Vecina a (25,50] km, mismo día",4733,0.26
+La misma estación con su día anterior,208,0.12

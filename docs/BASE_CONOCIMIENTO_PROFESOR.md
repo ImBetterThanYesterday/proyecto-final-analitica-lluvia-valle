@@ -105,8 +105,8 @@ Este documento reúne lo que el profesor Johann Alexis Ospina-Galindez enseña, 
 | EDA | Diferencias por sitio y d̄(t) ± 2 EE | Semana 12 | `F4_diferencia` |
 | EDA | Curvas ordenadas por profundidad; media, mediana y media recortada | Semana 12 | `F3_centralidad` |
 | EDA | Boxplot funcional | Semana 12 | `F3_boxplot_funcional` |
-| EDA | **Curvas acumuladas por fuente y d(t) acumulada** | Tesis, semana 12 | `F4_acumulada` (**nuevo**) |
-| Inferencia | **t(t) con crítico puntual y crítico del máximo** | Semana 14 | `F4_prueba_t_pareada` (**nuevo**) |
+| EDA | **Curvas acumuladas por fuente y d(t) acumulada** | Tesis, semana 12 | ~~`F4_acumulada`~~ (quitada tras la revisión por Teams) |
+| Inferencia | **t(t) con crítico puntual y crítico del máximo** | Semana 14 | ~~`F4_prueba_t_pareada`~~ (quitada tras la revisión por Teams) |
 | Inferencia | **F(t) del ANOVA funcional y tabla con gl × d̂** | Semana 14 | `F4_anova_funcional` (**nuevo**) |
 | Regresión | OCV frente a log λ | Semana 15 | `F5_seleccion_M_lambda` |
 | Regresión | β(t) con bandas ± 2 EE | Semana 15, tesis figs. 7.1, 9.1 y 9.2 | `F5_efectos` con bandas (**nuevo**), `C2_*`, `C6_*` |
@@ -118,7 +118,7 @@ Este documento reúne lo que el profesor Johann Alexis Ospina-Galindez enseña, 
 | Diagnóstico | **Residuos estudentizados y residuos frente a predichos** | Tesis figs. 9.3–9.4 | `F5_diagnostico` (**nuevo**) |
 | Diagnóstico | **Traza-variograma de los residuos** | Tesis cap. 8 | `F5_diagnostico` (**nuevo**) |
 | Evaluación | **Mapa del error por estación** | Tesis figs. 10.4–10.6 | `F5_mapa_error` (**nuevo**) |
-| Datos, por año | **Precipitación acumulada por año, estación y satélite** | Tesis figs. 5.8 y 5.12 | `12_acumulada_por_anio` (**nuevo**, D-59) |
+| Datos, por año | **Precipitación acumulada por año, estación y satélite** | Tesis figs. 5.8 y 5.12 | ~~`12_acumulada_por_anio`~~ (quitada tras la revisión por Teams) |
 | Datos, por año | **Correlación estación–satélite de cada año** | Tesis cap. 5 | `12_correlacion_por_anio` (**nuevo**, D-59) |
 | EDA, por año | **Curvas de cada año con promedio y desviación estándar** | Tesis figs. 6.2 y 6.3 | `F3_por_anio_estaciones`, `F3_por_anio_satelite` (**nuevo**, D-59) |
 | Regresión, por año | **b₁(t) del concurrente ajustado en cada año, con banda** | Tesis fig. 9.2 | `C7_b1_por_anio` (**nuevo**, D-59) |
@@ -148,9 +148,9 @@ Cada cambio está en `lluvia_valle_funcional.R` (y en su copia `lluvia_valle.R`)
 | Cambio | Fuente en el material | Por qué sirve |
 |---|---|---|
 | CV(t) en el EDA | Semana 12, diapositiva 12 | Compara la dispersión de dos fuentes con niveles distintos |
-| Prueba t funcional pareada (L², F, permutación con criterio del máximo) | Semana 14, diapositivas 15–21 y ejercicio 3 | Convierte la banda d̄(t) ± 2 EE en una decisión global y controla el error en todo el año |
+| Prueba t funcional pareada (L², F, permutación con criterio del máximo) | Semana 14, diapositivas 15–21 y ejercicio 3 | Convierte la banda d̄(t) ± 2 EE en una decisión global y controla el error en todo el año **(Quitado tras la revisión por Teams: ver sección 9.)** |
 | ANOVA funcional del error del satélite por fase ENSO, vertiente y altitud | Semana 14, diapositivas 25–40 | Prueba con datos lo que antes solo se describía: si el sesgo del satélite depende del ENSO y del relieve |
-| Vista acumulada | Tesis y semanas 12–13 | Muestra los resultados en la escala con que él trabaja, y justifica con datos por qué el modelo usa mm/día |
+| Vista acumulada | Tesis y semanas 12–13 | Muestra los resultados en la escala con que él trabaja, y justifica con datos por qué el modelo usa mm/día **(Quitado tras la revisión por Teams: ver sección 9.)** |
 | Bandas de los efectos por bootstrap de estaciones | Semana 15 y tesis figs. 7.1 y 9.2 | Él siempre presenta β con banda; la nuestra respeta que los años de una estación no son independientes |
 | Prueba F por permutación del aporte del satélite | Semana 15, diapositiva 15 (`Fperm.fd`) | Responde si el satélite aporta más allá de la altitud y el ONI |
 | Residuos estudentizados, residuos frente a predichos y correlación de residuos | Tesis figs. 9.3 y 9.4; semana 15 | Diagnóstico del modelo como en su tesis |
@@ -163,7 +163,7 @@ Cada cambio está en `lluvia_valle_funcional.R` (y en su copia `lluvia_valle.R`)
 | De su material | Por qué no | Qué hacemos en su lugar |
 |---|---|---|
 | Imputar faltantes con kriging | La clase y nuestras reglas no imputan: cada curva se ajusta con sus días observados, y solo se aceptan años con ≥ 90 % de días y ningún hueco > 15 días (R5) | El experimento de huecos (sección 7 del archivo de datos) muestra cuánto cambia la curva con huecos |
-| Curvas acumuladas con `smooth.monotone` | El enunciado pide modelar sobre √P o log(1+P) y fechar los dos picos, que son rasgos de la intensidad. Además, la acumulada está dominada por el total que se va sumando (memoria larga) y oculta las fechas de las temporadas, que son una métrica de la rúbrica. La derivada de la acumulada es nuestra curva: no se pierde información | Se muestra la vista acumulada en el EDA (4.6) con la justificación en datos |
+| Curvas acumuladas con `smooth.monotone` | El enunciado pide modelar sobre √P o log(1+P) y fechar los dos picos, que son rasgos de la intensidad. Además, la acumulada está dominada por el total que se va sumando (memoria larga) y oculta las fechas de las temporadas, que son una métrica de la rúbrica. La derivada de la acumulada es nuestra curva: no se pierde información | Se muestra la vista acumulada en el EDA (4.6) con la justificación en datos **(Quitado tras la revisión por Teams: ver sección 9.)** |
 | Mínimos cuadrados generalizados con covarianza espacial | No se vio en clase y el enunciado pide la regresión como referencia de la red | Se mide la correlación espacial con el traza-variograma y se respeta con IC por bootstrap de estaciones |
 | Altura² | En su tesis no aportó | La altitud entra lineal, como pide el enunciado |
 | Base de Fourier para un año de lluvia | Él mismo lo advierte en el taller de repaso (ejercicio 3): "el valor final de un día no coincide necesariamente con el inicial del siguiente". En nuestros datos, enero y diciembre del mismo año solo se correlacionan 0,54 | B-splines, como en su tesis y en el enunciado |
@@ -198,49 +198,40 @@ Corrida del 18-nov-2026: `lluvia_valle_datos.R` pasa 28 de 28 pruebas, `lluvia_v
 
 | Pregunta | Prueba, como en clase | Resultado | Qué significa |
 |---|---|---|---|
-| ¿El satélite y la estación tienen la misma media? | t pareada: L², F y permutación con criterio del máximo; 176 estaciones | F: p = 0,003. Máximo: p = 0,0002. 129 días significativos | No. La diferencia se concentra en febrero–marzo (la estación llueve más) y en los picos de abril–junio y noviembre (el satélite exagera) |
+| ¿El satélite y la estación tienen la misma media? | t pareada: L², F y permutación con criterio del máximo; 176 estaciones | F: p = 0,003. Máximo: p = 0,0002. 129 días significativos | No. La diferencia se concentra en febrero–marzo (la estación llueve más) y en los picos de abril–junio y noviembre (el satélite exagera) **(Quitado tras la revisión por Teams: ver sección 9.)** |
 | ¿El error del satélite depende del ENSO? | ANOVA funcional con los 23 años | F: p = 0,0003. GPF: p = 0,005. Fmax: p = 0,22 | Sí, con un efecto pequeño pero repartido en todo el año. Respalda dar el ONI al modelo |
 | ¿Y de la vertiente y la altitud? | ANOVA funcional con las estaciones | p ≤ 0,005 | Sí: el satélite no ve la orografía, como concluye la tesis |
-| ¿Qué muestra la vista acumulada? | d(t) acumulada ± 2 EE | Al 31-dic: −19 ± 71 mm | En el total anual los errores se compensan. Por eso el modelo trabaja en mm/día |
+| ¿Qué muestra la vista acumulada? | d(t) acumulada ± 2 EE | Al 31-dic: −19 ± 71 mm | En el total anual los errores se compensan. Por eso el modelo trabaja en mm/día **(Quitado tras la revisión por Teams: ver sección 9.)** |
 | ¿Aporta el satélite más allá de altitud y ONI? | F por permutación, como `Fperm.fd` | p = 0,003 en los 365 días | Sí |
 | ¿Aporta la altitud? | Bandas por bootstrap de estaciones | La banda contiene el 0 todo el año | No, una vez se conoce el píxel. Igual que en la tesis |
 | ¿Quedó correlación espacial? | Traza-variograma de los residuos | Rango práctico de unos 96 km, pepita del 17 % | Sí. Se respeta con IC por estación; mínimos cuadrados generalizados queda como trabajo futuro |
 | ¿Eran correctas las bandas sándwich del concurrente? | Bootstrap de estaciones | Son 4 veces más angostas de lo que deberían | No. Se reportan las de bootstrap |
 
-## 9. Su forma de graficar y qué metodologías suyas adoptamos (revisión del 18-nov-2026)
+## 9. Su forma de graficar y qué tomamos de él (revisado tras la revisión por Teams)
 
-### 9.1 Cómo grafica (tesis, capítulos 5, 6 y 9)
-- **Un panel por año.** Casi todo lo muestra así: los datos crudos (fig. 5.8), las curvas suavizadas con su promedio y desviación (figs. 6.2 y 6.3), las regiones (fig. 5.12) y hasta el coeficiente del satélite (fig. 9.2). Para él, el año es la unidad natural: la lluvia de un año depende del ENSO, y el panel por año lo deja ver sin una sola cifra.
-- **Mismo eje en todos los paneles**, para comparar un año con otro de un vistazo.
-- **Blanco y negro, con R base:**
-  - curvas individuales en gris claro;
-  - promedio en negro grueso;
-  - desviación estándar en línea punteada;
-  - bandas de confianza como sombra gris;
-  - línea punteada horizontal en 0 en los coeficientes.
-- **El año, en negrita, como título del panel**, y ejes en el lenguaje del problema: "Tiempo (día pentadal)" y "Precipitación acumulada (mm)".
-- **Trabaja en lluvia acumulada.** Así las curvas siempre suben y se ven el total y las temporadas: donde la curva se aplana, es tiempo seco.
+> **Corrección importante.** En la revisión por Teams (transcripción en `docs/transcripcion_revision_profesor.txt`) el profesor dijo que mostró su tesis de 2016 y dos papers **para que no se siguieran**, y que no se modele la lluvia acumulada. Esta sección se rehízo con eso: la tesis ya **no es guía**. Lo que quedó del proyecto tiene su propia fuente en la literatura (`docs/FUNDAMENTOS_REGLAS.md`).
 
-### 9.2 Lo que adoptamos de su estilo
-- Las cuatro figuras por año del catálogo (sección 3), en su mismo estilo. A cada una le agregamos la fase ENSO en el título, porque es lo que explica las diferencias entre años.
-- En la figura acumulada, el texto "satélite = x % de la estación" de cada año: es la "frase con números" de cada figura (regla 2.1).
+### 9.1 Lo que se conserva y lo que no
+- **Paneles por año, en R base y blanco y negro.** Se conservan como forma de **describir** los datos. Muestran la lluvia en **mm/día**, nunca acumulada:
+  - `6_serie_diaria_por_anio`: la lluvia diaria observada de una estación y la de su píxel. Es la «serie de la lluvia» que el profesor pidió ver;
+  - `F3_por_anio_*`: las curvas funcionales de cada año;
+  - `12_correlacion_por_anio`: la correlación estación–satélite de cada año;
+  - `C7_b1_por_anio`: el modelo concurrente ajustado en cada año, como descriptivo.
+- **La lluvia acumulada se quitó por completo** (`12_acumulada_por_anio`, `F4_acumulada`). Para modelarla se necesitan bases monótonas (Ramsay y Silverman 2005, cap. 6), y el error de un día se arrastra a todos los siguientes.
 
-### 9.3 ¿Usar sus metodologías para todas las decisiones?
+### 9.2 Decisión por decisión
 
-Sí, donde el problema es el mismo. No, donde el enunciado del curso nos pide otra cosa: su tesis interpola en el espacio dentro de un mismo año, y nuestro proyecto debe **predecir años nuevos** (prueba 2001–2003) a partir de 1981–1995. Decisión por decisión:
-
-| Su decisión en la tesis | La nuestra | Por qué |
+| Decisión | Ahora | Fuente o motivo |
 |---|---|---|
-| Graficar por año | **Adoptada** (cuatro figuras nuevas) | Es su forma de presentar y deja ver el ENSO |
-| Elegir K por VCG | **Adoptada**, con una K para toda la muestra en lugar de una por año | Todas las curvas deben estar en la misma base para compararlas y para la red (sección 6) |
-| Precipitación acumulada y `smooth.monotone` | **Como vista** (`F4_acumulada`, `12_acumulada_por_anio`); el modelo se queda en √P | El enunciado pide √P o log(1+P) y la fecha de los dos picos (sección 6) |
-| Imputar faltantes con kriging | No | Las reglas R5 y R7 y el experimento de huecos: no hace falta imputar |
-| Modelo concurrente | **Adoptado** (`regresion_concurrente.R`) | Es su modelo; queda como contraste del de función a función |
-| Ajustar el modelo año por año | **Como descriptivo** (`C7_b1_por_anio`) | Un ajuste por año no puede predecir un año nuevo: necesita las estaciones de ese año. Sirve para ver cómo cambia el aporte del satélite con el ENSO, y confirma su conclusión (b₁ mayor en La Niña, r = −0,44) |
-| Altura y altura² | Altura sí, altura² no | En su tesis ninguna de las dos aportó; en la nuestra la banda de la altitud contiene el 0 (D-57). La altitud se deja porque el enunciado la pide |
-| Traza-variograma de los residuos | **Adoptado** | Mide la correlación espacial que queda |
-| Mínimos cuadrados generalizados con covarianza espacial | No (trabajo futuro) | No se vio en clase; las bandas por bootstrap de estaciones respetan la dependencia |
-| Validación cruzada dejando una estación fuera | No; se usa la partición por años | El enunciado fija entrenamiento, validación y prueba por años |
-| Mann–Whitney para comparar errores | Wilcoxon **pareado** por estación | Es la misma familia de pruebas, en su versión pareada: los dos modelos se evalúan en las mismas estaciones |
-| R²(t), 20 curvas y mapa del error | **Adoptados** (`F5_prueba`, `F5_curvas_20_estaciones`, `F5_mapa_error`) | Así evalúa él |
-| Regiones valle y montaña | Zonas andina y pacífica, más franjas de altitud | Es el mismo criterio físico, aplicado a nuestro territorio |
+| Paneles por año | Se conservan, en mm/día | Descriptivos; el ENSO se ve año a año |
+| Lluvia acumulada | **Se quitó** | Lo pidió el profesor; Ramsay y Silverman 2005, cap. 6 |
+| Elegir K por VCG, una K para toda la muestra | Se conserva | Clase; todas las curvas en la misma base |
+| Imputar con kriging | No | R5 (OMM 2017) limita los días estimados por la base |
+| Modelo concurrente | Se conserva como contraste | Clase; Ramsay y Silverman 2005, cap. 14 |
+| Ajuste año por año | Solo descriptivo | No puede predecir un año nuevo |
+| Traza-variograma de residuos | Se conserva | Giraldo, Delicado y Mateu 2011 |
+| Mínimos cuadrados generalizados | Trabajo futuro | No se vio en clase |
+| Wilcoxon (antes, como reemplazo de su Mann–Whitney) | **Se quitó** | El profesor: estadística clásica que ignora la estructura funcional; el IC bootstrap por estación ya decide |
+| t y F funcionales pareadas | **Se quitaron** | El profesor: son para antes y después de un tratamiento. El sesgo del satélite lo responde la regresión |
+| ANOVA funcional | Se conserva | Grupos independientes (años por fase ENSO, estaciones por zona y altitud); clase |
+| Reglas de inclusión R5 y R6 | **Cambiaron a la norma de la OMM** | WMO-No. 1203 (2017), sección 4.4 |

@@ -1,7 +1,0 @@
-metrica,satelite,regresion,diferencia,ic_inf,ic_sup,p_wilcoxon,ic_excluye_0,mejora
-l2_rel,0.513,0.437,-0.076,-0.103,-0.051,1.7e-05,TRUE,TRUE
-rmse,2.423,2.181,-0.243,-0.338,-0.15,2e-04,TRUE,TRUE
-kge,0.382,0.467,0.085,0.056,0.117,0.00018,TRUE,TRUE
-|sesgo_pct|,37.791,25.031,-12.76,-16.06,-9.653,8.2e-10,TRUE,TRUE
-err_pico_1,23.073,18.054,-5.019,-6.218,-3.752,1.5e-11,TRUE,TRUE
-err_pico_2,18.024,17.429,-0.595,-1.257,0.074,0.076,FALSE,TRUE

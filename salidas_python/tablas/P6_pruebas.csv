@@ -1,14 +1,14 @@
 prueba,pasa,detalle
-Pares: 3 299 = 2 257 + 672 + 370 y todos usables,True,
+"Pares: 3046 = 2031 + 652 + 363, cada uno en una partición y todos usables",True,
 Partición temporal sin cruces (1981-1995 / 1996-2000 / 2001-2003),True,
 W calculada en Python por cuadratura = W de R,True,dif. máx. 8.2e-14
-FPCA de Python (solo entrenamiento) = FPCA de R,True,"μ 4.9e-15, ψ 1.2e-14 (salvo signo)"
+FPCA de Python (solo entrenamiento) = FPCA de R,True,"μ 5.8e-15, ψ 3.2e-15 (salvo signo)"
 Altitud estandarizada con media y DE de entrenamiento,True,
-La red lineal con los coeficientes de R da las predicciones de R,True,dif. máx. 3.6e-15 en coef. √P
+La red lineal con los coeficientes de R da las predicciones de R,True,dif. máx. 2.7e-15 en coef. √P
 KAN sintética: RMSE de prueba ≤ 1e-2,True,RMSE 2.0e-03
-"KAN y MLP con parámetros igualados (sum(p.numel()), ≤ 10 %)",True,640 vs 635: 0.8 %
+"KAN y MLP con parámetros igualados (sum(p.numel()), ≤ 10 %)",True,600 vs 597: 0.5 %
 "Cabeza lineal entrenada = regresión funcional con β(s,t) (≤ 1e-4, 3 semillas)",True,dif. máx. 1.6e-14 √(mm/día)
 Las tres cabezas tienen el mismo codificador y el mismo decodificador,True,
 Tres semillas por cabeza,True,
 Reconstrucción en mm no negativa,True,
-Predicciones exportadas para las 3 299 curvas de cada modelo,True,
+Predicciones exportadas para todas las curvas de cada modelo,True,

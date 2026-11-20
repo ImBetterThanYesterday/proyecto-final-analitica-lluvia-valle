@@ -162,9 +162,10 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Justificación:** son errores de digitación o de registro, no lluvia real; tratarlos como dato sesgaría las curvas.
 - **Archivos:** `eda_fase0/dias_marcados.csv`, `totales_mensuales_un_dia.csv`, `rachas_ceros_30d_con_contraste_regional.csv`, `anios_copiados_entre_estaciones.csv`.
 
-### D-13 · No se imputan datos de estaciones ✅
+### D-13 · No se imputan datos de estaciones 🔁 (reemplazada por D-61: los huecos que acepta R5 se rellenan por kriging con las vecinas)
 - **Decisión:** no se rellenan días faltantes con otras fuentes ni con modelos.
 - **Justificación:** la base B‑spline se ajusta solo en los días observados, así que no hace falta imputar para construir la curva. Rellenar con satélite o CHIRPS contaminaría justamente lo que se quiere comparar (estación vs. satélite).
+- **Por qué se cambió (D-61):** la OMM (2017, 4.6) dice que para valores diarios los días vecinos «are rarely useful» y pone primero la interpolación espacial. En nuestros datos, rellenar con las vecinas deja menos error en la curva que dejarla cubrir el hueco. Lo de no usar el satélite se mantiene.
 
 ### D-14 · Dominio anual común ✅
 - **Decisión:** día del año 1–365; el 29 de febrero se elimina en años bisiestos.
@@ -330,7 +331,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Resultado:** `estaciones_valle_finales.xlsx` / `.csv` (232 estaciones). Resuelve P-2.
 - **Fecha y responsable:** 2026-11-12, Gus y Claude.
 
-### D-36 · Reglas de depuración sacadas del EDA de las 232 ✅
+### D-36 · Reglas de depuración sacadas del EDA de las 232 ✅ (R5 y R6 revisadas en D-60: ahora siguen la OMM)
 - **Población:** de las 232 (D-34), **220 tienen datos en 1981–2003**; las 12 restantes solo tienen datos fuera del periodo. Las 232 caen dentro del polígono DANE del Valle (`lluvia_valle_datos.R`, sección 1).
 - **Qué dicen los datos** (`lluvia_valle_datos.R`, secciones 2–6):
   - Un faltante es una fila ausente. No hay `NA`, negativos, duplicados ni el valor imposible. Hay 5 144 valores con decimales: vienen de estaciones climatológicas (tipo 02), que leen a 0,1 mm. No son error.
@@ -711,7 +712,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Verificación:** `lluvia_valle_datos.R` pasa sus 27 pruebas. Las tablas y los `.rds` no cambian, salvo en el último decimal. `lluvia_valle.R` recibe los mismos cambios.
 - **Fecha y responsable:** 2026-11-18, Gus y Claude.
 
-### D-59 · Altitud imposible de El Alcázar y figuras por año como en la tesis del profesor ✅
+### D-59 · Altitud imposible de El Alcázar y figuras por año como en la tesis del profesor ✅ (la figura acumulada se quitó y la relación b1–ONI dejó de ser significativa: ver D-60)
 - **Altitud (resuelve el pendiente de D-58).** El catálogo oficial del IDEAM (CNE 0026100400) da 17 m para El Alcázar (Zarzal, `2614500102`). El terreno SRTM en su coordenada da 977 m, y El Medio, la estación oficial más cercana (3 km), está a 952 m.
   - **Regla:** en la cuenca del Cauca (código 26), una altitud oficial más de 300 m por debajo del piso de la cuenca se reemplaza por el terreno en la coordenada. El piso es el mínimo SRTM de sus estaciones, 904 m. Los 300 m son la tolerancia de D-35.
   - Es la lógica de R0: un valor imposible no se usa. Solo afecta a El Alcázar (977 m). Hay una prueba nueva, y el archivo de datos pasa 28 de 28.
@@ -726,6 +727,123 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Qué metodologías suyas se adoptan y cuáles no:** tabla en la sección 9 de `docs/BASE_CONOCIMIENTO_PROFESOR.md`.
 - **ENSO y ONI:** se explican en la sección 0.4 de `EXPLICACION_DATOS`.
 - **Fecha y responsable:** 2026-11-18, Gus y Claude.
+
+### D-60 · Reglas de la OMM, sin lluvia acumulada, sin Wilcoxon ni pruebas pareadas (revisión del profesor por Teams) ✅
+- **Origen.** Revisión del documento por Teams; la transcripción está en `docs/transcripcion_revision_profesor.txt`. El profesor pidió:
+  - no modelar lluvia acumulada;
+  - quitar Wilcoxon, que es estadística clásica y no mira la estructura funcional;
+  - quitar la t y la F pareadas, que son para antes y después de un tratamiento;
+  - ver la serie real de lluvia;
+  - explicar los huecos de la serie de Bahía Málaga;
+  - respaldar cada regla con literatura, revisando las rachas de ceros por temporada y fase ENSO.
+
+  Gus pidió aplicarlo de forma crítica y con fundamento. Las fuentes de todo están en `docs/FUNDAMENTOS_REGLAS.md`.
+- **R5 y R6 pasan a la norma de la OMM** (WMO-No. 1203, 2017, sección 4.4). Revisa D-36:
+  - **R5:** un año vale si en cada mes faltan ≤10 días y no hay 5 o más seguidos. Es la regla de la OMM para totales con días estimados, y la curva estima los faltantes con la base.
+  - **R6:** la estación necesita años válidos en ≥80 % de 1981–2003 (19 de 23). La OMM 2017 no pide un criterio de años seguidos.
+  - **Verificación con el experimento de huecos** (`7_reglas_comparadas.csv`): la regla de la OMM conserva 2 227 años de entrenamiento (la propia, 2 361) y deja la mitad del error en el peor 1 % (0,34 frente a 0,64).
+  - **Efecto:** 98 estaciones y 2 066 curvas (antes 176 y 3 299). La zona pacífica baja de 26 a 7 estaciones; es el costo de la norma y se dice en todos los resultados por zona.
+  - Con las 98 ninguna péntada cae en el tope de 200 mm (P-15).
+- **Serie de Bahía Málaga.** Los huecos eran años que R5 no aceptaba:
+  - la estación empieza en julio de 1984;
+  - en 1989 midió solo hasta junio;
+  - en 1986, 1987 y 2000 tiene huecos de 3 a 6 semanas.
+
+  La gráfica ahora dibuja todos los años, sombrea los no válidos con su causa y deja el satélite completo. Bahía Málaga ya no entra (15 años válidos de 23).
+- **Serie diaria real:** nueva gráfica `6_serie_diaria_por_anio` (Puerto Molina, los 23 años válidos).
+- **R4 por escenario:** nuevo inventario `5b_rachas_ceros_escenarios.csv`.
+  - El 96 % de las rachas de ≥30 días en 0 cae en temporada seca, y la mitad en temporada seca de El Niño.
+  - R4 solo vuelve faltante del 1,7 % al 3,6 % según la fase, porque decide con la vecina.
+  - No se cambia la regla.
+- **Se quitó la lluvia acumulada:** `12_acumulada_por_anio` y la sección 4.6 funcional (`F4_acumulada`). Año por año se usan totales anuales (escalares).
+- **Se quitaron las pruebas t y F pareadas** (sección 4.4 funcional). El sesgo del satélite lo responde la regresión: la banda de ∫β excluye el 1 los 365 días. Queda abierta la pregunta al profesor de por qué el ejercicio 3 de su clase sí las aplica a satélite contra estación.
+- **Se quitó Wilcoxon** en la regresión, la red y la concurrente. Decide el IC bootstrap de la diferencia por estación. Las tablas `*_pareado*` se renombraron a `*_por_estacion*`.
+- **La tesis de 2016 ya no es guía.** Se reescribió la sección 9 de `docs/BASE_CONOCIMIENTO_PROFESOR.md`. Los paneles por año se conservan como descriptivos y en mm/día.
+- **Zona de los píxeles:** ahora se asigna con las 232 estaciones del Valle, no con las incluidas, porque es geografía (acierto de 97 %). Con solo las 98 incluidas, muchos píxeles de la costa habrían quedado como "Cauca".
+- **Comentarios del código:** los bloques "QUÉ DICEN LOS DATOS" ya no repiten cifras. Remiten a los documentos, para que el código no muestre números de una muestra vieja.
+- **Resultados con las 98 estaciones** (prueba 2001–2003, 273 curvas de 97 estaciones):
+  - **Error L² relativo:** satélite 0,52 → regresión 0,41. KGE de 0,39 a 0,51, sesgo anual de +29 % a +11 % y primer pico de 21,8 a 16,2 días. El segundo pico no mejora de forma significativa.
+  - **Solo altitud y ONI** da 0,44: el satélite aporta (permutación p = 0,003), pero menos que con 176 estaciones.
+  - **Red:** lineal 0,41, KAN 0,42 y MLP 0,41, sin diferencias significativas entre cabezas.
+  - **Concurrente:** A 0,41 y B 0,42.
+  - **Quitar 1985, 1988 y 2000** ya no cambia la prueba (IC con el 0).
+  - **b1 por año frente al ONI:** r = −0,30, p = 0,17. La relación que D-59 presentaba como confirmada deja de ser significativa.
+  - **Parámetros:** M = 6 y λ = 3,2e8 no cambian; K = 8 y 11 tampoco.
+- **Pruebas:** datos 28/28, funcional 15/15 (se quitó la de la F pareada), red 13/13, evaluación de la red 5/5, concurrente 10/10.
+- **Fecha y responsable:** 2026-11-19, Gus y Claude.
+
+### D-61 · R4 con mayoría de vecinas, R7 con kriging y dos conjuntos de R6 ✅ (en D-63 se invierten los papeles: ≥10 años pasa a principal)
+- **Origen.** Gus pidió revisar R4 contra la literatura y el IDEAM (con cuidado en años Niño y Niña), buscar un criterio de inclusión de estaciones pensado para nuestro uso y decidir si se imputan los faltantes. Todo se probó con los datos antes de decidir.
+- **R4.** Una racha de ≥30 días en 0 pasa a faltante si la contradicen **al menos 2 de sus 3 vecinas más cercanas** (≤25 km, ≥80 % de datos en la racha), con q estimado en los **meses de la racha** (mes central ± 1, ≥30 días de entrenamiento).
+  - **Fuentes:** el principio de la regla de periodos secos de GSDR-QC (Lewis et al. 2021: deben contradecirla varias vecinas) y la ventana estacional de Durre et al. (2010). La cita a Durre en el comentario de R4 se corrigió: Durre no revisa rachas de ceros.
+  - **ENSO:** ninguna fuente (GSDR-QC, GHCN-Daily, Terán-Chaves et al. 2021, INQC) condiciona este control a la fase. Las sequías reales se protegen porque las vecinas también están secas.
+  - **GSDR tal cual no sirve aquí:** su filtro de vecinas (índice de afinidad > 0,9) deja 6 de 1 897 pares; sin él, borraría las sequías de El Niño.
+  - **Efecto:** 10 rachas (469 días) en vez de 30 (1 356). Versiones en `5b_rachas_ceros_versiones.csv`: 30, 18, **10** y 4 (las 3 vecinas). En las 10, al menos 2 vecinas a ≤20 km llovieron de 8 a 44 días.
+  - **Sin R4** entrarían 21 curvas más y una estación (Juntas), pero con 10 meses secos falsos.
+- **R7 (reemplaza D-13).** Los faltantes de los años que pasan R5 se rellenan por **kriging ordinario** con hasta 10 vecinas a ≤50 km con dato ese día; cada vecina se escala por la razón de medias mensuales (entrenamiento). Negativo → 0. Nunca con el satélite.
+  - **Por qué con vecinas:** OMM 2017, 4.6 («values from other days are rarely useful»; primero la interpolación espacial, huecos ≤10 días por mes, sin sesgo). En el Valle, la lluvia de una vecina a ≤5 km el mismo día se correlaciona 0,54 con la estación; la de la propia estación el día anterior, 0,12 (`8_R7_por_que_vecinas.csv`).
+  - **Por qué kriging:** sus pesos salen del semivariograma (Cressie 1993), reparte el peso entre vecinas que dicen lo mismo y da el error de cada estimación. Lo usan la tesis del profesor y Terán-Chaves et al. (2021) con datos diarios del IDEAM. El modelo se elige por validación cruzada: **exponencial** (ECM 88,7; esférico 89,0; Matérn 92,2; gaussiano 92,8).
+  - **Prueba** (`8_R7_metodos_relleno.csv`, 1 932 años completos de entrenamiento con días quitados): con el máximo que acepta R5, error de la curva 0,551 sin rellenar, 0,321 con IDW, 0,344 con kriging sin la razón y **0,300 con kriging y la razón** (mejor que IDW en el 59 % de los casos). Con el patrón real todos los métodos con vecinas quedan en 0,018–0,020.
+  - **Cuánto:** 366 días de 771 245 (0,047 %) en el conjunto principal; 719 en el de sensibilidad. R5 se sigue midiendo con los días **observados**, y cada día rellenado queda marcado (`rellenado` en los datos preparados).
+- **R5 no cambia.** Se evaluó aceptar hasta 7 días seguidos (Lopes Martins et al. 2022), pero es un solo estudio, en otra región, sobre relleno con vecinas, y el 7 no es un umbral medido. La OMM tiene más peso.
+- **R6: dos conjuntos.** Principal: ≥19 de 23 años (OMM 2017, 4.4.2). Sensibilidad: ≥10 años (NOAA, normales provisionales; Urrea et al. 2019, verificado en el texto: descartan las series diarias del IDEAM de menos de 20 años, con registros entre 1970 y 2015, ≈43 %; la equivalencia con 10 de 23 es una lectura nuestra). Thornton et al. (2021), con la estación-año como unidad, no piden mínimo por estación. Se elegía con `CONJUNTO=principal|r6_10`; desde D-63 el principal es el de ≥10 años y la sensibilidad se corre con `CONJUNTO=r6_omm` (carpetas con el sufijo `_r6_omm`).
+  - Principal: **100 estaciones (7 pacíficas), 2 113 curvas**; antes 98 y 2 066 (la R4 nueva le devuelve un año a Aují y a Puerto Frazadas).
+  - Sensibilidad: **163 estaciones (22 pacíficas), 3 046 curvas**.
+- **Resultados en prueba (2001–2003), error L² relativo:**
+
+  | | Principal (100 est.) | Sensibilidad (163 est.) |
+  |---|---|---|
+  | Satélite sin corregir | 0,52 | 0,51 |
+  | Regresión funcional | **0,42** | **0,44** |
+  | Solo altitud y ONI | 0,45 | 0,50 |
+  | Concurrente A (clase) | 0,42 | 0,44 |
+  | Red: lineal / KAN / MLP (media de 3 semillas) | 0,43 / 0,43 / 0,42 | 0,44 / 0,44 / 0,42 |
+  | KGE regresión | 0,49 | 0,46 |
+  | Sesgo anual regresión | +12 % (satélite +29 %) | +6 % (satélite +26 %) |
+
+  - **La conclusión no depende de R6:** la regresión baja el error del satélite en los dos conjuntos, y el satélite aporta (permutación p = 0,003 en ambos).
+  - Con más estaciones (sobre todo del Pacífico), el satélite aporta más: sin él el error sube a 0,50, frente a 0,45 en el principal.
+  - En el principal, M = 6 y λ = 3,2e8 no cambian; en la sensibilidad la validación elige M = 5.
+- **Pruebas** (en los dos conjuntos): datos 30/30, red 13/13, evaluación de la red 5/5, concurrente 10/10.
+- **Fecha y responsable:** 2026-11-20, Gus y Claude.
+
+### D-62 · Las estaciones se modelan en diario, no en péntadas ✅
+- **Decisión:** las curvas de estación se construyen con los 365 días; las del satélite, con sus 72 péntadas. Las dos van al mismo dominio 1–365, como hasta ahora.
+- **Justificación:**
+  - **El enunciado lo pide.** El criterio 1 de la rúbrica exige «curvas de ambas fuentes (diaria y péntada) construidas sobre el mismo dominio anual», y el tope del criterio 4.2 castiga tratar «el vector de péntadas» como red funcional.
+  - **Casi no cambia la curva.** Con K = 8, la curva construida con los datos diarios y la construida con las péntadas difieren en 0,16 mm/día, frente a una desviación estándar de 2,85 mm/día: la base ya suaviza a escalas mucho mayores que 5 días.
+  - Es como trabajan Urrea et al. (2019) para el ciclo anual en Colombia: un vector de 365 valores diarios.
+  - La limpieza (R0 a R7) se hace en diario en cualquier caso, como piden el IDEAM y la OMM.
+- **Qué se descartó:** pasar las estaciones a péntadas para igualar el soporte del satélite. Ganaba poco y se apartaba del enunciado.
+- **Fecha y responsable:** 2026-11-20, Gus y Claude.
+
+---
+
+### D-63 · R6 principal: ≥10 años válidos (la regla de la OMM del 80 % queda como sensibilidad) ✅
+- **Origen.** El profesor revisó los dos conjuntos de D-61 y dijo que le hace más sentido el de ≥10 años, bien fundamentado, porque deja más estaciones y no quita tantas del Pacífico. También aprobó imputar con kriging (R7).
+- **Decisión.** R6 principal: la estación entra con **≥10 años válidos** en 1981–2003. El 80 % de la OMM (19 de 23) pasa a ser la sensibilidad (`CONJUNTO=r6_omm`, salidas con el sufijo `_r6_omm`).
+- **Fundamento:**
+  1. **La OMM fija 10 años como mínimo para cualquier promedio climatológico.** Su Reglamento Técnico define los *period averages* como promedios «computed for any period of at least ten years» (WMO-No. 1203, 2017, sección 3). El 80 % de los años (4.4.2) es para las **normales estándar** de 30 años, otro propósito.
+  2. **NOAA usa ese mínimo y además rellena, como nosotros.** En las normales 1991–2020, «according to the WMO guidelines, a minimum of 10 years is required for calculating any normal». Una estación con ≥10 años que no llega al 80 % es "R" (*Representative*) si sus huecos se rellenan con estaciones vecinas. Es nuestro caso: R7 rellena con kriging.
+  3. **En Colombia, para el ciclo anual diario**, Urrea et al. (2019) descartan las series del IDEAM de menos de 20 años en 1970–2015 (≈43 % del periodo); en nuestros 23 años eso da unos 10. Es una lectura nuestra, no una regla del artículo.
+  4. **Nuestra unidad es la curva estación-año.** El modelo aprende de curvas, no de la normal de cada estación; un año que falta es una curva menos, no un hueco que rellenar (Thornton et al. 2021 filtran años y no piden un mínimo por estación).
+- **Verificado con los datos:**
+
+  | | ≥10 años (principal) | ≥19 años (OMM, sensibilidad) | Las 220 del Valle |
+  |---|---|---|---|
+  | Estaciones | **163** | 100 | 220 |
+  | Zona pacífica | **22 (13 %)** | 7 (7 %) | 19 % |
+  | Altitud mediana | 1 350 m | 1 398 m | 1 330 m |
+  | Lluvia anual mediana | 1 430 mm | 1 419 mm | 1 515 mm |
+  | Curvas | **3 046** | 2 113 | — |
+
+  - Se parece más a todo el Valle, sobre todo en la zona pacífica.
+  - Las 163 tienen años de entrenamiento; 146 tienen validación, 136 prueba y 133 los tres.
+  - **El resultado no cambia de conclusión** (prueba, L² relativo): satélite 0,51 → regresión 0,44 con ≥10 años; 0,52 → 0,42 con la OMM. Con ≥10 años el satélite aporta más: sin él, el error sube a 0,50.
+- **Cambios en el modelo:** la validación elige M = 5 componentes (91 % de la varianza) en vez de 6; λ = 3,2e8 no cambia. Red en prueba: lineal 0,44, KAN 0,44, MLP 0,42 (satélite 0,51). Sesgo anual: satélite +26 %, regresión +6 %. En años Niña de validación el modelo baja el sesgo de −0,1 % a −11 %, algo que con el 80 % de la OMM no pasaba.
+- **El tope de 200 mm del satélite** vuelve a aparecer (entran Bahía Málaga, Yurumanguí y San Francisco), pero solo en 33 de 218 806 péntadas (0,015 %).
+- **Costo:** algunas estaciones tienen bloques de años sin datos. No es un problema del modelo, porque cada curva es un año completo de una estación; sí hay que decirlo en los resultados por estación.
+- **Fecha y responsable:** 2026-11-20, Gus y Claude.
 
 ---
 

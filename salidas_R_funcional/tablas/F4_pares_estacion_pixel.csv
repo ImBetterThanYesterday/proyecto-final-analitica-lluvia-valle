@@ -8,7 +8,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2610000103,CRUCES,1987,entrenamiento,255,2.75,1,Cauca (interandina),968,1.18,Niño,FALSE
 2610000103,CRUCES,1988,entrenamiento,255,2.75,1,Cauca (interandina),968,-0.89,Niña,TRUE
 2610000103,CRUCES,1989,entrenamiento,255,2.75,1,Cauca (interandina),968,-0.62,Niña,FALSE
-2610000103,CRUCES,1990,entrenamiento,255,2.75,1,Cauca (interandina),968,0.27,Neutro,FALSE
 2610000103,CRUCES,1991,entrenamiento,255,2.75,1,Cauca (interandina),968,0.65,Niño,FALSE
 2610000103,CRUCES,1992,entrenamiento,255,2.75,1,Cauca (interandina),968,0.61,Niño,FALSE
 2610000103,CRUCES,1993,entrenamiento,255,2.75,1,Cauca (interandina),968,0.36,Neutro,FALSE
@@ -31,13 +30,11 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2610000104,LA VICTORIA,1989,entrenamiento,364,2.03,1,Cauca (interandina),907,-0.62,Niña,FALSE
 2610000104,LA VICTORIA,1990,entrenamiento,364,2.03,1,Cauca (interandina),907,0.27,Neutro,FALSE
 2610000104,LA VICTORIA,1991,entrenamiento,364,2.03,1,Cauca (interandina),907,0.65,Niño,FALSE
-2610000104,LA VICTORIA,1992,entrenamiento,364,2.03,1,Cauca (interandina),907,0.61,Niño,FALSE
 2610000104,LA VICTORIA,1994,entrenamiento,364,2.03,1,Cauca (interandina),907,0.37,Neutro,FALSE
 2610000104,LA VICTORIA,1995,entrenamiento,364,2.03,1,Cauca (interandina),907,-0.22,Neutro,FALSE
 2610000104,LA VICTORIA,1996,validación,364,2.03,1,Cauca (interandina),907,-0.41,Neutro,FALSE
 2610000104,LA VICTORIA,1997,validación,364,2.03,1,Cauca (interandina),907,1.14,Niño,FALSE
 2610000104,LA VICTORIA,1998,validación,364,2.03,1,Cauca (interandina),907,0.04,Neutro,FALSE
-2610000104,LA VICTORIA,1999,validación,364,2.03,1,Cauca (interandina),907,-1.08,Niña,FALSE
 2610000104,LA VICTORIA,2000,validación,364,2.03,1,Cauca (interandina),907,-0.77,Niña,TRUE
 2610000105,PUERTO MOLINA,1981,entrenamiento,290,0.33,1,Cauca (interandina),939,-0.25,Neutro,FALSE
 2610000105,PUERTO MOLINA,1982,entrenamiento,290,0.33,1,Cauca (interandina),939,0.91,Niño,FALSE
@@ -88,7 +85,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2610000202,ZARAGOZA,1984,entrenamiento,218,1.37,1,Cauca (interandina),925,-0.55,Niña,FALSE
 2610000202,ZARAGOZA,1985,entrenamiento,218,1.37,1,Cauca (interandina),925,-0.58,Niña,TRUE
 2610000202,ZARAGOZA,1986,entrenamiento,218,1.37,1,Cauca (interandina),925,0.27,Neutro,FALSE
-2610000202,ZARAGOZA,1988,entrenamiento,218,1.37,1,Cauca (interandina),925,-0.89,Niña,TRUE
 2610000202,ZARAGOZA,1989,entrenamiento,218,1.37,1,Cauca (interandina),925,-0.62,Niña,FALSE
 2610000202,ZARAGOZA,1990,entrenamiento,218,1.37,1,Cauca (interandina),925,0.27,Neutro,FALSE
 2610000202,ZARAGOZA,1991,entrenamiento,218,1.37,1,Cauca (interandina),925,0.65,Niño,FALSE
@@ -113,11 +109,11 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612200103,LOS ALPES,1988,entrenamiento,1287,2.31,1,Cauca (interandina),2380,-0.89,Niña,TRUE
 2612200103,LOS ALPES,1989,entrenamiento,1287,2.31,1,Cauca (interandina),2380,-0.62,Niña,FALSE
 2612200103,LOS ALPES,1990,entrenamiento,1287,2.31,1,Cauca (interandina),2380,0.27,Neutro,FALSE
+2612200103,LOS ALPES,1991,entrenamiento,1287,2.31,1,Cauca (interandina),2380,0.65,Niño,FALSE
 2612200103,LOS ALPES,1992,entrenamiento,1287,2.31,1,Cauca (interandina),2380,0.61,Niño,FALSE
 2612200103,LOS ALPES,1993,entrenamiento,1287,2.31,1,Cauca (interandina),2380,0.36,Neutro,FALSE
 2612200103,LOS ALPES,1994,entrenamiento,1287,2.31,1,Cauca (interandina),2380,0.37,Neutro,FALSE
 2612200103,LOS ALPES,1997,validación,1287,2.31,1,Cauca (interandina),2380,1.14,Niño,FALSE
-2612200103,LOS ALPES,1998,validación,1287,2.31,1,Cauca (interandina),2380,0.04,Neutro,FALSE
 2612200103,LOS ALPES,1999,validación,1287,2.31,1,Cauca (interandina),2380,-1.08,Niña,FALSE
 2612200103,LOS ALPES,2000,validación,1287,2.31,1,Cauca (interandina),2380,-0.77,Niña,TRUE
 2612200103,LOS ALPES,2001,prueba,1287,2.31,1,Cauca (interandina),2380,-0.29,Neutro,FALSE
@@ -134,7 +130,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612200105,CAJONES,1993,entrenamiento,1325,0.7,1,Cauca (interandina),2472,0.36,Neutro,FALSE
 2612200105,CAJONES,1994,entrenamiento,1325,0.7,1,Cauca (interandina),2472,0.37,Neutro,FALSE
 2612200105,CAJONES,1995,entrenamiento,1325,0.7,1,Cauca (interandina),2472,-0.22,Neutro,FALSE
-2612200105,CAJONES,2000,validación,1325,0.7,1,Cauca (interandina),2472,-0.77,Niña,TRUE
 2612200105,CAJONES,2001,prueba,1325,0.7,1,Cauca (interandina),2472,-0.29,Neutro,FALSE
 2612200105,CAJONES,2002,prueba,1325,0.7,1,Cauca (interandina),2472,0.51,Niño,FALSE
 2612200105,CAJONES,2003,prueba,1325,0.7,1,Cauca (interandina),2472,0.24,Neutro,FALSE
@@ -185,7 +180,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612700201,ING MANUELITA,2003,prueba,1062,0.72,1,Cauca (interandina),1059,0.24,Neutro,FALSE
 2612700202,PALMIRA ICA,1981,entrenamiento,1098,1.7,1,Cauca (interandina),1018,-0.25,Neutro,FALSE
 2612700202,PALMIRA ICA,1982,entrenamiento,1098,1.7,1,Cauca (interandina),1018,0.91,Niño,FALSE
-2612700202,PALMIRA ICA,1983,entrenamiento,1098,1.7,1,Cauca (interandina),1018,0.46,Neutro,FALSE
 2612700202,PALMIRA ICA,1985,entrenamiento,1098,1.7,1,Cauca (interandina),1018,-0.58,Niña,TRUE
 2612700202,PALMIRA ICA,1986,entrenamiento,1098,1.7,1,Cauca (interandina),1018,0.27,Neutro,FALSE
 2612700202,PALMIRA ICA,1987,entrenamiento,1098,1.7,1,Cauca (interandina),1018,1.18,Niño,FALSE
@@ -227,7 +221,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710101,FLORIDA,1989,entrenamiento,1248,2.09,1,Cauca (interandina),1059,-0.62,Niña,FALSE
 2612710101,FLORIDA,1990,entrenamiento,1248,2.09,1,Cauca (interandina),1059,0.27,Neutro,FALSE
 2612710101,FLORIDA,1991,entrenamiento,1248,2.09,1,Cauca (interandina),1059,0.65,Niño,FALSE
-2612710101,FLORIDA,1992,entrenamiento,1248,2.09,1,Cauca (interandina),1059,0.61,Niño,FALSE
 2612710101,FLORIDA,1993,entrenamiento,1248,2.09,1,Cauca (interandina),1059,0.36,Neutro,FALSE
 2612710101,FLORIDA,1994,entrenamiento,1248,2.09,1,Cauca (interandina),1059,0.37,Neutro,FALSE
 2612710101,FLORIDA,1995,entrenamiento,1248,2.09,1,Cauca (interandina),1059,-0.22,Neutro,FALSE
@@ -260,16 +253,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710103,ING LA QUINTA,2001,prueba,1172,2.47,1,Cauca (interandina),980,-0.29,Neutro,FALSE
 2612710103,ING LA QUINTA,2002,prueba,1172,2.47,1,Cauca (interandina),980,0.51,Niño,FALSE
 2612710103,ING LA QUINTA,2003,prueba,1172,2.47,1,Cauca (interandina),980,0.24,Neutro,FALSE
-2612710104,LOS ANDES,1981,entrenamiento,1323,2.7,1,Cauca (interandina),1960,-0.25,Neutro,FALSE
-2612710104,LOS ANDES,1982,entrenamiento,1323,2.7,1,Cauca (interandina),1960,0.91,Niño,FALSE
-2612710104,LOS ANDES,1983,entrenamiento,1323,2.7,1,Cauca (interandina),1960,0.46,Neutro,FALSE
-2612710104,LOS ANDES,1984,entrenamiento,1323,2.7,1,Cauca (interandina),1960,-0.55,Niña,FALSE
-2612710104,LOS ANDES,1985,entrenamiento,1323,2.7,1,Cauca (interandina),1960,-0.58,Niña,TRUE
-2612710104,LOS ANDES,1986,entrenamiento,1323,2.7,1,Cauca (interandina),1960,0.27,Neutro,FALSE
-2612710104,LOS ANDES,1987,entrenamiento,1323,2.7,1,Cauca (interandina),1960,1.18,Niño,FALSE
-2612710104,LOS ANDES,1988,entrenamiento,1323,2.7,1,Cauca (interandina),1960,-0.89,Niña,TRUE
-2612710104,LOS ANDES,1989,entrenamiento,1323,2.7,1,Cauca (interandina),1960,-0.62,Niña,FALSE
-2612710104,LOS ANDES,1990,entrenamiento,1323,2.7,1,Cauca (interandina),1960,0.27,Neutro,FALSE
 2612710105,LA SOLEDAD,1981,entrenamiento,1212,3.3,1,Cauca (interandina),2160,-0.25,Neutro,FALSE
 2612710105,LA SOLEDAD,1982,entrenamiento,1212,3.3,1,Cauca (interandina),2160,0.91,Niño,FALSE
 2612710105,LA SOLEDAD,1983,entrenamiento,1212,3.3,1,Cauca (interandina),2160,0.46,Neutro,FALSE
@@ -294,13 +277,11 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710106,GUACHAZAMBOLO,1984,entrenamiento,1133,3.24,1,Cauca (interandina),940,-0.55,Niña,FALSE
 2612710106,GUACHAZAMBOLO,1985,entrenamiento,1133,3.24,1,Cauca (interandina),940,-0.58,Niña,TRUE
 2612710106,GUACHAZAMBOLO,1986,entrenamiento,1133,3.24,1,Cauca (interandina),940,0.27,Neutro,FALSE
-2612710106,GUACHAZAMBOLO,1987,entrenamiento,1133,3.24,1,Cauca (interandina),940,1.18,Niño,FALSE
 2612710106,GUACHAZAMBOLO,1988,entrenamiento,1133,3.24,1,Cauca (interandina),940,-0.89,Niña,TRUE
 2612710106,GUACHAZAMBOLO,1989,entrenamiento,1133,3.24,1,Cauca (interandina),940,-0.62,Niña,FALSE
 2612710106,GUACHAZAMBOLO,1990,entrenamiento,1133,3.24,1,Cauca (interandina),940,0.27,Neutro,FALSE
 2612710106,GUACHAZAMBOLO,1991,entrenamiento,1133,3.24,1,Cauca (interandina),940,0.65,Niño,FALSE
 2612710106,GUACHAZAMBOLO,1993,entrenamiento,1133,3.24,1,Cauca (interandina),940,0.36,Neutro,FALSE
-2612710106,GUACHAZAMBOLO,1994,entrenamiento,1133,3.24,1,Cauca (interandina),940,0.37,Neutro,FALSE
 2612710106,GUACHAZAMBOLO,1995,entrenamiento,1133,3.24,1,Cauca (interandina),940,-0.22,Neutro,FALSE
 2612710106,GUACHAZAMBOLO,1996,validación,1133,3.24,1,Cauca (interandina),940,-0.41,Neutro,FALSE
 2612710106,GUACHAZAMBOLO,1998,validación,1133,3.24,1,Cauca (interandina),940,0.04,Neutro,FALSE
@@ -309,14 +290,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710106,GUACHAZAMBOLO,2001,prueba,1133,3.24,1,Cauca (interandina),940,-0.29,Neutro,FALSE
 2612710106,GUACHAZAMBOLO,2002,prueba,1133,3.24,1,Cauca (interandina),940,0.51,Niño,FALSE
 2612710106,GUACHAZAMBOLO,2003,prueba,1133,3.24,1,Cauca (interandina),940,0.24,Neutro,FALSE
-2612710201,CENTRAL CASTILLA,1981,entrenamiento,1210,2.93,1,Cauca (interandina),1040,-0.25,Neutro,FALSE
-2612710201,CENTRAL CASTILLA,1982,entrenamiento,1210,2.93,1,Cauca (interandina),1040,0.91,Niño,FALSE
-2612710201,CENTRAL CASTILLA,1983,entrenamiento,1210,2.93,1,Cauca (interandina),1040,0.46,Neutro,FALSE
-2612710201,CENTRAL CASTILLA,1984,entrenamiento,1210,2.93,1,Cauca (interandina),1040,-0.55,Niña,FALSE
-2612710201,CENTRAL CASTILLA,1985,entrenamiento,1210,2.93,1,Cauca (interandina),1040,-0.58,Niña,TRUE
-2612710201,CENTRAL CASTILLA,1986,entrenamiento,1210,2.93,1,Cauca (interandina),1040,0.27,Neutro,FALSE
-2612710201,CENTRAL CASTILLA,1987,entrenamiento,1210,2.93,1,Cauca (interandina),1040,1.18,Niño,FALSE
-2612710201,CENTRAL CASTILLA,1990,entrenamiento,1210,2.93,1,Cauca (interandina),1040,0.27,Neutro,FALSE
 2612710202,CENICAÑA,1982,entrenamiento,1209,3.17,1,Cauca (interandina),1013,0.91,Niño,FALSE
 2612710202,CENICAÑA,1983,entrenamiento,1209,3.17,1,Cauca (interandina),1013,0.46,Neutro,FALSE
 2612710202,CENICAÑA,1984,entrenamiento,1209,3.17,1,Cauca (interandina),1013,-0.55,Niña,FALSE
@@ -348,6 +321,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710301,LA DIANA,1987,entrenamiento,1249,1.73,1,Cauca (interandina),1960,1.18,Niño,FALSE
 2612710301,LA DIANA,1988,entrenamiento,1249,1.73,1,Cauca (interandina),1960,-0.89,Niña,TRUE
 2612710301,LA DIANA,1989,entrenamiento,1249,1.73,1,Cauca (interandina),1960,-0.62,Niña,FALSE
+2612710301,LA DIANA,1990,entrenamiento,1249,1.73,1,Cauca (interandina),1960,0.27,Neutro,FALSE
 2612710301,LA DIANA,1991,entrenamiento,1249,1.73,1,Cauca (interandina),1960,0.65,Niño,FALSE
 2612710301,LA DIANA,1992,entrenamiento,1249,1.73,1,Cauca (interandina),1960,0.61,Niño,FALSE
 2612710301,LA DIANA,1993,entrenamiento,1249,1.73,1,Cauca (interandina),1960,0.36,Neutro,FALSE
@@ -362,7 +336,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612710301,LA DIANA,2002,prueba,1249,1.73,1,Cauca (interandina),1960,0.51,Niño,FALSE
 2612710301,LA DIANA,2003,prueba,1249,1.73,1,Cauca (interandina),1960,0.24,Neutro,FALSE
 2612720101,YUNDE CARRIZAL,1981,entrenamiento,1134,3.08,1,Cauca (interandina),1000,-0.25,Neutro,FALSE
-2612720101,YUNDE CARRIZAL,1982,entrenamiento,1134,3.08,1,Cauca (interandina),1000,0.91,Niño,FALSE
 2612720101,YUNDE CARRIZAL,1985,entrenamiento,1134,3.08,1,Cauca (interandina),1000,-0.58,Niña,TRUE
 2612720101,YUNDE CARRIZAL,1986,entrenamiento,1134,3.08,1,Cauca (interandina),1000,0.27,Neutro,FALSE
 2612720101,YUNDE CARRIZAL,1987,entrenamiento,1134,3.08,1,Cauca (interandina),1000,1.18,Niño,FALSE
@@ -431,8 +404,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612800102,EL PORVENIR I,1989,entrenamiento,1026,2.32,1,Cauca (interandina),1100,-0.62,Niña,FALSE
 2612800102,EL PORVENIR I,1990,entrenamiento,1026,2.32,1,Cauca (interandina),1100,0.27,Neutro,FALSE
 2612800103,BELLA VISTA,1981,entrenamiento,1031,2.47,1,Cauca (interandina),2875,-0.25,Neutro,FALSE
+2612800103,BELLA VISTA,1982,entrenamiento,1031,2.47,1,Cauca (interandina),2875,0.91,Niño,FALSE
 2612800103,BELLA VISTA,1983,entrenamiento,1031,2.47,1,Cauca (interandina),2875,0.46,Neutro,FALSE
-2612800103,BELLA VISTA,1984,entrenamiento,1031,2.47,1,Cauca (interandina),2875,-0.55,Niña,FALSE
 2612800103,BELLA VISTA,1985,entrenamiento,1031,2.47,1,Cauca (interandina),2875,-0.58,Niña,TRUE
 2612800103,BELLA VISTA,1986,entrenamiento,1031,2.47,1,Cauca (interandina),2875,0.27,Neutro,FALSE
 2612800103,BELLA VISTA,1987,entrenamiento,1031,2.47,1,Cauca (interandina),2875,1.18,Niño,FALSE
@@ -459,9 +432,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612800104,AUJI,1987,entrenamiento,1028,1.94,1,Cauca (interandina),1555,1.18,Niño,FALSE
 2612800104,AUJI,1988,entrenamiento,1028,1.94,1,Cauca (interandina),1555,-0.89,Niña,TRUE
 2612800104,AUJI,1989,entrenamiento,1028,1.94,1,Cauca (interandina),1555,-0.62,Niña,FALSE
-2612800104,AUJI,1991,entrenamiento,1028,1.94,1,Cauca (interandina),1555,0.65,Niño,FALSE
+2612800104,AUJI,1990,entrenamiento,1028,1.94,1,Cauca (interandina),1555,0.27,Neutro,FALSE
 2612800104,AUJI,1992,entrenamiento,1028,1.94,1,Cauca (interandina),1555,0.61,Niño,FALSE
-2612800104,AUJI,1993,entrenamiento,1028,1.94,1,Cauca (interandina),1555,0.36,Neutro,FALSE
 2612800104,AUJI,1994,entrenamiento,1028,1.94,1,Cauca (interandina),1555,0.37,Neutro,FALSE
 2612800104,AUJI,1995,entrenamiento,1028,1.94,1,Cauca (interandina),1555,-0.22,Neutro,FALSE
 2612800104,AUJI,1996,validación,1028,1.94,1,Cauca (interandina),1555,-0.41,Neutro,FALSE
@@ -487,6 +459,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612800106,LA CEJA,2000,validación,956,2.29,1,Cauca (interandina),3052,-0.77,Niña,TRUE
 2612800106,LA CEJA,2003,prueba,956,2.29,1,Cauca (interandina),3052,0.24,Neutro,FALSE
 2612800107,ESPERANZA PRADERA,1985,entrenamiento,1173,2.06,1,Cauca (interandina),1075,-0.58,Niña,TRUE
+2612800107,ESPERANZA PRADERA,1986,entrenamiento,1173,2.06,1,Cauca (interandina),1075,0.27,Neutro,FALSE
 2612800107,ESPERANZA PRADERA,1987,entrenamiento,1173,2.06,1,Cauca (interandina),1075,1.18,Niño,FALSE
 2612800107,ESPERANZA PRADERA,1988,entrenamiento,1173,2.06,1,Cauca (interandina),1075,-0.89,Niña,TRUE
 2612800107,ESPERANZA PRADERA,1989,entrenamiento,1173,2.06,1,Cauca (interandina),1075,-0.62,Niña,FALSE
@@ -533,12 +506,9 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810102,SANTA TERESA,1997,validación,1141,0.69,1,Cauca (interandina),3690,1.14,Niño,FALSE
 2612810102,SANTA TERESA,1998,validación,1141,0.69,1,Cauca (interandina),3690,0.04,Neutro,FALSE
 2612810102,SANTA TERESA,1999,validación,1141,0.69,1,Cauca (interandina),3690,-1.08,Niña,FALSE
-2612810102,SANTA TERESA,2000,validación,1141,0.69,1,Cauca (interandina),3690,-0.77,Niña,TRUE
-2612810102,SANTA TERESA,2001,prueba,1141,0.69,1,Cauca (interandina),3690,-0.29,Neutro,FALSE
-2612810102,SANTA TERESA,2002,prueba,1141,0.69,1,Cauca (interandina),3690,0.51,Niño,FALSE
+2612810108,TENJO,1981,entrenamiento,1101,0.65,2,Cauca (interandina),1500,-0.25,Neutro,FALSE
 2612810108,TENJO,1982,entrenamiento,1101,0.65,2,Cauca (interandina),1500,0.91,Niño,FALSE
 2612810108,TENJO,1983,entrenamiento,1101,0.65,2,Cauca (interandina),1500,0.46,Neutro,FALSE
-2612810108,TENJO,1984,entrenamiento,1101,0.65,2,Cauca (interandina),1500,-0.55,Niña,FALSE
 2612810108,TENJO,1985,entrenamiento,1101,0.65,2,Cauca (interandina),1500,-0.58,Niña,TRUE
 2612810108,TENJO,1986,entrenamiento,1101,0.65,2,Cauca (interandina),1500,0.27,Neutro,FALSE
 2612810108,TENJO,1987,entrenamiento,1101,0.65,2,Cauca (interandina),1500,1.18,Niño,FALSE
@@ -557,9 +527,9 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810108,TENJO,2001,prueba,1101,0.65,2,Cauca (interandina),1500,-0.29,Neutro,FALSE
 2612810108,TENJO,2002,prueba,1101,0.65,2,Cauca (interandina),1500,0.51,Niño,FALSE
 2612810108,TENJO,2003,prueba,1101,0.65,2,Cauca (interandina),1500,0.24,Neutro,FALSE
+2612810109,SAN NICOLAS,1982,entrenamiento,1101,1.59,2,Cauca (interandina),2100,0.91,Niño,FALSE
 2612810109,SAN NICOLAS,1983,entrenamiento,1101,1.59,2,Cauca (interandina),2100,0.46,Neutro,FALSE
 2612810109,SAN NICOLAS,1984,entrenamiento,1101,1.59,2,Cauca (interandina),2100,-0.55,Niña,FALSE
-2612810109,SAN NICOLAS,1985,entrenamiento,1101,1.59,2,Cauca (interandina),2100,-0.58,Niña,TRUE
 2612810109,SAN NICOLAS,1986,entrenamiento,1101,1.59,2,Cauca (interandina),2100,0.27,Neutro,FALSE
 2612810109,SAN NICOLAS,1987,entrenamiento,1101,1.59,2,Cauca (interandina),2100,1.18,Niño,FALSE
 2612810109,SAN NICOLAS,1988,entrenamiento,1101,1.59,2,Cauca (interandina),2100,-0.89,Niña,TRUE
@@ -579,6 +549,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810112,AUSTRIA,1984,entrenamiento,1064,0.47,1,Cauca (interandina),1750,-0.55,Niña,FALSE
 2612810112,AUSTRIA,1985,entrenamiento,1064,0.47,1,Cauca (interandina),1750,-0.58,Niña,TRUE
 2612810112,AUSTRIA,1986,entrenamiento,1064,0.47,1,Cauca (interandina),1750,0.27,Neutro,FALSE
+2612810112,AUSTRIA,1987,entrenamiento,1064,0.47,1,Cauca (interandina),1750,1.18,Niño,FALSE
 2612810112,AUSTRIA,1988,entrenamiento,1064,0.47,1,Cauca (interandina),1750,-0.89,Niña,TRUE
 2612810112,AUSTRIA,1990,entrenamiento,1064,0.47,1,Cauca (interandina),1750,0.27,Neutro,FALSE
 2612810112,AUSTRIA,1991,entrenamiento,1064,0.47,1,Cauca (interandina),1750,0.65,Niño,FALSE
@@ -630,8 +601,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810122,PLANTA NIMA,2001,prueba,1100,2.65,3,Cauca (interandina),1170,-0.29,Neutro,FALSE
 2612810122,PLANTA NIMA,2002,prueba,1100,2.65,3,Cauca (interandina),1170,0.51,Niño,FALSE
 2612810122,PLANTA NIMA,2003,prueba,1100,2.65,3,Cauca (interandina),1170,0.24,Neutro,FALSE
-2612810201,SAN EMIGDIO,1981,entrenamiento,1100,3.71,3,Cauca (interandina),1272,-0.25,Neutro,FALSE
-2612810201,SAN EMIGDIO,1982,entrenamiento,1100,3.71,3,Cauca (interandina),1272,0.91,Niño,FALSE
 2612810201,SAN EMIGDIO,1983,entrenamiento,1100,3.71,3,Cauca (interandina),1272,0.46,Neutro,FALSE
 2612810201,SAN EMIGDIO,1984,entrenamiento,1100,3.71,3,Cauca (interandina),1272,-0.55,Niña,FALSE
 2612810201,SAN EMIGDIO,1985,entrenamiento,1100,3.71,3,Cauca (interandina),1272,-0.58,Niña,TRUE
@@ -653,7 +622,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810201,SAN EMIGDIO,2001,prueba,1100,3.71,3,Cauca (interandina),1272,-0.29,Neutro,FALSE
 2612810201,SAN EMIGDIO,2002,prueba,1100,3.71,3,Cauca (interandina),1272,0.51,Niño,FALSE
 2612810201,SAN EMIGDIO,2003,prueba,1100,3.71,3,Cauca (interandina),1272,0.24,Neutro,FALSE
-2612810203,LA SIRENA,1988,entrenamiento,1102,2.32,1,Cauca (interandina),2605,-0.89,Niña,TRUE
 2612810203,LA SIRENA,1989,entrenamiento,1102,2.32,1,Cauca (interandina),2605,-0.62,Niña,FALSE
 2612810203,LA SIRENA,1990,entrenamiento,1102,2.32,1,Cauca (interandina),2605,0.27,Neutro,FALSE
 2612810203,LA SIRENA,1991,entrenamiento,1102,2.32,1,Cauca (interandina),2605,0.65,Niño,FALSE
@@ -669,15 +637,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2612810203,LA SIRENA,2001,prueba,1102,2.32,1,Cauca (interandina),2605,-0.29,Neutro,FALSE
 2612810203,LA SIRENA,2002,prueba,1102,2.32,1,Cauca (interandina),2605,0.51,Niño,FALSE
 2612810203,LA SIRENA,2003,prueba,1102,2.32,1,Cauca (interandina),2605,0.24,Neutro,FALSE
-2613000101,LA SIBERIA,1981,entrenamiento,988,1.38,1,Cauca (interandina),1017,-0.25,Neutro,FALSE
-2613000101,LA SIBERIA,1982,entrenamiento,988,1.38,1,Cauca (interandina),1017,0.91,Niño,FALSE
-2613000101,LA SIBERIA,1983,entrenamiento,988,1.38,1,Cauca (interandina),1017,0.46,Neutro,FALSE
-2613000101,LA SIBERIA,1984,entrenamiento,988,1.38,1,Cauca (interandina),1017,-0.55,Niña,FALSE
-2613000101,LA SIBERIA,1985,entrenamiento,988,1.38,1,Cauca (interandina),1017,-0.58,Niña,TRUE
-2613000101,LA SIBERIA,1987,entrenamiento,988,1.38,1,Cauca (interandina),1017,1.18,Niño,FALSE
-2613000101,LA SIBERIA,1988,entrenamiento,988,1.38,1,Cauca (interandina),1017,-0.89,Niña,TRUE
-2613000101,LA SIBERIA,1989,entrenamiento,988,1.38,1,Cauca (interandina),1017,-0.62,Niña,FALSE
-2613000101,LA SIBERIA,1990,entrenamiento,988,1.38,1,Cauca (interandina),1017,0.27,Neutro,FALSE
 2613000102,EL PARAISO,1981,entrenamiento,1027,3.89,1,Cauca (interandina),1305,-0.25,Neutro,FALSE
 2613000102,EL PARAISO,1982,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.91,Niño,FALSE
 2613000102,EL PARAISO,1983,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.46,Neutro,FALSE
@@ -690,16 +649,13 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613000102,EL PARAISO,1990,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.27,Neutro,FALSE
 2613000102,EL PARAISO,1991,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.65,Niño,FALSE
 2613000102,EL PARAISO,1992,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.61,Niño,FALSE
-2613000102,EL PARAISO,1993,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.36,Neutro,FALSE
 2613000102,EL PARAISO,1994,entrenamiento,1027,3.89,1,Cauca (interandina),1305,0.37,Neutro,FALSE
 2613000102,EL PARAISO,1995,entrenamiento,1027,3.89,1,Cauca (interandina),1305,-0.22,Neutro,FALSE
-2613000102,EL PARAISO,1997,validación,1027,3.89,1,Cauca (interandina),1305,1.14,Niño,FALSE
 2613000102,EL PARAISO,1998,validación,1027,3.89,1,Cauca (interandina),1305,0.04,Neutro,FALSE
 2613000102,EL PARAISO,1999,validación,1027,3.89,1,Cauca (interandina),1305,-1.08,Niña,FALSE
 2613000102,EL PARAISO,2003,prueba,1027,3.89,1,Cauca (interandina),1305,0.24,Neutro,FALSE
 2613000103,EL CASTILLO,1981,entrenamiento,990,2.19,1,Cauca (interandina),1424,-0.25,Neutro,FALSE
 2613000103,EL CASTILLO,1982,entrenamiento,990,2.19,1,Cauca (interandina),1424,0.91,Niño,FALSE
-2613000103,EL CASTILLO,1983,entrenamiento,990,2.19,1,Cauca (interandina),1424,0.46,Neutro,FALSE
 2613000103,EL CASTILLO,1984,entrenamiento,990,2.19,1,Cauca (interandina),1424,-0.55,Niña,FALSE
 2613000103,EL CASTILLO,1985,entrenamiento,990,2.19,1,Cauca (interandina),1424,-0.58,Niña,TRUE
 2613000103,EL CASTILLO,1986,entrenamiento,990,2.19,1,Cauca (interandina),1424,0.27,Neutro,FALSE
@@ -763,7 +719,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613100104,GUACARI,2001,prueba,913,0.94,1,Cauca (interandina),990,-0.29,Neutro,FALSE
 2613100104,GUACARI,2002,prueba,913,0.94,1,Cauca (interandina),990,0.51,Niño,FALSE
 2613100104,GUACARI,2003,prueba,913,0.94,1,Cauca (interandina),990,0.24,Neutro,FALSE
-2613100106,JUNTAS,1981,entrenamiento,916,1.06,1,Cauca (interandina),1826,-0.25,Neutro,FALSE
 2613100106,JUNTAS,1983,entrenamiento,916,1.06,1,Cauca (interandina),1826,0.46,Neutro,FALSE
 2613100106,JUNTAS,1984,entrenamiento,916,1.06,1,Cauca (interandina),1826,-0.55,Niña,FALSE
 2613100106,JUNTAS,1985,entrenamiento,916,1.06,1,Cauca (interandina),1826,-0.58,Niña,TRUE
@@ -783,22 +738,20 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613100106,JUNTAS,1999,validación,916,1.06,1,Cauca (interandina),1826,-1.08,Niña,FALSE
 2613100106,JUNTAS,2003,prueba,916,1.06,1,Cauca (interandina),1826,0.24,Neutro,FALSE
 2613100107,COSTA RICA,1981,entrenamiento,915,2.31,1,Cauca (interandina),1192,-0.25,Neutro,FALSE
-2613100107,COSTA RICA,1983,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.46,Neutro,FALSE
 2613100107,COSTA RICA,1984,entrenamiento,915,2.31,1,Cauca (interandina),1192,-0.55,Niña,FALSE
 2613100107,COSTA RICA,1985,entrenamiento,915,2.31,1,Cauca (interandina),1192,-0.58,Niña,TRUE
-2613100107,COSTA RICA,1986,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.27,Neutro,FALSE
 2613100107,COSTA RICA,1989,entrenamiento,915,2.31,1,Cauca (interandina),1192,-0.62,Niña,FALSE
 2613100107,COSTA RICA,1990,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.27,Neutro,FALSE
 2613100107,COSTA RICA,1991,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.65,Niño,FALSE
 2613100107,COSTA RICA,1992,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.61,Niño,FALSE
 2613100107,COSTA RICA,1993,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.36,Neutro,FALSE
 2613100107,COSTA RICA,1994,entrenamiento,915,2.31,1,Cauca (interandina),1192,0.37,Neutro,FALSE
+2613100107,COSTA RICA,1995,entrenamiento,915,2.31,1,Cauca (interandina),1192,-0.22,Neutro,FALSE
 2613100107,COSTA RICA,1996,validación,915,2.31,1,Cauca (interandina),1192,-0.41,Neutro,FALSE
 2613100107,COSTA RICA,1997,validación,915,2.31,1,Cauca (interandina),1192,1.14,Niño,FALSE
 2613100107,COSTA RICA,1998,validación,915,2.31,1,Cauca (interandina),1192,0.04,Neutro,FALSE
 2613100107,COSTA RICA,1999,validación,915,2.31,1,Cauca (interandina),1192,-1.08,Niña,FALSE
 2613100107,COSTA RICA,2000,validación,915,2.31,1,Cauca (interandina),1192,-0.77,Niña,TRUE
-2613100107,COSTA RICA,2001,prueba,915,2.31,1,Cauca (interandina),1192,-0.29,Neutro,FALSE
 2613100107,COSTA RICA,2002,prueba,915,2.31,1,Cauca (interandina),1192,0.51,Niño,FALSE
 2613100107,COSTA RICA,2003,prueba,915,2.31,1,Cauca (interandina),1192,0.24,Neutro,FALSE
 2613200101,ING PICHICHI,1982,entrenamiento,914,0.39,1,Cauca (interandina),1043,0.91,Niño,FALSE
@@ -810,16 +763,14 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613200101,ING PICHICHI,1988,entrenamiento,914,0.39,1,Cauca (interandina),1043,-0.89,Niña,TRUE
 2613200101,ING PICHICHI,1989,entrenamiento,914,0.39,1,Cauca (interandina),1043,-0.62,Niña,FALSE
 2613200101,ING PICHICHI,1990,entrenamiento,914,0.39,1,Cauca (interandina),1043,0.27,Neutro,FALSE
-2613200101,ING PICHICHI,1992,entrenamiento,914,0.39,1,Cauca (interandina),1043,0.61,Niño,FALSE
 2613200101,ING PICHICHI,1994,entrenamiento,914,0.39,1,Cauca (interandina),1043,0.37,Neutro,FALSE
 2613200101,ING PICHICHI,1997,validación,914,0.39,1,Cauca (interandina),1043,1.14,Niño,FALSE
 2613200101,ING PICHICHI,1999,validación,914,0.39,1,Cauca (interandina),1043,-1.08,Niña,FALSE
 2613200101,ING PICHICHI,2000,validación,914,0.39,1,Cauca (interandina),1043,-0.77,Niña,TRUE
 2613200101,ING PICHICHI,2002,prueba,914,0.39,1,Cauca (interandina),1043,0.51,Niño,FALSE
-2613200105,LA PATAGONIA,1981,entrenamiento,878,2.35,1,Cauca (interandina),1950,-0.25,Neutro,FALSE
+2613200105,LA PATAGONIA,1982,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.91,Niño,FALSE
 2613200105,LA PATAGONIA,1983,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.46,Neutro,FALSE
 2613200105,LA PATAGONIA,1984,entrenamiento,878,2.35,1,Cauca (interandina),1950,-0.55,Niña,FALSE
-2613200105,LA PATAGONIA,1986,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.27,Neutro,FALSE
 2613200105,LA PATAGONIA,1987,entrenamiento,878,2.35,1,Cauca (interandina),1950,1.18,Niño,FALSE
 2613200105,LA PATAGONIA,1990,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.27,Neutro,FALSE
 2613200105,LA PATAGONIA,1991,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.65,Niño,FALSE
@@ -828,11 +779,11 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613200105,LA PATAGONIA,1994,entrenamiento,878,2.35,1,Cauca (interandina),1950,0.37,Neutro,FALSE
 2613200105,LA PATAGONIA,1995,entrenamiento,878,2.35,1,Cauca (interandina),1950,-0.22,Neutro,FALSE
 2613200105,LA PATAGONIA,1996,validación,878,2.35,1,Cauca (interandina),1950,-0.41,Neutro,FALSE
-2613200105,LA PATAGONIA,1997,validación,878,2.35,1,Cauca (interandina),1950,1.14,Niño,FALSE
 2613200105,LA PATAGONIA,1998,validación,878,2.35,1,Cauca (interandina),1950,0.04,Neutro,FALSE
 2613200105,LA PATAGONIA,2002,prueba,878,2.35,1,Cauca (interandina),1950,0.51,Niño,FALSE
 2613200105,LA PATAGONIA,2003,prueba,878,2.35,1,Cauca (interandina),1950,0.24,Neutro,FALSE
 2613600101,DOSQUEBRADAS,1981,entrenamiento,805,1.94,2,Cauca (interandina),1650,-0.25,Neutro,FALSE
+2613600101,DOSQUEBRADAS,1982,entrenamiento,805,1.94,2,Cauca (interandina),1650,0.91,Niño,FALSE
 2613600101,DOSQUEBRADAS,1983,entrenamiento,805,1.94,2,Cauca (interandina),1650,0.46,Neutro,FALSE
 2613600101,DOSQUEBRADAS,1984,entrenamiento,805,1.94,2,Cauca (interandina),1650,-0.55,Niña,FALSE
 2613600101,DOSQUEBRADAS,1985,entrenamiento,805,1.94,2,Cauca (interandina),1650,-0.58,Niña,TRUE
@@ -873,13 +824,13 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613600102,EL DILUVIO,1999,validación,843,2.79,2,Cauca (interandina),2360,-1.08,Niña,FALSE
 2613600102,EL DILUVIO,2000,validación,843,2.79,2,Cauca (interandina),2360,-0.77,Niña,TRUE
 2613600102,EL DILUVIO,2001,prueba,843,2.79,2,Cauca (interandina),2360,-0.29,Neutro,FALSE
+2613600102,EL DILUVIO,2002,prueba,843,2.79,2,Cauca (interandina),2360,0.51,Niño,FALSE
+2613600102,EL DILUVIO,2003,prueba,843,2.79,2,Cauca (interandina),2360,0.24,Neutro,FALSE
 2613600103,LA PRIMAVERA,1981,entrenamiento,805,2.56,2,Cauca (interandina),1644,-0.25,Neutro,FALSE
 2613600103,LA PRIMAVERA,1982,entrenamiento,805,2.56,2,Cauca (interandina),1644,0.91,Niño,FALSE
-2613600103,LA PRIMAVERA,1983,entrenamiento,805,2.56,2,Cauca (interandina),1644,0.46,Neutro,FALSE
 2613600103,LA PRIMAVERA,1984,entrenamiento,805,2.56,2,Cauca (interandina),1644,-0.55,Niña,FALSE
 2613600103,LA PRIMAVERA,1985,entrenamiento,805,2.56,2,Cauca (interandina),1644,-0.58,Niña,TRUE
 2613600103,LA PRIMAVERA,1986,entrenamiento,805,2.56,2,Cauca (interandina),1644,0.27,Neutro,FALSE
-2613600103,LA PRIMAVERA,1987,entrenamiento,805,2.56,2,Cauca (interandina),1644,1.18,Niño,FALSE
 2613600103,LA PRIMAVERA,1988,entrenamiento,805,2.56,2,Cauca (interandina),1644,-0.89,Niña,TRUE
 2613600103,LA PRIMAVERA,1989,entrenamiento,805,2.56,2,Cauca (interandina),1644,-0.62,Niña,FALSE
 2613600103,LA PRIMAVERA,1990,entrenamiento,805,2.56,2,Cauca (interandina),1644,0.27,Neutro,FALSE
@@ -896,15 +847,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613600103,LA PRIMAVERA,2001,prueba,805,2.56,2,Cauca (interandina),1644,-0.29,Neutro,FALSE
 2613600103,LA PRIMAVERA,2002,prueba,805,2.56,2,Cauca (interandina),1644,0.51,Niño,FALSE
 2613600103,LA PRIMAVERA,2003,prueba,805,2.56,2,Cauca (interandina),1644,0.24,Neutro,FALSE
-2613600104,EL JANEIRO,1981,entrenamiento,842,2.91,1,Cauca (interandina),2000,-0.25,Neutro,FALSE
-2613600104,EL JANEIRO,1982,entrenamiento,842,2.91,1,Cauca (interandina),2000,0.91,Niño,FALSE
-2613600104,EL JANEIRO,1983,entrenamiento,842,2.91,1,Cauca (interandina),2000,0.46,Neutro,FALSE
-2613600104,EL JANEIRO,1984,entrenamiento,842,2.91,1,Cauca (interandina),2000,-0.55,Niña,FALSE
-2613600104,EL JANEIRO,1986,entrenamiento,842,2.91,1,Cauca (interandina),2000,0.27,Neutro,FALSE
-2613600104,EL JANEIRO,1987,entrenamiento,842,2.91,1,Cauca (interandina),2000,1.18,Niño,FALSE
-2613600104,EL JANEIRO,1988,entrenamiento,842,2.91,1,Cauca (interandina),2000,-0.89,Niña,TRUE
-2613600104,EL JANEIRO,1989,entrenamiento,842,2.91,1,Cauca (interandina),2000,-0.62,Niña,FALSE
-2613600104,EL JANEIRO,1990,entrenamiento,842,2.91,1,Cauca (interandina),2000,0.27,Neutro,FALSE
 2613600105,ACUEDUCTO BUGA,1981,entrenamiento,840,2.21,1,Cauca (interandina),960,-0.25,Neutro,FALSE
 2613600105,ACUEDUCTO BUGA,1982,entrenamiento,840,2.21,1,Cauca (interandina),960,0.91,Niño,FALSE
 2613600105,ACUEDUCTO BUGA,1983,entrenamiento,840,2.21,1,Cauca (interandina),960,0.46,Neutro,FALSE
@@ -942,7 +884,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2613600301,LA MAGDALENA,1992,entrenamiento,841,2.75,1,Cauca (interandina),1360,0.61,Niño,FALSE
 2613600301,LA MAGDALENA,1993,entrenamiento,841,2.75,1,Cauca (interandina),1360,0.36,Neutro,FALSE
 2613600301,LA MAGDALENA,1995,entrenamiento,841,2.75,1,Cauca (interandina),1360,-0.22,Neutro,FALSE
-2613600301,LA MAGDALENA,1996,validación,841,2.75,1,Cauca (interandina),1360,-0.41,Neutro,FALSE
 2613600301,LA MAGDALENA,1997,validación,841,2.75,1,Cauca (interandina),1360,1.14,Niño,FALSE
 2613600301,LA MAGDALENA,1998,validación,841,2.75,1,Cauca (interandina),1360,0.04,Neutro,FALSE
 2613600301,LA MAGDALENA,1999,validación,841,2.75,1,Cauca (interandina),1360,-1.08,Niña,FALSE
@@ -1029,9 +970,9 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614100104,LOS BANCOS,1998,validación,808,2.81,2,Cauca (interandina),1956,0.04,Neutro,FALSE
 2614100104,LOS BANCOS,1999,validación,808,2.81,2,Cauca (interandina),1956,-1.08,Niña,FALSE
 2614100104,LOS BANCOS,2000,validación,808,2.81,2,Cauca (interandina),1956,-0.77,Niña,TRUE
+2614100104,LOS BANCOS,2001,prueba,808,2.81,2,Cauca (interandina),1956,-0.29,Neutro,FALSE
 2614100104,LOS BANCOS,2002,prueba,808,2.81,2,Cauca (interandina),1956,0.51,Niño,FALSE
 2614100104,LOS BANCOS,2003,prueba,808,2.81,2,Cauca (interandina),1956,0.24,Neutro,FALSE
-2614100202,ACUEDUCTO TULUA,1981,entrenamiento,694,1.17,1,Cauca (interandina),1014,-0.25,Neutro,FALSE
 2614100202,ACUEDUCTO TULUA,1982,entrenamiento,694,1.17,1,Cauca (interandina),1014,0.91,Niño,FALSE
 2614100202,ACUEDUCTO TULUA,1983,entrenamiento,694,1.17,1,Cauca (interandina),1014,0.46,Neutro,FALSE
 2614100202,ACUEDUCTO TULUA,1984,entrenamiento,694,1.17,1,Cauca (interandina),1014,-0.55,Niña,FALSE
@@ -1062,7 +1003,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614100203,MONTELORO,1986,entrenamiento,770,2.05,1,Cauca (interandina),1861,0.27,Neutro,FALSE
 2614100203,MONTELORO,1987,entrenamiento,770,2.05,1,Cauca (interandina),1861,1.18,Niño,FALSE
 2614100203,MONTELORO,1988,entrenamiento,770,2.05,1,Cauca (interandina),1861,-0.89,Niña,TRUE
-2614100203,MONTELORO,1989,entrenamiento,770,2.05,1,Cauca (interandina),1861,-0.62,Niña,FALSE
 2614100203,MONTELORO,1990,entrenamiento,770,2.05,1,Cauca (interandina),1861,0.27,Neutro,FALSE
 2614100203,MONTELORO,1991,entrenamiento,770,2.05,1,Cauca (interandina),1861,0.65,Niño,FALSE
 2614100203,MONTELORO,1992,entrenamiento,770,2.05,1,Cauca (interandina),1861,0.61,Niño,FALSE
@@ -1098,13 +1038,13 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614200101,VENUS,2002,prueba,733,0.4,1,Cauca (interandina),1560,0.51,Niño,FALSE
 2614400101,ALEGRIAS,1981,entrenamiento,700,1.44,1,Cauca (interandina),2290,-0.25,Neutro,FALSE
 2614400101,ALEGRIAS,1982,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.91,Niño,FALSE
-2614400101,ALEGRIAS,1984,entrenamiento,700,1.44,1,Cauca (interandina),2290,-0.55,Niña,FALSE
+2614400101,ALEGRIAS,1983,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.46,Neutro,FALSE
 2614400101,ALEGRIAS,1986,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.27,Neutro,FALSE
 2614400101,ALEGRIAS,1987,entrenamiento,700,1.44,1,Cauca (interandina),2290,1.18,Niño,FALSE
 2614400101,ALEGRIAS,1988,entrenamiento,700,1.44,1,Cauca (interandina),2290,-0.89,Niña,TRUE
 2614400101,ALEGRIAS,1989,entrenamiento,700,1.44,1,Cauca (interandina),2290,-0.62,Niña,FALSE
 2614400101,ALEGRIAS,1990,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.27,Neutro,FALSE
-2614400101,ALEGRIAS,1991,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.65,Niño,FALSE
+2614400101,ALEGRIAS,1992,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.61,Niño,FALSE
 2614400101,ALEGRIAS,1993,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.36,Neutro,FALSE
 2614400101,ALEGRIAS,1994,entrenamiento,700,1.44,1,Cauca (interandina),2290,0.37,Neutro,FALSE
 2614400101,ALEGRIAS,1995,entrenamiento,700,1.44,1,Cauca (interandina),2290,-0.22,Neutro,FALSE
@@ -1153,6 +1093,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614400103,PUERTO FRAZADAS,1997,validación,698,3.17,1,Cauca (interandina),1657,1.14,Niño,FALSE
 2614400103,PUERTO FRAZADAS,1998,validación,698,3.17,1,Cauca (interandina),1657,0.04,Neutro,FALSE
 2614400103,PUERTO FRAZADAS,2001,prueba,698,3.17,1,Cauca (interandina),1657,-0.29,Neutro,FALSE
+2614400103,PUERTO FRAZADAS,2002,prueba,698,3.17,1,Cauca (interandina),1657,0.51,Niño,FALSE
 2614400103,PUERTO FRAZADAS,2003,prueba,698,3.17,1,Cauca (interandina),1657,0.24,Neutro,FALSE
 2614400104,IRLANDA,1981,entrenamiento,625,1.79,1,Cauca (interandina),1663,-0.25,Neutro,FALSE
 2614400104,IRLANDA,1982,entrenamiento,625,1.79,1,Cauca (interandina),1663,0.91,Niño,FALSE
@@ -1190,7 +1131,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614400105,PARDO,1991,entrenamiento,695,3.02,1,Cauca (interandina),1314,0.65,Niño,FALSE
 2614400105,PARDO,1992,entrenamiento,695,3.02,1,Cauca (interandina),1314,0.61,Niño,FALSE
 2614400105,PARDO,1994,entrenamiento,695,3.02,1,Cauca (interandina),1314,0.37,Neutro,FALSE
-2614400105,PARDO,1996,validación,695,3.02,1,Cauca (interandina),1314,-0.41,Neutro,FALSE
 2614400105,PARDO,1997,validación,695,3.02,1,Cauca (interandina),1314,1.14,Niño,FALSE
 2614400105,PARDO,1998,validación,695,3.02,1,Cauca (interandina),1314,0.04,Neutro,FALSE
 2614400105,PARDO,2000,validación,695,3.02,1,Cauca (interandina),1314,-0.77,Niña,TRUE
@@ -1211,7 +1151,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614400201,BARRAGAN,1992,entrenamiento,737,1.74,1,Cauca (interandina),3100,0.61,Niño,FALSE
 2614400201,BARRAGAN,1993,entrenamiento,737,1.74,1,Cauca (interandina),3100,0.36,Neutro,FALSE
 2614400201,BARRAGAN,1994,entrenamiento,737,1.74,1,Cauca (interandina),3100,0.37,Neutro,FALSE
-2614400201,BARRAGAN,1995,entrenamiento,737,1.74,1,Cauca (interandina),3100,-0.22,Neutro,FALSE
 2614400201,BARRAGAN,1996,validación,737,1.74,1,Cauca (interandina),3100,-0.41,Neutro,FALSE
 2614400201,BARRAGAN,1997,validación,737,1.74,1,Cauca (interandina),3100,1.14,Niño,FALSE
 2614400201,BARRAGAN,1998,validación,737,1.74,1,Cauca (interandina),3100,0.04,Neutro,FALSE
@@ -1231,7 +1170,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614500102,EL ALCAZAR,1992,entrenamiento,512,2.12,1,Cauca (interandina),977,0.61,Niño,FALSE
 2614500102,EL ALCAZAR,1993,entrenamiento,512,2.12,1,Cauca (interandina),977,0.36,Neutro,FALSE
 2614500102,EL ALCAZAR,1994,entrenamiento,512,2.12,1,Cauca (interandina),977,0.37,Neutro,FALSE
-2614500102,EL ALCAZAR,1995,entrenamiento,512,2.12,1,Cauca (interandina),977,-0.22,Neutro,FALSE
 2614500102,EL ALCAZAR,1996,validación,512,2.12,1,Cauca (interandina),977,-0.41,Neutro,FALSE
 2614500102,EL ALCAZAR,1997,validación,512,2.12,1,Cauca (interandina),977,1.14,Niño,FALSE
 2614500102,EL ALCAZAR,1998,validación,512,2.12,1,Cauca (interandina),977,0.04,Neutro,FALSE
@@ -1239,15 +1177,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614500102,EL ALCAZAR,2000,validación,512,2.12,1,Cauca (interandina),977,-0.77,Niña,TRUE
 2614500102,EL ALCAZAR,2001,prueba,512,2.12,1,Cauca (interandina),977,-0.29,Neutro,FALSE
 2614500102,EL ALCAZAR,2002,prueba,512,2.12,1,Cauca (interandina),977,0.51,Niño,FALSE
-2614500103,EL JIGUAL,1982,entrenamiento,623,2.41,1,Cauca (interandina),1433,0.91,Niño,FALSE
-2614500103,EL JIGUAL,1983,entrenamiento,623,2.41,1,Cauca (interandina),1433,0.46,Neutro,FALSE
-2614500103,EL JIGUAL,1984,entrenamiento,623,2.41,1,Cauca (interandina),1433,-0.55,Niña,FALSE
-2614500103,EL JIGUAL,1985,entrenamiento,623,2.41,1,Cauca (interandina),1433,-0.58,Niña,TRUE
-2614500103,EL JIGUAL,1986,entrenamiento,623,2.41,1,Cauca (interandina),1433,0.27,Neutro,FALSE
-2614500103,EL JIGUAL,1987,entrenamiento,623,2.41,1,Cauca (interandina),1433,1.18,Niño,FALSE
-2614500103,EL JIGUAL,1988,entrenamiento,623,2.41,1,Cauca (interandina),1433,-0.89,Niña,TRUE
-2614500103,EL JIGUAL,1989,entrenamiento,623,2.41,1,Cauca (interandina),1433,-0.62,Niña,FALSE
-2614500103,EL JIGUAL,1990,entrenamiento,623,2.41,1,Cauca (interandina),1433,0.27,Neutro,FALSE
 2614500104,GALICIA,1981,entrenamiento,622,2.08,1,Cauca (interandina),1191,-0.25,Neutro,FALSE
 2614500104,GALICIA,1982,entrenamiento,622,2.08,1,Cauca (interandina),1191,0.91,Niño,FALSE
 2614500104,GALICIA,1983,entrenamiento,622,2.08,1,Cauca (interandina),1191,0.46,Neutro,FALSE
@@ -1270,11 +1199,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614500104,GALICIA,2001,prueba,622,2.08,1,Cauca (interandina),1191,-0.29,Neutro,FALSE
 2614500104,GALICIA,2002,prueba,622,2.08,1,Cauca (interandina),1191,0.51,Niño,FALSE
 2614500104,GALICIA,2003,prueba,622,2.08,1,Cauca (interandina),1191,0.24,Neutro,FALSE
-2614900101,EL SOCORRO,1984,entrenamiento,402,1.81,1,Cauca (interandina),1025,-0.55,Niña,FALSE
-2614900101,EL SOCORRO,1986,entrenamiento,402,1.81,1,Cauca (interandina),1025,0.27,Neutro,FALSE
 2614900101,EL SOCORRO,1987,entrenamiento,402,1.81,1,Cauca (interandina),1025,1.18,Niño,FALSE
 2614900101,EL SOCORRO,1988,entrenamiento,402,1.81,1,Cauca (interandina),1025,-0.89,Niña,TRUE
-2614900101,EL SOCORRO,1989,entrenamiento,402,1.81,1,Cauca (interandina),1025,-0.62,Niña,FALSE
 2614900101,EL SOCORRO,1990,entrenamiento,402,1.81,1,Cauca (interandina),1025,0.27,Neutro,FALSE
 2614900101,EL SOCORRO,1991,entrenamiento,402,1.81,1,Cauca (interandina),1025,0.65,Niño,FALSE
 2614900101,EL SOCORRO,1993,entrenamiento,402,1.81,1,Cauca (interandina),1025,0.36,Neutro,FALSE
@@ -1284,7 +1210,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614900101,EL SOCORRO,2000,validación,402,1.81,1,Cauca (interandina),1025,-0.77,Niña,TRUE
 2614900101,EL SOCORRO,2001,prueba,402,1.81,1,Cauca (interandina),1025,-0.29,Neutro,FALSE
 2614900101,EL SOCORRO,2002,prueba,402,1.81,1,Cauca (interandina),1025,0.51,Niño,FALSE
-2614900101,EL SOCORRO,2003,prueba,402,1.81,1,Cauca (interandina),1025,0.24,Neutro,FALSE
 2614900102,LA ELVIRA,1984,entrenamiento,475,2.85,1,Cauca (interandina),962,-0.55,Niña,FALSE
 2614900102,LA ELVIRA,1985,entrenamiento,475,2.85,1,Cauca (interandina),962,-0.58,Niña,TRUE
 2614900102,LA ELVIRA,1986,entrenamiento,475,2.85,1,Cauca (interandina),962,0.27,Neutro,FALSE
@@ -1311,11 +1236,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2614900201,MIRAVALLES,1984,entrenamiento,366,1.13,1,Cauca (interandina),1233,-0.55,Niña,FALSE
 2614900201,MIRAVALLES,1985,entrenamiento,366,1.13,1,Cauca (interandina),1233,-0.58,Niña,TRUE
 2614900201,MIRAVALLES,1986,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.27,Neutro,FALSE
-2614900201,MIRAVALLES,1987,entrenamiento,366,1.13,1,Cauca (interandina),1233,1.18,Niño,FALSE
 2614900201,MIRAVALLES,1989,entrenamiento,366,1.13,1,Cauca (interandina),1233,-0.62,Niña,FALSE
 2614900201,MIRAVALLES,1990,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.27,Neutro,FALSE
-2614900201,MIRAVALLES,1991,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.65,Niño,FALSE
-2614900201,MIRAVALLES,1992,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.61,Niño,FALSE
 2614900201,MIRAVALLES,1993,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.36,Neutro,FALSE
 2614900201,MIRAVALLES,1994,entrenamiento,366,1.13,1,Cauca (interandina),1233,0.37,Neutro,FALSE
 2614900201,MIRAVALLES,1995,entrenamiento,366,1.13,1,Cauca (interandina),1233,-0.22,Neutro,FALSE
@@ -1331,7 +1253,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615000101,OBANDO,1984,entrenamiento,328,2.22,1,Cauca (interandina),930,-0.55,Niña,FALSE
 2615000101,OBANDO,1985,entrenamiento,328,2.22,1,Cauca (interandina),930,-0.58,Niña,TRUE
 2615000101,OBANDO,1986,entrenamiento,328,2.22,1,Cauca (interandina),930,0.27,Neutro,FALSE
-2615000101,OBANDO,1987,entrenamiento,328,2.22,1,Cauca (interandina),930,1.18,Niño,FALSE
 2615000101,OBANDO,1988,entrenamiento,328,2.22,1,Cauca (interandina),930,-0.89,Niña,TRUE
 2615000101,OBANDO,1989,entrenamiento,328,2.22,1,Cauca (interandina),930,-0.62,Niña,FALSE
 2615000101,OBANDO,1990,entrenamiento,328,2.22,1,Cauca (interandina),930,0.27,Neutro,FALSE
@@ -1343,14 +1264,12 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615000101,OBANDO,1998,validación,328,2.22,1,Cauca (interandina),930,0.04,Neutro,FALSE
 2615000101,OBANDO,1999,validación,328,2.22,1,Cauca (interandina),930,-1.08,Niña,FALSE
 2615000102,LA ARBOLEDA,1983,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.46,Neutro,FALSE
-2615000102,LA ARBOLEDA,1985,entrenamiento,329,1.06,1,Cauca (interandina),1275,-0.58,Niña,TRUE
 2615000102,LA ARBOLEDA,1986,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.27,Neutro,FALSE
 2615000102,LA ARBOLEDA,1987,entrenamiento,329,1.06,1,Cauca (interandina),1275,1.18,Niño,FALSE
 2615000102,LA ARBOLEDA,1989,entrenamiento,329,1.06,1,Cauca (interandina),1275,-0.62,Niña,FALSE
 2615000102,LA ARBOLEDA,1990,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.27,Neutro,FALSE
 2615000102,LA ARBOLEDA,1991,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.65,Niño,FALSE
 2615000102,LA ARBOLEDA,1992,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.61,Niño,FALSE
-2615000102,LA ARBOLEDA,1993,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.36,Neutro,FALSE
 2615000102,LA ARBOLEDA,1994,entrenamiento,329,1.06,1,Cauca (interandina),1275,0.37,Neutro,FALSE
 2615000102,LA ARBOLEDA,1995,entrenamiento,329,1.06,1,Cauca (interandina),1275,-0.22,Neutro,FALSE
 2615000102,LA ARBOLEDA,1996,validación,329,1.06,1,Cauca (interandina),1275,-0.41,Neutro,FALSE
@@ -1368,10 +1287,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615400102,HERACLIO URIBE,1986,entrenamiento,551,2.73,1,Cauca (interandina),1540,0.27,Neutro,FALSE
 2615400102,HERACLIO URIBE,1987,entrenamiento,551,2.73,1,Cauca (interandina),1540,1.18,Niño,FALSE
 2615400102,HERACLIO URIBE,1988,entrenamiento,551,2.73,1,Cauca (interandina),1540,-0.89,Niña,TRUE
-2615400102,HERACLIO URIBE,1989,entrenamiento,551,2.73,1,Cauca (interandina),1540,-0.62,Niña,FALSE
 2615400102,HERACLIO URIBE,1990,entrenamiento,551,2.73,1,Cauca (interandina),1540,0.27,Neutro,FALSE
 2615400102,HERACLIO URIBE,1991,entrenamiento,551,2.73,1,Cauca (interandina),1540,0.65,Niño,FALSE
-2615400102,HERACLIO URIBE,1999,validación,551,2.73,1,Cauca (interandina),1540,-1.08,Niña,FALSE
 2615400102,HERACLIO URIBE,2002,prueba,551,2.73,1,Cauca (interandina),1540,0.51,Niño,FALSE
 2615400102,HERACLIO URIBE,2003,prueba,551,2.73,1,Cauca (interandina),1540,0.24,Neutro,FALSE
 2615400103,SANTA ANA,1981,entrenamiento,181,3.47,1,Cauca (interandina),913,-0.25,Neutro,FALSE
@@ -1387,7 +1304,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615400103,SANTA ANA,1991,entrenamiento,181,3.47,1,Cauca (interandina),913,0.65,Niño,FALSE
 2615400103,SANTA ANA,1992,entrenamiento,181,3.47,1,Cauca (interandina),913,0.61,Niño,FALSE
 2615400103,SANTA ANA,1993,entrenamiento,181,3.47,1,Cauca (interandina),913,0.36,Neutro,FALSE
-2615400103,SANTA ANA,1994,entrenamiento,181,3.47,1,Cauca (interandina),913,0.37,Neutro,FALSE
 2615400103,SANTA ANA,1995,entrenamiento,181,3.47,1,Cauca (interandina),913,-0.22,Neutro,FALSE
 2615400104,LA CAMELIA,1981,entrenamiento,516,1.32,1,Cauca (interandina),1240,-0.25,Neutro,FALSE
 2615400104,LA CAMELIA,1982,entrenamiento,516,1.32,1,Cauca (interandina),1240,0.91,Niño,FALSE
@@ -1415,8 +1331,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615400105,ALCALA,1982,entrenamiento,258,1.25,1,Cauca (interandina),1261,0.91,Niño,FALSE
 2615400105,ALCALA,1983,entrenamiento,258,1.25,1,Cauca (interandina),1261,0.46,Neutro,FALSE
 2615400105,ALCALA,1984,entrenamiento,258,1.25,1,Cauca (interandina),1261,-0.55,Niña,FALSE
-2615400105,ALCALA,1985,entrenamiento,258,1.25,1,Cauca (interandina),1261,-0.58,Niña,TRUE
-2615400105,ALCALA,1986,entrenamiento,258,1.25,1,Cauca (interandina),1261,0.27,Neutro,FALSE
 2615400105,ALCALA,1987,entrenamiento,258,1.25,1,Cauca (interandina),1261,1.18,Niño,FALSE
 2615400105,ALCALA,1988,entrenamiento,258,1.25,1,Cauca (interandina),1261,-0.89,Niña,TRUE
 2615400105,ALCALA,1991,entrenamiento,258,1.25,1,Cauca (interandina),1261,0.65,Niño,FALSE
@@ -1426,7 +1340,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615400105,ALCALA,1996,validación,258,1.25,1,Cauca (interandina),1261,-0.41,Neutro,FALSE
 2615400105,ALCALA,1997,validación,258,1.25,1,Cauca (interandina),1261,1.14,Niño,FALSE
 2615400105,ALCALA,1998,validación,258,1.25,1,Cauca (interandina),1261,0.04,Neutro,FALSE
-2615400105,ALCALA,1999,validación,258,1.25,1,Cauca (interandina),1261,-1.08,Niña,FALSE
 2615400105,ALCALA,2000,validación,258,1.25,1,Cauca (interandina),1261,-0.77,Niña,TRUE
 2615400105,ALCALA,2001,prueba,258,1.25,1,Cauca (interandina),1261,-0.29,Neutro,FALSE
 2615400105,ALCALA,2002,prueba,258,1.25,1,Cauca (interandina),1261,0.51,Niño,FALSE
@@ -1501,21 +1414,18 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2615400111,PIEDRAS DE MOLER,1994,entrenamiento,219,3,1,Cauca (interandina),1100,0.37,Neutro,FALSE
 2615400111,PIEDRAS DE MOLER,1995,entrenamiento,219,3,1,Cauca (interandina),1100,-0.22,Neutro,FALSE
 2615400111,PIEDRAS DE MOLER,1996,validación,219,3,1,Cauca (interandina),1100,-0.41,Neutro,FALSE
-2615400111,PIEDRAS DE MOLER,1997,validación,219,3,1,Cauca (interandina),1100,1.14,Niño,FALSE
 2615400111,PIEDRAS DE MOLER,1998,validación,219,3,1,Cauca (interandina),1100,0.04,Neutro,FALSE
 2615400111,PIEDRAS DE MOLER,1999,validación,219,3,1,Cauca (interandina),1100,-1.08,Niña,FALSE
 2615400111,PIEDRAS DE MOLER,2000,validación,219,3,1,Cauca (interandina),1100,-0.77,Niña,TRUE
 2615400111,PIEDRAS DE MOLER,2001,prueba,219,3,1,Cauca (interandina),1100,-0.29,Neutro,FALSE
 2615400111,PIEDRAS DE MOLER,2002,prueba,219,3,1,Cauca (interandina),1100,0.51,Niño,FALSE
 2615400111,PIEDRAS DE MOLER,2003,prueba,219,3,1,Cauca (interandina),1100,0.24,Neutro,FALSE
-2620000103,PLANTA RIO CAUCA,1981,entrenamiento,1169,3.17,1,Cauca (interandina),956,-0.25,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,1982,entrenamiento,1169,3.17,1,Cauca (interandina),956,0.91,Niño,FALSE
 2620000103,PLANTA RIO CAUCA,1983,entrenamiento,1169,3.17,1,Cauca (interandina),956,0.46,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,1984,entrenamiento,1169,3.17,1,Cauca (interandina),956,-0.55,Niña,FALSE
 2620000103,PLANTA RIO CAUCA,1985,entrenamiento,1169,3.17,1,Cauca (interandina),956,-0.58,Niña,TRUE
 2620000103,PLANTA RIO CAUCA,1986,entrenamiento,1169,3.17,1,Cauca (interandina),956,0.27,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,1987,entrenamiento,1169,3.17,1,Cauca (interandina),956,1.18,Niño,FALSE
-2620000103,PLANTA RIO CAUCA,1988,entrenamiento,1169,3.17,1,Cauca (interandina),956,-0.89,Niña,TRUE
 2620000103,PLANTA RIO CAUCA,1989,entrenamiento,1169,3.17,1,Cauca (interandina),956,-0.62,Niña,FALSE
 2620000103,PLANTA RIO CAUCA,1990,entrenamiento,1169,3.17,1,Cauca (interandina),956,0.27,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,1991,entrenamiento,1169,3.17,1,Cauca (interandina),956,0.65,Niño,FALSE
@@ -1526,7 +1436,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2620000103,PLANTA RIO CAUCA,1996,validación,1169,3.17,1,Cauca (interandina),956,-0.41,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,1997,validación,1169,3.17,1,Cauca (interandina),956,1.14,Niño,FALSE
 2620000103,PLANTA RIO CAUCA,1998,validación,1169,3.17,1,Cauca (interandina),956,0.04,Neutro,FALSE
-2620000103,PLANTA RIO CAUCA,1999,validación,1169,3.17,1,Cauca (interandina),956,-1.08,Niña,FALSE
 2620000103,PLANTA RIO CAUCA,2000,validación,1169,3.17,1,Cauca (interandina),956,-0.77,Niña,TRUE
 2620000103,PLANTA RIO CAUCA,2001,prueba,1169,3.17,1,Cauca (interandina),956,-0.29,Neutro,FALSE
 2620000103,PLANTA RIO CAUCA,2002,prueba,1169,3.17,1,Cauca (interandina),956,0.51,Niño,FALSE
@@ -1551,18 +1460,15 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2620000109,MEDIACANOA,1981,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.25,Neutro,FALSE
 2620000109,MEDIACANOA,1982,entrenamiento,839,3.15,1,Cauca (interandina),920,0.91,Niño,FALSE
 2620000109,MEDIACANOA,1983,entrenamiento,839,3.15,1,Cauca (interandina),920,0.46,Neutro,FALSE
-2620000109,MEDIACANOA,1984,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.55,Niña,FALSE
 2620000109,MEDIACANOA,1985,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.58,Niña,TRUE
 2620000109,MEDIACANOA,1986,entrenamiento,839,3.15,1,Cauca (interandina),920,0.27,Neutro,FALSE
 2620000109,MEDIACANOA,1987,entrenamiento,839,3.15,1,Cauca (interandina),920,1.18,Niño,FALSE
-2620000109,MEDIACANOA,1988,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.89,Niña,TRUE
 2620000109,MEDIACANOA,1989,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.62,Niña,FALSE
 2620000109,MEDIACANOA,1990,entrenamiento,839,3.15,1,Cauca (interandina),920,0.27,Neutro,FALSE
 2620000109,MEDIACANOA,1991,entrenamiento,839,3.15,1,Cauca (interandina),920,0.65,Niño,FALSE
 2620000109,MEDIACANOA,1992,entrenamiento,839,3.15,1,Cauca (interandina),920,0.61,Niño,FALSE
 2620000109,MEDIACANOA,1993,entrenamiento,839,3.15,1,Cauca (interandina),920,0.36,Neutro,FALSE
 2620000109,MEDIACANOA,1994,entrenamiento,839,3.15,1,Cauca (interandina),920,0.37,Neutro,FALSE
-2620000109,MEDIACANOA,1995,entrenamiento,839,3.15,1,Cauca (interandina),920,-0.22,Neutro,FALSE
 2620000109,MEDIACANOA,1996,validación,839,3.15,1,Cauca (interandina),920,-0.41,Neutro,FALSE
 2620000109,MEDIACANOA,1998,validación,839,3.15,1,Cauca (interandina),920,0.04,Neutro,FALSE
 2620000109,MEDIACANOA,1999,validación,839,3.15,1,Cauca (interandina),920,-1.08,Niña,FALSE
@@ -1622,7 +1528,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2621500103,EL SILENCIOSO,1984,entrenamiento,1386,1.7,1,Cauca (interandina),1156,-0.55,Niña,FALSE
 2621500103,EL SILENCIOSO,1985,entrenamiento,1386,1.7,1,Cauca (interandina),1156,-0.58,Niña,TRUE
 2621500103,EL SILENCIOSO,1986,entrenamiento,1386,1.7,1,Cauca (interandina),1156,0.27,Neutro,FALSE
-2621500103,EL SILENCIOSO,1989,entrenamiento,1386,1.7,1,Cauca (interandina),1156,-0.62,Niña,FALSE
+2621500103,EL SILENCIOSO,1987,entrenamiento,1386,1.7,1,Cauca (interandina),1156,1.18,Niño,FALSE
 2621500103,EL SILENCIOSO,1990,entrenamiento,1386,1.7,1,Cauca (interandina),1156,0.27,Neutro,FALSE
 2621500103,EL SILENCIOSO,1991,entrenamiento,1386,1.7,1,Cauca (interandina),1156,0.65,Niño,FALSE
 2621500103,EL SILENCIOSO,1992,entrenamiento,1386,1.7,1,Cauca (interandina),1156,0.61,Niño,FALSE
@@ -1641,7 +1547,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2621500301,SAMARKANDA,1982,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.91,Niño,FALSE
 2621500301,SAMARKANDA,1983,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.46,Neutro,FALSE
 2621500301,SAMARKANDA,1984,entrenamiento,1349,2.38,1,Cauca (interandina),1527,-0.55,Niña,FALSE
-2621500301,SAMARKANDA,1985,entrenamiento,1349,2.38,1,Cauca (interandina),1527,-0.58,Niña,TRUE
 2621500301,SAMARKANDA,1986,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.27,Neutro,FALSE
 2621500301,SAMARKANDA,1987,entrenamiento,1349,2.38,1,Cauca (interandina),1527,1.18,Niño,FALSE
 2621500301,SAMARKANDA,1988,entrenamiento,1349,2.38,1,Cauca (interandina),1527,-0.89,Niña,TRUE
@@ -1650,7 +1555,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2621500301,SAMARKANDA,1992,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.61,Niño,FALSE
 2621500301,SAMARKANDA,1993,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.36,Neutro,FALSE
 2621500301,SAMARKANDA,1994,entrenamiento,1349,2.38,1,Cauca (interandina),1527,0.37,Neutro,FALSE
-2621500301,SAMARKANDA,1995,entrenamiento,1349,2.38,1,Cauca (interandina),1527,-0.22,Neutro,FALSE
 2621500301,SAMARKANDA,1996,validación,1349,2.38,1,Cauca (interandina),1527,-0.41,Neutro,FALSE
 2621500301,SAMARKANDA,1997,validación,1349,2.38,1,Cauca (interandina),1527,1.14,Niño,FALSE
 2621500301,SAMARKANDA,1998,validación,1349,2.38,1,Cauca (interandina),1527,0.04,Neutro,FALSE
@@ -1703,6 +1607,18 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622100103,SAN VICENTE,2001,prueba,1277,0.63,1,Cauca (interandina),1442,-0.29,Neutro,FALSE
 2622100103,SAN VICENTE,2002,prueba,1277,0.63,1,Cauca (interandina),1442,0.51,Niño,FALSE
 2622100103,SAN VICENTE,2003,prueba,1277,0.63,1,Cauca (interandina),1442,0.24,Neutro,FALSE
+2622100104,PEÑA MONA,1981,entrenamiento,1276,3.55,1,Cauca (interandina),2100,-0.25,Neutro,FALSE
+2622100104,PEÑA MONA,1987,entrenamiento,1276,3.55,1,Cauca (interandina),2100,1.18,Niño,FALSE
+2622100104,PEÑA MONA,1988,entrenamiento,1276,3.55,1,Cauca (interandina),2100,-0.89,Niña,TRUE
+2622100104,PEÑA MONA,1989,entrenamiento,1276,3.55,1,Cauca (interandina),2100,-0.62,Niña,FALSE
+2622100104,PEÑA MONA,1991,entrenamiento,1276,3.55,1,Cauca (interandina),2100,0.65,Niño,FALSE
+2622100104,PEÑA MONA,1995,entrenamiento,1276,3.55,1,Cauca (interandina),2100,-0.22,Neutro,FALSE
+2622100104,PEÑA MONA,1996,validación,1276,3.55,1,Cauca (interandina),2100,-0.41,Neutro,FALSE
+2622100104,PEÑA MONA,1997,validación,1276,3.55,1,Cauca (interandina),2100,1.14,Niño,FALSE
+2622100104,PEÑA MONA,1998,validación,1276,3.55,1,Cauca (interandina),2100,0.04,Neutro,FALSE
+2622100104,PEÑA MONA,2000,validación,1276,3.55,1,Cauca (interandina),2100,-0.77,Niña,TRUE
+2622100104,PEÑA MONA,2002,prueba,1276,3.55,1,Cauca (interandina),2100,0.51,Niño,FALSE
+2622100104,PEÑA MONA,2003,prueba,1276,3.55,1,Cauca (interandina),2100,0.24,Neutro,FALSE
 2622100301,SAN ANTONIO,1981,entrenamiento,1313,2.81,1,Cauca (interandina),1567,-0.25,Neutro,FALSE
 2622100301,SAN ANTONIO,1982,entrenamiento,1313,2.81,1,Cauca (interandina),1567,0.91,Niño,FALSE
 2622100301,SAN ANTONIO,1983,entrenamiento,1313,2.81,1,Cauca (interandina),1567,0.46,Neutro,FALSE
@@ -1726,7 +1642,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622110101,LA ARGENTINA,1982,entrenamiento,1239,2.7,1,Cauca (interandina),1794,0.91,Niño,FALSE
 2622110101,LA ARGENTINA,1984,entrenamiento,1239,2.7,1,Cauca (interandina),1794,-0.55,Niña,FALSE
 2622110101,LA ARGENTINA,1985,entrenamiento,1239,2.7,1,Cauca (interandina),1794,-0.58,Niña,TRUE
-2622110101,LA ARGENTINA,1986,entrenamiento,1239,2.7,1,Cauca (interandina),1794,0.27,Neutro,FALSE
 2622110101,LA ARGENTINA,1987,entrenamiento,1239,2.7,1,Cauca (interandina),1794,1.18,Niño,FALSE
 2622110101,LA ARGENTINA,1988,entrenamiento,1239,2.7,1,Cauca (interandina),1794,-0.89,Niña,TRUE
 2622110101,LA ARGENTINA,1989,entrenamiento,1239,2.7,1,Cauca (interandina),1794,-0.62,Niña,FALSE
@@ -1768,14 +1683,10 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622110201,EL TOPACIO,2002,prueba,1240,1.57,1,Cauca (interandina),1676,0.51,Niño,FALSE
 2622110201,EL TOPACIO,2003,prueba,1240,1.57,1,Cauca (interandina),1676,0.24,Neutro,FALSE
 2622310101,LA LADRILLERA,1983,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.46,Neutro,FALSE
-2622310101,LA LADRILLERA,1984,entrenamiento,1204,2.02,2,Cauca (interandina),1180,-0.55,Niña,FALSE
 2622310101,LA LADRILLERA,1985,entrenamiento,1204,2.02,2,Cauca (interandina),1180,-0.58,Niña,TRUE
 2622310101,LA LADRILLERA,1986,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.27,Neutro,FALSE
-2622310101,LA LADRILLERA,1987,entrenamiento,1204,2.02,2,Cauca (interandina),1180,1.18,Niño,FALSE
 2622310101,LA LADRILLERA,1988,entrenamiento,1204,2.02,2,Cauca (interandina),1180,-0.89,Niña,TRUE
 2622310101,LA LADRILLERA,1989,entrenamiento,1204,2.02,2,Cauca (interandina),1180,-0.62,Niña,FALSE
-2622310101,LA LADRILLERA,1990,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.27,Neutro,FALSE
-2622310101,LA LADRILLERA,1991,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.65,Niño,FALSE
 2622310101,LA LADRILLERA,1992,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.61,Niño,FALSE
 2622310101,LA LADRILLERA,1993,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.36,Neutro,FALSE
 2622310101,LA LADRILLERA,1994,entrenamiento,1204,2.02,2,Cauca (interandina),1180,0.37,Neutro,FALSE
@@ -1783,8 +1694,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622310101,LA LADRILLERA,1996,validación,1204,2.02,2,Cauca (interandina),1180,-0.41,Neutro,FALSE
 2622310101,LA LADRILLERA,1997,validación,1204,2.02,2,Cauca (interandina),1180,1.14,Niño,FALSE
 2622310101,LA LADRILLERA,1998,validación,1204,2.02,2,Cauca (interandina),1180,0.04,Neutro,FALSE
-2622310101,LA LADRILLERA,1999,validación,1204,2.02,2,Cauca (interandina),1180,-1.08,Niña,FALSE
-2622310101,LA LADRILLERA,2000,validación,1204,2.02,2,Cauca (interandina),1180,-0.77,Niña,TRUE
 2622320101,LA FONDA,1983,entrenamiento,1204,2.51,2,Cauca (interandina),1298,0.46,Neutro,FALSE
 2622320101,LA FONDA,1984,entrenamiento,1204,2.51,2,Cauca (interandina),1298,-0.55,Niña,FALSE
 2622320101,LA FONDA,1985,entrenamiento,1204,2.51,2,Cauca (interandina),1298,-0.58,Niña,TRUE
@@ -1802,30 +1711,29 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622320101,LA FONDA,1997,validación,1204,2.51,2,Cauca (interandina),1298,1.14,Niño,FALSE
 2622320101,LA FONDA,1998,validación,1204,2.51,2,Cauca (interandina),1298,0.04,Neutro,FALSE
 2622320101,LA FONDA,1999,validación,1204,2.51,2,Cauca (interandina),1298,-1.08,Niña,FALSE
-2622320101,LA FONDA,2000,validación,1204,2.51,2,Cauca (interandina),1298,-0.77,Niña,TRUE
 2622320101,LA FONDA,2001,prueba,1204,2.51,2,Cauca (interandina),1298,-0.29,Neutro,FALSE
 2622320101,LA FONDA,2002,prueba,1204,2.51,2,Cauca (interandina),1298,0.51,Niño,FALSE
 2622320101,LA FONDA,2003,prueba,1204,2.51,2,Cauca (interandina),1298,0.24,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1983,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.46,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1984,entrenamiento,1203,0.48,2,Cauca (interandina),1705,-0.55,Niña,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1985,entrenamiento,1203,0.48,2,Cauca (interandina),1705,-0.58,Niña,TRUE
-2622320103,ALTO DE LAS IGLESIAS,1986,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.27,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1987,entrenamiento,1203,0.48,2,Cauca (interandina),1705,1.18,Niño,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1989,entrenamiento,1203,0.48,2,Cauca (interandina),1705,-0.62,Niña,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1990,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.27,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1991,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.65,Niño,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1992,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.61,Niño,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1993,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.36,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1994,entrenamiento,1203,0.48,2,Cauca (interandina),1705,0.37,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1995,entrenamiento,1203,0.48,2,Cauca (interandina),1705,-0.22,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1996,validación,1203,0.48,2,Cauca (interandina),1705,-0.41,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1997,validación,1203,0.48,2,Cauca (interandina),1705,1.14,Niño,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1998,validación,1203,0.48,2,Cauca (interandina),1705,0.04,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,1999,validación,1203,0.48,2,Cauca (interandina),1705,-1.08,Niña,FALSE
-2622320103,ALTO DE LAS IGLESIAS,2000,validación,1203,0.48,2,Cauca (interandina),1705,-0.77,Niña,TRUE
-2622320103,ALTO DE LAS IGLESIAS,2001,prueba,1203,0.48,2,Cauca (interandina),1705,-0.29,Neutro,FALSE
-2622320103,ALTO DE LAS IGLESIAS,2002,prueba,1203,0.48,2,Cauca (interandina),1705,0.51,Niño,FALSE
-2622320103,ALTO DE LAS IGLESIAS,2003,prueba,1203,0.48,2,Cauca (interandina),1705,0.24,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1983,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.46,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1984,entrenamiento,1203,0.48,1,Cauca (interandina),1705,-0.55,Niña,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1985,entrenamiento,1203,0.48,1,Cauca (interandina),1705,-0.58,Niña,TRUE
+2622320103,ALTO DE LAS IGLESIAS,1986,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.27,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1987,entrenamiento,1203,0.48,1,Cauca (interandina),1705,1.18,Niño,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1989,entrenamiento,1203,0.48,1,Cauca (interandina),1705,-0.62,Niña,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1990,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.27,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1991,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.65,Niño,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1992,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.61,Niño,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1993,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.36,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1994,entrenamiento,1203,0.48,1,Cauca (interandina),1705,0.37,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1995,entrenamiento,1203,0.48,1,Cauca (interandina),1705,-0.22,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1996,validación,1203,0.48,1,Cauca (interandina),1705,-0.41,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1997,validación,1203,0.48,1,Cauca (interandina),1705,1.14,Niño,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1998,validación,1203,0.48,1,Cauca (interandina),1705,0.04,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,1999,validación,1203,0.48,1,Cauca (interandina),1705,-1.08,Niña,FALSE
+2622320103,ALTO DE LAS IGLESIAS,2000,validación,1203,0.48,1,Cauca (interandina),1705,-0.77,Niña,TRUE
+2622320103,ALTO DE LAS IGLESIAS,2001,prueba,1203,0.48,1,Cauca (interandina),1705,-0.29,Neutro,FALSE
+2622320103,ALTO DE LAS IGLESIAS,2002,prueba,1203,0.48,1,Cauca (interandina),1705,0.51,Niño,FALSE
+2622320103,ALTO DE LAS IGLESIAS,2003,prueba,1203,0.48,1,Cauca (interandina),1705,0.24,Neutro,FALSE
 2622320201,UNIVALLE,1982,entrenamiento,1205,1.38,1,Cauca (interandina),996,0.91,Niño,FALSE
 2622320201,UNIVALLE,1983,entrenamiento,1205,1.38,1,Cauca (interandina),996,0.46,Neutro,FALSE
 2622320201,UNIVALLE,1984,entrenamiento,1205,1.38,1,Cauca (interandina),996,-0.55,Niña,FALSE
@@ -1840,110 +1748,63 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622320201,UNIVALLE,1994,entrenamiento,1205,1.38,1,Cauca (interandina),996,0.37,Neutro,FALSE
 2622320201,UNIVALLE,1995,entrenamiento,1205,1.38,1,Cauca (interandina),996,-0.22,Neutro,FALSE
 2622320201,UNIVALLE,1997,validación,1205,1.38,1,Cauca (interandina),996,1.14,Niño,FALSE
-2622320201,UNIVALLE,1999,validación,1205,1.38,1,Cauca (interandina),996,-1.08,Niña,FALSE
 2622320201,UNIVALLE,2000,validación,1205,1.38,1,Cauca (interandina),996,-0.77,Niña,TRUE
-2622320201,UNIVALLE,2001,prueba,1205,1.38,1,Cauca (interandina),996,-0.29,Neutro,FALSE
 2622320201,UNIVALLE,2002,prueba,1205,1.38,1,Cauca (interandina),996,0.51,Niño,FALSE
-2622320201,UNIVALLE,2003,prueba,1205,1.38,1,Cauca (interandina),996,0.24,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1981,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.25,Neutro,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1982,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.91,Niño,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1983,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.46,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1984,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.55,Niña,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1985,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.58,Niña,TRUE
-2622330101,COLEGIO SAN JUAN BOSCO,1986,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.27,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1987,entrenamiento,1168,2.13,3,Cauca (interandina),1000,1.18,Niño,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1988,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.89,Niña,TRUE
 2622330101,COLEGIO SAN JUAN BOSCO,1989,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.62,Niña,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1990,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.27,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1991,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.65,Niño,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1992,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.61,Niño,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1993,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.36,Neutro,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1994,entrenamiento,1168,2.13,3,Cauca (interandina),1000,0.37,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1995,entrenamiento,1168,2.13,3,Cauca (interandina),1000,-0.22,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1996,validación,1168,2.13,3,Cauca (interandina),1000,-0.41,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1997,validación,1168,2.13,3,Cauca (interandina),1000,1.14,Niño,FALSE
-2622330101,COLEGIO SAN JUAN BOSCO,1998,validación,1168,2.13,3,Cauca (interandina),1000,0.04,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,1999,validación,1168,2.13,3,Cauca (interandina),1000,-1.08,Niña,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,2000,validación,1168,2.13,3,Cauca (interandina),1000,-0.77,Niña,TRUE
 2622330101,COLEGIO SAN JUAN BOSCO,2001,prueba,1168,2.13,3,Cauca (interandina),1000,-0.29,Neutro,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,2002,prueba,1168,2.13,3,Cauca (interandina),1000,0.51,Niño,FALSE
 2622330101,COLEGIO SAN JUAN BOSCO,2003,prueba,1168,2.13,3,Cauca (interandina),1000,0.24,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1981,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.25,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1982,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.91,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,1983,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.46,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1984,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.55,Niña,FALSE
-2622330102,CAÑAVERALEJO PG,1985,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.58,Niña,TRUE
-2622330102,CAÑAVERALEJO PG,1986,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.27,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1987,entrenamiento,1167,1.57,3,Cauca (interandina),1056,1.18,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,1988,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.89,Niña,TRUE
-2622330102,CAÑAVERALEJO PG,1989,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.62,Niña,FALSE
-2622330102,CAÑAVERALEJO PG,1990,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.27,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1991,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.65,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,1992,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.61,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,1993,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.36,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1994,entrenamiento,1167,1.57,3,Cauca (interandina),1056,0.37,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1995,entrenamiento,1167,1.57,3,Cauca (interandina),1056,-0.22,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1996,validación,1167,1.57,3,Cauca (interandina),1056,-0.41,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1997,validación,1167,1.57,3,Cauca (interandina),1056,1.14,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,1998,validación,1167,1.57,3,Cauca (interandina),1056,0.04,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,1999,validación,1167,1.57,3,Cauca (interandina),1056,-1.08,Niña,FALSE
-2622330102,CAÑAVERALEJO PG,2001,prueba,1167,1.57,3,Cauca (interandina),1056,-0.29,Neutro,FALSE
-2622330102,CAÑAVERALEJO PG,2002,prueba,1167,1.57,3,Cauca (interandina),1056,0.51,Niño,FALSE
-2622330102,CAÑAVERALEJO PG,2003,prueba,1167,1.57,3,Cauca (interandina),1056,0.24,Neutro,FALSE
-2622330104,EL DESCANSO,1981,entrenamiento,1203,3.11,2,Cauca (interandina),1172,-0.25,Neutro,FALSE
-2622330104,EL DESCANSO,1982,entrenamiento,1203,3.11,2,Cauca (interandina),1172,0.91,Niño,FALSE
-2622330104,EL DESCANSO,1983,entrenamiento,1203,3.11,2,Cauca (interandina),1172,0.46,Neutro,FALSE
-2622330104,EL DESCANSO,1984,entrenamiento,1203,3.11,2,Cauca (interandina),1172,-0.55,Niña,FALSE
-2622330104,EL DESCANSO,1985,entrenamiento,1203,3.11,2,Cauca (interandina),1172,-0.58,Niña,TRUE
-2622330104,EL DESCANSO,1986,entrenamiento,1203,3.11,2,Cauca (interandina),1172,0.27,Neutro,FALSE
-2622330104,EL DESCANSO,1987,entrenamiento,1203,3.11,2,Cauca (interandina),1172,1.18,Niño,FALSE
-2622330104,EL DESCANSO,1988,entrenamiento,1203,3.11,2,Cauca (interandina),1172,-0.89,Niña,TRUE
-2622330104,EL DESCANSO,1989,entrenamiento,1203,3.11,2,Cauca (interandina),1172,-0.62,Niña,FALSE
-2622330104,EL DESCANSO,1990,entrenamiento,1203,3.11,2,Cauca (interandina),1172,0.27,Neutro,FALSE
-2622330105,LOS CRISTALES,1981,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.25,Neutro,FALSE
-2622330105,LOS CRISTALES,1982,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.91,Niño,FALSE
-2622330105,LOS CRISTALES,1983,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.46,Neutro,FALSE
-2622330105,LOS CRISTALES,1984,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.55,Niña,FALSE
-2622330105,LOS CRISTALES,1985,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.58,Niña,TRUE
-2622330105,LOS CRISTALES,1986,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.27,Neutro,FALSE
-2622330105,LOS CRISTALES,1987,entrenamiento,1167,0.79,3,Cauca (interandina),1312,1.18,Niño,FALSE
-2622330105,LOS CRISTALES,1988,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.89,Niña,TRUE
-2622330105,LOS CRISTALES,1989,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.62,Niña,FALSE
-2622330105,LOS CRISTALES,1990,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.27,Neutro,FALSE
-2622330105,LOS CRISTALES,1991,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.65,Niño,FALSE
-2622330105,LOS CRISTALES,1993,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.36,Neutro,FALSE
-2622330105,LOS CRISTALES,1994,entrenamiento,1167,0.79,3,Cauca (interandina),1312,0.37,Neutro,FALSE
-2622330105,LOS CRISTALES,1995,entrenamiento,1167,0.79,3,Cauca (interandina),1312,-0.22,Neutro,FALSE
-2622330105,LOS CRISTALES,1996,validación,1167,0.79,3,Cauca (interandina),1312,-0.41,Neutro,FALSE
-2622330105,LOS CRISTALES,1997,validación,1167,0.79,3,Cauca (interandina),1312,1.14,Niño,FALSE
-2622330105,LOS CRISTALES,1998,validación,1167,0.79,3,Cauca (interandina),1312,0.04,Neutro,FALSE
-2622330105,LOS CRISTALES,2000,validación,1167,0.79,3,Cauca (interandina),1312,-0.77,Niña,TRUE
-2622330105,LOS CRISTALES,2001,prueba,1167,0.79,3,Cauca (interandina),1312,-0.29,Neutro,FALSE
-2622330105,LOS CRISTALES,2002,prueba,1167,0.79,3,Cauca (interandina),1312,0.51,Niño,FALSE
-2622330105,LOS CRISTALES,2003,prueba,1167,0.79,3,Cauca (interandina),1312,0.24,Neutro,FALSE
-2622330106,LAS BRISAS,1981,entrenamiento,1167,2.63,3,Cauca (interandina),1228,-0.25,Neutro,FALSE
-2622330106,LAS BRISAS,1982,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.91,Niño,FALSE
-2622330106,LAS BRISAS,1983,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.46,Neutro,FALSE
-2622330106,LAS BRISAS,1984,entrenamiento,1167,2.63,3,Cauca (interandina),1228,-0.55,Niña,FALSE
-2622330106,LAS BRISAS,1986,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.27,Neutro,FALSE
-2622330106,LAS BRISAS,1987,entrenamiento,1167,2.63,3,Cauca (interandina),1228,1.18,Niño,FALSE
-2622330106,LAS BRISAS,1990,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.27,Neutro,FALSE
-2622330106,LAS BRISAS,1993,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.36,Neutro,FALSE
-2622330106,LAS BRISAS,1994,entrenamiento,1167,2.63,3,Cauca (interandina),1228,0.37,Neutro,FALSE
-2622330106,LAS BRISAS,1995,entrenamiento,1167,2.63,3,Cauca (interandina),1228,-0.22,Neutro,FALSE
-2622330106,LAS BRISAS,1996,validación,1167,2.63,3,Cauca (interandina),1228,-0.41,Neutro,FALSE
-2622330106,LAS BRISAS,1997,validación,1167,2.63,3,Cauca (interandina),1228,1.14,Niño,FALSE
-2622330106,LAS BRISAS,1998,validación,1167,2.63,3,Cauca (interandina),1228,0.04,Neutro,FALSE
-2622330106,LAS BRISAS,1999,validación,1167,2.63,3,Cauca (interandina),1228,-1.08,Niña,FALSE
-2622330106,LAS BRISAS,2000,validación,1167,2.63,3,Cauca (interandina),1228,-0.77,Niña,TRUE
-2622330106,LAS BRISAS,2001,prueba,1167,2.63,3,Cauca (interandina),1228,-0.29,Neutro,FALSE
-2622330106,LAS BRISAS,2002,prueba,1167,2.63,3,Cauca (interandina),1228,0.51,Niño,FALSE
-2622330106,LAS BRISAS,2003,prueba,1167,2.63,3,Cauca (interandina),1228,0.24,Neutro,FALSE
-2622330107,EDIFICIO CVC,1984,entrenamiento,1168,2.63,3,Cauca (interandina),985,-0.55,Niña,FALSE
+2622330105,LOS CRISTALES,1981,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.25,Neutro,FALSE
+2622330105,LOS CRISTALES,1982,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.91,Niño,FALSE
+2622330105,LOS CRISTALES,1983,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.46,Neutro,FALSE
+2622330105,LOS CRISTALES,1984,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.55,Niña,FALSE
+2622330105,LOS CRISTALES,1985,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.58,Niña,TRUE
+2622330105,LOS CRISTALES,1986,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.27,Neutro,FALSE
+2622330105,LOS CRISTALES,1987,entrenamiento,1167,0.79,2,Cauca (interandina),1312,1.18,Niño,FALSE
+2622330105,LOS CRISTALES,1988,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.89,Niña,TRUE
+2622330105,LOS CRISTALES,1989,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.62,Niña,FALSE
+2622330105,LOS CRISTALES,1990,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.27,Neutro,FALSE
+2622330105,LOS CRISTALES,1991,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.65,Niño,FALSE
+2622330105,LOS CRISTALES,1993,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.36,Neutro,FALSE
+2622330105,LOS CRISTALES,1994,entrenamiento,1167,0.79,2,Cauca (interandina),1312,0.37,Neutro,FALSE
+2622330105,LOS CRISTALES,1995,entrenamiento,1167,0.79,2,Cauca (interandina),1312,-0.22,Neutro,FALSE
+2622330105,LOS CRISTALES,1996,validación,1167,0.79,2,Cauca (interandina),1312,-0.41,Neutro,FALSE
+2622330105,LOS CRISTALES,1997,validación,1167,0.79,2,Cauca (interandina),1312,1.14,Niño,FALSE
+2622330105,LOS CRISTALES,1998,validación,1167,0.79,2,Cauca (interandina),1312,0.04,Neutro,FALSE
+2622330105,LOS CRISTALES,2000,validación,1167,0.79,2,Cauca (interandina),1312,-0.77,Niña,TRUE
+2622330105,LOS CRISTALES,2001,prueba,1167,0.79,2,Cauca (interandina),1312,-0.29,Neutro,FALSE
+2622330105,LOS CRISTALES,2003,prueba,1167,0.79,2,Cauca (interandina),1312,0.24,Neutro,FALSE
+2622330106,LAS BRISAS,1981,entrenamiento,1167,2.63,2,Cauca (interandina),1228,-0.25,Neutro,FALSE
+2622330106,LAS BRISAS,1982,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.91,Niño,FALSE
+2622330106,LAS BRISAS,1983,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.46,Neutro,FALSE
+2622330106,LAS BRISAS,1984,entrenamiento,1167,2.63,2,Cauca (interandina),1228,-0.55,Niña,FALSE
+2622330106,LAS BRISAS,1986,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.27,Neutro,FALSE
+2622330106,LAS BRISAS,1987,entrenamiento,1167,2.63,2,Cauca (interandina),1228,1.18,Niño,FALSE
+2622330106,LAS BRISAS,1990,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.27,Neutro,FALSE
+2622330106,LAS BRISAS,1993,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.36,Neutro,FALSE
+2622330106,LAS BRISAS,1994,entrenamiento,1167,2.63,2,Cauca (interandina),1228,0.37,Neutro,FALSE
+2622330106,LAS BRISAS,1995,entrenamiento,1167,2.63,2,Cauca (interandina),1228,-0.22,Neutro,FALSE
+2622330106,LAS BRISAS,1996,validación,1167,2.63,2,Cauca (interandina),1228,-0.41,Neutro,FALSE
+2622330106,LAS BRISAS,1997,validación,1167,2.63,2,Cauca (interandina),1228,1.14,Niño,FALSE
+2622330106,LAS BRISAS,1998,validación,1167,2.63,2,Cauca (interandina),1228,0.04,Neutro,FALSE
+2622330106,LAS BRISAS,1999,validación,1167,2.63,2,Cauca (interandina),1228,-1.08,Niña,FALSE
+2622330106,LAS BRISAS,2000,validación,1167,2.63,2,Cauca (interandina),1228,-0.77,Niña,TRUE
+2622330106,LAS BRISAS,2001,prueba,1167,2.63,2,Cauca (interandina),1228,-0.29,Neutro,FALSE
+2622330106,LAS BRISAS,2002,prueba,1167,2.63,2,Cauca (interandina),1228,0.51,Niño,FALSE
+2622330106,LAS BRISAS,2003,prueba,1167,2.63,2,Cauca (interandina),1228,0.24,Neutro,FALSE
 2622330107,EDIFICIO CVC,1985,entrenamiento,1168,2.63,3,Cauca (interandina),985,-0.58,Niña,TRUE
 2622330107,EDIFICIO CVC,1986,entrenamiento,1168,2.63,3,Cauca (interandina),985,0.27,Neutro,FALSE
 2622330107,EDIFICIO CVC,1987,entrenamiento,1168,2.63,3,Cauca (interandina),985,1.18,Niño,FALSE
-2622330107,EDIFICIO CVC,1988,entrenamiento,1168,2.63,3,Cauca (interandina),985,-0.89,Niña,TRUE
 2622330107,EDIFICIO CVC,1989,entrenamiento,1168,2.63,3,Cauca (interandina),985,-0.62,Niña,FALSE
 2622330107,EDIFICIO CVC,1990,entrenamiento,1168,2.63,3,Cauca (interandina),985,0.27,Neutro,FALSE
 2622330107,EDIFICIO CVC,1991,entrenamiento,1168,2.63,3,Cauca (interandina),985,0.65,Niño,FALSE
@@ -1953,7 +1814,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622330107,EDIFICIO CVC,1995,entrenamiento,1168,2.63,3,Cauca (interandina),985,-0.22,Neutro,FALSE
 2622330107,EDIFICIO CVC,1996,validación,1168,2.63,3,Cauca (interandina),985,-0.41,Neutro,FALSE
 2622330107,EDIFICIO CVC,1997,validación,1168,2.63,3,Cauca (interandina),985,1.14,Niño,FALSE
-2622330107,EDIFICIO CVC,1998,validación,1168,2.63,3,Cauca (interandina),985,0.04,Neutro,FALSE
 2622330107,EDIFICIO CVC,1999,validación,1168,2.63,3,Cauca (interandina),985,-1.08,Niña,FALSE
 2622330107,EDIFICIO CVC,2000,validación,1168,2.63,3,Cauca (interandina),985,-0.77,Niña,TRUE
 2622330107,EDIFICIO CVC,2001,prueba,1168,2.63,3,Cauca (interandina),985,-0.29,Neutro,FALSE
@@ -1966,30 +1826,14 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622400101,COLEGIO SAN LUIS,1985,entrenamiento,1131,2.08,1,Cauca (interandina),1053,-0.58,Niña,TRUE
 2622400101,COLEGIO SAN LUIS,1986,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.27,Neutro,FALSE
 2622400101,COLEGIO SAN LUIS,1987,entrenamiento,1131,2.08,1,Cauca (interandina),1053,1.18,Niño,FALSE
-2622400101,COLEGIO SAN LUIS,1988,entrenamiento,1131,2.08,1,Cauca (interandina),1053,-0.89,Niña,TRUE
-2622400101,COLEGIO SAN LUIS,1989,entrenamiento,1131,2.08,1,Cauca (interandina),1053,-0.62,Niña,FALSE
-2622400101,COLEGIO SAN LUIS,1990,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.27,Neutro,FALSE
 2622400101,COLEGIO SAN LUIS,1991,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.65,Niño,FALSE
 2622400101,COLEGIO SAN LUIS,1992,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.61,Niño,FALSE
 2622400101,COLEGIO SAN LUIS,1993,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.36,Neutro,FALSE
 2622400101,COLEGIO SAN LUIS,1994,entrenamiento,1131,2.08,1,Cauca (interandina),1053,0.37,Neutro,FALSE
 2622400101,COLEGIO SAN LUIS,1995,entrenamiento,1131,2.08,1,Cauca (interandina),1053,-0.22,Neutro,FALSE
-2622400101,COLEGIO SAN LUIS,1996,validación,1131,2.08,1,Cauca (interandina),1053,-0.41,Neutro,FALSE
 2622400101,COLEGIO SAN LUIS,1997,validación,1131,2.08,1,Cauca (interandina),1053,1.14,Niño,FALSE
-2622400101,COLEGIO SAN LUIS,1999,validación,1131,2.08,1,Cauca (interandina),1053,-1.08,Niña,FALSE
 2622400101,COLEGIO SAN LUIS,2000,validación,1131,2.08,1,Cauca (interandina),1053,-0.77,Niña,TRUE
 2622400101,COLEGIO SAN LUIS,2001,prueba,1131,2.08,1,Cauca (interandina),1053,-0.29,Neutro,FALSE
-2622400101,COLEGIO SAN LUIS,2003,prueba,1131,2.08,1,Cauca (interandina),1053,0.24,Neutro,FALSE
-2622400102,LA LEONERA,1981,entrenamiento,1129,2.64,2,Cauca (interandina),1869,-0.25,Neutro,FALSE
-2622400102,LA LEONERA,1983,entrenamiento,1129,2.64,2,Cauca (interandina),1869,0.46,Neutro,FALSE
-2622400102,LA LEONERA,1984,entrenamiento,1129,2.64,2,Cauca (interandina),1869,-0.55,Niña,FALSE
-2622400102,LA LEONERA,1985,entrenamiento,1129,2.64,2,Cauca (interandina),1869,-0.58,Niña,TRUE
-2622400102,LA LEONERA,1987,entrenamiento,1129,2.64,2,Cauca (interandina),1869,1.18,Niño,FALSE
-2622400102,LA LEONERA,1988,entrenamiento,1129,2.64,2,Cauca (interandina),1869,-0.89,Niña,TRUE
-2622400102,LA LEONERA,1989,entrenamiento,1129,2.64,2,Cauca (interandina),1869,-0.62,Niña,FALSE
-2622400102,LA LEONERA,1990,entrenamiento,1129,2.64,2,Cauca (interandina),1869,0.27,Neutro,FALSE
-2622400103,PLANTA RIO CALI,1981,entrenamiento,1168,3.21,3,Cauca (interandina),1070,-0.25,Neutro,FALSE
-2622400103,PLANTA RIO CALI,1982,entrenamiento,1168,3.21,3,Cauca (interandina),1070,0.91,Niño,FALSE
 2622400103,PLANTA RIO CALI,1983,entrenamiento,1168,3.21,3,Cauca (interandina),1070,0.46,Neutro,FALSE
 2622400103,PLANTA RIO CALI,1984,entrenamiento,1168,3.21,3,Cauca (interandina),1070,-0.55,Niña,FALSE
 2622400103,PLANTA RIO CALI,1985,entrenamiento,1168,3.21,3,Cauca (interandina),1070,-0.58,Niña,TRUE
@@ -2011,32 +1855,29 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622400103,PLANTA RIO CALI,2001,prueba,1168,3.21,3,Cauca (interandina),1070,-0.29,Neutro,FALSE
 2622400103,PLANTA RIO CALI,2002,prueba,1168,3.21,3,Cauca (interandina),1070,0.51,Niño,FALSE
 2622400103,PLANTA RIO CALI,2003,prueba,1168,3.21,3,Cauca (interandina),1070,0.24,Neutro,FALSE
-2622400104,BRASILIA,1981,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.25,Neutro,FALSE
-2622400104,BRASILIA,1982,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.91,Niño,FALSE
-2622400104,BRASILIA,1983,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.46,Neutro,FALSE
-2622400104,BRASILIA,1984,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.55,Niña,FALSE
-2622400104,BRASILIA,1985,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.58,Niña,TRUE
-2622400104,BRASILIA,1986,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.27,Neutro,FALSE
-2622400104,BRASILIA,1987,entrenamiento,1129,2.52,2,Cauca (interandina),1864,1.18,Niño,FALSE
-2622400104,BRASILIA,1988,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.89,Niña,TRUE
-2622400104,BRASILIA,1989,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.62,Niña,FALSE
-2622400104,BRASILIA,1990,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.27,Neutro,FALSE
-2622400104,BRASILIA,1991,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.65,Niño,FALSE
-2622400104,BRASILIA,1992,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.61,Niño,FALSE
-2622400104,BRASILIA,1993,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.36,Neutro,FALSE
-2622400104,BRASILIA,1994,entrenamiento,1129,2.52,2,Cauca (interandina),1864,0.37,Neutro,FALSE
-2622400104,BRASILIA,1995,entrenamiento,1129,2.52,2,Cauca (interandina),1864,-0.22,Neutro,FALSE
-2622400104,BRASILIA,1996,validación,1129,2.52,2,Cauca (interandina),1864,-0.41,Neutro,FALSE
-2622400104,BRASILIA,1997,validación,1129,2.52,2,Cauca (interandina),1864,1.14,Niño,FALSE
-2622400104,BRASILIA,1998,validación,1129,2.52,2,Cauca (interandina),1864,0.04,Neutro,FALSE
-2622400104,BRASILIA,2000,validación,1129,2.52,2,Cauca (interandina),1864,-0.77,Niña,TRUE
-2622400104,BRASILIA,2001,prueba,1129,2.52,2,Cauca (interandina),1864,-0.29,Neutro,FALSE
-2622400104,BRASILIA,2002,prueba,1129,2.52,2,Cauca (interandina),1864,0.51,Niño,FALSE
-2622400104,BRASILIA,2003,prueba,1129,2.52,2,Cauca (interandina),1864,0.24,Neutro,FALSE
+2622400104,BRASILIA,1981,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.25,Neutro,FALSE
+2622400104,BRASILIA,1982,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.91,Niño,FALSE
+2622400104,BRASILIA,1983,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.46,Neutro,FALSE
+2622400104,BRASILIA,1984,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.55,Niña,FALSE
+2622400104,BRASILIA,1985,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.58,Niña,TRUE
+2622400104,BRASILIA,1986,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.27,Neutro,FALSE
+2622400104,BRASILIA,1987,entrenamiento,1129,2.52,1,Cauca (interandina),1864,1.18,Niño,FALSE
+2622400104,BRASILIA,1988,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.89,Niña,TRUE
+2622400104,BRASILIA,1989,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.62,Niña,FALSE
+2622400104,BRASILIA,1990,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.27,Neutro,FALSE
+2622400104,BRASILIA,1991,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.65,Niño,FALSE
+2622400104,BRASILIA,1992,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.61,Niño,FALSE
+2622400104,BRASILIA,1994,entrenamiento,1129,2.52,1,Cauca (interandina),1864,0.37,Neutro,FALSE
+2622400104,BRASILIA,1995,entrenamiento,1129,2.52,1,Cauca (interandina),1864,-0.22,Neutro,FALSE
+2622400104,BRASILIA,1996,validación,1129,2.52,1,Cauca (interandina),1864,-0.41,Neutro,FALSE
+2622400104,BRASILIA,1997,validación,1129,2.52,1,Cauca (interandina),1864,1.14,Niño,FALSE
+2622400104,BRASILIA,1998,validación,1129,2.52,1,Cauca (interandina),1864,0.04,Neutro,FALSE
+2622400104,BRASILIA,2000,validación,1129,2.52,1,Cauca (interandina),1864,-0.77,Niña,TRUE
+2622400104,BRASILIA,2001,prueba,1129,2.52,1,Cauca (interandina),1864,-0.29,Neutro,FALSE
+2622400104,BRASILIA,2002,prueba,1129,2.52,1,Cauca (interandina),1864,0.51,Niño,FALSE
+2622400104,BRASILIA,2003,prueba,1129,2.52,1,Cauca (interandina),1864,0.24,Neutro,FALSE
 2622400201,LA TERESITA,1982,entrenamiento,1165,3.06,2,Cauca (interandina),1950,0.91,Niño,FALSE
 2622400201,LA TERESITA,1983,entrenamiento,1165,3.06,2,Cauca (interandina),1950,0.46,Neutro,FALSE
-2622400201,LA TERESITA,1984,entrenamiento,1165,3.06,2,Cauca (interandina),1950,-0.55,Niña,FALSE
-2622400201,LA TERESITA,1986,entrenamiento,1165,3.06,2,Cauca (interandina),1950,0.27,Neutro,FALSE
 2622400201,LA TERESITA,1987,entrenamiento,1165,3.06,2,Cauca (interandina),1950,1.18,Niño,FALSE
 2622400201,LA TERESITA,1988,entrenamiento,1165,3.06,2,Cauca (interandina),1950,-0.89,Niña,TRUE
 2622400201,LA TERESITA,1989,entrenamiento,1165,3.06,2,Cauca (interandina),1950,-0.62,Niña,FALSE
@@ -2066,7 +1907,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622410102,YANACONAS,1992,entrenamiento,1166,3,1,Cauca (interandina),1730,0.61,Niño,FALSE
 2622410102,YANACONAS,1993,entrenamiento,1166,3,1,Cauca (interandina),1730,0.36,Neutro,FALSE
 2622410102,YANACONAS,1994,entrenamiento,1166,3,1,Cauca (interandina),1730,0.37,Neutro,FALSE
-2622410102,YANACONAS,1995,entrenamiento,1166,3,1,Cauca (interandina),1730,-0.22,Neutro,FALSE
 2622410102,YANACONAS,1996,validación,1166,3,1,Cauca (interandina),1730,-0.41,Neutro,FALSE
 2622410102,YANACONAS,1997,validación,1166,3,1,Cauca (interandina),1730,1.14,Niño,FALSE
 2622410102,YANACONAS,1998,validación,1166,3,1,Cauca (interandina),1730,0.04,Neutro,FALSE
@@ -2076,10 +1916,8 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622410102,YANACONAS,2002,prueba,1166,3,1,Cauca (interandina),1730,0.51,Niño,FALSE
 2622410102,YANACONAS,2003,prueba,1166,3,1,Cauca (interandina),1730,0.24,Neutro,FALSE
 2622410104,PEÑAS BLANCAS,1981,entrenamiento,1165,1.77,2,Cauca (interandina),2158,-0.25,Neutro,FALSE
-2622410104,PEÑAS BLANCAS,1982,entrenamiento,1165,1.77,2,Cauca (interandina),2158,0.91,Niño,FALSE
 2622410104,PEÑAS BLANCAS,1985,entrenamiento,1165,1.77,2,Cauca (interandina),2158,-0.58,Niña,TRUE
 2622410104,PEÑAS BLANCAS,1987,entrenamiento,1165,1.77,2,Cauca (interandina),2158,1.18,Niño,FALSE
-2622410104,PEÑAS BLANCAS,1988,entrenamiento,1165,1.77,2,Cauca (interandina),2158,-0.89,Niña,TRUE
 2622410104,PEÑAS BLANCAS,1989,entrenamiento,1165,1.77,2,Cauca (interandina),2158,-0.62,Niña,FALSE
 2622410104,PEÑAS BLANCAS,1990,entrenamiento,1165,1.77,2,Cauca (interandina),2158,0.27,Neutro,FALSE
 2622410104,PEÑAS BLANCAS,1991,entrenamiento,1165,1.77,2,Cauca (interandina),2158,0.65,Niño,FALSE
@@ -2093,7 +1931,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622410104,PEÑAS BLANCAS,1999,validación,1165,1.77,2,Cauca (interandina),2158,-1.08,Niña,FALSE
 2622410104,PEÑAS BLANCAS,2000,validación,1165,1.77,2,Cauca (interandina),2158,-0.77,Niña,TRUE
 2622410104,PEÑAS BLANCAS,2001,prueba,1165,1.77,2,Cauca (interandina),2158,-0.29,Neutro,FALSE
-2622410104,PEÑAS BLANCAS,2002,prueba,1165,1.77,2,Cauca (interandina),2158,0.51,Niño,FALSE
 2622410104,PEÑAS BLANCAS,2003,prueba,1165,1.77,2,Cauca (interandina),2158,0.24,Neutro,FALSE
 2622420101,MONTEBELLO,1981,entrenamiento,1130,3.08,1,Cauca (interandina),1260,-0.25,Neutro,FALSE
 2622420101,MONTEBELLO,1982,entrenamiento,1130,3.08,1,Cauca (interandina),1260,0.91,Niño,FALSE
@@ -2139,7 +1976,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622420102,SAN PABLO,2000,validación,1092,1.03,2,Cauca (interandina),1871,-0.77,Niña,TRUE
 2622420102,SAN PABLO,2001,prueba,1092,1.03,2,Cauca (interandina),1871,-0.29,Neutro,FALSE
 2622420102,SAN PABLO,2002,prueba,1092,1.03,2,Cauca (interandina),1871,0.51,Niño,FALSE
-2622420102,SAN PABLO,2003,prueba,1092,1.03,2,Cauca (interandina),1871,0.24,Neutro,FALSE
 2622420103,AGUACATAL,1981,entrenamiento,1092,2.95,2,Cauca (interandina),1649,-0.25,Neutro,FALSE
 2622420103,AGUACATAL,1982,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.91,Niño,FALSE
 2622420103,AGUACATAL,1983,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.46,Neutro,FALSE
@@ -2151,8 +1987,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622420103,AGUACATAL,1990,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.27,Neutro,FALSE
 2622420103,AGUACATAL,1991,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.65,Niño,FALSE
 2622420103,AGUACATAL,1992,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.61,Niño,FALSE
-2622420103,AGUACATAL,1993,entrenamiento,1092,2.95,2,Cauca (interandina),1649,0.36,Neutro,FALSE
-2622420103,AGUACATAL,1995,entrenamiento,1092,2.95,2,Cauca (interandina),1649,-0.22,Neutro,FALSE
 2622420103,AGUACATAL,1996,validación,1092,2.95,2,Cauca (interandina),1649,-0.41,Neutro,FALSE
 2622420103,AGUACATAL,1997,validación,1092,2.95,2,Cauca (interandina),1649,1.14,Niño,FALSE
 2622420103,AGUACATAL,1998,validación,1092,2.95,2,Cauca (interandina),1649,0.04,Neutro,FALSE
@@ -2196,7 +2030,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622500101,DAPA,1995,entrenamiento,1056,2.83,1,Cauca (interandina),1716,-0.22,Neutro,FALSE
 2622500101,DAPA,1996,validación,1056,2.83,1,Cauca (interandina),1716,-0.41,Neutro,FALSE
 2622500101,DAPA,1997,validación,1056,2.83,1,Cauca (interandina),1716,1.14,Niño,FALSE
-2622500101,DAPA,1998,validación,1056,2.83,1,Cauca (interandina),1716,0.04,Neutro,FALSE
 2622500101,DAPA,1999,validación,1056,2.83,1,Cauca (interandina),1716,-1.08,Niña,FALSE
 2622500101,DAPA,2000,validación,1056,2.83,1,Cauca (interandina),1716,-0.77,Niña,TRUE
 2622500101,DAPA,2001,prueba,1056,2.83,1,Cauca (interandina),1716,-0.29,Neutro,FALSE
@@ -2275,7 +2108,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622600201,LA BUITRERA,1992,entrenamiento,1057,1.38,2,Cauca (interandina),1500,0.61,Niño,FALSE
 2622600201,LA BUITRERA,1993,entrenamiento,1057,1.38,2,Cauca (interandina),1500,0.36,Neutro,FALSE
 2622600201,LA BUITRERA,1994,entrenamiento,1057,1.38,2,Cauca (interandina),1500,0.37,Neutro,FALSE
-2622600201,LA BUITRERA,1995,entrenamiento,1057,1.38,2,Cauca (interandina),1500,-0.22,Neutro,FALSE
 2622600201,LA BUITRERA,1996,validación,1057,1.38,2,Cauca (interandina),1500,-0.41,Neutro,FALSE
 2622600201,LA BUITRERA,1997,validación,1057,1.38,2,Cauca (interandina),1500,1.14,Niño,FALSE
 2622600201,LA BUITRERA,1998,validación,1057,1.38,2,Cauca (interandina),1500,0.04,Neutro,FALSE
@@ -2311,7 +2143,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622900102,OCACHE,1986,entrenamiento,983,3.28,1,Cauca (interandina),1490,0.27,Neutro,FALSE
 2622900102,OCACHE,1987,entrenamiento,983,3.28,1,Cauca (interandina),1490,1.18,Niño,FALSE
 2622900102,OCACHE,1988,entrenamiento,983,3.28,1,Cauca (interandina),1490,-0.89,Niña,TRUE
-2622900102,OCACHE,1989,entrenamiento,983,3.28,1,Cauca (interandina),1490,-0.62,Niña,FALSE
 2622900102,OCACHE,1990,entrenamiento,983,3.28,1,Cauca (interandina),1490,0.27,Neutro,FALSE
 2622900102,OCACHE,1991,entrenamiento,983,3.28,1,Cauca (interandina),1490,0.65,Niño,FALSE
 2622900102,OCACHE,1992,entrenamiento,983,3.28,1,Cauca (interandina),1490,0.61,Niño,FALSE
@@ -2328,7 +2159,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622900102,OCACHE,2003,prueba,983,3.28,1,Cauca (interandina),1490,0.24,Neutro,FALSE
 2622900301,VIJES,1981,entrenamiento,985,2.69,1,Cauca (interandina),990,-0.25,Neutro,FALSE
 2622900301,VIJES,1982,entrenamiento,985,2.69,1,Cauca (interandina),990,0.91,Niño,FALSE
-2622900301,VIJES,1983,entrenamiento,985,2.69,1,Cauca (interandina),990,0.46,Neutro,FALSE
 2622900301,VIJES,1984,entrenamiento,985,2.69,1,Cauca (interandina),990,-0.55,Niña,FALSE
 2622900301,VIJES,1985,entrenamiento,985,2.69,1,Cauca (interandina),990,-0.58,Niña,TRUE
 2622900301,VIJES,1986,entrenamiento,985,2.69,1,Cauca (interandina),990,0.27,Neutro,FALSE
@@ -2337,7 +2167,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2622900301,VIJES,1989,entrenamiento,985,2.69,1,Cauca (interandina),990,-0.62,Niña,FALSE
 2622900301,VIJES,1990,entrenamiento,985,2.69,1,Cauca (interandina),990,0.27,Neutro,FALSE
 2622900301,VIJES,1991,entrenamiento,985,2.69,1,Cauca (interandina),990,0.65,Niño,FALSE
-2622900301,VIJES,1992,entrenamiento,985,2.69,1,Cauca (interandina),990,0.61,Niño,FALSE
 2622900301,VIJES,1993,entrenamiento,985,2.69,1,Cauca (interandina),990,0.36,Neutro,FALSE
 2622900301,VIJES,1994,entrenamiento,985,2.69,1,Cauca (interandina),990,0.37,Neutro,FALSE
 2622900301,VIJES,1995,entrenamiento,985,2.69,1,Cauca (interandina),990,-0.22,Neutro,FALSE
@@ -2411,15 +2240,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2623500101,EL CANEY,2001,prueba,800,0.9,1,Cauca (interandina),1433,-0.29,Neutro,FALSE
 2623500101,EL CANEY,2002,prueba,800,0.9,1,Cauca (interandina),1433,0.51,Niño,FALSE
 2623500101,EL CANEY,2003,prueba,800,0.9,1,Cauca (interandina),1433,0.24,Neutro,FALSE
-2623900102,CALABAZAS,1981,entrenamiento,727,1.67,1,Cauca (interandina),1093,-0.25,Neutro,FALSE
-2623900102,CALABAZAS,1982,entrenamiento,727,1.67,1,Cauca (interandina),1093,0.91,Niño,FALSE
-2623900102,CALABAZAS,1983,entrenamiento,727,1.67,1,Cauca (interandina),1093,0.46,Neutro,FALSE
-2623900102,CALABAZAS,1984,entrenamiento,727,1.67,1,Cauca (interandina),1093,-0.55,Niña,FALSE
-2623900102,CALABAZAS,1985,entrenamiento,727,1.67,1,Cauca (interandina),1093,-0.58,Niña,TRUE
-2623900102,CALABAZAS,1986,entrenamiento,727,1.67,1,Cauca (interandina),1093,0.27,Neutro,FALSE
-2623900102,CALABAZAS,1988,entrenamiento,727,1.67,1,Cauca (interandina),1093,-0.89,Niña,TRUE
-2623900102,CALABAZAS,1989,entrenamiento,727,1.67,1,Cauca (interandina),1093,-0.62,Niña,FALSE
-2623900102,CALABAZAS,1990,entrenamiento,727,1.67,1,Cauca (interandina),1093,0.27,Neutro,FALSE
 2624000101,VENECIA,1981,entrenamiento,652,1.55,1,Cauca (interandina),1532,-0.25,Neutro,FALSE
 2624000101,VENECIA,1982,entrenamiento,652,1.55,1,Cauca (interandina),1532,0.91,Niño,FALSE
 2624000101,VENECIA,1983,entrenamiento,652,1.55,1,Cauca (interandina),1532,0.46,Neutro,FALSE
@@ -2434,6 +2254,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624000101,VENECIA,1992,entrenamiento,652,1.55,1,Cauca (interandina),1532,0.61,Niño,FALSE
 2624000101,VENECIA,1993,entrenamiento,652,1.55,1,Cauca (interandina),1532,0.36,Neutro,FALSE
 2624000101,VENECIA,1994,entrenamiento,652,1.55,1,Cauca (interandina),1532,0.37,Neutro,FALSE
+2624000101,VENECIA,1995,entrenamiento,652,1.55,1,Cauca (interandina),1532,-0.22,Neutro,FALSE
 2624000101,VENECIA,2002,prueba,652,1.55,1,Cauca (interandina),1532,0.51,Niño,FALSE
 2624000101,VENECIA,2003,prueba,652,1.55,1,Cauca (interandina),1532,0.24,Neutro,FALSE
 2624000102,RIOFRIO,1981,entrenamiento,655,1.83,1,Cauca (interandina),1000,-0.25,Neutro,FALSE
@@ -2471,12 +2292,20 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624000301,MANUEL M MALLARINO,1993,entrenamiento,616,2.92,1,Cauca (interandina),1380,0.36,Neutro,FALSE
 2624000301,MANUEL M MALLARINO,1994,entrenamiento,616,2.92,1,Cauca (interandina),1380,0.37,Neutro,FALSE
 2624000301,MANUEL M MALLARINO,1995,entrenamiento,616,2.92,1,Cauca (interandina),1380,-0.22,Neutro,FALSE
-2624000301,MANUEL M MALLARINO,1996,validación,616,2.92,1,Cauca (interandina),1380,-0.41,Neutro,FALSE
 2624000301,MANUEL M MALLARINO,1999,validación,616,2.92,1,Cauca (interandina),1380,-1.08,Niña,FALSE
 2624000301,MANUEL M MALLARINO,2000,validación,616,2.92,1,Cauca (interandina),1380,-0.77,Niña,TRUE
+2624600101,BOLIVAR,1990,entrenamiento,509,1.78,1,Cauca (interandina),972,0.27,Neutro,FALSE
+2624600101,BOLIVAR,1991,entrenamiento,509,1.78,1,Cauca (interandina),972,0.65,Niño,FALSE
+2624600101,BOLIVAR,1992,entrenamiento,509,1.78,1,Cauca (interandina),972,0.61,Niño,FALSE
+2624600101,BOLIVAR,1993,entrenamiento,509,1.78,1,Cauca (interandina),972,0.36,Neutro,FALSE
+2624600101,BOLIVAR,1994,entrenamiento,509,1.78,1,Cauca (interandina),972,0.37,Neutro,FALSE
+2624600101,BOLIVAR,1995,entrenamiento,509,1.78,1,Cauca (interandina),972,-0.22,Neutro,FALSE
+2624600101,BOLIVAR,1996,validación,509,1.78,1,Cauca (interandina),972,-0.41,Neutro,FALSE
+2624600101,BOLIVAR,1997,validación,509,1.78,1,Cauca (interandina),972,1.14,Niño,FALSE
+2624600101,BOLIVAR,1998,validación,509,1.78,1,Cauca (interandina),972,0.04,Neutro,FALSE
+2624600101,BOLIVAR,1999,validación,509,1.78,1,Cauca (interandina),972,-1.08,Niña,FALSE
 2624600102,EL RETIRO,1982,entrenamiento,471,2.57,2,Cauca (interandina),1640,0.91,Niño,FALSE
 2624600102,EL RETIRO,1983,entrenamiento,471,2.57,2,Cauca (interandina),1640,0.46,Neutro,FALSE
-2624600102,EL RETIRO,1984,entrenamiento,471,2.57,2,Cauca (interandina),1640,-0.55,Niña,FALSE
 2624600102,EL RETIRO,1985,entrenamiento,471,2.57,2,Cauca (interandina),1640,-0.58,Niña,TRUE
 2624600102,EL RETIRO,1986,entrenamiento,471,2.57,2,Cauca (interandina),1640,0.27,Neutro,FALSE
 2624600102,EL RETIRO,1987,entrenamiento,471,2.57,2,Cauca (interandina),1640,1.18,Niño,FALSE
@@ -2518,29 +2347,29 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624600103,LA HERRADURA,2001,prueba,545,0.89,1,Cauca (interandina),951,-0.29,Neutro,FALSE
 2624600103,LA HERRADURA,2002,prueba,545,0.89,1,Cauca (interandina),951,0.51,Niño,FALSE
 2624600103,LA HERRADURA,2003,prueba,545,0.89,1,Cauca (interandina),951,0.24,Neutro,FALSE
-2624700103,EL VESUBIO,1981,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.25,Neutro,FALSE
-2624700103,EL VESUBIO,1982,entrenamiento,289,2.47,2,Cauca (interandina),990,0.91,Niño,FALSE
-2624700103,EL VESUBIO,1983,entrenamiento,289,2.47,2,Cauca (interandina),990,0.46,Neutro,FALSE
-2624700103,EL VESUBIO,1984,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.55,Niña,FALSE
-2624700103,EL VESUBIO,1985,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.58,Niña,TRUE
-2624700103,EL VESUBIO,1986,entrenamiento,289,2.47,2,Cauca (interandina),990,0.27,Neutro,FALSE
-2624700103,EL VESUBIO,1987,entrenamiento,289,2.47,2,Cauca (interandina),990,1.18,Niño,FALSE
-2624700103,EL VESUBIO,1988,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.89,Niña,TRUE
-2624700103,EL VESUBIO,1989,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.62,Niña,FALSE
-2624700103,EL VESUBIO,1990,entrenamiento,289,2.47,2,Cauca (interandina),990,0.27,Neutro,FALSE
-2624700103,EL VESUBIO,1991,entrenamiento,289,2.47,2,Cauca (interandina),990,0.65,Niño,FALSE
-2624700103,EL VESUBIO,1992,entrenamiento,289,2.47,2,Cauca (interandina),990,0.61,Niño,FALSE
-2624700103,EL VESUBIO,1993,entrenamiento,289,2.47,2,Cauca (interandina),990,0.36,Neutro,FALSE
-2624700103,EL VESUBIO,1994,entrenamiento,289,2.47,2,Cauca (interandina),990,0.37,Neutro,FALSE
-2624700103,EL VESUBIO,1995,entrenamiento,289,2.47,2,Cauca (interandina),990,-0.22,Neutro,FALSE
-2624700103,EL VESUBIO,1996,validación,289,2.47,2,Cauca (interandina),990,-0.41,Neutro,FALSE
-2624700103,EL VESUBIO,1997,validación,289,2.47,2,Cauca (interandina),990,1.14,Niño,FALSE
-2624700103,EL VESUBIO,1998,validación,289,2.47,2,Cauca (interandina),990,0.04,Neutro,FALSE
-2624700103,EL VESUBIO,1999,validación,289,2.47,2,Cauca (interandina),990,-1.08,Niña,FALSE
-2624700103,EL VESUBIO,2000,validación,289,2.47,2,Cauca (interandina),990,-0.77,Niña,TRUE
-2624700103,EL VESUBIO,2001,prueba,289,2.47,2,Cauca (interandina),990,-0.29,Neutro,FALSE
-2624700103,EL VESUBIO,2002,prueba,289,2.47,2,Cauca (interandina),990,0.51,Niño,FALSE
-2624700103,EL VESUBIO,2003,prueba,289,2.47,2,Cauca (interandina),990,0.24,Neutro,FALSE
+2624700103,EL VESUBIO,1981,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.25,Neutro,FALSE
+2624700103,EL VESUBIO,1982,entrenamiento,289,2.47,1,Cauca (interandina),990,0.91,Niño,FALSE
+2624700103,EL VESUBIO,1983,entrenamiento,289,2.47,1,Cauca (interandina),990,0.46,Neutro,FALSE
+2624700103,EL VESUBIO,1984,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.55,Niña,FALSE
+2624700103,EL VESUBIO,1985,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.58,Niña,TRUE
+2624700103,EL VESUBIO,1986,entrenamiento,289,2.47,1,Cauca (interandina),990,0.27,Neutro,FALSE
+2624700103,EL VESUBIO,1987,entrenamiento,289,2.47,1,Cauca (interandina),990,1.18,Niño,FALSE
+2624700103,EL VESUBIO,1988,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.89,Niña,TRUE
+2624700103,EL VESUBIO,1989,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.62,Niña,FALSE
+2624700103,EL VESUBIO,1990,entrenamiento,289,2.47,1,Cauca (interandina),990,0.27,Neutro,FALSE
+2624700103,EL VESUBIO,1991,entrenamiento,289,2.47,1,Cauca (interandina),990,0.65,Niño,FALSE
+2624700103,EL VESUBIO,1992,entrenamiento,289,2.47,1,Cauca (interandina),990,0.61,Niño,FALSE
+2624700103,EL VESUBIO,1993,entrenamiento,289,2.47,1,Cauca (interandina),990,0.36,Neutro,FALSE
+2624700103,EL VESUBIO,1994,entrenamiento,289,2.47,1,Cauca (interandina),990,0.37,Neutro,FALSE
+2624700103,EL VESUBIO,1995,entrenamiento,289,2.47,1,Cauca (interandina),990,-0.22,Neutro,FALSE
+2624700103,EL VESUBIO,1996,validación,289,2.47,1,Cauca (interandina),990,-0.41,Neutro,FALSE
+2624700103,EL VESUBIO,1997,validación,289,2.47,1,Cauca (interandina),990,1.14,Niño,FALSE
+2624700103,EL VESUBIO,1998,validación,289,2.47,1,Cauca (interandina),990,0.04,Neutro,FALSE
+2624700103,EL VESUBIO,1999,validación,289,2.47,1,Cauca (interandina),990,-1.08,Niña,FALSE
+2624700103,EL VESUBIO,2000,validación,289,2.47,1,Cauca (interandina),990,-0.77,Niña,TRUE
+2624700103,EL VESUBIO,2001,prueba,289,2.47,1,Cauca (interandina),990,-0.29,Neutro,FALSE
+2624700103,EL VESUBIO,2002,prueba,289,2.47,1,Cauca (interandina),990,0.51,Niño,FALSE
+2624700103,EL VESUBIO,2003,prueba,289,2.47,1,Cauca (interandina),990,0.24,Neutro,FALSE
 2624700104,EL PORVENIR,1981,entrenamiento,362,2.2,4,Cauca (interandina),1020,-0.25,Neutro,FALSE
 2624700104,EL PORVENIR,1983,entrenamiento,362,2.2,4,Cauca (interandina),1020,0.46,Neutro,FALSE
 2624700104,EL PORVENIR,1984,entrenamiento,362,2.2,4,Cauca (interandina),1020,-0.55,Niña,FALSE
@@ -2585,27 +2414,25 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624700108,LAS PEÑAS,2001,prueba,251,2.39,2,Cauca (interandina),1807,-0.29,Neutro,FALSE
 2624700108,LAS PEÑAS,2002,prueba,251,2.39,2,Cauca (interandina),1807,0.51,Niño,FALSE
 2624700108,LAS PEÑAS,2003,prueba,251,2.39,2,Cauca (interandina),1807,0.24,Neutro,FALSE
-2624700109,MONTECRISTO,1981,entrenamiento,435,2.05,2,Cauca (interandina),1357,-0.25,Neutro,FALSE
-2624700109,MONTECRISTO,1982,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.91,Niño,FALSE
-2624700109,MONTECRISTO,1983,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.46,Neutro,FALSE
-2624700109,MONTECRISTO,1984,entrenamiento,435,2.05,2,Cauca (interandina),1357,-0.55,Niña,FALSE
-2624700109,MONTECRISTO,1985,entrenamiento,435,2.05,2,Cauca (interandina),1357,-0.58,Niña,TRUE
-2624700109,MONTECRISTO,1986,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.27,Neutro,FALSE
-2624700109,MONTECRISTO,1987,entrenamiento,435,2.05,2,Cauca (interandina),1357,1.18,Niño,FALSE
-2624700109,MONTECRISTO,1989,entrenamiento,435,2.05,2,Cauca (interandina),1357,-0.62,Niña,FALSE
-2624700109,MONTECRISTO,1990,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.27,Neutro,FALSE
-2624700109,MONTECRISTO,1991,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.65,Niño,FALSE
-2624700109,MONTECRISTO,1992,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.61,Niño,FALSE
-2624700109,MONTECRISTO,1993,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.36,Neutro,FALSE
-2624700109,MONTECRISTO,1994,entrenamiento,435,2.05,2,Cauca (interandina),1357,0.37,Neutro,FALSE
-2624700109,MONTECRISTO,1996,validación,435,2.05,2,Cauca (interandina),1357,-0.41,Neutro,FALSE
-2624700109,MONTECRISTO,1997,validación,435,2.05,2,Cauca (interandina),1357,1.14,Niño,FALSE
-2624700109,MONTECRISTO,1998,validación,435,2.05,2,Cauca (interandina),1357,0.04,Neutro,FALSE
-2624700109,MONTECRISTO,1999,validación,435,2.05,2,Cauca (interandina),1357,-1.08,Niña,FALSE
-2624700109,MONTECRISTO,2000,validación,435,2.05,2,Cauca (interandina),1357,-0.77,Niña,TRUE
-2624700109,MONTECRISTO,2001,prueba,435,2.05,2,Cauca (interandina),1357,-0.29,Neutro,FALSE
-2624700109,MONTECRISTO,2002,prueba,435,2.05,2,Cauca (interandina),1357,0.51,Niño,FALSE
-2624700109,MONTECRISTO,2003,prueba,435,2.05,2,Cauca (interandina),1357,0.24,Neutro,FALSE
+2624700109,MONTECRISTO,1982,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.91,Niño,FALSE
+2624700109,MONTECRISTO,1983,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.46,Neutro,FALSE
+2624700109,MONTECRISTO,1984,entrenamiento,435,2.05,1,Cauca (interandina),1357,-0.55,Niña,FALSE
+2624700109,MONTECRISTO,1985,entrenamiento,435,2.05,1,Cauca (interandina),1357,-0.58,Niña,TRUE
+2624700109,MONTECRISTO,1986,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.27,Neutro,FALSE
+2624700109,MONTECRISTO,1987,entrenamiento,435,2.05,1,Cauca (interandina),1357,1.18,Niño,FALSE
+2624700109,MONTECRISTO,1989,entrenamiento,435,2.05,1,Cauca (interandina),1357,-0.62,Niña,FALSE
+2624700109,MONTECRISTO,1990,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.27,Neutro,FALSE
+2624700109,MONTECRISTO,1991,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.65,Niño,FALSE
+2624700109,MONTECRISTO,1992,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.61,Niño,FALSE
+2624700109,MONTECRISTO,1993,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.36,Neutro,FALSE
+2624700109,MONTECRISTO,1994,entrenamiento,435,2.05,1,Cauca (interandina),1357,0.37,Neutro,FALSE
+2624700109,MONTECRISTO,1996,validación,435,2.05,1,Cauca (interandina),1357,-0.41,Neutro,FALSE
+2624700109,MONTECRISTO,1997,validación,435,2.05,1,Cauca (interandina),1357,1.14,Niño,FALSE
+2624700109,MONTECRISTO,1998,validación,435,2.05,1,Cauca (interandina),1357,0.04,Neutro,FALSE
+2624700109,MONTECRISTO,2000,validación,435,2.05,1,Cauca (interandina),1357,-0.77,Niña,TRUE
+2624700109,MONTECRISTO,2001,prueba,435,2.05,1,Cauca (interandina),1357,-0.29,Neutro,FALSE
+2624700109,MONTECRISTO,2002,prueba,435,2.05,1,Cauca (interandina),1357,0.51,Niño,FALSE
+2624700109,MONTECRISTO,2003,prueba,435,2.05,1,Cauca (interandina),1357,0.24,Neutro,FALSE
 2624700110,EL AGUACATE,1981,entrenamiento,471,3.5,2,Cauca (interandina),1400,-0.25,Neutro,FALSE
 2624700110,EL AGUACATE,1982,entrenamiento,471,3.5,2,Cauca (interandina),1400,0.91,Niño,FALSE
 2624700110,EL AGUACATE,1983,entrenamiento,471,3.5,2,Cauca (interandina),1400,0.46,Neutro,FALSE
@@ -2627,25 +2454,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624700110,EL AGUACATE,2001,prueba,471,3.5,2,Cauca (interandina),1400,-0.29,Neutro,FALSE
 2624700110,EL AGUACATE,2002,prueba,471,3.5,2,Cauca (interandina),1400,0.51,Niño,FALSE
 2624700110,EL AGUACATE,2003,prueba,471,3.5,2,Cauca (interandina),1400,0.24,Neutro,FALSE
-2624700111,LA MONTANUELA,1981,entrenamiento,435,3.13,2,Cauca (interandina),1678,-0.25,Neutro,FALSE
-2624700111,LA MONTANUELA,1982,entrenamiento,435,3.13,2,Cauca (interandina),1678,0.91,Niño,FALSE
-2624700111,LA MONTANUELA,1983,entrenamiento,435,3.13,2,Cauca (interandina),1678,0.46,Neutro,FALSE
-2624700111,LA MONTANUELA,1985,entrenamiento,435,3.13,2,Cauca (interandina),1678,-0.58,Niña,TRUE
-2624700111,LA MONTANUELA,1986,entrenamiento,435,3.13,2,Cauca (interandina),1678,0.27,Neutro,FALSE
-2624700111,LA MONTANUELA,1987,entrenamiento,435,3.13,2,Cauca (interandina),1678,1.18,Niño,FALSE
-2624700111,LA MONTANUELA,1988,entrenamiento,435,3.13,2,Cauca (interandina),1678,-0.89,Niña,TRUE
-2624700111,LA MONTANUELA,1989,entrenamiento,435,3.13,2,Cauca (interandina),1678,-0.62,Niña,FALSE
-2624700111,LA MONTANUELA,1990,entrenamiento,435,3.13,2,Cauca (interandina),1678,0.27,Neutro,FALSE
-2624700112,EL BOHIO,1981,entrenamiento,289,2.49,2,Cauca (interandina),957,-0.25,Neutro,FALSE
-2624700112,EL BOHIO,1982,entrenamiento,289,2.49,2,Cauca (interandina),957,0.91,Niño,FALSE
-2624700112,EL BOHIO,1983,entrenamiento,289,2.49,2,Cauca (interandina),957,0.46,Neutro,FALSE
-2624700112,EL BOHIO,1984,entrenamiento,289,2.49,2,Cauca (interandina),957,-0.55,Niña,FALSE
-2624700112,EL BOHIO,1985,entrenamiento,289,2.49,2,Cauca (interandina),957,-0.58,Niña,TRUE
-2624700112,EL BOHIO,1986,entrenamiento,289,2.49,2,Cauca (interandina),957,0.27,Neutro,FALSE
-2624700112,EL BOHIO,1987,entrenamiento,289,2.49,2,Cauca (interandina),957,1.18,Niño,FALSE
-2624700112,EL BOHIO,1988,entrenamiento,289,2.49,2,Cauca (interandina),957,-0.89,Niña,TRUE
-2624700112,EL BOHIO,1989,entrenamiento,289,2.49,2,Cauca (interandina),957,-0.62,Niña,FALSE
-2624700112,EL BOHIO,1990,entrenamiento,289,2.49,2,Cauca (interandina),957,0.27,Neutro,FALSE
 2624700113,EL OSO,1981,entrenamiento,326,2.76,1,Cauca (interandina),1240,-0.25,Neutro,FALSE
 2624700113,EL OSO,1982,entrenamiento,326,2.76,1,Cauca (interandina),1240,0.91,Niño,FALSE
 2624700113,EL OSO,1983,entrenamiento,326,2.76,1,Cauca (interandina),1240,0.46,Neutro,FALSE
@@ -2701,7 +2509,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624700115,EL OREGANO,1989,entrenamiento,398,2.64,2,Cauca (interandina),1460,-0.62,Niña,FALSE
 2624700115,EL OREGANO,1990,entrenamiento,398,2.64,2,Cauca (interandina),1460,0.27,Neutro,FALSE
 2624700115,EL OREGANO,1991,entrenamiento,398,2.64,2,Cauca (interandina),1460,0.65,Niño,FALSE
-2624700115,EL OREGANO,1992,entrenamiento,398,2.64,2,Cauca (interandina),1460,0.61,Niño,FALSE
 2624700115,EL OREGANO,1993,entrenamiento,398,2.64,2,Cauca (interandina),1460,0.36,Neutro,FALSE
 2624700115,EL OREGANO,1994,entrenamiento,398,2.64,2,Cauca (interandina),1460,0.37,Neutro,FALSE
 2624700115,EL OREGANO,1995,entrenamiento,398,2.64,2,Cauca (interandina),1460,-0.22,Neutro,FALSE
@@ -2838,9 +2645,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624700202,CENT ADMO LA UNION,1991,entrenamiento,363,1.75,1,Cauca (interandina),934,0.65,Niño,FALSE
 2624700202,CENT ADMO LA UNION,1992,entrenamiento,363,1.75,1,Cauca (interandina),934,0.61,Niño,FALSE
 2624700202,CENT ADMO LA UNION,1993,entrenamiento,363,1.75,1,Cauca (interandina),934,0.36,Neutro,FALSE
-2624700202,CENT ADMO LA UNION,1994,entrenamiento,363,1.75,1,Cauca (interandina),934,0.37,Neutro,FALSE
 2624700202,CENT ADMO LA UNION,1995,entrenamiento,363,1.75,1,Cauca (interandina),934,-0.22,Neutro,FALSE
-2624700202,CENT ADMO LA UNION,1996,validación,363,1.75,1,Cauca (interandina),934,-0.41,Neutro,FALSE
 2624700202,CENT ADMO LA UNION,1997,validación,363,1.75,1,Cauca (interandina),934,1.14,Niño,FALSE
 2624700202,CENT ADMO LA UNION,1998,validación,363,1.75,1,Cauca (interandina),934,0.04,Neutro,FALSE
 2624700202,CENT ADMO LA UNION,1999,validación,363,1.75,1,Cauca (interandina),934,-1.08,Niña,FALSE
@@ -2854,7 +2659,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2624700301,SABANAZO,1986,entrenamiento,362,3.51,4,Cauca (interandina),1643,0.27,Neutro,FALSE
 2624700301,SABANAZO,1987,entrenamiento,362,3.51,4,Cauca (interandina),1643,1.18,Niño,FALSE
 2624700301,SABANAZO,1988,entrenamiento,362,3.51,4,Cauca (interandina),1643,-0.89,Niña,TRUE
-2624700301,SABANAZO,1989,entrenamiento,362,3.51,4,Cauca (interandina),1643,-0.62,Niña,FALSE
 2624700301,SABANAZO,1990,entrenamiento,362,3.51,4,Cauca (interandina),1643,0.27,Neutro,FALSE
 2624700301,SABANAZO,1991,entrenamiento,362,3.51,4,Cauca (interandina),1643,0.65,Niño,FALSE
 2624700301,SABANAZO,1992,entrenamiento,362,3.51,4,Cauca (interandina),1643,0.61,Niño,FALSE
@@ -2889,7 +2693,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 2625500102,EL AGUILA EL GRANARIO,2002,prueba,67,3.87,1,Cauca (interandina),1813,0.51,Niño,FALSE
 2625500102,EL AGUILA EL GRANARIO,2003,prueba,67,3.87,1,Cauca (interandina),1813,0.24,Neutro,FALSE
 5300000203,BAHIA MALAGA,1985,entrenamiento,708,3.23,1,Pacífico,50,-0.58,Niña,TRUE
-5300000203,BAHIA MALAGA,1987,entrenamiento,708,3.23,1,Pacífico,50,1.18,Niño,FALSE
 5300000203,BAHIA MALAGA,1988,entrenamiento,708,3.23,1,Pacífico,50,-0.89,Niña,TRUE
 5300000203,BAHIA MALAGA,1990,entrenamiento,708,3.23,1,Pacífico,50,0.27,Neutro,FALSE
 5300000203,BAHIA MALAGA,1991,entrenamiento,708,3.23,1,Pacífico,50,0.65,Niño,FALSE
@@ -2904,7 +2707,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5300000203,BAHIA MALAGA,2001,prueba,708,3.23,1,Pacífico,50,-0.29,Neutro,FALSE
 5300000203,BAHIA MALAGA,2002,prueba,708,3.23,1,Pacífico,50,0.51,Niño,FALSE
 5300000203,BAHIA MALAGA,2003,prueba,708,3.23,1,Pacífico,50,0.24,Neutro,FALSE
-5301000104,SAN FRANCISCO,1985,entrenamiento,1375,2.11,1,Pacífico,20,-0.58,Niña,TRUE
 5301000104,SAN FRANCISCO,1986,entrenamiento,1375,2.11,1,Pacífico,20,0.27,Neutro,FALSE
 5301000104,SAN FRANCISCO,1987,entrenamiento,1375,2.11,1,Pacífico,20,1.18,Niño,FALSE
 5301000104,SAN FRANCISCO,1988,entrenamiento,1375,2.11,1,Pacífico,20,-0.89,Niña,TRUE
@@ -2937,10 +2739,7 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5301400104,LA CASCADA,1983,entrenamiento,1051,2.66,1,Pacífico,320,0.46,Neutro,FALSE
 5301400104,LA CASCADA,1984,entrenamiento,1051,2.66,1,Pacífico,320,-0.55,Niña,FALSE
 5301400104,LA CASCADA,1985,entrenamiento,1051,2.66,1,Pacífico,320,-0.58,Niña,TRUE
-5301400104,LA CASCADA,1986,entrenamiento,1051,2.66,1,Pacífico,320,0.27,Neutro,FALSE
 5301400104,LA CASCADA,1987,entrenamiento,1051,2.66,1,Pacífico,320,1.18,Niño,FALSE
-5301400104,LA CASCADA,1988,entrenamiento,1051,2.66,1,Pacífico,320,-0.89,Niña,TRUE
-5301400104,LA CASCADA,1989,entrenamiento,1051,2.66,1,Pacífico,320,-0.62,Niña,FALSE
 5301400104,LA CASCADA,1992,entrenamiento,1051,2.66,1,Pacífico,320,0.61,Niño,FALSE
 5301400104,LA CASCADA,1993,entrenamiento,1051,2.66,1,Pacífico,320,0.36,Neutro,FALSE
 5301400104,LA CASCADA,1994,entrenamiento,1051,2.66,1,Pacífico,320,0.37,Neutro,FALSE
@@ -2966,33 +2765,10 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5301400108,ALTO - ANCHICAYA,2000,validación,1050,0.91,1,Pacífico,650,-0.77,Niña,TRUE
 5301400108,ALTO - ANCHICAYA,2001,prueba,1050,0.91,1,Pacífico,650,-0.29,Neutro,FALSE
 5301400108,ALTO - ANCHICAYA,2002,prueba,1050,0.91,1,Pacífico,650,0.51,Niño,FALSE
-5301420102,DIGUITA,1981,entrenamiento,1089,1.21,2,Pacífico,850,-0.25,Neutro,FALSE
-5301420102,DIGUITA,1985,entrenamiento,1089,1.21,2,Pacífico,850,-0.58,Niña,TRUE
-5301420102,DIGUITA,1986,entrenamiento,1089,1.21,2,Pacífico,850,0.27,Neutro,FALSE
-5301420102,DIGUITA,1987,entrenamiento,1089,1.21,2,Pacífico,850,1.18,Niño,FALSE
-5301420102,DIGUITA,1988,entrenamiento,1089,1.21,2,Pacífico,850,-0.89,Niña,TRUE
-5301420102,DIGUITA,1989,entrenamiento,1089,1.21,2,Pacífico,850,-0.62,Niña,FALSE
-5301420102,DIGUITA,1990,entrenamiento,1089,1.21,2,Pacífico,850,0.27,Neutro,FALSE
-5301420102,DIGUITA,1991,entrenamiento,1089,1.21,2,Pacífico,850,0.65,Niño,FALSE
-5301420102,DIGUITA,1995,entrenamiento,1089,1.21,2,Pacífico,850,-0.22,Neutro,FALSE
-5301420201,QUEREMAL EL,1983,entrenamiento,1089,2.93,2,Pacífico,1496,0.46,Neutro,FALSE
-5301420201,QUEREMAL EL,1984,entrenamiento,1089,2.93,2,Pacífico,1496,-0.55,Niña,FALSE
-5301420201,QUEREMAL EL,1985,entrenamiento,1089,2.93,2,Pacífico,1496,-0.58,Niña,TRUE
-5301420201,QUEREMAL EL,1986,entrenamiento,1089,2.93,2,Pacífico,1496,0.27,Neutro,FALSE
-5301420201,QUEREMAL EL,1987,entrenamiento,1089,2.93,2,Pacífico,1496,1.18,Niño,FALSE
-5301420201,QUEREMAL EL,1988,entrenamiento,1089,2.93,2,Pacífico,1496,-0.89,Niña,TRUE
-5301420201,QUEREMAL EL,1989,entrenamiento,1089,2.93,2,Pacífico,1496,-0.62,Niña,FALSE
-5301420201,QUEREMAL EL,1990,entrenamiento,1089,2.93,2,Pacífico,1496,0.27,Neutro,FALSE
-5301420201,QUEREMAL EL,1991,entrenamiento,1089,2.93,2,Pacífico,1496,0.65,Niño,FALSE
-5301420201,QUEREMAL EL,1992,entrenamiento,1089,2.93,2,Pacífico,1496,0.61,Niño,FALSE
-5301420201,QUEREMAL EL,1994,entrenamiento,1089,2.93,2,Pacífico,1496,0.37,Neutro,FALSE
-5301420201,QUEREMAL EL,1995,entrenamiento,1089,2.93,2,Pacífico,1496,-0.22,Neutro,FALSE
-5301500102,LOBOGUERRERO,1985,entrenamiento,906,1.92,1,Pacífico,702,-0.58,Niña,TRUE
 5301500102,LOBOGUERRERO,1986,entrenamiento,906,1.92,1,Pacífico,702,0.27,Neutro,FALSE
 5301500102,LOBOGUERRERO,1987,entrenamiento,906,1.92,1,Pacífico,702,1.18,Niño,FALSE
 5301500102,LOBOGUERRERO,1988,entrenamiento,906,1.92,1,Pacífico,702,-0.89,Niña,TRUE
 5301500102,LOBOGUERRERO,1989,entrenamiento,906,1.92,1,Pacífico,702,-0.62,Niña,FALSE
-5301500102,LOBOGUERRERO,1990,entrenamiento,906,1.92,1,Pacífico,702,0.27,Neutro,FALSE
 5301500102,LOBOGUERRERO,1991,entrenamiento,906,1.92,1,Pacífico,702,0.65,Niño,FALSE
 5301500102,LOBOGUERRERO,1992,entrenamiento,906,1.92,1,Pacífico,702,0.61,Niño,FALSE
 5301500102,LOBOGUERRERO,1993,entrenamiento,906,1.92,1,Pacífico,702,0.36,Neutro,FALSE
@@ -3062,7 +2838,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5420410107,BETANIA,2002,prueba,432,2.23,1,Pacífico,1750,0.51,Niño,FALSE
 5420410107,BETANIA,2003,prueba,432,2.23,1,Pacífico,1750,0.24,Neutro,FALSE
 5420410112,LA MARIA,1983,entrenamiento,360,2.27,1,Pacífico,1376,0.46,Neutro,FALSE
-5420410112,LA MARIA,1984,entrenamiento,360,2.27,1,Pacífico,1376,-0.55,Niña,FALSE
 5420410112,LA MARIA,1985,entrenamiento,360,2.27,1,Pacífico,1376,-0.58,Niña,TRUE
 5420410112,LA MARIA,1986,entrenamiento,360,2.27,1,Pacífico,1376,0.27,Neutro,FALSE
 5420410112,LA MARIA,1987,entrenamiento,360,2.27,1,Pacífico,1376,1.18,Niño,FALSE
@@ -3087,7 +2862,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5420410113,EL BOSQUE,1991,entrenamiento,251,1.92,2,Pacífico,1561,0.65,Niño,FALSE
 5420410113,EL BOSQUE,1992,entrenamiento,251,1.92,2,Pacífico,1561,0.61,Niño,FALSE
 5420410113,EL BOSQUE,1993,entrenamiento,251,1.92,2,Pacífico,1561,0.36,Neutro,FALSE
-5420410113,EL BOSQUE,1994,entrenamiento,251,1.92,2,Pacífico,1561,0.37,Neutro,FALSE
 5420410113,EL BOSQUE,1996,validación,251,1.92,2,Pacífico,1561,-0.41,Neutro,FALSE
 5420410113,EL BOSQUE,1997,validación,251,1.92,2,Pacífico,1561,1.14,Niño,FALSE
 5420410113,EL BOSQUE,1998,validación,251,1.92,2,Pacífico,1561,0.04,Neutro,FALSE
@@ -3106,7 +2880,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5420410114,ARABIA,1990,entrenamiento,287,2.68,1,Pacífico,1395,0.27,Neutro,FALSE
 5420410114,ARABIA,1991,entrenamiento,287,2.68,1,Pacífico,1395,0.65,Niño,FALSE
 5420410114,ARABIA,1992,entrenamiento,287,2.68,1,Pacífico,1395,0.61,Niño,FALSE
-5420410114,ARABIA,1993,entrenamiento,287,2.68,1,Pacífico,1395,0.36,Neutro,FALSE
 5420410114,ARABIA,1994,entrenamiento,287,2.68,1,Pacífico,1395,0.37,Neutro,FALSE
 5420410114,ARABIA,1995,entrenamiento,287,2.68,1,Pacífico,1395,-0.22,Neutro,FALSE
 5420410114,ARABIA,1996,validación,287,2.68,1,Pacífico,1395,-0.41,Neutro,FALSE
@@ -3121,11 +2894,9 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5420410115,PUERTO NUEVO,1984,entrenamiento,322,2.5,1,Pacífico,990,-0.55,Niña,FALSE
 5420410115,PUERTO NUEVO,1985,entrenamiento,322,2.5,1,Pacífico,990,-0.58,Niña,TRUE
 5420410115,PUERTO NUEVO,1986,entrenamiento,322,2.5,1,Pacífico,990,0.27,Neutro,FALSE
-5420410115,PUERTO NUEVO,1987,entrenamiento,322,2.5,1,Pacífico,990,1.18,Niño,FALSE
 5420410115,PUERTO NUEVO,1988,entrenamiento,322,2.5,1,Pacífico,990,-0.89,Niña,TRUE
 5420410115,PUERTO NUEVO,1989,entrenamiento,322,2.5,1,Pacífico,990,-0.62,Niña,FALSE
 5420410115,PUERTO NUEVO,1990,entrenamiento,322,2.5,1,Pacífico,990,0.27,Neutro,FALSE
-5420410115,PUERTO NUEVO,1991,entrenamiento,322,2.5,1,Pacífico,990,0.65,Niño,FALSE
 5420410115,PUERTO NUEVO,1992,entrenamiento,322,2.5,1,Pacífico,990,0.61,Niño,FALSE
 5420410115,PUERTO NUEVO,1993,entrenamiento,322,2.5,1,Pacífico,990,0.36,Neutro,FALSE
 5420410115,PUERTO NUEVO,1994,entrenamiento,322,2.5,1,Pacífico,990,0.37,Neutro,FALSE
@@ -3200,8 +2971,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5421200105,LA CRISTALINA,1983,entrenamiento,763,3.36,1,Pacífico,1490,0.46,Neutro,FALSE
 5421200105,LA CRISTALINA,1985,entrenamiento,763,3.36,1,Pacífico,1490,-0.58,Niña,TRUE
 5421200105,LA CRISTALINA,1986,entrenamiento,763,3.36,1,Pacífico,1490,0.27,Neutro,FALSE
-5421200105,LA CRISTALINA,1987,entrenamiento,763,3.36,1,Pacífico,1490,1.18,Niño,FALSE
-5421200105,LA CRISTALINA,1988,entrenamiento,763,3.36,1,Pacífico,1490,-0.89,Niña,TRUE
 5421200105,LA CRISTALINA,1989,entrenamiento,763,3.36,1,Pacífico,1490,-0.62,Niña,FALSE
 5421200105,LA CRISTALINA,1990,entrenamiento,763,3.36,1,Pacífico,1490,0.27,Neutro,FALSE
 5421200105,LA CRISTALINA,1991,entrenamiento,763,3.36,1,Pacífico,1490,0.65,Niño,FALSE
@@ -3238,22 +3007,20 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5421200109,SAMARIA,1993,entrenamiento,726,1.89,1,Pacífico,1975,0.36,Neutro,FALSE
 5421200109,SAMARIA,1994,entrenamiento,726,1.89,1,Pacífico,1975,0.37,Neutro,FALSE
 5421200109,SAMARIA,1995,entrenamiento,726,1.89,1,Pacífico,1975,-0.22,Neutro,FALSE
-5421200111,EL CUSUMBO,1981,entrenamiento,795,2.24,2,Pacífico,720,-0.25,Neutro,FALSE
-5421200111,EL CUSUMBO,1982,entrenamiento,795,2.24,2,Pacífico,720,0.91,Niño,FALSE
-5421200111,EL CUSUMBO,1983,entrenamiento,795,2.24,2,Pacífico,720,0.46,Neutro,FALSE
-5421200111,EL CUSUMBO,1984,entrenamiento,795,2.24,2,Pacífico,720,-0.55,Niña,FALSE
-5421200111,EL CUSUMBO,1985,entrenamiento,795,2.24,2,Pacífico,720,-0.58,Niña,TRUE
-5421200111,EL CUSUMBO,1986,entrenamiento,795,2.24,2,Pacífico,720,0.27,Neutro,FALSE
-5421200111,EL CUSUMBO,1987,entrenamiento,795,2.24,2,Pacífico,720,1.18,Niño,FALSE
-5421200111,EL CUSUMBO,1988,entrenamiento,795,2.24,2,Pacífico,720,-0.89,Niña,TRUE
-5421200111,EL CUSUMBO,1989,entrenamiento,795,2.24,2,Pacífico,720,-0.62,Niña,FALSE
-5421200111,EL CUSUMBO,1990,entrenamiento,795,2.24,2,Pacífico,720,0.27,Neutro,FALSE
-5421200111,EL CUSUMBO,1991,entrenamiento,795,2.24,2,Pacífico,720,0.65,Niño,FALSE
-5421200111,EL CUSUMBO,1992,entrenamiento,795,2.24,2,Pacífico,720,0.61,Niño,FALSE
-5421200111,EL CUSUMBO,1993,entrenamiento,795,2.24,2,Pacífico,720,0.36,Neutro,FALSE
-5421200111,EL CUSUMBO,1994,entrenamiento,795,2.24,2,Pacífico,720,0.37,Neutro,FALSE
-5421200111,EL CUSUMBO,1995,entrenamiento,795,2.24,2,Pacífico,720,-0.22,Neutro,FALSE
-5421200114,LA GRANJITA,1983,entrenamiento,725,3.15,1,Pacífico,1660,0.46,Neutro,FALSE
+5421200111,EL CUSUMBO,1982,entrenamiento,795,2.24,1,Pacífico,720,0.91,Niño,FALSE
+5421200111,EL CUSUMBO,1983,entrenamiento,795,2.24,1,Pacífico,720,0.46,Neutro,FALSE
+5421200111,EL CUSUMBO,1984,entrenamiento,795,2.24,1,Pacífico,720,-0.55,Niña,FALSE
+5421200111,EL CUSUMBO,1985,entrenamiento,795,2.24,1,Pacífico,720,-0.58,Niña,TRUE
+5421200111,EL CUSUMBO,1986,entrenamiento,795,2.24,1,Pacífico,720,0.27,Neutro,FALSE
+5421200111,EL CUSUMBO,1987,entrenamiento,795,2.24,1,Pacífico,720,1.18,Niño,FALSE
+5421200111,EL CUSUMBO,1988,entrenamiento,795,2.24,1,Pacífico,720,-0.89,Niña,TRUE
+5421200111,EL CUSUMBO,1989,entrenamiento,795,2.24,1,Pacífico,720,-0.62,Niña,FALSE
+5421200111,EL CUSUMBO,1990,entrenamiento,795,2.24,1,Pacífico,720,0.27,Neutro,FALSE
+5421200111,EL CUSUMBO,1991,entrenamiento,795,2.24,1,Pacífico,720,0.65,Niño,FALSE
+5421200111,EL CUSUMBO,1992,entrenamiento,795,2.24,1,Pacífico,720,0.61,Niño,FALSE
+5421200111,EL CUSUMBO,1993,entrenamiento,795,2.24,1,Pacífico,720,0.36,Neutro,FALSE
+5421200111,EL CUSUMBO,1994,entrenamiento,795,2.24,1,Pacífico,720,0.37,Neutro,FALSE
+5421200111,EL CUSUMBO,1995,entrenamiento,795,2.24,1,Pacífico,720,-0.22,Neutro,FALSE
 5421200114,LA GRANJITA,1984,entrenamiento,725,3.15,1,Pacífico,1660,-0.55,Niña,FALSE
 5421200114,LA GRANJITA,1985,entrenamiento,725,3.15,1,Pacífico,1660,-0.58,Niña,TRUE
 5421200114,LA GRANJITA,1986,entrenamiento,725,3.15,1,Pacífico,1660,0.27,Neutro,FALSE
@@ -3264,7 +3031,6 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5421200114,LA GRANJITA,1991,entrenamiento,725,3.15,1,Pacífico,1660,0.65,Niño,FALSE
 5421200114,LA GRANJITA,1992,entrenamiento,725,3.15,1,Pacífico,1660,0.61,Niño,FALSE
 5421200114,LA GRANJITA,1993,entrenamiento,725,3.15,1,Pacífico,1660,0.36,Neutro,FALSE
-5421200114,LA GRANJITA,1994,entrenamiento,725,3.15,1,Pacífico,1660,0.37,Neutro,FALSE
 5421200114,LA GRANJITA,1995,entrenamiento,725,3.15,1,Pacífico,1660,-0.22,Neutro,FALSE
 5421210101,RIOBRAVO,1983,entrenamiento,760,2.43,1,Pacífico,1520,0.46,Neutro,FALSE
 5421210101,RIOBRAVO,1984,entrenamiento,760,2.43,1,Pacífico,1520,-0.55,Niña,FALSE
@@ -3279,22 +3045,3 @@ codigo,nombre,anio,particion,celda,dist_km,estaciones_en_el_pixel,vertiente,alti
 5421210101,RIOBRAVO,1993,entrenamiento,760,2.43,1,Pacífico,1520,0.36,Neutro,FALSE
 5421210101,RIOBRAVO,1994,entrenamiento,760,2.43,1,Pacífico,1520,0.37,Neutro,FALSE
 5421210101,RIOBRAVO,1995,entrenamiento,760,2.43,1,Pacífico,1520,-0.22,Neutro,FALSE
-5421220101,LIMONES,1982,entrenamiento,795,1.55,2,Pacífico,850,0.91,Niño,FALSE
-5421220101,LIMONES,1983,entrenamiento,795,1.55,2,Pacífico,850,0.46,Neutro,FALSE
-5421220101,LIMONES,1984,entrenamiento,795,1.55,2,Pacífico,850,-0.55,Niña,FALSE
-5421220101,LIMONES,1985,entrenamiento,795,1.55,2,Pacífico,850,-0.58,Niña,TRUE
-5421220101,LIMONES,1986,entrenamiento,795,1.55,2,Pacífico,850,0.27,Neutro,FALSE
-5421220101,LIMONES,1987,entrenamiento,795,1.55,2,Pacífico,850,1.18,Niño,FALSE
-5421220101,LIMONES,1988,entrenamiento,795,1.55,2,Pacífico,850,-0.89,Niña,TRUE
-5421220101,LIMONES,1990,entrenamiento,795,1.55,2,Pacífico,850,0.27,Neutro,FALSE
-5421220101,LIMONES,1991,entrenamiento,795,1.55,2,Pacífico,850,0.65,Niño,FALSE
-5421240201,EL TABANO,1982,entrenamiento,794,3.11,1,Pacífico,380,0.91,Niño,FALSE
-5421240201,EL TABANO,1983,entrenamiento,794,3.11,1,Pacífico,380,0.46,Neutro,FALSE
-5421240201,EL TABANO,1984,entrenamiento,794,3.11,1,Pacífico,380,-0.55,Niña,FALSE
-5421240201,EL TABANO,1985,entrenamiento,794,3.11,1,Pacífico,380,-0.58,Niña,TRUE
-5421240201,EL TABANO,1986,entrenamiento,794,3.11,1,Pacífico,380,0.27,Neutro,FALSE
-5421240201,EL TABANO,1987,entrenamiento,794,3.11,1,Pacífico,380,1.18,Niño,FALSE
-5421240201,EL TABANO,1988,entrenamiento,794,3.11,1,Pacífico,380,-0.89,Niña,TRUE
-5421240201,EL TABANO,1989,entrenamiento,794,3.11,1,Pacífico,380,-0.62,Niña,FALSE
-5421240201,EL TABANO,1990,entrenamiento,794,3.11,1,Pacífico,380,0.27,Neutro,FALSE
-5421240201,EL TABANO,1991,entrenamiento,794,3.11,1,Pacífico,380,0.65,Niño,FALSE

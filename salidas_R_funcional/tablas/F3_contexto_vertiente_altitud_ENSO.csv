@@ -1,17 +1,17 @@
 fuente,agrupacion,grupo,P_anual,curvas
-estaciones,vertiente,Cauca (interandina),1551,2889
-estaciones,vertiente,Pacífico,3105,410
-satélite,vertiente,Cauca (interandina),1735,8878
-satélite,vertiente,Pacífico,3998,6670
-estaciones (Cauca),altitud,< 1200 m,1333,1153
-estaciones (Cauca),altitud,1200-2000 m,1715,1423
-estaciones (Cauca),altitud,> 2000 m,1607,313
-estaciones (Cauca),ENSO,Neutro,1544,1361
-estaciones (Cauca),ENSO,Niña,1718,785
-estaciones (Cauca),ENSO,Niño,1387,743
-satélite (Cauca),ENSO,Neutro,1767,4246
-satélite (Cauca),ENSO,Niña,1664,2316
-satélite (Cauca),ENSO,Niño,1747,2316
-"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Neutro,1767,4246
-"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Niña,1838,1158
-"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Niño,1747,2316
+estaciones,vertiente,Cauca (interandina),1556,2693
+estaciones,vertiente,Pacífico,3051,353
+satélite,vertiente,Cauca (interandina),1706,8648
+satélite,vertiente,Pacífico,3958,6900
+estaciones (Cauca),altitud,< 1200 m,1318,1036
+estaciones (Cauca),altitud,1200-2000 m,1704,1339
+estaciones (Cauca),altitud,> 2000 m,1706,318
+estaciones (Cauca),ENSO,Neutro,1550,1276
+estaciones (Cauca),ENSO,Niña,1720,708
+estaciones (Cauca),ENSO,Niño,1401,709
+satélite (Cauca),ENSO,Neutro,1738,4136
+satélite (Cauca),ENSO,Niña,1639,2256
+satélite (Cauca),ENSO,Niño,1716,2256
+"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Neutro,1738,4136
+"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Niña,1811,1128
+"satélite (Cauca) sin 1985, 1988 y 2000",ENSO,Niño,1716,2256
