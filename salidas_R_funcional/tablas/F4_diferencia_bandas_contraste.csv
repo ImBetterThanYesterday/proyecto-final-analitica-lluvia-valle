@@ -1,0 +1,4 @@
+banda,ancho_medio_mm_dia,dias_excluye_0,dias_mismo_veredicto
+"±2 EE entre estaciones (176), rúbrica 3",0.833,147,365
+"Bootstrap de estaciones, percentiles 95 % (2000)",0.816,152,356
+±2 EE entre píxeles (148),0.95,137,327

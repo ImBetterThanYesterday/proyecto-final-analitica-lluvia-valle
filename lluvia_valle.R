@@ -2432,7 +2432,27 @@ cat(sprintf("d(t) medio: %.2f mm/día (%.0f mm/año); días en que la banda excl
             mean(b$d), mean(b$d) * 365, sum(int_d$dias)))
 b_def <- banda_diferencia(D[marc, ], pares$codigo[marc]); b_resto <- banda_diferencia(D[!marc, ], pares$codigo[!marc])
 cat(sprintf("En 1985, 1988 y 2000: d(t) medio %.2f mm/día (%.0f mm/año) | en el resto: %.2f mm/día (%.0f mm/año)\n", mean(b_def$d), mean(b_def$d) * 365, mean(b_resto$d), mean(b_resto$d) * 365))
-tabla_f(data.table(dia = T_DIA, d = b$d, ee = b$ee, inferior = b$d - 2 * b$ee, superior = b$d + 2 * b$ee, d_1985_1988_2000 = b_def$d, d_resto = b_resto$d), "F4_diferencia_por_dia")
+# Contraste de la banda ±2 EE (rúbrica 3): (a) percentiles de un bootstrap de estaciones, que
+# no supone normalidad de d̄(t), y (b) la misma banda con el PÍXEL como unidad, porque varias
+# estaciones comparten píxel y su diferencia no es independiente.
+B_BOOT_D <- 2000L
+medias_est <- rowsum(D, pares$codigo) / as.vector(table(pares$codigo)[rownames(rowsum(D, pares$codigo))])
+set.seed(20261123)
+boot_d <- replicate(B_BOOT_D, colMeans(medias_est[sample(nrow(medias_est), replace = TRUE), ]))
+d_lo <- apply(boot_d, 1, quantile, .025); d_hi <- apply(boot_d, 1, quantile, .975)
+b_pix <- banda_diferencia(D, pares$celda)
+excluye_0 <- function(inf, sup) (inf > 0) | (sup < 0)
+bandas_d <- data.table(banda = c(sprintf("±2 EE entre estaciones (%d), rúbrica 3", b$n), sprintf("Bootstrap de estaciones, percentiles 95 %% (%d)", B_BOOT_D),
+                                 sprintf("±2 EE entre píxeles (%d)", b_pix$n)),
+                       ancho_medio_mm_dia = round(c(mean(4 * b$ee), mean(d_hi - d_lo), mean(4 * b_pix$ee)), 3),
+                       dias_excluye_0 = c(sum(excluye_0(b$d - 2 * b$ee, b$d + 2 * b$ee)), sum(excluye_0(d_lo, d_hi)), sum(excluye_0(b_pix$d - 2 * b_pix$ee, b_pix$d + 2 * b_pix$ee))),
+                       dias_mismo_veredicto = c(365L, sum(excluye_0(d_lo, d_hi) == excluye_0(b$d - 2 * b$ee, b$d + 2 * b$ee)),
+                                                sum(excluye_0(b_pix$d - 2 * b_pix$ee, b_pix$d + 2 * b_pix$ee) == excluye_0(b$d - 2 * b$ee, b$d + 2 * b$ee))))
+print(tabla_f(bandas_d, "F4_diferencia_bandas_contraste"))
+print(tabla_f(intervalos(b_pix$d - 2 * b_pix$ee, b_pix$d + 2 * b_pix$ee), "F4_intervalos_diferencia_por_pixel"))
+tabla_f(data.table(dia = T_DIA, d = b$d, ee = b$ee, inferior = b$d - 2 * b$ee, superior = b$d + 2 * b$ee, inferior_bootstrap = d_lo, superior_bootstrap = d_hi,
+                   d_por_pixel = b_pix$d, inferior_pixel = b_pix$d - 2 * b_pix$ee, superior_pixel = b_pix$d + 2 * b_pix$ee,
+                   d_1985_1988_2000 = b_def$d, d_resto = b_resto$d), "F4_diferencia_por_dia")
 
 grafico_base("F4_diferencia", function() {
   par(mfrow = c(1, 2))
@@ -2440,13 +2460,15 @@ grafico_base("F4_diferencia", function() {
        xlab = "Día del año", ylab = "mm/día", main = "Media de los pares: estación y su píxel")
   lines(T_DIA, colMeans(X[ok, ]), lwd = 2, col = "darkorange")
   legend("bottomleft", c("Estaciones", "Satélite (su píxel)"), col = c(4, "darkorange"), lwd = 2, bty = "n")
-  plot(T_DIA, b$d, type = "n", ylim = range(c(b$d - 2 * b$ee, b$d + 2 * b$ee, b_def$d, 0)), xlab = "Día del año", ylab = "mm/día",
+  plot(T_DIA, b$d, type = "n", ylim = range(c(b$d - 2 * b$ee, b$d + 2 * b$ee, d_lo, d_hi, b_pix$d - 2 * b_pix$ee, b_pix$d + 2 * b_pix$ee, b_def$d, 0)), xlab = "Día del año", ylab = "mm/día",
        main = expression(paste(bar(d), "(t) = estación - satélite  ±2 EE(t)")))
   polygon(c(T_DIA, rev(T_DIA)), c(b$d - 2 * b$ee, rev(b$d + 2 * b$ee)), col = adjustcolor("steelblue", .3), border = NA)
   lines(T_DIA, b$d, lwd = 2); lines(T_DIA, b_def$d, lty = 2, col = "firebrick"); abline(h = 0, lty = 3)
+  lines(T_DIA, d_lo, lty = 3, col = "navy"); lines(T_DIA, d_hi, lty = 3, col = "navy")
+  lines(T_DIA, b_pix$d - 2 * b_pix$ee, lty = 4, col = "darkgreen"); lines(T_DIA, b_pix$d + 2 * b_pix$ee, lty = 4, col = "darkgreen")
   excl <- (b$d - 2 * b$ee > 0) | (b$d + 2 * b$ee < 0); rug(T_DIA[excl], col = "firebrick")
-  legend("bottomleft", c("Todos los años (banda por estación)", "Solo 1985, 1988 y 2000", "Días en que la banda excluye el 0"),
-         col = c(1, "firebrick", "firebrick"), lty = c(1, 2, 1), lwd = c(2, 1, 1), bty = "n", cex = .8)
+  legend("bottomleft", c("Todos los años (banda ±2 EE por estación)", "Bootstrap de estaciones 95 %", "±2 EE por píxel", "Solo 1985, 1988 y 2000", "Días en que la banda excluye el 0"),
+         col = c(1, "navy", "darkgreen", "firebrick", "firebrick"), lty = c(1, 3, 4, 2, 1), lwd = c(2, 1, 1, 1, 1), bty = "n", cex = .75)
 }, ancho = 13, alto = 4.8)
 
 titulo("4.1b Serie diaria de un año y ciclo anual de cada estación frente a su píxel")
@@ -2920,6 +2942,13 @@ grafico_base("F4_anova_funcional", function() {
 #   días. Los tramos del 1 al 12 de enero y del 24 al 31 de diciembre son efecto
 #   de borde de las bases. En 1985, 1988 y 2000 el satélite pierde 337 mm/año
 #   frente a la estación; en el resto de años da 83 mm/año de más.
+#   Contraste de la banda: con percentiles de un bootstrap de estaciones la banda
+#   excluye el 0 en 152 días (356 con el mismo veredicto que ±2 EE): la
+#   aproximación normal no cambia nada. Con el píxel como unidad (148) la banda
+#   se ensancha 14 % y excluye el 0 en 137 días; siguen los mismos tramos (el
+#   satélite arranca tarde la primera temporada, 7-feb a 30-mar, y exagera su pico,
+#   20-abr a 5-jun), pero el de la segunda temporada se reduce a 5-12 de noviembre.
+#   Las estaciones que comparten píxel no cambian la lectura de d(t).
 #   Serie diaria y ciclo anual (4.1b): en Yurumanguí (costa Pacífica, 21 m) la
 #   estación promedia 22,4 mm/día y su píxel 14,2: el satélite ve la forma
 #   bimodal pero se queda en dos tercios del nivel. En Puerto Molina (fondo del
