@@ -1,0 +1,4 @@
+zona,codigo,nombre,altitud,celda,anios,anio_ejemplo,P_estacion_mm_dia,P_satelite_mm_dia,r_ciclo_anual
+"Pacífico, costa",5301100101,YURUMANGUI,21,1188,17,2001,22.37,14.22,0.83
+"Cauca, fondo del valle",2610000105,PUERTO MOLINA,939,290,23,2003,3.92,5.44,0.84
+"Cauca, ladera alta",2614100103,LA GITANA,2783,808,23,2003,5.1,4.14,0.86

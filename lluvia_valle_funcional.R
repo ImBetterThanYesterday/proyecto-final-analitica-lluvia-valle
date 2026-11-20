@@ -975,6 +975,44 @@ grafico_base("F4_diferencia", function() {
          col = c(1, "firebrick", "firebrick"), lty = c(1, 2, 1), lwd = c(2, 1, 1), bty = "n", cex = .8)
 }, ancho = 13, alto = 4.8)
 
+titulo("4.1b Serie diaria de un año y ciclo anual de cada estación frente a su píxel")
+# Se muestra la lluvia puntual en mm/día, sin agregar en totales: el dato diario de la
+# estación, el dato pentadal de su píxel y las dos curvas suavizadas de un año, y al lado el
+# ciclo anual medio de la estación y de su píxel con los años individuales de fondo. Se toma
+# una estación de cada zona (costa Pacífica bajo 500 m, fondo del valle y ladera alta del Cauca): la de más
+# años; el año es el más reciente con los 365 días observados.
+zonas_ej <- list(`Pacífico, costa` = pares$vertiente == "Pacífico" & pares$altitud < 500, `Cauca, fondo del valle` = pares$vertiente != "Pacífico" & pares$banda_altitud == "< 1200 m",
+                 `Cauca, ladera alta` = pares$vertiente != "Pacífico" & pares$banda_altitud == "> 2000 m")
+n_completos <- o$id_est$n_obs[pares$fila_est] == 365L
+ejemplos <- rbindlist(lapply(names(zonas_ej), function(z) {
+  k <- which(zonas_ej[[z]] & !is.na(zonas_ej[[z]]))
+  cand <- data.table(pares[k, .(codigo, nombre, altitud, celda)], completo = n_completos[k])[
+    , .(anios = .N, con_completo = any(completo)), by = .(codigo, nombre, altitud, celda)][con_completo == TRUE][order(-anios, codigo)][1]
+  fil <- which(pares$codigo == cand$codigo); anio_ej <- max(pares$anio[fil][n_completos[fil]])
+  cand[, .(zona = z, codigo, nombre, altitud, celda, anios, anio_ejemplo = anio_ej, fila = fil[pares$anio[fil] == anio_ej],
+           P_estacion_mm_dia = round(mean(Y[fil, ]), 2), P_satelite_mm_dia = round(mean(X[fil, ]), 2),
+           r_ciclo_anual = round(cor(colMeans(Y[fil, , drop = FALSE]), colMeans(X[fil, , drop = FALSE])), 2))]
+}))
+print(tabla_f(ejemplos[, !"fila"], "F4_ejemplos_estacion_pixel"))
+grafico_base("F4_serie_diaria_y_ciclo_anual", function() {
+  par(mfrow = c(nrow(ejemplos), 2), mar = c(4, 4, 3, 1))
+  for (k in seq_len(nrow(ejemplos))) with(ejemplos[k], {
+    fe <- pares$fila_est[fila]; fs <- pares$fila_sat[fila]; y_obs <- Y_dia[fe, ]; x_obs <- X_pen[fs, ]
+    plot(T_DIA, y_obs, type = "h", col = "grey60", ylim = c(0, max(y_obs, x_obs, Y[fila, ], X[fila, ], na.rm = TRUE)), xlab = "Día del año", ylab = "mm/día",
+         main = sprintf("%s (%s, %.0f m) · %d", nombre, zona, altitud, anio_ejemplo), cex.main = .95)
+    points(T_SAT, x_obs, pch = 19, cex = .5, col = "darkorange")
+    lines(T_DIA, Y[fila, ], lwd = 2, col = 4); lines(T_DIA, X[fila, ], lwd = 2, col = "darkorange")
+    if (k == 1) legend("topright", c("Estación: dato diario", "Satélite: dato pentadal", "Curva de la estación", "Curva del satélite"),
+                       col = c("grey60", "darkorange", 4, "darkorange"), lty = c(1, NA, 1, 1), pch = c(NA, 19, NA, NA), lwd = c(1, NA, 2, 2), bty = "n", cex = .75)
+    fil <- which(pares$codigo == codigo)
+    matplot(T_DIA, t(Y[fil, , drop = FALSE]), type = "l", lty = 1, col = adjustcolor(4, .15), ylim = c(0, max(Y[fil, ], X[fil, ])), xlab = "Día del año", ylab = "mm/día",
+            main = sprintf("Ciclo anual medio, %d años (r = %.2f)", anios, r_ciclo_anual), cex.main = .95)
+    matlines(T_DIA, t(X[fil, , drop = FALSE]), lty = 1, col = adjustcolor("darkorange", .15))
+    lines(T_DIA, colMeans(Y[fil, , drop = FALSE]), lwd = 3, col = 4); lines(T_DIA, colMeans(X[fil, , drop = FALSE]), lwd = 3, col = "darkorange")
+    if (k == 1) legend("topright", c("Estación (media de sus años)", "Su píxel (media de los mismos años)"), col = c(4, "darkorange"), lwd = 3, bty = "n", cex = .75)
+  })
+}, ancho = 13, alto = 3.6 * 3)
+
 titulo("4.2 Correlación cruzada y covarianzas")
 Ce <- o$coef_est[pares$fila_est[ok], ]; Cs <- o$coef_sat[pares$fila_sat[ok], ]
 Cec <- sweep(Ce, 2, colMeans(Ce)); Csc <- sweep(Cs, 2, colMeans(Cs)); n <- nrow(Ce)
@@ -1202,41 +1240,6 @@ grafico_base("F4_anova_funcional", function() {
   })
 }, ancho = 15, alto = 8)
 
-titulo("4.6 Vista acumulada, como la presenta el profesor (tesis de 2016 y semanas 12-13)")
-# En la tesis del profesor y en las clases la lluvia se trabaja ACUMULADA (mm desde el 1 de
-# enero). Aquí se muestra esa vista con nuestras curvas: A(t) = ∫ x(u) du (curva recortada en 0)
-# y se mide por qué el modelo se queda con la curva de mm/día. La derivada de la curva
-# acumulada es nuestra curva (la "intensidad" de la clase), así que no se pierde nada.
-acumular <- function(M) t(apply(pmax(M, 0), 1, cumsum))
-A_y <- acumular(Y); A_x <- acumular(X); b_acum <- banda_diferencia(A_y - A_x, pares$codigo)
-r_acum <- diag(cor(A_y, A_x)); r_tasa <- diag(cor(Y, X))
-lejos <- outer(T_DIA, T_DIA, function(s, t) abs(s - t) >= 90)
-cor_lejos <- function(M) { R <- cor(M); mean(R[lejos]) }
-acum_vs_tasa <- data.table(
-  medida = c("Acumulado al 31-dic, estaciones (mm)", "Acumulado al 31-dic, satélite (mm)", "d(31-dic) = estación - satélite (mm)", "EE de d(31-dic) por estación (mm)",
-             "Días en que la banda de d(t) excluye el 0", "CV al 31-dic, estaciones", "CV al 31-dic, satélite",
-             "Diagonal r(t,t) estación-satélite: mediana", "Diagonal r(t,t): mínima", "Correlación media entre días separados 90 días o más (estaciones)"),
-  acumulada = c(round(mean(A_y[, 365])), round(mean(A_x[, 365])), round(b_acum$d[365]), round(b_acum$ee[365]),
-                sum((b_acum$d - 2 * b_acum$ee > 0) | (b_acum$d + 2 * b_acum$ee < 0)), round(sd(A_y[, 365]) / mean(A_y[, 365]), 3), round(sd(A_x[, 365]) / mean(A_x[, 365]), 3),
-                round(median(r_acum), 2), round(min(r_acum), 2), round(cor_lejos(A_y), 2)),
-  mm_dia = c(NA, NA, NA, NA, sum((b$d - 2 * b$ee > 0) | (b$d + 2 * b$ee < 0)), NA, NA, round(median(r_tasa), 2), round(min(r_tasa), 2), round(cor_lejos(Y), 2)))
-print(tabla_f(acum_vs_tasa, "F4_acumulada_vs_mm_dia"))
-grafico_base("F4_acumulada", function() {
-  par(mfrow = c(1, 3))
-  set.seed(2); m <- sample(nrow(A_y), 120)
-  matplot(T_DIA, t(A_y[m, ]), type = "l", lty = 1, col = adjustcolor(4, .25), xlab = "Día del año", ylab = "mm acumulados",
-          main = "Precipitación acumulada: estación (azul) y su píxel (naranja)", ylim = range(c(0, quantile(A_y[, 365], .97), quantile(A_x[, 365], .97))))
-  matlines(T_DIA, t(A_x[m, ]), lty = 1, col = adjustcolor("darkorange", .25))
-  lines(T_DIA, colMeans(A_y), lwd = 3, col = 4); lines(T_DIA, colMeans(A_x), lwd = 3, col = "darkorange")
-  plot(T_DIA, b_acum$d, type = "n", ylim = range(c(b_acum$d - 2 * b_acum$ee, b_acum$d + 2 * b_acum$ee, 0)), xlab = "Día del año", ylab = "mm",
-       main = "d(t) acumulada = estación - satélite ±2 EE (por estación)")
-  polygon(c(T_DIA, rev(T_DIA)), c(b_acum$d - 2 * b_acum$ee, rev(b_acum$d + 2 * b_acum$ee)), col = adjustcolor("steelblue", .3), border = NA)
-  lines(T_DIA, b_acum$d, lwd = 2); abline(h = 0, lty = 3)
-  plot(T_DIA, r_acum, type = "l", lwd = 2, ylim = c(0, 1), xlab = "Día del año", ylab = "r(t,t)", main = "Diagonal de la correlación cruzada")
-  lines(T_DIA, r_tasa, lwd = 2, col = "firebrick")
-  legend("bottomright", c("Curvas acumuladas", "Curvas en mm/día"), col = c(1, "firebrick"), lwd = 2, bty = "n")
-}, ancho = 16, alto = 4.8)
-
 # QUÉ DICEN LOS DATOS
 #   Pares: 3 299 estación-año / píxel-año, 176 estaciones en 148 píxeles, todos
 #   los años. El EE se calcula entre estaciones (promedio de cada estación
@@ -1251,6 +1254,14 @@ grafico_base("F4_acumulada", function() {
 #   días. Los tramos del 1 al 12 de enero y del 24 al 31 de diciembre son efecto
 #   de borde de las bases. En 1985, 1988 y 2000 el satélite pierde 337 mm/año
 #   frente a la estación; en el resto de años da 83 mm/año de más.
+#   Serie diaria y ciclo anual (4.1b): en Yurumanguí (costa Pacífica, 21 m) la
+#   estación promedia 22,4 mm/día y su píxel 14,2: el satélite ve la forma
+#   bimodal pero se queda en dos tercios del nivel. En Puerto Molina (fondo del
+#   valle, 939 m) pasa lo contrario, 3,9 frente a 5,4 mm/día: el satélite
+#   exagera los dos picos. En La Gitana (2 783 m) el píxel da 4,1 frente a 5,1 y
+#   aplana el pico de noviembre. La forma del ciclo anual coincide en los tres
+#   (r = 0,83 a 0,86): el error del satélite es sobre todo de nivel y de
+#   amplitud, y cambia de signo según el sitio, como resume d(t).
 #   Correlación cruzada: la diagonal r(t,t) vale 0,62 en promedio (0,78 a
 #   mediados de julio) y la correlación máxima está en el mismo día (desfase
 #   mediano de -1 día). Casi toda viene de que el satélite reconoce qué sitios
