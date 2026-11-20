@@ -11,6 +11,7 @@ Funciones propias ortonormales con W,TRUE
 "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)",TRUE
 La reconstrucción en mm no es negativa,TRUE
 Bootstrap con al menos 1000 remuestreos,TRUE
+"La concurrente y la función a función se evalúan en las mismas curvas de prueba, con reconstrucción no negativa",TRUE
 "Regresión concurrente: b1(t) por año = lm(), ecuaciones normales = mínimos cuadrados directos, sin fuga, rugosidad nula en una recta, b1 lineal con lambda enorme, reconstrucción no negativa y bootstrap suficiente",TRUE
 "ANOVA funcional: SSE_n = (n-k) tr(γ̂) y, con k = 2, F(t) = t² (clase, ejercicio 1)",TRUE
 Bandas por bootstrap de estaciones y permutación del satélite con réplicas suficientes,TRUE

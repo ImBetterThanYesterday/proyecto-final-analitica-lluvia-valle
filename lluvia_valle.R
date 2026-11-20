@@ -1530,6 +1530,10 @@ grafico_base <- function(nombre, dibujar, ancho = 11, alto = 5) {
   if (interactive()) dibujar()
   invisible(NULL)
 }
+con_semilla <- function(semilla, expr) {
+  previa <- get(".Random.seed", envir = globalenv()); on.exit(assign(".Random.seed", previa, envir = globalenv()))
+  set.seed(semilla); expr
+}
 titulo <- function(x) cat("\n", strrep("=", 78), "\n", x, "\n", strrep("=", 78), "\n", sep = "")
 fecha_dia <- function(d) format(as.Date(round(d) - 1, origin = "2001-01-01"), "%d-%b")
 
@@ -3239,6 +3243,19 @@ bandas_ef <- data.table(efecto = c("Integral de beta sobre s", "Altitud gamma(t)
                         minimo = round(apply(ef_obs, 2, min), 3), maximo = round(apply(ef_obs, 2, max), 3),
                         ancho_medio_banda = round(colMeans(ef_hi - ef_lo), 3))
 print(tabla_f(bandas_ef, "F5_efectos_bandas"))
+# Sensibilidad: el mismo bootstrap con el PÍXEL como bloque (las estaciones de un mismo píxel
+# comparten la curva del satélite). Se aísla la semilla para no mover los remuestreos de 5.5.
+filas_pix <- split(which(ent), pares$celda[ent])
+boot_ef_pix <- con_semilla(20261124, replicate(B_BOOT_EF, {
+  f <- unlist(filas_pix[sample(length(filas_pix), replace = TRUE)], use.names = FALSE)
+  Z <- diseno(f); efectos_de(solve(crossprod(Z) + LAMBDA * penal(), crossprod(Z, S[f, , drop = FALSE])))
+}))
+ef_lo_p <- apply(boot_ef_pix, c(1, 2), quantile, .025); ef_hi_p <- apply(boot_ef_pix, c(1, 2), quantile, .975)
+bandas_ef_pix <- data.table(efecto = rep(bandas_ef$efecto, 2), bloque = rep(c(sprintf("estaciones (%d)", length(filas_est)), sprintf("píxeles (%d)", length(filas_pix))), each = 3),
+                            dias_banda_excluye_0 = c(colSums(ef_lo > 0 | ef_hi < 0), colSums(ef_lo_p > 0 | ef_hi_p < 0)),
+                            dias_banda_excluye_1 = c(sum(ef_lo[, 1] > 1 | ef_hi[, 1] < 1), NA, NA, sum(ef_lo_p[, 1] > 1 | ef_hi_p[, 1] < 1), NA, NA),
+                            ancho_medio_banda = round(c(colMeans(ef_hi - ef_lo), colMeans(ef_hi_p - ef_lo_p)), 3))
+print(tabla_f(bandas_ef_pix, "F5_efectos_bandas_estaciones_vs_pixeles"))
 tabla_f(data.table(dia = T_DIA, ef_obs, inf = ef_lo, sup = ef_hi), "F5_efectos_bandas_por_dia")
 grafico_base("F5_efectos", function() {
   par(mfrow = c(1, 3))
@@ -3258,7 +3275,8 @@ titulo("5.5 Evaluación en prueba (2001-2003) con las métricas de la rúbrica")
 # Las cuatro métricas de la rúbrica 4.4, por curva:
 #   - error L² relativo  = ||ŷ - y|| / ||y||   (y además el error integrado L² en mm/día)
 #   - KGE
-#   - sesgo del acumulado anual en %
+#   - sesgo del acumulado anual en % (la métrica de la rúbrica se calcula sobre la predicción
+#     en mm/día; no se modela la lluvia acumulada)
 #   - error en la fecha de los dos picos (días)
 # IC del 95 % por bootstrap de ESTACIONES (2 000 remuestreos): las curvas de una
 # misma estación no son independientes. Prueba de Wilcoxon pareada por estación.
@@ -3322,6 +3340,36 @@ setcolorder(por_fase, c("particion", "fase", "anios")); setorder(por_fase, -part
 print(tabla_f(por_fase, "F5_metricas_por_fase_ENSO"))
 por_anio_pru <- metricas_curva[, .(curvas = .N, L2_relativo = round(mean(l2_rel), 3), KGE = round(mean(kge), 2), sesgo_anual_pct = round(mean(sesgo_pct), 1)), by = .(anio, fase, modelo)]
 print(tabla_f(por_anio_pru[order(anio, modelo)], "F5_metricas_prueba_por_anio"))
+
+# Sensibilidad de la comparación con el satélite: el PÍXEL como unidad del bootstrap y del Wilcoxon.
+dif_pareada <- function(tab, unidad, m1, m0, v, mejor_si_baja = TRUE, absoluto = FALSE) {
+  w <- dcast(tab[modelo %in% c(m1, m0), .(x = mean(get(v))), by = c("modelo", unidad)], as.formula(paste(unidad, "~ modelo")), value.var = "x")
+  a <- w[[m1]]; s0 <- w[[m0]]; if (absoluto) { a <- abs(a); s0 <- abs(s0) }
+  d <- a - s0; q <- quantile(replicate(N_BOOT, mean(sample(d, replace = TRUE))), c(.025, .975))
+  data.table(comparacion = paste(m1, "-", m0), unidad = unidad, unidades = length(d), metrica = if (absoluto) paste0("|", v, "|") else v,
+             modelo_1 = round(mean(a), 3), modelo_0 = round(mean(s0), 3), diferencia = round(mean(d), 3), ic_inf = round(q[1], 3), ic_sup = round(q[2], 3),
+             p_wilcoxon = signif(wilcox.test(a, s0, paired = TRUE)$p.value, 2), ic_excluye_0 = q[1] > 0 | q[2] < 0, gana_modelo_1 = if (mejor_si_baja) mean(d) < 0 else mean(d) > 0)
+}
+seis_metricas <- function(tab, unidad, m1, m0) rbind(dif_pareada(tab, unidad, m1, m0, "l2_rel"), dif_pareada(tab, unidad, m1, m0, "rmse"), dif_pareada(tab, unidad, m1, m0, "kge", FALSE),
+                                                     dif_pareada(tab, unidad, m1, m0, "sesgo_pct", absoluto = TRUE), dif_pareada(tab, unidad, m1, m0, "err_pico_1"), dif_pareada(tab, unidad, m1, m0, "err_pico_2"))
+mc_pix <- copy(metricas_curva)[, celda := pares$celda[match(paste(codigo, anio), paste(pares$codigo, pares$anio))]]
+pareada_pix <- con_semilla(20261125, seis_metricas(mc_pix, "celda", "Regresión funcional", "Satélite sin corregir"))
+print(tabla_f(pareada_pix, "F5_regresion_vs_satelite_por_pixel"))
+
+titulo("5.5c Regresión concurrente (4.4) frente a la de función a función, en prueba")
+# La concurrente usa solo el mismo día del satélite; la de función a función, todo su año
+# (beta(s,t)). Se evalúan las dos en las mismas 370 curvas de prueba, con las mismas métricas,
+# IC bootstrap por estación y Wilcoxon pareado por estación. Mide qué aporta mirar el resto del
+# año del satélite (por ejemplo, el arranque tardío de la primera temporada).
+stopifnot(identical(concurrente$i_pru, i_pru))
+met_conc <- rbind(metricas_curva[modelo %in% c("Satélite sin corregir", "Regresión funcional")],
+                  metricas_de(concurrente$P_mm$A_pru, i_pru, "Concurrente A (clase)"), metricas_de(concurrente$P_mm$B_pru, i_pru, "Concurrente B (+ altitud y ONI)"))
+tabla_conc <- con_semilla(20261126, met_conc[, resumir(.SD), by = modelo])
+print(tabla_f(tabla_conc, "F5_concurrente_vs_funcion_a_funcion"))
+pareada_conc <- con_semilla(20261127, rbind(seis_metricas(met_conc, "codigo", "Concurrente A (clase)", "Satélite sin corregir"),
+                                            seis_metricas(met_conc, "codigo", "Regresión funcional", "Concurrente A (clase)"),
+                                            seis_metricas(met_conc, "codigo", "Regresión funcional", "Concurrente B (+ altitud y ONI)")))
+print(tabla_f(pareada_conc, "F5_concurrente_vs_funcion_a_funcion_pareado"))
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ┃ RÚBRICA 4.2 / regla de clase — Contraste con los métodos de regresión vistos en clase
@@ -3642,6 +3690,21 @@ cat("Archivos para Python en", dir_py, ":", paste(list.files(dir_py), collapse =
 #   0,439 frente a 0,434; sesgo 8,9 % frente a 7,4 %) en 79 de 137 estaciones
 #   (Wilcoxon p = 0,003). Quitar esos años no ayuda: confirma con
 #   datos la indicación del profesor (D-47).
+#   Píxeles: con el píxel como bloque del bootstrap (148 en entrenamiento) las
+#   bandas de los efectos casi no cambian (ancho medio 0,43 frente a 0,42 en la
+#   integral de beta; el ONI sigue excluyendo el 0 en 360 días). En prueba, con
+#   los 120 píxeles como unidad, la regresión sigue superando al satélite en L²,
+#   RMSE, KGE, sesgo y primer pico (IC sin el 0); en el segundo pico sigue sin
+#   diferencia (p = 0,06). Las estaciones que comparten píxel no cambian nada.
+#   Concurrente frente a función a función (5.5c): en L², RMSE y KGE empatan
+#   (0,44 y 0,47; IC de la diferencia con el 0). La de función a función gana en
+#   el sesgo anual (7 % frente a 11 % de media; 25 % frente a 29 % en valor
+#   absoluto por estación, IC sin el 0) y sobre todo en la fecha del segundo
+#   pico: 17 días frente a 23. La concurrente, que solo mira el mismo día,
+#   empeora ese pico 5 días frente al satélite crudo; beta(s,t) usa el resto del
+#   año del satélite y lo mantiene en 17 días (18 el satélite). Por eso la
+#   referencia lineal de la red es la de función a función, como pide el
+#   enunciado; la concurrente queda en la fase 3 para leer b1(t) y R²(t).
 #   La reconstrucción en mm es no negativa y solo 0,02 % de los valores se
 #   recorta en 0.
 #   Esta regresión es la referencia lineal. La red funcional (codificador con W,
@@ -3702,6 +3765,8 @@ pruebas <- list(
   "Equivalencia beta(s,t) vs puntajes FPCA (<= 1e-4)" = dif_equiv <= 1e-4,
   "La reconstrucción en mm no es negativa" = min(modelos[["Regresión funcional"]]) >= 0,
   "Bootstrap con al menos 1000 remuestreos" = N_BOOT >= 1000,
+  "La concurrente y la función a función se evalúan en las mismas curvas de prueba, con reconstrucción no negativa" =
+    identical(concurrente$i_pru, i_pru) && min(concurrente$P_mm$A_pru, concurrente$P_mm$B_pru) >= 0,
   "Regresión concurrente: b1(t) por año = lm(), ecuaciones normales = mínimos cuadrados directos, sin fuga, rugosidad nula en una recta, b1 lineal con lambda enorme, reconstrucción no negativa y bootstrap suficiente" = all(concurrente$pruebas),
   "ANOVA funcional: SSE_n = (n-k) tr(γ̂) y, con k = 2, F(t) = t² (clase, ejercicio 1)" = all(chequeo_anova < 1e-8),
   "Bandas por bootstrap de estaciones y permutación del satélite con réplicas suficientes" = B_BOOT_EF >= 500 && B_FPERM >= 200 && B_PERM >= 1000,
