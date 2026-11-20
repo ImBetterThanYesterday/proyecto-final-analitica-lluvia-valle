@@ -125,7 +125,7 @@ Hay dos ajustes con evidencia de mejora que aún no se aplican: ancho 5 y G = 3,
 | Semillas | 2026, 2027 y 2028 |
 | Resultado (semilla 2026) | L² relativo en validación 0,417875, en la época 107 |
 
-Todos los valores se justificaron en la auditoría de parámetros (`AUDITORIA_PARAMETROS_KAN_JACOBO.md`).
+Todos los valores se justificaron en la auditoría de parámetros (`AUDITORIA_PARAMETROS_KAN.md`).
 
 ### 0.6 Cómo leer las gráficas que siguen
 
@@ -334,8 +334,8 @@ Todos los valores se justificaron en la auditoría de parámetros (`AUDITORIA_PA
 ## Archivos
 
 **Scripts (en `KAN/codigo/`):**
-- `interpretabilidad_kan_jacobo.py oficial`: genera G1–G7. Con `federico` se reproduce la versión anterior (D² = 100).
-- `bspline_estilo_clase_kan_jacobo.py oficial`: genera G8.
+- `interpretabilidad_kan.py oficial`: genera G1–G7. Con `federico` se reproduce la versión anterior (D² = 100).
+- `bspline_estilo_clase_kan.py oficial`: genera G8.
 
 **Salidas (en `KAN/salidas/interpretabilidad_oficial/`):**
 - las figuras G1–G8;

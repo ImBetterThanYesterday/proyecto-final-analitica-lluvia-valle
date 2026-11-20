@@ -5,7 +5,7 @@ bloque fuera, igual que el protocolo de validacion del proyecto. La prueba 2001-
 El bloque 1996-2000 reproduce la particion original.
 
 Uso desde KAN/codigo:
-    python -X utf8 cv_bloques_kan_jacobo.py <trabajador> <n_trabajadores>
+    python -X utf8 cv_bloques_kan.py <trabajador> <n_trabajadores>
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from kan_variantes_core import (
     DATA, K_E, K_S, LAMBDA_W, LR, M, MAX_EPOCHS, N_ENCODER, PATIENCE, R_S_T, ROOT, SEEDS, W_E_T, W_S_T,
     X_T, Y_T, EXTRA_T, KAN, FunctionalKAN,
 )
-from experimentos_kan_jacobo import CabezaResidual, CabezaSimple
+from experimentos_kan import CabezaResidual, CabezaSimple
 
 SALIDA = ROOT / "KAN" / "salidas" / "cv_bloques"
 N_IN = N_ENCODER + 2

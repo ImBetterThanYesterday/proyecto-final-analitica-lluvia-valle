@@ -18,12 +18,12 @@ from scipy.stats import wilcoxon
 
 import kan_variantes_core as core
 from kan_variantes_core import EXTRA_T, X_T
-import analizar_propuestas_nuevas_kan_jacobo as an
-from bsplines_kan_jacobo import entradas_de_capas, entrenar_o_cargar
-from bspline_estilo_clase_kan_jacobo import panel
-from cv_bloques_kan_jacobo import ANIO, BLOQUES
-from cv_propuestas_nuevas_kan_jacobo import PROPUESTAS, construir
-from interpretabilidad_kan_jacobo import OCULTAS, SALIDAS
+import analizar_propuestas_nuevas_kan as an
+from bsplines_kan import entradas_de_capas, entrenar_o_cargar
+from bspline_estilo_clase_kan import panel
+from cv_bloques_kan import ANIO, BLOQUES
+from cv_propuestas_nuevas_kan import PROPUESTAS, construir
+from interpretabilidad_kan import OCULTAS, SALIDAS
 
 BASE = an.BASE
 FED = an.FED

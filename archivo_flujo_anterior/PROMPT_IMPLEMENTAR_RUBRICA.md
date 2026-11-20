@@ -41,7 +41,7 @@ Si ninguna referencia de Jacobo existe localmente, no intentes conectarte al ser
 
 ### 3. Actualiza primero esta matriz viva
 
-Crea `docs/SEGUIMIENTO_RUBRICA_JACOBO.md` y conserva ahí la tabla siguiente. **Actualízala después de cada lote**, incluyendo evidencia/rutas y pruebas. Estados permitidos: `PENDIENTE`, `EN PROGRESO`, `VERIFICADO`, `BLOQUEADO`. Solo escribe `VERIFICADO` si se ejecutó el cálculo o test descrito y dejó evidencia reproducible. No uses casillas marcadas solo porque exista código.
+Crea `docs/SEGUIMIENTO_RUBRICA.md` y conserva ahí la tabla siguiente. **Actualízala después de cada lote**, incluyendo evidencia/rutas y pruebas. Estados permitidos: `PENDIENTE`, `EN PROGRESO`, `VERIFICADO`, `BLOQUEADO`. Solo escribe `VERIFICADO` si se ejecutó el cálculo o test descrito y dejó evidencia reproducible. No uses casillas marcadas solo porque exista código.
 
 | Criterio / peso | Meta concreta para aspirar a 5 | Hecho comprobado al iniciar | Falta / no hecho | Librerías: requisito y evidencia | Prueba/evidencia que cerrará el criterio | Estado inicial |
 |---|---|---|---|---|---|---|
@@ -75,7 +75,7 @@ Incluye una columna adicional o sección **“Historial de cambios de estado”*
 ### 5. Contrato de salida por lote
 
 Al cerrar cada lote:
-- Actualiza `docs/SEGUIMIENTO_RUBRICA_JACOBO.md` con estado y evidencia.
+- Actualiza `docs/SEGUIMIENTO_RUBRICA.md` con estado y evidencia.
 - Entrega lista de archivos modificados, comandos ejecutados y sus resultados reales.
 - Reporta criterios `VERIFICADO`, `PENDIENTE` y `BLOQUEADO` por separado.
 - Explica discrepancias que cambien universo, K o conclusiones.

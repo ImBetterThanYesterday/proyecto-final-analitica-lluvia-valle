@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 import kan_variantes_core as core
 from kan_variantes_core import DATA, EXTRA_T, X_T, KANLayer, _indices
-from experimentos_kan_jacobo import entrenar, red_con_cabeza
+from experimentos_kan import entrenar, red_con_cabeza
 
 SALIDA = core.ROOT / "KAN" / "salidas" / "bsplines"
 SALIDA.mkdir(parents=True, exist_ok=True)

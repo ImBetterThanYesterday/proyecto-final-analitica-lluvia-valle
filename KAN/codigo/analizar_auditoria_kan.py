@@ -7,7 +7,7 @@ alternativo solo es candidato a cambio si el IC de su diferencia frente al ofici
 a su favor; si empata, se mantiene el oficial o el mas simple.
 
 Uso desde KAN/codigo:
-    python -X utf8 analizar_auditoria_kan_jacobo.py
+    python -X utf8 analizar_auditoria_kan.py
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import wilcoxon
 
 import kan_variantes_core as core
-from auditoria_parametros_kan_jacobo import OFICIAL, SALIDA, VARIANTES, cfg_de
+from auditoria_parametros_kan import OFICIAL, SALIDA, VARIANTES, cfg_de
 
 DIAS = np.arange(1, 366, dtype=float)
 COLS = [f"c{i + 1}" for i in range(core.K_E)]

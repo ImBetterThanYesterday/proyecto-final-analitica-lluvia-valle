@@ -7,8 +7,8 @@ la fraccion de entradas de cada capa fuera de la rejilla y cuanto se alejan sus 
 (1 - R2 de un ajuste lineal de phi(x) sobre los datos).
 
 Uso desde KAN/codigo:
-    python -X utf8 auditoria_parametros_kan_jacobo.py correr <trabajador> <n_trabajadores> [codigos...]
-    python -X utf8 auditoria_parametros_kan_jacobo.py verificar
+    python -X utf8 auditoria_parametros_kan.py correr <trabajador> <n_trabajadores> [codigos...]
+    python -X utf8 auditoria_parametros_kan.py verificar
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ import torch
 
 import kan_variantes_core as core
 from kan_variantes_core import DATA, K_E, K_S, R_S_T, ROOT, SEEDS, W_E_T, W_S_T, X_T, Y_T, EXTRA_T
-from cv_bloques_kan_jacobo import ANIO, BLOQUES, FILAS_ELEGIBLES
+from cv_bloques_kan import ANIO, BLOQUES, FILAS_ELEGIBLES
 
 BASE = ROOT / "KAN" / "salidas"
 SALIDA = BASE / "auditoria_kan"

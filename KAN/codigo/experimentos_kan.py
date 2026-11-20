@@ -5,7 +5,7 @@ B. KAN residual: cabeza = lineal + KAN que arranca en cero.
 R. Referencias con el mismo codificador: cabeza lineal y MLP con parametros igualados.
 
 Uso desde la raiz del proyecto:
-    python -X utf8 experimentos_kan_jacobo.py <trabajador> <n_trabajadores>
+    python -X utf8 experimentos_kan.py <trabajador> <n_trabajadores>
 """
 
 from __future__ import annotations

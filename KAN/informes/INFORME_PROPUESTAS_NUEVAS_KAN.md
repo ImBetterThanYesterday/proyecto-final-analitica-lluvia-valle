@@ -4,7 +4,7 @@ Fecha: 17-nov-2026. Rama de trabajo: `gus-cierre-funcional`. Solo se usan los a�
 
 ## 1. Punto de partida
 
-El informe anterior (`INFORME_EXPERIMENTOS_KAN_JACOBO.md`) dejó como ganadora la **KAN de Federico [10,4,6], G=5, D²=100**, con L² de validación cruzada de 0,4293. El análisis de interpretabilidad (`LEEME_INTERPRETABILIDAD.md`) le encontró tres debilidades:
+El informe anterior (`INFORME_EXPERIMENTOS_KAN.md`) dejó como ganadora la **KAN de Federico [10,4,6], G=5, D²=100**, con L² de validación cruzada de 0,4293. El análisis de interpretabilidad (`LEEME_INTERPRETABILIDAD.md`) le encontró tres debilidades:
 
 | Debilidad | Evidencia | Gráfica |
 |---|---|---|
@@ -140,16 +140,16 @@ Medido en el bloque 1996–2000 con la semilla 2026 (tabla en `nuevas_uso_rejill
 Desde `KAN/codigo/`, con el entorno `.venv` del proyecto:
 
 ```
-python -X utf8 cv_propuestas_nuevas_kan_jacobo.py 0 4   (y 1 4, 2 4, 3 4 en paralelo)
-python -X utf8 analizar_propuestas_nuevas_kan_jacobo.py
-python -X utf8 figuras_propuestas_nuevas_kan_jacobo.py
+python -X utf8 cv_propuestas_nuevas_kan.py 0 4   (y 1 4, 2 4, 3 4 en paralelo)
+python -X utf8 analizar_propuestas_nuevas_kan.py
+python -X utf8 figuras_propuestas_nuevas_kan.py
 ```
 
 | Archivo | Contenido |
 |---|---|
-| `cv_propuestas_nuevas_kan_jacobo.py` | Define N1–N7 y corre los 84 entrenamientos |
-| `analizar_propuestas_nuevas_kan_jacobo.py` | Tabla de la sección 3 y figura 4 |
-| `figuras_propuestas_nuevas_kan_jacobo.py` | Ensambles (sección 4), uso de la rejilla (sección 5), figuras 5 y 6 |
+| `cv_propuestas_nuevas_kan.py` | Define N1–N7 y corre los 84 entrenamientos |
+| `analizar_propuestas_nuevas_kan.py` | Tabla de la sección 3 y figura 4 |
+| `figuras_propuestas_nuevas_kan.py` | Ensambles (sección 4), uso de la rejilla (sección 5), figuras 5 y 6 |
 | `KAN/salidas/cv_nuevas/` | Predicciones de cada entrenamiento y modelos guardados del bloque 1996–2000 |
 | `nuevas_resumen.csv`, `nuevas_L2_por_bloque_y_semilla.csv` | Resultados individuales |
 | `nuevas_ensambles.csv`, `nuevas_uso_rejilla.csv` | Ensambles y uso de la rejilla |

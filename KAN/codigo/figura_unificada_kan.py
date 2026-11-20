@@ -11,7 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-from bsplines_kan_jacobo import ENTRADAS, OCULTAS, SALIDA, capas_kan, entradas_de_capas, entrenar_o_cargar, funcion_arista
+from bsplines_kan import ENTRADAS, OCULTAS, SALIDA, capas_kan, entradas_de_capas, entrenar_o_cargar, funcion_arista
 
 BLOQUES = [("base", "KAN base [10,4,6] G=5, sin D²", "#777777"),
            ("federico", "KAN [10,4,6] G=5, D²=100 (Federico)", "#2f5fa8")]

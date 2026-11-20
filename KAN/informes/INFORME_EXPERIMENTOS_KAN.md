@@ -188,10 +188,10 @@ Desde la raíz del repositorio, con PyTorch en CPU:
 
 ```powershell
 cd KAN/codigo
-foreach ($w in 0..3) { Start-Process python -ArgumentList "-X utf8 experimentos_kan_jacobo.py $w 4" -NoNewWindow }
-python -X utf8 analizar_experimentos_kan_jacobo.py
-foreach ($w in 0..3) { Start-Process python -ArgumentList "-X utf8 cv_bloques_kan_jacobo.py $w 4" -NoNewWindow }
-python -X utf8 analizar_cv_bloques_kan_jacobo.py
+foreach ($w in 0..3) { Start-Process python -ArgumentList "-X utf8 experimentos_kan.py $w 4" -NoNewWindow }
+python -X utf8 analizar_experimentos_kan.py
+foreach ($w in 0..3) { Start-Process python -ArgumentList "-X utf8 cv_bloques_kan.py $w 4" -NoNewWindow }
+python -X utf8 analizar_cv_bloques_kan.py
 ```
 
 La validación cruzada tarda unos 50 minutos con 4 procesos.

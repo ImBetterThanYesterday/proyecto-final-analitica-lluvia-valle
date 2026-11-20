@@ -214,9 +214,9 @@ Lectura:
 ## 9. Archivos
 
 **Scripts (en `KAN/codigo/`):**
-- `auditoria_parametros_kan_jacobo.py`: entrena las variantes y hace la verificación del paso 0.
+- `auditoria_parametros_kan.py`: entrena las variantes y hace la verificación del paso 0.
   - Uso: `correr <trabajador> <n> [códigos]` y `verificar`.
-- `analizar_auditoria_kan_jacobo.py`: produce las tablas y la figura.
+- `analizar_auditoria_kan.py`: produce las tablas y la figura.
 
 **Salidas (en `KAN/salidas/auditoria_kan/`):**
 - `paso0_equivalencia.csv` y `paso0_equivalencia_por_ajuste.csv`: reproducción de la KAN oficial.

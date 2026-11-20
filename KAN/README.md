@@ -19,11 +19,11 @@ KAN/
 | # | Etapa | Informe | Qué se concluyó |
 |---|---|---|---|
 | 0 | Propuestas de Federico | `informes/PROPUESTAS_FEDERICO_README.md` | Punto de partida: barrido de un parámetro a la vez con validación 1996–2000. Destacan G = 3 y la penalización D² |
-| 1 | Experimentos complementarios (16-nov) | `informes/INFORME_EXPERIMENTOS_KAN_JACOBO.md` | Se combinan ancho, G y D², se prueba una KAN residual y se compara con MLP igualados. Con validación cruzada gana la KAN [10,4,6] G=5 D²=100 (0,429); la residual se descarta |
-| 2 | Propuestas KAN nuevas (17-nov) | `informes/INFORME_PROPUESTAS_NUEVAS_KAN_JACOBO.md` | Estandarizar las neuronas ocultas corrige que la capa 2 caiga fuera de la rejilla. El promedio Federico + N6 mejora (0,415), pero es un ensamble |
-| 3 | MLP y ablación oficial (17-nov) | `informes/INFORME_PROPUESTAS_MLP_JACOBO.md` | Se fija la **KAN oficial sin regularizar** (0,4397). 13 de 14 MLP del mismo tamaño la superan por poco: la interpretabilidad cuesta 0,007 (1,6 % del error) y la KAN conserva el 73 % de la ganancia no lineal sobre la cabeza lineal (0,4588) |
-| 4 | Interpretabilidad de la KAN oficial (18-nov) | `informes/INFORME_INTERPRETABILIDAD_KAN_OFICIAL_JACOBO.md` | Gráficas G1–G8: las splines tienen forma (umbrales, campanas) y se identifica qué neurona lleva el nivel de lluvia, las temporadas y el ONI |
-| 5 | Auditoría de parámetros (18-nov) | `informes/AUDITORIA_PARAMETROS_KAN_JACOBO.md` | 31 variantes de 13 parámetros, 372 ajustes. 10 de 13 parámetros quedan justificados. Candidatos a cambio: **ancho oculto 5** y **G = 3** |
+| 1 | Experimentos complementarios (16-nov) | `informes/INFORME_EXPERIMENTOS_KAN.md` | Se combinan ancho, G y D², se prueba una KAN residual y se compara con MLP igualados. Con validación cruzada gana la KAN [10,4,6] G=5 D²=100 (0,429); la residual se descarta |
+| 2 | Propuestas KAN nuevas (17-nov) | `informes/INFORME_PROPUESTAS_NUEVAS_KAN.md` | Estandarizar las neuronas ocultas corrige que la capa 2 caiga fuera de la rejilla. El promedio Federico + N6 mejora (0,415), pero es un ensamble |
+| 3 | MLP y ablación oficial (17-nov) | `informes/INFORME_PROPUESTAS_MLP.md` | Se fija la **KAN oficial sin regularizar** (0,4397). 13 de 14 MLP del mismo tamaño la superan por poco: la interpretabilidad cuesta 0,007 (1,6 % del error) y la KAN conserva el 73 % de la ganancia no lineal sobre la cabeza lineal (0,4588) |
+| 4 | Interpretabilidad de la KAN oficial (18-nov) | `informes/INFORME_INTERPRETABILIDAD_KAN_OFICIAL.md` | Gráficas G1–G8: las splines tienen forma (umbrales, campanas) y se identifica qué neurona lleva el nivel de lluvia, las temporadas y el ONI |
+| 5 | Auditoría de parámetros (18-nov) | `informes/AUDITORIA_PARAMETROS_KAN.md` | 31 variantes de 13 parámetros, 372 ajustes. 10 de 13 parámetros quedan justificados. Candidatos a cambio: **ancho oculto 5** y **G = 3** |
 
 ## La KAN oficial
 
@@ -58,14 +58,14 @@ El siguiente paso propuesto está en la sección 7 de la auditoría: una ronda d
 | `kan_variantes_core.py` | todas | Datos, codificador, capa KAN, entrenamiento y métricas compartidos |
 | `comparar_parametros_kan.py`, `evaluar_parametros_kan.R` | 0 | Barrido de Federico (un parámetro a la vez) y su métrica en R |
 | `lluvia_valle_red_kan_rugosidad.py`, `lluvia_valle_red_kan_g3.py` | 0 | Las dos propuestas de Federico que siguieron adelante (D² y G = 3) |
-| `experimentos_kan_jacobo.py`, `analizar_experimentos_kan_jacobo.py` | 1 | Combinaciones, KAN residual y referencias (validación 1996–2000) |
-| `cv_bloques_kan_jacobo.py`, `analizar_cv_bloques_kan_jacobo.py` | 1 | Validación cruzada por bloques de los finalistas |
-| `bsplines_kan_jacobo.py` | 1–2 | Gráficas de las B-splines de cada capa |
-| `cv_propuestas_nuevas_kan_jacobo.py`, `analizar_propuestas_nuevas_kan_jacobo.py`, `figuras_propuestas_nuevas_kan_jacobo.py` | 2 | Propuestas N1–N7 y ensambles |
-| `cv_mlp_jacobo.py`, `analizar_mlp_jacobo.py`, `figuras_mlp_jacobo.py`, `analizar_ablacion_oficial_jacobo.py` | 3 | Las 49 propuestas MLP (rondas r1–r5) y la ablación oficial |
-| `interpretabilidad_kan_jacobo.py`, `bspline_estilo_clase_kan_jacobo.py` | 4 | Gráficas G1–G8 (`oficial` o `federico` como argumento) |
-| `auditoria_parametros_kan_jacobo.py`, `analizar_auditoria_kan_jacobo.py` | 5 | Auditoría de parámetros y su verificación (paso 0) |
-| `figura_unificada_kan_jacobo.py` | 1–2 | Funciones de la capa 1: KAN base frente a D² = 100 (`bsplines/B2_...png`) |
+| `experimentos_kan.py`, `analizar_experimentos_kan.py` | 1 | Combinaciones, KAN residual y referencias (validación 1996–2000) |
+| `cv_bloques_kan.py`, `analizar_cv_bloques_kan.py` | 1 | Validación cruzada por bloques de los finalistas |
+| `bsplines_kan.py` | 1–2 | Gráficas de las B-splines de cada capa |
+| `cv_propuestas_nuevas_kan.py`, `analizar_propuestas_nuevas_kan.py`, `figuras_propuestas_nuevas_kan.py` | 2 | Propuestas N1–N7 y ensambles |
+| `cv_mlp.py`, `analizar_mlp.py`, `figuras_mlp.py`, `analizar_ablacion_oficial.py` | 3 | Las 49 propuestas MLP (rondas r1–r5) y la ablación oficial |
+| `interpretabilidad_kan.py`, `bspline_estilo_clase_kan.py` | 4 | Gráficas G1–G8 (`oficial` o `federico` como argumento) |
+| `auditoria_parametros_kan.py`, `analizar_auditoria_kan.py` | 5 | Auditoría de parámetros y su verificación (paso 0) |
+| `figura_unificada_kan.py` | 1–2 | Funciones de la capa 1: KAN base frente a D² = 100 (`bsplines/B2_...png`) |
 
 Todos los scripts se corren desde `KAN/codigo/` con el entorno `.venv` del proyecto y leen los insumos de `salidas_R_funcional/para_python/`. Cada informe trae al final sus comandos.
 

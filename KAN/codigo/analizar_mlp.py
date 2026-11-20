@@ -1,7 +1,7 @@
 """Compara las propuestas de cabeza MLP de todas las rondas con la KAN de Federico (validacion cruzada por bloques).
 
 Uso desde KAN/codigo:
-    python -X utf8 analizar_mlp_jacobo.py [figura]
+    python -X utf8 analizar_mlp.py [figura]
 """
 
 from __future__ import annotations

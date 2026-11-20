@@ -1,6 +1,6 @@
 """Graficas de interpretabilidad de la KAN pedidas en la asesoria (semilla 2026).
 
-Uso: python -X utf8 interpretabilidad_kan_jacobo.py [federico|oficial]
+Uso: python -X utf8 interpretabilidad_kan.py [federico|oficial]
 federico = KAN [10,4,6] G=5 D2=100 (carpeta interpretabilidad); oficial = KAN oficial [10,4,6] G=5 sin D2,
 identica a entrenar_kan_base_oficial.py (carpeta interpretabilidad_oficial).
 
@@ -27,8 +27,8 @@ from matplotlib.lines import Line2D
 
 import kan_variantes_core as core
 from kan_variantes_core import DATA, EXTRA_T, X_T, Y_T, KAN, FunctionalKAN, _indices
-from experimentos_kan_jacobo import red_con_cabeza
-from bsplines_kan_jacobo import SALIDA as DIR_MODELOS, capas_kan, entrenar_o_cargar
+from experimentos_kan import red_con_cabeza
+from bsplines_kan import SALIDA as DIR_MODELOS, capas_kan, entrenar_o_cargar
 
 CONFIG = {"federico": ("interpretabilidad", "federico", "KAN [10,4,6] G=5 D²=100", 100.0),
           "oficial": ("interpretabilidad_oficial", "base", "KAN oficial [10,4,6] G=5 sin D²", 0.0)}

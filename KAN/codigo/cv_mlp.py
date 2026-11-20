@@ -6,7 +6,7 @@ Herramientas de clase: ancho y profundidad, funcion de activacion, penalizacion 
 dropout, tasa de aprendizaje y mini-lotes.
 
 Uso desde KAN/codigo:
-    python -X utf8 cv_mlp_jacobo.py <ronda> <trabajador> <n_trabajadores>
+    python -X utf8 cv_mlp.py <ronda> <trabajador> <n_trabajadores>
 """
 
 from __future__ import annotations
@@ -20,8 +20,8 @@ import torch
 
 import kan_variantes_core as core
 from kan_variantes_core import K_E, K_S, LAMBDA_W, M, MAX_EPOCHS, N_ENCODER, PATIENCE, R_S_T, ROOT, SEEDS, W_S_T, X_T, EXTRA_T, KAN
-from cv_bloques_kan_jacobo import ANIO, BLOQUES, FILAS_ELEGIBLES, RedPliegue, perdida
-from experimentos_kan_jacobo import CabezaSimple
+from cv_bloques_kan import ANIO, BLOQUES, FILAS_ELEGIBLES, RedPliegue, perdida
+from experimentos_kan import CabezaSimple
 
 SALIDA = ROOT / "KAN" / "salidas" / "cv_mlp"
 N_IN = N_ENCODER + 2

@@ -8,7 +8,7 @@ Cambios respecto a la KAN de Federico ([10,4,6], G=5, D2=100, lr=0.01), todos co
 Para el bloque 1996-2000 (particion original) se guardan los modelos para graficarlos despues.
 
 Uso desde KAN/codigo:
-    python -X utf8 cv_propuestas_nuevas_kan_jacobo.py <trabajador> <n_trabajadores>
+    python -X utf8 cv_propuestas_nuevas_kan.py <trabajador> <n_trabajadores>
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ import torch
 
 import kan_variantes_core as core
 from kan_variantes_core import K_E, K_S, LAMBDA_W, M, MAX_EPOCHS, N_ENCODER, PATIENCE, R_S_T, ROOT, SEEDS, W_E_T, W_S_T, X_T, EXTRA_T, KAN
-from cv_bloques_kan_jacobo import ANIO, BLOQUES, FILAS_ELEGIBLES, RedPliegue, perdida
+from cv_bloques_kan import ANIO, BLOQUES, FILAS_ELEGIBLES, RedPliegue, perdida
 
 SALIDA = ROOT / "KAN" / "salidas" / "cv_nuevas"
 N_IN = N_ENCODER + 2

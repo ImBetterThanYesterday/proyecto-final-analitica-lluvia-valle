@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 
 import kan_variantes_core as core
 from kan_variantes_core import EXTRA_T, LAMBDA_W, MAX_EPOCHS, PATIENCE, R_S_T, W_S_T, X_T
-from cv_bloques_kan_jacobo import ANIO, BLOQUES, perdida
-from cv_mlp_jacobo import RONDAS, cfg_completa, construir, penalizacion_l2
+from cv_bloques_kan import ANIO, BLOQUES, perdida
+from cv_mlp import RONDAS, cfg_completa, construir, penalizacion_l2
 
 BASE = core.ROOT / "KAN" / "salidas"
 SEMILLA = 2026

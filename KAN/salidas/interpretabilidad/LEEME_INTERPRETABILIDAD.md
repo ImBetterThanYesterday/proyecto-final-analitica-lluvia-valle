@@ -1,6 +1,6 @@
 # Interpretabilidad de la KAN: gráficas pedidas en la asesoría
 
-Modelo: KAN [10,4,6], G=5, D²=100 (la ganadora de la validación cruzada), semilla 2026. Solo se usan entrenamiento y validación (1981–2000); la prueba 2001–2003 no se toca. Script: `Propuestas_KAN/interpretabilidad_kan_jacobo.py`.
+Modelo: KAN [10,4,6], G=5, D²=100 (la ganadora de la validación cruzada), semilla 2026. Solo se usan entrenamiento y validación (1981–2000); la prueba 2001–2003 no se toca. Script: `Propuestas_KAN/interpretabilidad_kan.py`.
 
 **Cómo funciona la red, para leer las gráficas:**
 

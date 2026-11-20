@@ -121,17 +121,17 @@ La mejor regularizada, por estabilidad y simplicidad, es **M25: MLP de 3 capas d
 Desde `KAN/codigo/`, con el entorno `.venv` del proyecto:
 
 ```
-python -X utf8 cv_mlp_jacobo.py r1 0 4      (y 1 4, 2 4, 3 4 en paralelo; rondas r1 a r5)
-python -X utf8 analizar_ablacion_oficial_jacobo.py
-python -X utf8 analizar_mlp_jacobo.py figura
-python -X utf8 figuras_mlp_jacobo.py
+python -X utf8 cv_mlp.py r1 0 4      (y 1 4, 2 4, 3 4 en paralelo; rondas r1 a r5)
+python -X utf8 analizar_ablacion_oficial.py
+python -X utf8 analizar_mlp.py figura
+python -X utf8 figuras_mlp.py
 ```
 
 | Archivo | Contenido |
 |---|---|
-| `cv_mlp_jacobo.py` | Las 49 propuestas MLP por ronda. La r5 son los MLP profundos sin regularización |
-| `analizar_ablacion_oficial_jacobo.py` | Ablación oficial (sección 2), costo de la interpretabilidad y figura 9 |
-| `analizar_mlp_jacobo.py` | Todas las propuestas frente a la KAN con D²=100, pares de finalistas y figura 7 |
-| `figuras_mlp_jacobo.py` | Diagnóstico del MLP regularizado y figura 8 |
+| `cv_mlp.py` | Las 49 propuestas MLP por ronda. La r5 son los MLP profundos sin regularización |
+| `analizar_ablacion_oficial.py` | Ablación oficial (sección 2), costo de la interpretabilidad y figura 9 |
+| `analizar_mlp.py` | Todas las propuestas frente a la KAN con D²=100, pares de finalistas y figura 7 |
+| `figuras_mlp.py` | Diagnóstico del MLP regularizado y figura 8 |
 | `ablacion_oficial_resumen.csv`, `ablacion_oficial_costo_interpretabilidad.csv` | Tablas de la ablación oficial |
 | `mlp_resumen.csv`, `mlp_finalistas_pares.csv`, `mlp_diagnostico_neuronas.csv` | Tablas de la exploración con regularización |

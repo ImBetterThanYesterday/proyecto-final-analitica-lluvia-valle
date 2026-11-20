@@ -1,6 +1,6 @@
 """B-splines de las conexiones KAN al estilo de clase: puntos de control, nodos y un polinomio por intervalo.
 
-Modelo: el de interpretabilidad_kan_jacobo.py segun el argumento federico u oficial, semilla 2026.
+Modelo: el de interpretabilidad_kan.py segun el argumento federico u oficial, semilla 2026.
 """
 
 from __future__ import annotations
@@ -13,8 +13,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from bsplines_kan_jacobo import capas_kan, entradas_de_capas, entrenar_o_cargar
-from interpretabilidad_kan_jacobo import ENTRADAS, ETIQUETA, OCULTAS, SALIDAS, SALIDA, VERSION
+from bsplines_kan import capas_kan, entradas_de_capas, entrenar_o_cargar
+from interpretabilidad_kan import ENTRADAS, ETIQUETA, OCULTAS, SALIDAS, SALIDA, VERSION
 
 COLORES = plt.get_cmap("tab10").colors
 

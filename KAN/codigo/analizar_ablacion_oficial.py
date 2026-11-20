@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import wilcoxon
 
 import kan_variantes_core as core
-from cv_mlp_jacobo import RONDAS, cfg_completa
+from cv_mlp import RONDAS, cfg_completa
 
 BASE = core.ROOT / "KAN" / "salidas"
 KAN = "KAN oficial [10,4,6] G=5 (sin regularización)"

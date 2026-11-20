@@ -119,7 +119,7 @@ def reconcile(root: Path = ROOT, baseline_ref: str = "main") -> tuple[list[dict[
 
 def main() -> None:
     records, summary = reconcile()
-    out = ROOT / "docs/diff_claves_estacion_main_jacobo.csv"
+    out = ROOT / "docs/diff_claves_estacion_main.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
     fields = ["STATION_ID", "YEAR", "pertenece", "diagnostico", "anios_validos_entren", "anios_validos_1981_2003",
               "flags_locales", "cobertura", "hueco_max", "meses20"]
