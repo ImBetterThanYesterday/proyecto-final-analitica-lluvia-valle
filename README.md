@@ -1,4 +1,4 @@
-# Lluvia del Valle del Cauca 1981–2003 · Proyecto final de Analítica de Datos (UAO, 2026-2S)
+# - Lluvia del Valle del Cauca 1981–2003 · Proyecto final de Analítica de Datos (UAO, 2026-2S)
 
 La lluvia del Valle del Cauca se modela como datos funcionales: cada año de cada sitio es una curva. Hay dos fuentes:
 - estaciones con lluvia diaria;
