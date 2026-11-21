@@ -1,6 +1,27 @@
-# Auditoría de la parte funcional (`funcional/10` a `14`)
+# Auditoría de la parte funcional (hoy `lluvia_valle_funcional.R`; antes `funcional/10` a `14`)
 
 Rama `gus-auditoria-funcional`, 13-nov-2026. Se revisó el código de Jacobo y María contra el enunciado (fe de erratas), la rúbrica y los datos cerrados (D-43 a D-46). Los puntos dudosos se probaron corriendo el código; los experimentos están al final.
+
+## Estado después del cierre (13-nov-2026, D-48)
+
+Todo lo funcional quedó en un solo archivo, `lluvia_valle_funcional.R`, que reemplaza a `funcional/10` a `14`. Qué pasó con cada hallazgo:
+
+| Hallazgo | Estado | Dónde se ve |
+|---|---|---|
+| G1. Años 1985, 1988 y 2000 | ✅ Entran todos | Secciones 1 y 5.6; `F1_satelite_vs_estaciones_por_anio.csv`, `F5_sensibilidad_anios_marcados.csv` |
+| G2. Métricas de la rúbrica | ✅ Agregadas | Sección 5.5; `F5_metricas_prueba.csv`, `F5_regresion_vs_satelite_pareado.csv`, `F5_metricas_por_fase_ENSO.csv` |
+| G3. Código duplicado y seis archivos | ✅ Un archivo que lee `datos_preparados.rds` | Sección 1 |
+| I1. EDA que mezcla dos climas | ✅ Por vertiente y con anomalías | Sección 3.2; `F3_covarianza_por_vertiente_y_anomalias.csv` |
+| I2. K distinto por fuente | ✅ Verificado: no cambia las conclusiones | Sección 4.2; `F4_sensibilidad_mismo_K.csv` |
+| I3. Orden de la raíz y el suavizado | ✅ Verificado: suavizar en mm conserva el acumulado anual | Sección 5.1; `F5_orden_raiz_y_suavizado.csv` |
+| I4. K = 8 rígido | ✅ Se mantiene K = 8: la ventaja de K mayor en los picos depende de la referencia (D-51) | Sección 2; `F2_K_picos_vs_referencia.csv`, `F2_K_que_gana_por_referencia.csv` |
+| I5. Bordes | ✅ Documentado | Bloque "Qué dicen los datos" de la sección 2 |
+| I6. Dos definiciones de vertiente | ✅ Una sola: estación más cercana | Sección 1; `F1_regla_vertiente_pixeles.csv` |
+| Ventanas fijas de temporada | 🟡 Se mantienen; se reporta el % de picos en el borde de la ventana | `F2_sensibilidad_K_estaciones.csv` |
+| Píxeles compartidos | 🟡 Documentado, sin corrección | `F1_pixeles_compartidos.csv` |
+| Exportación a Python | ✅ `pares.csv` ya no lleva `defectuoso` | Sección 5.7 |
+
+Lo que sigue describe la auditoría tal como se hizo, sobre el código anterior.
 
 ## Veredicto
 

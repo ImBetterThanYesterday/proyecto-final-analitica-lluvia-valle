@@ -294,10 +294,11 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 | P-13 | Confirmado: solo estaciones dentro del Valle del Cauca. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-14 | Resuelta: se acepta la altitud de Univalle (996 m) tomada del IDEAM, porque los datos del curso también vienen del IDEAM (D-46). Respuesta del profesor (13-nov-2026) | ✅ |
 | P-15 | Respondida: hay que armar la serie y dibujarla para entender el tope. Hecho en la sección 12 (`12_serie_tope_200.png`): el tope afecta 33 de 238 224 péntadas comparables y solo 3 estaciones del Pacífico (D-47). Respuesta del profesor (13-nov-2026) | ✅ |
-| P-16 | ¿Qué "ONI del año" espera: la media de los 12 trimestres del año (lo que se usa) o un trimestre concreto (p. ej. DEF)? | ⬜ |
+| P-16 | Cerrada (D-56): el ONI del año es la media de sus 12 trimestres, salvo que el profesor indique otra cosa | ✅ |
 | P-17 | Resuelta: está bien quitar el 29 de febrero. Respuesta del profesor (13-nov-2026) | ✅ |
 | P-18 | Resuelta: el píxel que contiene la estación está bien; como el píxel es más grande que el punto, no hay que reescalar ni promediar. Respuesta del profesor (13-nov-2026) | ✅ |
-| P-19 | ¿Se pueden usar los registros de 1930–1979 solo para estimar el FPCA, aunque la fe de erratas fije 1981–2003? | ⬜ |
+| P-19 | Cerrada (D-56): no se usan los registros de 1930–1979; el FPCA de entrenamiento ya los representa | ✅ |
+| P-20 | Resuelta (D-51): K = 8 en las estaciones. La ventaja de K = 16 en la fecha de los picos dependía de la referencia elegida | ✅ |
 
 ---
 
@@ -347,7 +348,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
   2. Una estación entra si tiene ≥7 años válidos en entrenamiento: quedan **176 estaciones**, entre ellas las 6 del CNE y 12 con coordenada a revisar.
   3. Los 5 extremos sin respaldo de vecinas pasan a faltante.
   4. Los totales mensuales en un día pasan a faltante si el mes está casi vacío; si el mes está completo, deciden las vecinas.
-  5. Las rachas de ceros no se borran por regla. Las 6 se revisaron a mano:
+  5. *(Reemplazado por D-49: R4 ahora es una regla calculada.)* Las rachas de ceros no se borran por regla. Las 6 se revisaron a mano:
      - **Loboguerrero, oct–nov de 1995, pasa a faltante.** Es temporada de lluvias: la estación suele llover el 41 % de esos días, y Dagua, a 12 km en el mismo cañón, tuvo 12 días con lluvia (83 mm).
      - **Las otras 5 se mantienen.** La Despensa (ene–feb 1996) y Loboguerrero (1982, 1982–83, 1989 y 1991) caen en temporada seca o en El Niño, y la vecina del mismo cañón también estuvo casi seca.
   6. No se imputa (D-13).
@@ -541,6 +542,110 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - **Principio para la sustentación:** toda regla debe estar respaldada por resultados en el código ("¿dónde lo verifican?"). Cada regla de D-36 tiene su tabla de evidencia y una prueba automática. La revisión manual de R4 (Loboguerrero 1995) está en la tabla `5b_revision_rachas.csv`.
 - **Fecha y responsable:** 2026-11-13, Gus y Claude.
 
+### D-48 · Cierre de la parte funcional: un solo archivo, todos los años y cada decisión verificada ✅ (revisa D-37, D-39, D-40, D-41 y D-42)
+- **Un solo archivo funcional.** `lluvia_valle_funcional.R` reemplaza a `funcional/00` y `10` a `14` (quedan en el historial de git). Tiene cinco secciones: datos y emparejamiento, construcción, EDA funcional, comparación y regresión. Quien cambie algo de lo funcional lo cambia ahí.
+  - **Entrada única:** `salidas_R_datos/datos_preparados.rds`. Ya no se vuelve a leer el satélite ni a emparejar: se quitó el procesamiento duplicado de la antigua sección 10, y las 26 pruebas del archivo de datos cubren todo lo que entra.
+  - **Son dos archivos R mientras se trabaja** (`lluvia_valle_datos.R` y `lluvia_valle_funcional.R`), para no mezclar. La entrega pide un único R: se pegan uno tras otro al final, porque el segundo solo depende del `.rds` que deja el primero.
+- **Todos los años entran (D-47).** Se quitó la exclusión de 1985, 1988 y 2000 en la elección de K, la comparación y la regresión. Verificación en el código:
+  - el cociente satélite/estación de cada año sigue al ONI (r = 0,68); 1984 y 1999 se apartan tanto como los tres años marcados;
+  - sin esos años la prueba empeora (L² relativo 0,439 frente a 0,434) en 79 de 137 estaciones (Wilcoxon p = 0,003).
+- **Métricas de la rúbrica 4.4.** Error L² relativo, KGE, sesgo del acumulado anual en % y error en la fecha de los dos picos; IC del 95 % por bootstrap de estaciones (2 000 remuestreos); Wilcoxon pareado por estación; resultados por fase ENSO.
+  - Prueba 2001–2003, regresión frente al satélite sin corregir: L² relativo 0,51 → 0,44; KGE 0,38 → 0,47; sesgo anual +26 % → +7 %; pico de la primera temporada 23 → 18 días. El IC de la diferencia excluye el cero en cinco métricas; en el pico de la segunda temporada la ganancia (medio día) no es significativa.
+  - La prueba no tiene ningún año Niña. Por eso se reporta también la validación por fase, marcada como orientativa. En los años Niña 1999–2000 la regresión casi empata con el satélite y su sesgo empeora (−0,5 % → −11 %): es el punto débil de la referencia lineal.
+- **Vertiente de los píxeles: la de la estación más cercana.** El corte en la longitud −76,8° solo acierta el 88,6 % al comprobarlo con las estaciones (ningún corte pasa de 89,2 %); la estación más cercana acierta el 97,7 % dejando una fuera. Queda una sola definición para las dos fuentes: la cuenca de la CVC.
+- **K = 8 y K = 11 se mantienen (D-39),** ahora elegidos con todos los años de entrenamiento. Sensibilidad: con K = 12, 16 o 24 la fecha mediana de los picos se mueve a lo sumo 9 días y los valores negativos suben de 2 % a 5 %.
+- **Comparación con el mismo K.** Con el satélite también en K = 8, la diferencia media, la diagonal de la correlación y el cociente de varianzas casi no cambian. Las diferencias entre fuentes no salen de usar K distinto.
+- **Primero se suaviza en mm y luego se saca la raíz (D-23 se mantiene).** Ese orden conserva el acumulado anual (cociente 1,000); sacar la raíz al dato diario y luego suavizar lo reduce a un tercio (0,33).
+- **EDA por vertiente y con anomalías.** El 74 % de la varianza de las estaciones es diferencia entre sitios. Con anomalías por estación, la primera componente baja de 76 % a 29 % y abril y octubre casi no se relacionan (0,14).
+- **Regresión (revisa D-40):** M = 6 (94,2 % de la varianza, con los datos de D-49) y λ = 3,2e8, elegidos con validación con todos los años. La equivalencia β(s,t) frente a puntajes FPCA da 4e-15.
+- **Pruebas:** 12 comprobaciones automáticas al final del archivo (`tablas/F6_pruebas.csv`); si una falla, el script se detiene.
+- **Salidas:** `salidas_R_funcional/` con los prefijos `F1_` a `F6_`, `para_python/` y `resultados_funcional.rds`. `para_python/pares.csv` ya no lleva la columna `defectuoso`.
+- **Fecha y responsable:** 2026-11-13, Gus y Claude.
+
+### D-49 · R4 calculada con los datos: rachas de ceros sin respaldo de la vecina ✅ (revisa la R4 de D-36)
+- **Problema:** la R4 anterior era una revisión a mano. Se revisaron las 6 rachas en las que las vecinas llovían más del 40 % de los días, y solo una (Loboguerrero, oct–nov de 1995) quedó escrita con sus fechas en el código. No había un criterio verificable ("¿dónde lo verifican?").
+- **Regla nueva** (sección 5b de `lluvia_valle_datos.R`, tabla `5b_rachas_ceros_prueba.csv` y gráfica `5b_rachas_ceros_prueba.png`). Para cada racha de 30 días o más en 0:
+  - se toma la vecina más cercana (a 25 km o menos) que tenga datos en al menos el 80 % de la racha, y se cuenta en cuántos días k llovió;
+  - con los días de entrenamiento (1981–1995) en que ambas tienen dato, se calcula q = P(llueve en la estación | llueve en la vecina). No usa validación ni prueba;
+  - p = (1 − q)^k es la probabilidad de que la estación marque 0 todos esos días por azar;
+  - la racha pasa a faltante si p < 0,05 / 917 = 5,5e-5. Es la corrección de Bonferroni, porque se prueban 917 rachas a la vez.
+- **Por qué este umbral:** p supone días independientes y la lluvia viene en rachas, así que p exagera lo raro. Un umbral exigente compensa eso. Con 0,001 se marcarían 72 rachas, con más riesgo de borrar sequías reales.
+- **Resultado:** 30 de 917 rachas son falsas, en 27 estaciones (1 356 días). La mayoría de las rachas largas son sequías reales: la vecina también estuvo seca (El Niño de 1997, temporadas secas).
+  - El caso más claro es Bella Vista 1982: 49 días en 0 mientras La Ceja (8,7 km) llovió 23 días (p = 7e-10).
+  - **Loboguerrero oct–nov de 1995 vuelve a ser dato.** Dagua llovió 12 días, pero coincide con Loboguerrero solo la mitad de los días de lluvia (q = 0,50); p = 2e-4 no alcanza el umbral. Un enclave seco con 33 días sin lluvia en noviembre es posible.
+  - **Loboguerrero dic-1982 a mar-1983 (67 días) sí pasa a faltante.** La revisión a mano la había dejado porque "Dagua también estuvo seca", pero Dagua solo tiene 4 días de datos en esas fechas. La regla usa la siguiente vecina con datos, Limones (16,7 km), que llovió 39 días (p = 5e-7).
+- **Efecto en el conjunto:** cada racha deja un hueco de más de 15 días, así que su año deja de ser válido (R5). Quedan 176 estaciones y **3 299 pares estación–año** (2 257 de entrenamiento, 672 de validación y 370 de prueba), frente a 3 326. Las 26 pruebas de datos y las 12 funcionales pasan.
+- **Efecto en lo funcional:** casi ninguno. K sigue en 8 y 11. M pasa de 5 a 6 (94,2 % de la varianza, dentro del rango 4–6 del enunciado). En prueba la regresión baja el error L² relativo de 0,51 a 0,44 frente al satélite.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-50 · R0: valores físicamente imposibles a faltante, con umbral citado ✅ (completa D-36)
+- **Problema:** la sección 2 contaba los negativos y el máximo, pero ninguna regla los convertía en faltante. La ausencia de valores imposibles se suponía, no se verificaba ("¿dónde lo verifican?").
+- **Regla R0** (sección 2 de `lluvia_valle_datos.R`, tabla `2_R0_valores_imposibles.csv`): un valor diario P < 0 o P > 1 825 mm pasa a faltante, antes de R1. 1 825 mm es el récord mundial de lluvia en 24 h reconocido por la OMM (Foc-Foc, La Reunión, 7–8 de enero de 1966).
+- **Resultado:** en las 220 estaciones del Valle R0 no quita nada (0 negativos; máximo 600 mm, Pardo). En el crudo completo detecta un solo valor, 859 375 mm, de una estación fuera del Valle. La trazabilidad lleva la fila "1b. R0" con 0 días que salen, y una prueba nueva de la sección 14 lo comprueba en la matriz final.
+- **Efecto en el conjunto:** ninguno; 176 estaciones y 3 299 pares, como antes.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-51 · K = 8 en las estaciones: la fecha de los picos no sirve para elegir K ✅ (cierra P-20; confirma D-39)
+- **Problema:** la VC de las estaciones es casi plana entre K = 5 y 17. Una prueba del stash "fase A" mostraba que con K = 16 la fecha de los picos queda más cerca de una media móvil de 31 días de los datos crudos (6 y 5 días por curva frente a 12 y 10 con K = 8), con la VC solo 0,9 % peor.
+- **Prueba** (sección 2 de `lluvia_valle_funcional.R`; tablas `F2_K_picos_vs_referencia.csv`, `F2_K_que_gana_por_referencia.csv` y `F2_diferencia_entre_referencias.csv`): 1 643 curvas completas interandinas de entrenamiento, con K = 8, 10, 12, 16 y 20, y tres referencias que no dependen de K (medias móviles de 15, 31 y 61 días).
+- **Resultado:** el K que gana cambia con la referencia: K = 20 con 15 y 31 días, K = 10 con 61 días. Con 61 días, K = 16 queda peor que K = 8 (13 y 15 días frente a 10 y 9). Las referencias difieren entre sí 8 a 19 días en la fecha del pico, lo mismo que se gana subiendo K, y la fecha varía 32 a 36 días entre curvas (RIC). La prueba mide qué suavizado se parece a la referencia, no cuál ubica mejor el pico.
+- **Decisión:** se mantiene K = 8, el mínimo de la VCG (criterio de clase). El script se detiene si algún día una misma K ganara con las tres referencias, porque entonces este argumento ya no valdría.
+- **Consecuencias:** no cambia nada del análisis. El experimento de huecos de R5 sigue valiendo, porque se hizo con K = 8. K = 10 queda documentado como alternativa (VC 0,34 % peor, menos negativos), sin adoptarlo.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-52 · Red neuronal funcional y ablación de la cabeza en Python, conectada a lo de R ✅ (rúbrica 4.2 y 4.3)
+- **Por qué Python:** el enunciado permite PyTorch y pykan solo en este apartado, y son de Python. R ya tiene la versión lineal (regresión funcional, sección 5), así que Python lee lo que deja R en `salidas_R_funcional/para_python/` y no vuelve a construir nada.
+- **Base:** se reutilizó `archivo_flujo_anterior/05_red_funcional.py` (KAN con la forma del enunciado, MLP, conteo de parámetros, semillas, prueba sintética), reconectado a los insumos actuales en un solo archivo: `lluvia_valle_red.py`. Salidas en `salidas_python/tablas` (prefijos P1 a P6).
+- **Puente con R** (sección 1 y 3): W por cuadratura igual a la de R (8e-14); FPCA de entrenamiento igual (1e-14, salvo signo); las métricas de prueba de la regresión de R se reproducen; la red lineal cargada con los coeficientes de R da sus predicciones (3,6e-15). El decodificador usa el μ y las ψ de R (M = 6, 94,2 %), congelados.
+- **Arquitectura:** z_k = a_kᵀ W_s c con 8 neuronas, más altitud estandarizada y ONI. z se estandariza con su media y DE en ENTRENAMIENTO (afín, no rompe la equivalencia lineal; deja las entradas de la KAN dentro de su rejilla). Cabezas: lineal (10→6), KAN [10,4,6] con G = 5 (640 parámetros) y MLP [10,37,6] (635; 0,8 % de diferencia).
+- **Cambios frente al script viejo, con su razón:**
+  - *Penalización de rugosidad relativa* Σ ∫w_k''² / ∫w_k²: con z estandarizado, la penalización absoluta a_kᵀRa_k se podía bajar encogiendo las w_k sin suavizarlas.
+  - *Optimizador:* con lr = 3e-3 y paciencia 300 la cabeza lineal paraba en una pérdida de validación de 142, peor que mínimos cuadrados (137). Con lr = 1e-2, hasta 5 000 épocas y paciencia 1 000 llega al mínimo de entrenamiento de MCO, y con λ_w = 1e8 a 126,3 (la regresión de R: 126,9). Sin esto, la ventaja de las otras cabezas habría sido un artefacto.
+  - *Rejilla de λ_w* {0, 1e6, 1e7, 1e8, 1e9}: la rugosidad relativa es del orden de 1e-6; la rejilla vieja (≤ 0,1) no penalizaba nada.
+  - *M y ψ de R* en lugar de elegir M otra vez con "≥ 95 % de varianza": un solo criterio en todo el proyecto (validación, D-48).
+- **Presupuesto igual para las tres cabezas:** Adam, lr 1e-2, lote completo, hasta 5 000 épocas, parada temprana con la pérdida L² de validación (paciencia 1 000), 5 pruebas de λ_w con la semilla 2026 y luego 3 semillas (2026-2028). `P5_presupuesto.csv`.
+- **Verificaciones** (14 de 14 pasan, `P6_pruebas.csv`): equivalencia de la cabeza lineal con β(s,t) a 1,5e-14 en las 3 semillas (criterio 1e-4); KAN sintética con RMSE 2e-3 (criterio 1e-2); parámetros igualados; mismo codificador y decodificador; reconstrucción no negativa (0 % recortado).
+- **Resultado** (prueba 2001-2003, 370 curvas, 137 estaciones): L² relativo satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420. El MLP supera a la lineal en L² y KGE por poco (IC 95 % pareado que apenas excluye el 0); la KAN no se distingue de la lineal en L² ni en KGE y reduce el |sesgo| 4 puntos; KAN y MLP no se distinguen salvo en el pico 2. En validación la ventaja no lineal es mayor (pérdida 100-108 frente a 126), pero las no lineales sobreajustan pronto (época ~100). Detalle en el bloque "Qué dicen los datos" de la sección 5.
+- **Falta:** interpretación 4.5 (w_k(t), activaciones de la KAN, ajuste simbólico, peores casos) y las métricas por fase ENSO para las tres cabezas (4.4).
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-53 · La regresión funcional contrastada con los dos métodos de clase ✅ (regla "solo métodos vistos en clase")
+- **Problema:** nuestra regresión (puntajes FPCA de la estación sobre ∫φ_j(s)X(s)ds con penalización de rugosidad) es el modelo integral, pero en clase se ajustó de otras formas: el taller de repaso (ejercicio 10, paso 3) regresa los puntajes de Y sobre los puntajes de X, y el ejercicio 9 usa `fda.usc::fregre.basis.fr()`.
+- **Prueba** (sección 5.5b de `lluvia_valle_funcional.R`; tablas `F5_contraste_seleccion_validacion.csv`, `F5_contraste_metodos_clase.csv`, `F5_contraste_pareado.csv`): las tres versiones con las mismas curvas √P, el mismo FPCA de la estación (M = 6) y parámetros elegidos en validación (taller: l = 4 componentes de X; fregre: λs = λt = 1e10). Como `fregre.basis.fr` no admite altitud ni ONI, se comparan también sin ellas.
+- **Resultado en prueba:** L² relativo 0,43–0,44 en todas (satélite 0,51); las diferencias de L² no excluyen el 0. La nuestra sube el KGE unos 0,03 frente a las dos de clase (IC que excluyen el 0). La B del taller coincide con `lm()` (verificación que pide el propio taller).
+- **Decisión:** se mantiene nuestra regresión como referencia (y como cabeza lineal de la red): es el modelo integral de clase y frente a sus dos versiones de clase da el mismo error y mejor KGE. Altitud y ONI se dejan: en prueba no cambian nada, en validación bajan el RMSE de 2,42 a 2,29 mm/día.
+- **Requisito nuevo:** el script carga `fda` y `fda.usc` (`install.packages("fda.usc")` si falta). Ahora tiene 13 pruebas.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-54 · Python solo entrena; R evalúa la red con las herramientas de clase ✅ (rúbrica 4.4 y regla del curso)
+- **Problema:** el apartado de la red solo permite PyTorch y pykan, pero `lluvia_valle_red.py` usaba además `scipy` (Wilcoxon) y `matplotlib`, y calculaba las métricas con fórmulas propias, distintas de las de R.
+- **Cambio:** Python entrena, verifica la construcción y exporta `salidas_python/predicciones_coef_raiz.csv` (coeficientes √P de las 3 299 curvas por cabeza y semilla) y `pesos_codificador.csv` (para graficar w_k en 4.5). Solo usa `torch`, `numpy` y `pandas` (estas dos para leer y escribir). La **sección 7 de `lluvia_valle_funcional.R`** evalúa con las mismas funciones de 5.5: métricas, IC bootstrap por estación, `wilcox.test` y la tabla por fase ENSO.
+- **Orden de ejecución:** `lluvia_valle_funcional.R` → `python lluvia_valle_red.py` → `lluvia_valle_funcional.R` otra vez (si no están las predicciones, la sección 7 avisa y no falla).
+- **Controles** (5 de 5, `F7_pruebas_red.csv`): las filas son los mismos pares; la regresión de R rehecha en Python coincide con la de R a 1e-10; tres semillas y 3 299 curvas por cabeza.
+- **Resultado:** el mismo de D-52 (prueba: L² 0,440 / 0,434 / 0,420), ahora con IC y por fase ENSO (`F7_metricas_por_fase_ENSO.csv`): en años Niño (1997, 2002) KAN y MLP son las mejores; en años Niña (1999-2000) la lineal es la mejor y las no lineales sobrestiman (+14 % KAN, +7 % MLP). La no linealidad depende de la fase ENSO.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-55 · Interpretación de la red (rúbrica 4.5) en R ✅
+- **Qué se hizo** (sección 8 de `lluvia_valle_funcional.R`; Python solo exporta pesos de la cabeza lineal, activaciones de la primera capa de la KAN en el rango p1–p99 de entrenamiento y los modelos guardados en `salidas_python/modelos/`):
+  - w_k(s) de las tres cabezas con su ventana del año (|w_k| ≥ 0,5): `F8_pesos_w_k.png`, `F8_ventanas_w_k.csv`.
+  - β(s,t) de la red lineal frente a la regresión de R y su estabilidad entre semillas: `F8_beta_red_vs_regresion.png`, `F8_estabilidad_beta_lineal.csv`.
+  - Importancia de cada entrada en la cabeza lineal (norma del efecto en la curva) y en la KAN (Σ DE de φ): `F8_importancia_entradas.csv`.
+  - Activaciones de la KAN y su no linealidad (1 − R² de una recta): `F8_kan_activaciones.png`, `F8_kan_aristas.csv`.
+  - Ajuste simbólico de las 4 activaciones más importantes (lineal, cuadrática, exponencial, tanh, cúbica, seno; la más simple con R² ≥ 0,99): `F8_ajuste_simbolico.csv`.
+  - Los seis peores casos de prueba con sus curvas: `F8_peores_casos.png/.csv`.
+- **Por qué así:** la importancia de cada neurona por separado no es estable entre semillas (con cabeza lineal las w_k se pueden rotar sin cambiar la predicción); por eso se interpreta la β(s,t) completa (estable: correlación 0,98–0,99 entre semillas) y, en la KAN, las aristas con sus formas.
+- **Lectura:** la cabeza lineal usa w_k casi rectas; KAN y MLP usan w_k que contrastan las temporadas del régimen bimodal. Las activaciones importantes de la KAN son de saturación (tanh, R² 0,992–0,997): la corrección deja de crecer cuando el satélite marca mucha lluvia. La entrada más no lineal es la altitud (efecto no monótono, coherente con la orografía andina); la cabeza lineal casi no la usa. El ONI entra casi monótono. Los peores casos son estaciones secas (500–830 mm/año) del fondo del valle del Cauca y de la cuenca del Dagua donde el satélite marca 1 000–2 400 mm: es un límite de representatividad del píxel.
+- **Fecha y responsable:** 2026-11-14, Gus y Claude.
+
+### D-56 · Sin registros de 1930–1979 y ONI anual como media de los 12 trimestres ✅ (cierra P-16 y P-19)
+- **P-19, registros de 1930–1979:** no se usan. Respaldo en la sección 5.2b de `lluvia_valle_funcional.R`, con las tablas `F5_P19_conteo.csv` y `F5_P19_registros_1930_1979.csv`:
+  - 145 de las 176 estaciones tienen registros en ese periodo y 140 tienen años que cumplen R5. Son 1 250 curvas (963 de los años setenta), un 55 % más que las 2 257 de entrenamiento.
+  - El FPCA de entrenamiento con M = 6 explica el 89,8 % de su variabilidad, cerca del 91,5 % de validación y del 95,2 % de prueba.
+  - Si se agregan al ajuste, las cuatro primeras funciones propias no cambian (coseno 1,000), la quinta casi no (0,994) y solo gira algo la sexta (0,912). La media se mueve 1,7 % y la varianza explicada con M = 6 baja de 94,2 % a 93,2 %.
+  - Conclusión: el decodificador sería prácticamente el mismo. La fe de erratas fija 1981–2003, y usarlos obligaría a depurar 50 años más con R0 a R7.
+- **P-16, ONI anual:** se mantiene la media de los 12 trimestres del año. La curva es del año completo y la fase (Niño, Niña o neutro) sale de esa media. No cambia ninguna entrada de la red.
+- **Fecha y responsable:** 2026-11-14, Jacobo.
+
 ## Fuentes
 
 - Enunciado del proyecto: `Proyecto_Final_Analitica.docx`.
@@ -552,6 +657,7 @@ Estas no pasaban el criterio de D-07 a la primera (fechas que no cuadraban, solo
 - Elevación SRTM 30 m vía OpenTopoData: https://api.opentopodata.org (ejemplo: `/v1/srtm30m?locations=3.52242,-76.104246`).
 - Sistemas de coordenadas: https://epsg.io/3115 y https://epsg.io/9377
 - ONI (NOAA CPC): https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
+- Récord mundial de lluvia en 24 h (R0, D-50): tabla de récords de la OMM, https://public.wmo.int/sites/default/files/2025-07/Table_Records_25Jul2025.pdf, y archivo de extremos https://wmo.asu.edu
 - CHIRPS v2 (UCSB CHC) y NASA POWER (MERRA-2): ver `02_datos_externos.ipynb`.
 
 ---

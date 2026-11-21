@@ -140,7 +140,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612200103,1988,entrenamiento,365,0,TRUE
 2612200103,1989,entrenamiento,365,0,TRUE
 2612200103,1990,entrenamiento,365,0,TRUE
-2612200103,1991,entrenamiento,361,4,TRUE
+2612200103,1991,entrenamiento,325,36,FALSE
 2612200103,1992,entrenamiento,365,0,TRUE
 2612200103,1993,entrenamiento,365,0,TRUE
 2612200103,1994,entrenamiento,365,0,TRUE
@@ -154,7 +154,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612200103,2002,prueba,120,245,FALSE
 2612200103,2003,prueba,245,120,FALSE
 2612200105,1981,entrenamiento,365,0,TRUE
-2612200105,1982,entrenamiento,365,0,TRUE
+2612200105,1982,entrenamiento,309,56,FALSE
 2612200105,1983,entrenamiento,330,30,FALSE
 2612200105,1984,entrenamiento,365,0,TRUE
 2612200105,1985,entrenamiento,362,2,TRUE
@@ -415,7 +415,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612710301,1987,entrenamiento,365,0,TRUE
 2612710301,1988,entrenamiento,365,0,TRUE
 2612710301,1989,entrenamiento,365,0,TRUE
-2612710301,1990,entrenamiento,365,0,TRUE
+2612710301,1990,entrenamiento,317,48,FALSE
 2612710301,1991,entrenamiento,365,0,TRUE
 2612710301,1992,entrenamiento,365,0,TRUE
 2612710301,1993,entrenamiento,365,0,TRUE
@@ -457,7 +457,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612720103,1983,entrenamiento,284,81,FALSE
 2612720103,1984,entrenamiento,309,49,FALSE
 2612720103,1985,entrenamiento,299,31,FALSE
-2612720103,1986,entrenamiento,301,36,FALSE
+2612720103,1986,entrenamiento,231,70,FALSE
 2612720103,1987,entrenamiento,365,0,TRUE
 2612720103,1988,entrenamiento,334,31,FALSE
 2612720103,1989,entrenamiento,365,0,TRUE
@@ -529,7 +529,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612800102,1989,entrenamiento,364,1,TRUE
 2612800102,1990,entrenamiento,365,0,TRUE
 2612800103,1981,entrenamiento,363,2,TRUE
-2612800103,1982,entrenamiento,365,0,TRUE
+2612800103,1982,entrenamiento,316,49,FALSE
 2612800103,1983,entrenamiento,365,0,TRUE
 2612800103,1984,entrenamiento,358,7,TRUE
 2612800103,1985,entrenamiento,365,0,TRUE
@@ -560,8 +560,8 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612800104,1987,entrenamiento,365,0,TRUE
 2612800104,1988,entrenamiento,365,0,TRUE
 2612800104,1989,entrenamiento,365,0,TRUE
-2612800104,1990,entrenamiento,365,0,TRUE
-2612800104,1991,entrenamiento,359,6,TRUE
+2612800104,1990,entrenamiento,346,19,FALSE
+2612800104,1991,entrenamiento,345,14,TRUE
 2612800104,1992,entrenamiento,365,0,TRUE
 2612800104,1993,entrenamiento,355,10,TRUE
 2612800104,1994,entrenamiento,365,0,TRUE
@@ -570,7 +570,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612800104,1997,validación,365,0,TRUE
 2612800104,1998,validación,365,0,TRUE
 2612800104,1999,validación,365,0,TRUE
-2612800104,2000,validación,351,14,TRUE
+2612800104,2000,validación,281,70,FALSE
 2612800104,2001,prueba,365,0,TRUE
 2612800104,2002,prueba,365,0,TRUE
 2612800104,2003,prueba,365,0,TRUE
@@ -580,7 +580,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612800106,1984,entrenamiento,365,0,TRUE
 2612800106,1985,entrenamiento,204,161,FALSE
 2612800106,1986,entrenamiento,333,31,FALSE
-2612800106,1987,entrenamiento,328,33,FALSE
+2612800106,1987,entrenamiento,278,50,FALSE
 2612800106,1988,entrenamiento,365,0,TRUE
 2612800106,1989,entrenamiento,365,0,TRUE
 2612800106,1990,entrenamiento,365,0,TRUE
@@ -601,7 +601,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612800107,1982,entrenamiento,120,245,FALSE
 2612800107,1984,entrenamiento,153,212,FALSE
 2612800107,1985,entrenamiento,365,0,TRUE
-2612800107,1986,entrenamiento,365,0,TRUE
+2612800107,1986,entrenamiento,281,84,FALSE
 2612800107,1987,entrenamiento,365,0,TRUE
 2612800107,1988,entrenamiento,365,0,TRUE
 2612800107,1989,entrenamiento,365,0,TRUE
@@ -660,7 +660,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612810102,2003,prueba,188,150,FALSE
 2612810107,1981,entrenamiento,335,30,FALSE
 2612810107,1982,entrenamiento,365,0,TRUE
-2612810108,1981,entrenamiento,365,0,TRUE
+2612810108,1981,entrenamiento,321,44,FALSE
 2612810108,1982,entrenamiento,365,0,TRUE
 2612810108,1983,entrenamiento,362,2,TRUE
 2612810108,1984,entrenamiento,358,7,TRUE
@@ -684,7 +684,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612810108,2002,prueba,365,0,TRUE
 2612810108,2003,prueba,365,0,TRUE
 2612810109,1981,entrenamiento,325,31,FALSE
-2612810109,1982,entrenamiento,365,0,TRUE
+2612810109,1982,entrenamiento,335,30,FALSE
 2612810109,1983,entrenamiento,365,0,TRUE
 2612810109,1984,entrenamiento,365,0,TRUE
 2612810109,1985,entrenamiento,359,6,TRUE
@@ -713,7 +713,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2612810112,1984,entrenamiento,365,0,TRUE
 2612810112,1985,entrenamiento,365,0,TRUE
 2612810112,1986,entrenamiento,365,0,TRUE
-2612810112,1987,entrenamiento,365,0,TRUE
+2612810112,1987,entrenamiento,322,43,FALSE
 2612810112,1988,entrenamiento,365,0,TRUE
 2612810112,1989,entrenamiento,334,31,FALSE
 2612810112,1990,entrenamiento,365,0,TRUE
@@ -960,7 +960,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2613100106,1999,validación,365,0,TRUE
 2613100106,2000,validación,181,184,FALSE
 2613100106,2001,prueba,335,30,FALSE
-2613100106,2002,prueba,365,0,TRUE
+2613100106,2002,prueba,324,41,FALSE
 2613100106,2003,prueba,365,0,TRUE
 2613100107,1981,entrenamiento,362,3,TRUE
 2613100107,1982,entrenamiento,200,165,FALSE
@@ -976,7 +976,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2613100107,1992,entrenamiento,365,0,TRUE
 2613100107,1993,entrenamiento,365,0,TRUE
 2613100107,1994,entrenamiento,365,0,TRUE
-2613100107,1995,entrenamiento,365,0,TRUE
+2613100107,1995,entrenamiento,334,31,FALSE
 2613100107,1996,validación,365,0,TRUE
 2613100107,1997,validación,365,0,TRUE
 2613100107,1998,validación,365,0,TRUE
@@ -1009,7 +1009,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2613200101,2002,prueba,365,0,TRUE
 2613200101,2003,prueba,334,31,FALSE
 2613200105,1981,entrenamiento,359,6,TRUE
-2613200105,1982,entrenamiento,365,0,TRUE
+2613200105,1982,entrenamiento,318,47,FALSE
 2613200105,1983,entrenamiento,365,0,TRUE
 2613200105,1984,entrenamiento,365,0,TRUE
 2613200105,1985,entrenamiento,273,92,FALSE
@@ -1032,7 +1032,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2613200105,2002,prueba,365,0,TRUE
 2613200105,2003,prueba,365,0,TRUE
 2613600101,1981,entrenamiento,365,0,TRUE
-2613600101,1982,entrenamiento,365,0,TRUE
+2613600101,1982,entrenamiento,330,35,FALSE
 2613600101,1983,entrenamiento,365,0,TRUE
 2613600101,1984,entrenamiento,365,0,TRUE
 2613600101,1985,entrenamiento,365,0,TRUE
@@ -1075,8 +1075,8 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2613600102,1999,validación,365,0,TRUE
 2613600102,2000,validación,365,0,TRUE
 2613600102,2001,prueba,365,0,TRUE
-2613600102,2002,prueba,365,0,TRUE
-2613600102,2003,prueba,365,0,TRUE
+2613600102,2002,prueba,349,16,FALSE
+2613600102,2003,prueba,348,17,FALSE
 2613600103,1981,entrenamiento,364,1,TRUE
 2613600103,1982,entrenamiento,365,0,TRUE
 2613600103,1983,entrenamiento,354,5,TRUE
@@ -1246,7 +1246,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614100104,1998,validación,365,0,TRUE
 2614100104,1999,validación,365,0,TRUE
 2614100104,2000,validación,365,0,TRUE
-2614100104,2001,prueba,365,0,TRUE
+2614100104,2001,prueba,322,43,FALSE
 2614100104,2002,prueba,365,0,TRUE
 2614100104,2003,prueba,365,0,TRUE
 2614100202,1981,entrenamiento,360,5,TRUE
@@ -1292,7 +1292,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614100203,1998,validación,365,0,TRUE
 2614100203,1999,validación,365,0,TRUE
 2614100203,2000,validación,105,260,FALSE
-2614100203,2001,prueba,302,62,FALSE
+2614100203,2001,prueba,263,62,FALSE
 2614100203,2002,prueba,333,30,FALSE
 2614100203,2003,prueba,361,2,TRUE
 2614200101,1981,entrenamiento,365,0,TRUE
@@ -1320,7 +1320,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614200101,2003,prueba,273,92,FALSE
 2614400101,1981,entrenamiento,365,0,TRUE
 2614400101,1982,entrenamiento,365,0,TRUE
-2614400101,1983,entrenamiento,365,0,TRUE
+2614400101,1983,entrenamiento,281,84,FALSE
 2614400101,1984,entrenamiento,360,5,TRUE
 2614400101,1985,entrenamiento,300,65,FALSE
 2614400101,1986,entrenamiento,365,0,TRUE
@@ -1329,7 +1329,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614400101,1989,entrenamiento,365,0,TRUE
 2614400101,1990,entrenamiento,365,0,TRUE
 2614400101,1991,entrenamiento,360,5,TRUE
-2614400101,1992,entrenamiento,365,0,TRUE
+2614400101,1992,entrenamiento,326,39,FALSE
 2614400101,1993,entrenamiento,364,1,TRUE
 2614400101,1994,entrenamiento,363,2,TRUE
 2614400101,1995,entrenamiento,365,0,TRUE
@@ -1365,7 +1365,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614400102,2002,prueba,365,0,TRUE
 2614400102,2003,prueba,365,0,TRUE
 2614400103,1981,entrenamiento,365,0,TRUE
-2614400103,1982,entrenamiento,337,28,FALSE
+2614400103,1982,entrenamiento,304,33,FALSE
 2614400103,1983,entrenamiento,365,0,TRUE
 2614400103,1984,entrenamiento,362,3,TRUE
 2614400103,1985,entrenamiento,365,0,TRUE
@@ -1385,7 +1385,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2614400103,1999,validación,276,89,FALSE
 2614400103,2000,validación,334,31,FALSE
 2614400103,2001,prueba,365,0,TRUE
-2614400103,2002,prueba,365,0,TRUE
+2614400103,2002,prueba,329,36,FALSE
 2614400103,2003,prueba,365,0,TRUE
 2614400104,1981,entrenamiento,365,0,TRUE
 2614400104,1982,entrenamiento,365,0,TRUE
@@ -1920,8 +1920,8 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2621500103,1984,entrenamiento,365,0,TRUE
 2621500103,1985,entrenamiento,365,0,TRUE
 2621500103,1986,entrenamiento,360,4,TRUE
-2621500103,1987,entrenamiento,364,1,TRUE
-2621500103,1988,entrenamiento,348,16,FALSE
+2621500103,1987,entrenamiento,339,25,FALSE
+2621500103,1988,entrenamiento,342,16,FALSE
 2621500103,1989,entrenamiento,356,9,TRUE
 2621500103,1990,entrenamiento,364,1,TRUE
 2621500103,1991,entrenamiento,365,0,TRUE
@@ -1993,7 +1993,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2622100102,2002,prueba,365,0,TRUE
 2622100102,2003,prueba,365,0,TRUE
 2622100103,1981,entrenamiento,365,0,TRUE
-2622100103,1982,entrenamiento,364,1,TRUE
+2622100103,1982,entrenamiento,334,30,FALSE
 2622100103,1983,entrenamiento,365,0,TRUE
 2622100103,1984,entrenamiento,365,0,TRUE
 2622100103,1985,entrenamiento,365,0,TRUE
@@ -2048,7 +2048,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2622100301,1988,entrenamiento,364,1,TRUE
 2622100301,1989,entrenamiento,365,0,TRUE
 2622100301,1990,entrenamiento,365,0,TRUE
-2622100301,1991,entrenamiento,356,9,TRUE
+2622100301,1991,entrenamiento,320,36,FALSE
 2622100301,1992,entrenamiento,365,0,TRUE
 2622100301,1993,entrenamiento,295,47,FALSE
 2622100301,1994,entrenamiento,244,6,FALSE
@@ -2063,7 +2063,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2622100301,2003,prueba,365,0,TRUE
 2622110101,1981,entrenamiento,365,0,TRUE
 2622110101,1982,entrenamiento,365,0,TRUE
-2622110101,1983,entrenamiento,365,0,TRUE
+2622110101,1983,entrenamiento,332,33,FALSE
 2622110101,1984,entrenamiento,365,0,TRUE
 2622110101,1985,entrenamiento,365,0,TRUE
 2622110101,1986,entrenamiento,359,5,TRUE
@@ -2203,7 +2203,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2622320201,1990,entrenamiento,365,0,TRUE
 2622320201,1991,entrenamiento,365,0,TRUE
 2622320201,1992,entrenamiento,365,0,TRUE
-2622320201,1993,entrenamiento,364,1,TRUE
+2622320201,1993,entrenamiento,333,31,FALSE
 2622320201,1994,entrenamiento,365,0,TRUE
 2622320201,1995,entrenamiento,365,0,TRUE
 2622320201,1996,validación,162,197,FALSE
@@ -2865,8 +2865,8 @@ codigo,anio,particion,n_obs,hueco_max,valido
 2624000101,1991,entrenamiento,365,0,TRUE
 2624000101,1992,entrenamiento,365,0,TRUE
 2624000101,1993,entrenamiento,365,0,TRUE
-2624000101,1994,entrenamiento,365,0,TRUE
-2624000101,1995,entrenamiento,365,0,TRUE
+2624000101,1994,entrenamiento,361,4,TRUE
+2624000101,1995,entrenamiento,315,50,FALSE
 2624000101,1996,validación,90,275,FALSE
 2624000101,1999,validación,188,135,FALSE
 2624000101,2002,prueba,365,0,TRUE
@@ -3516,8 +3516,8 @@ codigo,anio,particion,n_obs,hueco_max,valido
 5301420201,1995,entrenamiento,365,0,TRUE
 5301420201,1997,validación,212,153,FALSE
 5301500102,1981,entrenamiento,290,74,FALSE
-5301500102,1982,entrenamiento,320,45,FALSE
-5301500102,1983,entrenamiento,365,0,TRUE
+5301500102,1982,entrenamiento,316,45,FALSE
+5301500102,1983,entrenamiento,302,63,FALSE
 5301500102,1984,entrenamiento,303,22,FALSE
 5301500102,1985,entrenamiento,341,12,TRUE
 5301500102,1986,entrenamiento,365,0,TRUE
@@ -3529,7 +3529,7 @@ codigo,anio,particion,n_obs,hueco_max,valido
 5301500102,1992,entrenamiento,364,1,TRUE
 5301500102,1993,entrenamiento,360,2,TRUE
 5301500102,1994,entrenamiento,361,3,TRUE
-5301500102,1995,entrenamiento,213,49,FALSE
+5301500102,1995,entrenamiento,246,49,FALSE
 5301500102,1996,validación,365,0,TRUE
 5301500102,1997,validación,365,0,TRUE
 5301500102,1998,validación,327,15,FALSE

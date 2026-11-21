@@ -1,0 +1,25 @@
+fuente,vertiente,momento,pct_no_identificable,dia_mediano,p25,p75,fecha_mediana,rango_intercuartil
+estaciones,Cauca (interandina),inicio_1,25.8,59,54,67,28-Feb,23-Feb a 08-Mar
+estaciones,Pacífico,inicio_1,18.3,66,58,96,07-Mar,27-Feb a 06-Apr
+satélite,Cauca (interandina),inicio_1,6.2,77,71,96,18-Mar,12-Mar a 06-Apr
+satélite,Pacífico,inicio_1,3.3,106,91,111,16-Apr,01-Apr a 21-Apr
+estaciones,Cauca (interandina),pico_1,0,104,90,126,14-Apr,31-Mar a 06-May
+estaciones,Pacífico,pico_1,0,122,101,141,02-May,11-Apr a 21-May
+satélite,Cauca (interandina),pico_1,0,122,110,130,02-May,20-Apr a 10-May
+satélite,Pacífico,pico_1,0,135,129,139,15-May,09-May a 19-May
+estaciones,Cauca (interandina),fin_1,0,165,141,174,14-Jun,21-May a 23-Jun
+estaciones,Pacífico,fin_1,0,171,157,178,20-Jun,06-Jun a 27-Jun
+satélite,Cauca (interandina),fin_1,0,162,159,165,11-Jun,08-Jun a 14-Jun
+satélite,Pacífico,fin_1,0,164,161,167,13-Jun,10-Jun a 16-Jun
+estaciones,Cauca (interandina),inicio_2,0,258,251,289,15-Sep,08-Sep a 16-Oct
+estaciones,Pacífico,inicio_2,0,257,251,283,14-Sep,08-Sep a 10-Oct
+satélite,Cauca (interandina),inicio_2,0,268,253,287,25-Sep,10-Sep a 14-Oct
+satélite,Pacífico,inicio_2,0,284,257,288,11-Oct,14-Sep a 15-Oct
+estaciones,Cauca (interandina),pico_2,0,305,291,324,01-Nov,18-Oct a 20-Nov
+estaciones,Pacífico,pico_2,0,303.5,292,321,31-Oct,19-Oct a 17-Nov
+satélite,Cauca (interandina),pico_2,0,307,298,315,03-Nov,25-Oct a 11-Nov
+satélite,Pacífico,pico_2,0,309,304,313,05-Nov,31-Oct a 09-Nov
+estaciones,Cauca (interandina),fin_2,62.1,323,318,330,19-Nov,14-Nov a 26-Nov
+estaciones,Pacífico,fin_2,63.9,323,318.75,330,19-Nov,15-Nov a 26-Nov
+satélite,Cauca (interandina),fin_2,31,331,330,334,27-Nov,26-Nov a 30-Nov
+satélite,Pacífico,fin_2,15,333,331,335,29-Nov,27-Nov a 01-Dec

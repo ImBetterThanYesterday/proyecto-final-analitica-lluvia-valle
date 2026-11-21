@@ -9,10 +9,11 @@ Cada estación tiene ≥7 años válidos en entrenamiento,OK,mínimo: 8
 Cada curva tiene ≥90 % de días,OK,mínimo: 329
 Ninguna curva tiene un hueco > 15 días,OK,máximo: 15
 Sin duplicados estación-año,OK,""
+R0: ningún valor negativo ni sobre el récord OMM de 24 h,OK,en el Valle R0 quitó 0 valores; en el crudo completo habría quitado 1
 Valores entre 0 y el máximo crudo,OK,máximo: 560
-Cada valor final es igual al crudo (salvo los marcados),OK,1211103 valores comparados
-Los días marcados quedaron como faltante,OK,2 marcados dentro de años válidos
-Todo faltante de la matriz es un día ausente en el crudo o marcado,OK,observados: 1211103
+Cada valor final es igual al crudo (salvo los marcados),OK,1201260 valores comparados
+Los días marcados quedaron como faltante,OK,20 marcados dentro de años válidos
+Todo faltante de la matriz es un día ausente en el crudo o marcado,OK,observados: 1201260
 La trazabilidad termina en los datos preparados,OK,""
 El p99 de las reglas usa solo entrenamiento,OK,210 estaciones
 Satélite sin faltantes y no negativo,OK,""

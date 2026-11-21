@@ -1,144 +1,248 @@
 # Control de la rúbrica
 
-Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeErratas.docx`) y cómo vamos.
-Se actualiza cada vez que se avanza.
+Lista de todo lo que pide el enunciado (`enunciado/Proyecto_Final_Analitica_FeErratas.docx`) y cómo vamos, criterio por criterio de la rúbrica. Se actualiza cada vez que se avanza.
 
-**Estados:** ✅ hecho y verificado · 🟡 a medias · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/` con la población vieja (248 estaciones) y hay que rehacerlo con las 176.
+**Estados:** ✅ hecho y verificado en el código · 🟡 hecho, falta redactarlo o un detalle · ⬜ pendiente · ♻️ existe en `archivo_flujo_anterior/05_red_funcional.py` con los insumos viejos (248 estaciones) y hay que reconectarlo a `salidas_R_funcional/para_python/`.
 
-**Última actualización:** 13-nov-2026, después de unir el trabajo funcional de Jacobo y María.
+**Última actualización:** 14-nov-2026: red funcional y ablación en `lluvia_valle_red.py` (D-52), 14 de 14 pruebas. R: 27 + 13 pruebas. Regresión contrastada con los métodos de clase (D-53). Python solo entrena; R evalúa (D-54) e interpreta (D-55).
 
 ## Resumen
 
 | Ítem | Peso | Estado | Qué falta |
 |---|---|---|---|
-| 1. Construcción de datos funcionales | 10 % | ✅ | Hecho en `funcional/11` (Jacobo): K = 8 / 11, S verificada, bandas |
-| 2. EDA funcional | 15 % | ✅ | Hecho en `funcional/12`; falta pulir la interpretación para el informe |
-| 3. Comparación funcional por fuente | 15 % | ✅ | Hecho en `funcional/10` y `13` |
-| 4.1 Preprocesamiento y selección | 6 % | ✅ | Solo decidir sobre los registros 1930–1979 (con el FPCA) |
-| 4.2 Red neuronal funcional | 10 % | 🟡 | La regresión de referencia está (`funcional/14`); falta la red en Python |
-| 4.3 Ablación KAN, MLP y lineal | 11 % | ♻️ | Rehacer |
-| 4.4 Evaluación | 8 % | 🟡 | Métricas e IC de la regresión de referencia hechos; falta para la red |
-| 4.5 Interpretación climatológica | 10 % | ♻️ | Rehacer |
+| 1. Construcción de datos funcionales | 10 % | ✅ | Redactarlo en el informe |
+| 2. EDA funcional | 15 % | ✅ | Redactarlo; ventanas de temporada en el Pacífico (ver abajo) |
+| 3. Comparación funcional por fuente | 15 % | ✅ | Redactar la interpretación del sesgo |
+| 4.1 Preprocesamiento y selección | 6 % | ✅ | P-19 cerrada con datos (D-56) |
+| 4.2 Red neuronal funcional | 10 % | ✅ | `lluvia_valle_red.py`, secciones 1–3 (D-52); falta redactar la demostración en el informe |
+| 4.3 Ablación KAN, MLP y lineal | 11 % | ✅ | Secciones 4–5 (D-52); falta redactar las conclusiones |
+| 4.4 Evaluación | 8 % | ✅ | Sección 7 del funcional (D-54), con fase ENSO. Solo falta confirmar con el profesor el CSV de estaciones reservadas |
+| 4.5 Interpretación climatológica | 10 % | ✅ | Sección 8 del funcional (D-55); falta redactarla en el informe |
 | 5. Informe PDF | 10 % | ⬜ | Todo |
-| 6. Scripts R y Python | 5 % | 🟡 | El R está en 6 archivos: hay que unirlos en uno (D-41); falta el Python |
+| 6. Scripts R y Python | 5 % | 🟡 | R unido en `lluvia_valle.R` (falta correrlo completo en la Mac y decidir cuál se edita); Python en un solo archivo |
 
-## Antes de lo funcional: datos y EDA (lo que ya está)
+Lo que falta: el informe (10 %), el anexo de IA, unir los dos R y confirmar por escrito que no hay estaciones reservadas (P-16 y P-19 cerradas en D-56).
 
-- ✅ **Estaciones del Valle:** 232 con coordenada, todas dentro del polígono del DANE (D-31 a D-35).
-- ✅ **EDA de los datos crudos de estaciones:** secciones 1–6 de `lluvia_valle_datos.R`.
-- ✅ **Depuración con reglas sacadas de los datos (D-36):** 176 estaciones y 3 326 pares estación–año.
-- ✅ **Fuente del satélite identificada:** CHIRP solo-infrarrojo (D-43), confirmado por el profesor. Se usa solo ese, sin rellenar con otra fuente.
-- ✅ **EDA del satélite y comparación con las estaciones (D-44).**
-- ✅ **Datos preparados para la construcción funcional:** `salidas_R_datos/datos_preparados.rds`.
-- ✅ **Pruebas:** 26 comprobaciones automáticas dentro del script (sección 14). Todas pasan.
+## Auditoría: ¿se hace como en clase? (14-nov)
 
-## 1. Construcción de datos funcionales (10 %) — `funcional/11_construccion_funcional.R`
+Regla del enunciado (punto 5): "Desarrollar el proyecto en R y Python. Solo se pueden usar los scripts, procedimientos y metodologías vistos en clase. Las librerías adicionales se permiten en los apartados mencionados." El apartado de la red (4.2–4.5) dice: "Librerías permitidas en este apartado: PyTorch y pykan".
 
-- ✅ Matriz de la base Φ (Cox–de Boor propio) y coeficientes por mínimos cuadrados, sin librerías (`00_funciones.R`). Coincide con `splines::splineDesign` (3e-16), que se usa solo para verificar.
-- ✅ K por ECM, VC y VCG para cada fuente, solo con entrenamiento: K = 8 (estaciones) y K = 11 (satélite) (D-39).
-- ✅ S idempotente y tr(S) = K (error < 1e-14).
-- ✅ Covarianza residual y bandas punto a punto.
-- ✅ Ambas fuentes en el dominio 1–365 (péntadas en su día central).
-- 🟡 Días faltantes: el ajuste usa solo los días observados (sin imputar). Hay que escribirlo en el informe.
-- ⚠️ **Tope:** construir las curvas con librerías deja la nota en máximo 2.
+`material_clase/` es todo R: `fda` y `fda.usc` (EDA y regresión), `fdANOVA` (ANOVA funcional) y el taller de repaso, que hace cada modelo paso a paso en R base y lo contrasta con `fda`/`fda.usc`. No hay material de redes: por eso la red va en Python con PyTorch, que es lo que el enunciado permite.
 
-## 2. Análisis exploratorio funcional (15 %) — `funcional/12_eda_funcional.R`
+| Parte | Cómo se hizo en clase | Cómo lo hacemos | Estado |
+|---|---|---|---|
+| Lenguaje | R para todo lo funcional; Python solo para la red (enunciado) | R (datos, construcción, EDA, comparación, regresión) y Python solo para la red | ✅ |
+| Construcción | B-splines paso a paso, ECM/VC/VCG (taller, ej. 1–2); bandas punto a punto (ej. 3) | Igual, sin librerías; `splines` solo para verificar | ✅ |
+| Media, varianza, covarianza, correlación | Paso a paso y contraste con `fda::mean.fd`, `var.fd` (ej. 4) | Paso a paso; media verificada con `fda::mean.fd` | ✅ |
+| Profundidad y boxplot funcional | `fda.usc` (`depth.FM`, …) y `fda::fbplot` | FM y MBD propios; MBD y atípicas verificadas con `fbplot`. **FM no verificada con `fda.usc::depth.FM`** | 🟡 |
+| Inferencia por grupos (ENSO, altitud, fuente) | `fda::tperm.fd` (t funcional) y `fdANOVA` | Bandas ± 2EE (lo pide la rúbrica) y tablas por grupo; **sin prueba t ni ANOVA funcional de clase** | 🟡 recomendado |
+| Regresión función-función | Modelo integral por componentes principales: puntajes de Y sobre puntajes de X (taller, ej. 10, paso 3), contrastado con `fda.usc::fregre.basis.fr()`; concurrente con `fda::fRegress()` | Puntajes FPCA de Y sobre ∫φ_j X penalizado. Contrastada en la sección 5.5b con la versión del taller y con `fregre.basis.fr()`: mismo L² en prueba (0,43–0,44) y mejor KGE (D-53) | ✅ |
+| Red (codificador, cabezas) | No se vio; el enunciado permite PyTorch y pykan | PyTorch; KAN programada con la fórmula del enunciado y verificada con una función sintética | ✅ |
+| Librerías en Python | Solo PyTorch y pykan | PyTorch, más `numpy`/`pandas` solo para leer y escribir (D-54) | ✅ |
+| Métricas, bootstrap, Wilcoxon, ENSO de la red | Funciones de R (5.5) y `wilcox.test` | Sección 7 de `lluvia_valle_funcional.R`, con las predicciones exportadas por Python (D-54) | ✅ |
 
-- ✅ Media funcional paso a paso, verificada con `fda::mean.fd`.
-- ✅ Varianza y desviación estándar funcional.
-- ✅ Covarianza y correlación funcional de cada fuente.
-- ✅ Derivadas, inicio y fin de las temporadas de lluvia.
-- ✅ Profundidad (FM y MBD) y boxplot funcional, con las atípicas por estación y año (coinciden con `fda::fbplot`).
-- 🟡 Interpretación climatológica (régimen bimodal, orografía, ENSO): está en los comentarios del código; falta redactarla en el informe.
-- ✅ **Tope de representatividad:** las 176 estaciones representan a las 220 (sección 8 de `lluvia_valle_datos.R`).
+### Qué cambiar para quedar 100 % dentro de la regla
 
-## 3. Comparación funcional por fuente (15 %) — `funcional/10` y `funcional/13`
+1. ~~**Python solo entrena y exporta.**~~ Hecho (D-54). `lluvia_valle_red.py` deja las predicciones (coeficientes √P por curva y cabeza/semilla), las w_k(t) y las activaciones de la KAN en CSV. Las métricas, el bootstrap, Wilcoxon (`wilcox.test` de R base), la tabla por fase ENSO y las gráficas de 4.5 se hacen en R con las mismas funciones ya verificadas de la sección 5. Así desaparecen `scipy` y `matplotlib`, y las tres cabezas se evalúan exactamente igual que la regresión.
+2. ~~Contrastar la regresión con la de clase~~ — hecho (sección 5.5b, D-53).
+3. **Verificar FM con `fda.usc::depth.FM`** (instalar `fda.usc`).
+4. **Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`)** para satélite frente a estación y para ENSO y altitud.
+5. **KAN:** se puede dejar la nuestra (cumple la forma del enunciado y la prueba sintética) o contrastarla con `pykan`. Decisión del equipo; `pykan` facilita el ajuste simbólico de 4.5.
 
-- ✅ Emparejamiento estación–píxel documentado: 176 estaciones en 148 píxeles, 23 compartidos (D-38, D-44).
-- ✅ Curva de diferencia d(t) con banda ± 2EE e intervalos donde no contiene el cero.
-- ✅ Correlación cruzada funcional y su diagonal.
-- ✅ Comparación de las covarianzas.
-- ✅ Comparación por altitud, vertiente y fase ENSO.
-- 🟡 Interpretación del sesgo satelital: base en D-44 y en la sección 13; falta redactarla.
-- ⚠️ **Por corregir (P-4 resuelta):** el profesor pidió no eliminar años; la comparación principal hoy excluye 1985, 1988 y 2000 (D-37/D-42) y hay que incluirlos (D-47).
+## 1. Construcción de datos funcionales (10 %) — sección 2 de `lluvia_valle_funcional.R`
 
-## 4.1 Preprocesamiento y selección de datos (6 %)
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Φ y coeficientes por mínimos cuadrados, paso a paso, sin librerías | ✅ | Funciones `base_bspline` (Cox–de Boor), `ajuste_mco` y `construir`. Coincide con `splines::splineDesign` a 3e-16 (prueba 3) |
+| K con ECM, VC y VCG: gráfica y valor elegido por fuente | ✅ | `F2_seleccion_K.png`, `F2_K_elegido.csv`: K = 8 (estaciones) y 11 (satélite), solo con entrenamiento (D-39) |
+| K = 8 frente a la fecha de los picos | ✅ | `F2_K_picos_vs_referencia.csv`, `F2_K_que_gana_por_referencia.csv`: el K que mejora los picos depende de la referencia, así que se queda el de la VCG (D-51) |
+| S idempotente y tr(S) = K | ✅ | `F2_controles_S.csv`, error < 1e-14 (prueba 4) |
+| Covarianza residual y bandas punto a punto, interpretadas como punto a punto | ✅ | `F2_covarianza_residual.png`, `F2_bandas_punto_a_punto.png` |
+| Ambas fuentes en el mismo dominio anual | ✅ | `F2_mismo_dominio.png`: día 1–365, péntadas en su día central |
+| Tope: curvas con librerías → máximo 2 | ✅ no aplica | Las librerías solo verifican |
 
-- ✅ Regla explícita para valores imposibles y errores de digitación (R2: extremos sin respaldo de las vecinas).
-- ✅ Totales acumulados en un solo día (R3) y ceros que son faltantes (R4, con revisión a mano).
-- ✅ Criterio de cobertura mínima por estación y año, justificado con el experimento de huecos (R5 y R6).
-- 🟡 Decisión sobre agregar datos:
-  - imputación: no se imputa, y está justificado (D-13);
-  - registros fuera del periodo (1930–1979) para estimar el FPCA: **falta decidirlo y escribirlo**.
-- ✅ Tabla de trazabilidad: estaciones y pares antes y después de cada paso (`tablas/8_trazabilidad.csv`).
-- ✅ Ninguna decisión usa datos de prueba: los umbrales (p99), el experimento de huecos y el mínimo de años se calculan solo con 1981–1995. Hay una prueba automática.
+Para el informe: los días faltantes no se imputan; cada curva se ajusta con sus días observados y su propia S.
 
-## 4.2 Red neuronal funcional (10 %)
+## 2. EDA funcional (15 %) — sección 3 de `lluvia_valle_funcional.R`
 
-- ♻️ Codificador con w_k(t) en B-splines y z = A W c, con la matriz de Gram por cuadratura (6 a 8 neuronas).
-- ✅ Datos de altitud de la estación (`$meta_estaciones`) y ONI del año (`$pares`) listos para z en `datos_preparados.rds`, con prueba automática. Univalle (`2622320201`) toma los 996 m de la estación del IDEAM en el mismo campus (D-46); falta agregarlos a z al construir la red.
-- ♻️ Decodificador FPCA solo con entrenamiento; M (4 a 6) justificado y varianza explicada.
-- ♻️ Pérdida L² funcional con W y penalización de rugosidad; se modela sobre √P o log(1+P).
-- ♻️ Demostración y verificación numérica (≤ 1e-4) de que la cabeza lineal equivale a la regresión funcional.
-- ♻️ Reconstrucción no negativa en mm, con el % de valores recortados.
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Media paso a paso, verificada con la función de librería | ✅ | `F3_verificacion_media.csv`, contra `fda::mean.fd` (prueba 6) |
+| Varianza y desviación estándar funcional | ✅ | `F3_media_y_dispersion.png`, `F3_dispersion_resumen.csv` |
+| Covarianza y correlación de cada fuente | ✅ | `F3_covarianza_*.png`, `F3_correlacion_*.png`, también por vertiente y con anomalías |
+| Derivadas e inicio y fin de las temporadas | 🟡 | `F3_derivada_media.png`, `F3_temporadas_por_curva.png`. Las ventanas suponen régimen bimodal y se aplican también al Pacífico; el fin de la 2.ª temporada no se puede fechar en el 62 % de las curvas. Hay que justificarlo o separar el Pacífico |
+| Profundidad FM y MBD, boxplot funcional, atípicas por estación y año | ✅ | `F3_boxplot_funcional.png`, `F3_atipicas_*.csv`; MBD y atípicas coinciden con `fda::fbplot` (prueba 7). Opcional: verificar FM con `fda.usc::depth.FM` |
+| Interpretación climatológica (bimodal, orografía, ENSO) | 🟡 | Escrita en el bloque "Qué dicen los datos"; falta pasarla al informe |
+| Tope: subconjunto sin justificar → máximo 2 | ✅ no aplica | Se usan las 176 estaciones y los 23 años; representatividad en la sección 8 de `lluvia_valle_datos.R` |
 
-## 4.3 Ablación KAN, MLP y cabeza lineal (11 %)
+Falta justificar por qué se modela la tasa en mm/día y no la lluvia acumulada que usa el ejemplo de clase `Script_AnalisisExploratorio.R`.
 
-- ♻️ Las tres cabezas con el mismo codificador y el mismo decodificador.
-- ♻️ Parámetros de KAN y MLP contados con `sum(p.numel())`, diferencia ≤ 10 %.
-- ♻️ Tres semillas por configuración, con media y desviación estándar.
-- ♻️ Mismo presupuesto de entrenamiento para todas las cabezas.
-- ♻️ KAN verificada con una función sintética (RMSE ≤ 1e-2).
-- ♻️ Conclusiones solo si el IC bootstrap del 95 % de la diferencia excluye el cero.
-- ⚠️ **Tope:** hiperparámetros elegidos con el conjunto de prueba dejan la nota en máximo 1.
+## 3. Comparación funcional por fuente (15 %) — secciones 1 y 4 de `lluvia_valle_funcional.R`
+
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Emparejamiento estación–píxel: coordenadas, regla y píxeles compartidos | ✅ | `F1_emparejamiento_estacion_pixel.csv`, `F1_pixeles_compartidos.csv`: 176 estaciones en 148 píxeles, píxel que contiene la estación (P-18) |
+| d(t) con banda ± 2EE e intervalos donde no contiene el cero | ✅ | `F4_diferencia.png`, `F4_intervalos_diferencia.csv` |
+| Correlación cruzada y su diagonal, interpretadas | ✅ | `F4_correlacion_cruzada.png`, `F4_diagonal_correlacion.png` |
+| Comparación de las covarianzas | ✅ | `F4_covarianzas.png`, `F4_covarianzas_comparadas.csv` |
+| Por altitud o subregión y por fase ENSO | ✅ | `F4_comparacion_por_grupo.csv`, `F4_diferencia_por_grupo.png`, `F4_sesgo_altitud.png` |
+| Interpretación climatológica del sesgo | 🟡 | Base en D-44, sección 12 de datos y bloque de la sección 4; falta redactarla |
+| Tope: sin emparejamiento documentado → máximo 1 | ✅ no aplica | |
+
+El diagnóstico global no depende de usar K distinto por fuente; el veredicto día a día coincide en 281 de 365 días (`F4_sensibilidad_mismo_K.csv`). Opcional: ANOVA funcional o prueba t por permutación (scripts de clase) para ENSO y altitud.
+
+## 4.1 Preprocesamiento y selección (6 %) — `lluvia_valle_datos.R`
+
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Regla explícita para valores imposibles y errores de digitación | ✅ | R0: negativos y > 1 825 mm (récord OMM), `2_R0_valores_imposibles.csv` (D-50). R2: extremos sin respaldo de las vecinas |
+| Totales acumulados en un solo día y ceros que son faltantes | ✅ | R3 (totales mensuales) y R4 (rachas de ceros con la vecina y umbral de Bonferroni, D-49) |
+| Cobertura mínima por estación y año, justificada | ✅ | R5 (≥ 90 % y hueco ≤ 15 días) y R6 (≥ 7 años de entrenamiento), con el experimento de huecos (sección 7) |
+| Decisión justificada sobre agregar o eliminar datos | ✅ | Sin imputación (D-13). P-19 (D-56): los 1 250 años válidos de 1930–1979 no se usan; el FPCA de entrenamiento ya explica el 89,8 % de su variabilidad y agregarlos deja iguales las 4 primeras funciones propias (`F5_P19_registros_1930_1979.csv`) |
+| Trazabilidad: estaciones y pares antes y después de cada paso | ✅ | `8_trazabilidad.csv`: 323 → 220 → 176 estaciones, 3 299 pares |
+| Nada usa datos de prueba | ✅ | Umbrales y experimentos solo con 1981–1995; prueba automática |
+
+Pendiente menor: sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
+
+## 4.2 Red neuronal funcional (10 %) — `lluvia_valle_red.py` (D-52)
+
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Codificador con w_k(t) en B-splines y z = A W c, Gram por cuadratura | ✅ | Clase `RedFuncional` (8 neuronas). W por Gauss–Legendre, igual a la de R a 8e-14 (sección 1) |
+| Altitud y ONI agregados a z | ✅ | Altitud estandarizada con entrenamiento; ONI anual de `pares.csv` |
+| FPCA solo con entrenamiento; M justificado y varianza reportada | ✅ | `P1_fpca_varianza.csv`: M = 6 (94,2 %), el mismo de R (elegido en validación); FPCA de Python = R a 1e-14 |
+| Pérdida L² con W y penalización de rugosidad sobre w_k | ✅ | `perdida_L2` y `rugosidad_relativa` (∫w''²/∫w², no se puede "ganar" encogiendo las w_k) |
+| Demostración escrita y verificación ≤ 1e-4 | ✅ | Demostración en la sección 3; `P3_equivalencia_lineal.csv`: 1,5e-14 en 3 semillas, y la red con los coeficientes de R da sus predicciones (3,6e-15) |
+| Reconstrucción no negativa con el % recortado | ✅ | `P5_recorte_no_negatividad.csv`: 0 % en prueba |
+| Tope: MLP sobre el vector de péntadas → máximo 1 | ✅ no aplica | Las tres cabezas van después del codificador funcional |
+
+## 4.3 Ablación KAN, MLP y cabeza lineal (11 %) — `lluvia_valle_red.py` (D-52)
+
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| Las tres cabezas con el mismo codificador y el mismo decodificador | ✅ | Prueba automática (sección 6) |
+| Parámetros de KAN y MLP con `sum(p.numel())`, diferencia ≤ 10 % | ✅ | `P4_parametros_cabezas.csv`: 640 vs 635 (0,8 %) |
+| Tres semillas, media y DE | ✅ | `P5_entrenamiento_por_semilla.csv` (Python), `F7_ablacion_media_DE_semillas.csv` (R) |
+| Mismo presupuesto: épocas, parada temprana, pruebas de hiperparámetros | ✅ | `P5_presupuesto.csv`, `P5_seleccion_lambda_por_cabeza.csv`: 5 pruebas de λ_w por cabeza |
+| KAN verificada con una función sintética (RMSE ≤ 1e-2) | ✅ | `P4_kan_sintetica.csv`: RMSE 2e-3 |
+| Una cabeza supera a otra solo si el IC 95 % bootstrap excluye el 0 | ✅ | `F7_comparaciones_pareadas_prueba.csv` (columna `gana`) |
+| Conclusiones sobre la no linealidad del sesgo y el costo de la interpretabilidad | 🟡 | Escritas en "Qué dicen los datos" de la sección 7 del funcional: la no linealidad depende de la fase ENSO (ayuda en Niño, estorba en Niña); falta pasarlas al informe |
+| Tope: hiperparámetros con prueba → máximo 1 | ✅ no aplica | λ_w y épocas solo con validación |
 
 ## 4.4 Evaluación (8 %)
 
-- ✅ Partición 1981–1995 / 1996–2000 / 2001–2003 aplicada en los datos preparados.
-- ✅ Estaciones reservadas por el docente: **ya no van** (el profesor cambió el plan). La prueba es 2001–2003.
-- ♻️ Comparación contra la curva satelital sin corregir.
-- ♻️ Las cuatro métricas: error L² relativo, KGE, sesgo del acumulado anual y error en la fecha de los dos picos.
-- ♻️ IC bootstrap del 95 % (≥ 1000 remuestreos) y prueba de Wilcoxon pareada por estación.
-- 🟡 Resultados por fase ENSO con el ONI y su fuente citada. El ONI está en `datos_web/`; falta aplicarlo a los resultados.
+| Lo que pide la rúbrica | Estado | Dónde |
+|---|---|---|
+| Partición 1981–1995 / 1996–2000 / 2001–2003 sin fuga | ✅ | Datos preparados; prueba de no fuga del funcional (prueba 9) |
+| Estaciones reservadas | 🟡 | El profesor dijo que ya no van (P-10), pero la fe de erratas aún pide el CSV `station_id, year, day, value_mm`. **Confirmar con él** |
+| Comparación con el satélite sin corregir | ✅ | `F5_metricas_prueba.csv` (regresión) y `F7_ablacion_media_DE_semillas.csv` (tres cabezas) |
+| Las cuatro métricas | ✅ | Prueba, L² relativo: satélite 0,513, lineal 0,440, KAN 0,434, MLP 0,420 |
+| IC bootstrap 95 % (≥ 1 000) y Wilcoxon pareado por estación | ✅ | 2 000 remuestreos; `F5_regresion_vs_satelite_pareado.csv` y `F7_comparaciones_pareadas_prueba.csv` |
+| Por fase ENSO con el ONI y su fuente | ✅ | `F5_metricas_por_fase_ENSO.csv`; ONI de NOAA CPC. P-16 cerrada (D-56): ONI anual = media de los 12 trimestres |
 
-## 4.5 Interpretación climatológica (10 %)
+## 4.5 Interpretación climatológica (10 %) — sección 8 de `lluvia_valle_funcional.R` (D-55)
 
-- ♻️ w_k(t) graficadas, con la ventana del año que usa cada neurona.
-- ♻️ Funciones de activación de la primera capa de la KAN.
-- ♻️ Contraste con los coeficientes de la cabeza lineal.
-- ♻️ Ajuste simbólico de al menos una función de activación, con su R².
-- ⬜ Lectura climatológica coherente con las gráficas.
-- ⬜ Análisis de los peores casos con sus curvas.
+| Lo que pide la rúbrica | Estado | Dónde se verifica |
+|---|---|---|
+| w_k(t) graficadas con la ventana del año de cada neurona | ✅ | `F8_pesos_w_k.png`, `F8_ventanas_w_k.csv` |
+| Activaciones de la primera capa de la KAN en el rango de los datos | ✅ | `F8_kan_activaciones.png` (rango p1–p99 de entrenamiento), `F8_kan_aristas.csv` |
+| Contraste con los coeficientes de la cabeza lineal | ✅ | `F8_importancia_entradas.csv`, `F8_beta_red_vs_regresion.png`, `F8_estabilidad_beta_lineal.csv` |
+| Ajuste simbólico de al menos una activación con su R² | ✅ | `F8_ajuste_simbolico.csv`: 4 aristas; tanh con R² 0,992–0,997 |
+| Lectura climatológica coherente con las gráficas | 🟡 | Escrita en "Qué dicen los datos" de la sección 8 (régimen bimodal, orografía, ENSO); falta pasarla al informe |
+| Peores casos con sus curvas | ✅ | `F8_peores_casos.png/.csv` |
 
 ## 5. Informe en PDF (10 %)
 
-- ⬜ PDF a una columna, máximo 20 páginas con referencias, con todos los integrantes.
-- ⬜ Cada tabla y figura numerada, titulada, citada e interpretada.
-- 🟡 Referencias para los métodos y las fuentes de datos. Las fuentes están en `DECISIONES.md`; el satélite necesita la cita de CHIRP (D-43).
-- 🟡 Anexo en Word con la herramienta de IA y los prompts. **Hay que ir guardando los prompts.**
-- ⬜ Redacción propia.
-- ⚠️ No se acepta R Markdown, dos columnas ni solo Colab. IA no declarada: máximo 2.
+| Lo que pide la rúbrica | Estado |
+|---|---|
+| PDF a una columna, ≤ 20 páginas con referencias, todos los integrantes | ⬜ |
+| Tablas y figuras numeradas, tituladas, citadas e interpretadas | ⬜ |
+| Referencias de métodos y fuentes (estaciones, CHIRP, ONI, OMM) | 🟡 Fuentes listadas en `DECISIONES.md`; falta la cita formal de CHIRP |
+| Anexo en Word con la herramienta de IA y los prompts | 🟡 **Hay que ir guardando los prompts** (se usó Claude) |
+| Redacción propia | ⬜ |
+| Topes: sin R Markdown, dos columnas ni solo Colab; IA no declarada → máximo 2 | |
 
 ## 6. Scripts en R y Python (5 %)
 
-- 🟡 Un único archivo de R y un único archivo de Python. Hoy: `lluvia_valle_datos.R` (datos). Falta sumarle lo funcional y armar el Python.
-- ✅ El R corre de principio a fin, con rutas relativas, semilla fija y versiones listadas (`salidas_R_datos/sessionInfo.txt`).
-- 🟡 Solo procedimientos vistos en clase; librerías adicionales solo donde se permite. En el R de datos las librerías son de EDA; la base B-spline del experimento de huecos es propia.
-- ⬜ Cada tabla y figura del informe ubicable en el código.
+| Lo que pide la rúbrica | Estado |
+|---|---|
+| Un único R y un único Python | 🟡 `lluvia_valle.R` une los dos R sin cambiar el código, con marcas por ítem de la rúbrica; verificada la unión (parte B: 13 + 5 pruebas). Falta la corrida completa en la Mac. Python: `lluvia_valle_red.py` |
+| Corren de principio a fin, rutas relativas, semillas fijas, versiones listadas | ✅ R: 27 pruebas en datos y 13 en funcional; `sessionInfo.txt`; fijan UTF-8 solos y leen el satélite por lotes (límite de archivos de macOS) |
+| Solo procedimientos de clase; librerías extra solo donde se permite | ✅ Construcción sin librerías; regresión contrastada con los métodos de clase (D-53); Python solo con PyTorch (+ numpy/pandas para leer y escribir) (D-54) |
+| Cada tabla y figura del informe ubicable en el código | ✅ Prefijos `2_`…`15_` (datos), `F1_`…`F8_` (funcional) y `P1_`…`P6_` (Python); falta citarlas en el informe |
+
+## Qué está en cada script (mapa script → rúbrica)
+
+| Script | Qué tiene | Ítems de la rúbrica |
+|---|---|---|
+| `lluvia_valle_datos.R` | Datos crudos → datos limpios: reglas R0 a R7, trazabilidad, satélite (lectura, recorte, EDA), datos preparados; 27 pruebas | 4.1 completo (P-19 en la sección 5.2b de la parte funcional) |
+| `lluvia_valle_funcional.R` | Sección 1: emparejamiento estación–píxel · 2: construcción funcional · 3: EDA funcional · 4: comparación por fuente · 5: regresión funcional (y 5.5b: contraste con los métodos de clase) · 6: 13 pruebas · 7: evaluación de la red (métricas, IC, Wilcoxon, ENSO) · 8: interpretación de la red | 1, 2, 3; 4.2 (parte R); 4.4; 4.5 |
+| `lluvia_valle_red.py` | Codificador, decodificador FPCA, cabezas lineal / KAN / MLP, equivalencia con la regresión, KAN sintética, ablación con 3 semillas; exporta predicciones y pesos; 13 pruebas | 4.2 y 4.3 |
+
+Orden de ejecución: `lluvia_valle_datos.R` → `lluvia_valle_funcional.R` → `python lluvia_valle_red.py` → `lluvia_valle_funcional.R` otra vez.
+
+## Pendientes (en orden de prioridad)
+
+### A. Decisiones abiertas (para revisar en equipo antes de cerrar 4.1 y 4.4)
+
+| Decisión | Opciones | Recomendación y por qué | Dónde |
+|---|---|---|---|
+| **P-19** ¿Usar los registros 1930–1979 (solo para estimar el FPCA)? | (a) No usarlos. (b) Usarlos solo para el FPCA. | **(a)**: la fe de erratas fija 1981–2003; con 2 257 curvas de entrenamiento el FPCA ya explica 94,2 % con M = 6; agregar 50 años de otra época mete cambios de clima e instrumentación que habría que depurar con las mismas reglas. Falta dejarlo respaldado en el código (conteo de cuántas de las 176 tienen esos años) | `DECISIONES.md` §8, P-19 |
+| **P-16** ¿Qué "ONI del año"? | (a) Media de los 12 trimestres del año (lo que se usa). (b) Un trimestre (p. ej. DEF). | **(a)** mientras el profesor no diga otra cosa: la curva es del año entero y la media resume todo el año; la fase (Niño/Niña/Neutro) sale de esa media | `DECISIONES.md` §8, P-16 |
+| **Estaciones reservadas** | El profesor dijo que ya no van (P-10, 13-nov), pero la fe de erratas aún pide un CSV `station_id, year, day, value_mm` en 4.4 | Confirmarlo por escrito con el profesor | `DECISIONES.md` §8, P-10 y P-11 |
+
+### B. Detalles técnicos rápidos
+
+1. Verificar la profundidad FM con `fda.usc::depth.FM` (herramienta de clase).
+2. Prueba t funcional (`tperm.fd`) o ANOVA funcional (`fdANOVA`) para ENSO, altitud y satélite frente a estación (recomendado, refuerza "como en clase").
+3. Justificar por qué se modela la tasa en mm/día y no la lluvia acumulada del ejemplo de clase `Script_AnalisisExploratorio.R`.
+4. Ventanas de temporada en el Pacífico: el fin de la 2.ª temporada no se puede fechar en el 62 % de las curvas; separar el Pacífico o justificarlo.
+5. Sensibilidad con y sin las 6 estaciones del cruce con el CNE y las 12 coordenadas a revisar.
+
+### C. Entrega
+
+1. ~~Unir los dos R~~ — hecho en `lluvia_valle.R`; falta correrlo completo en la Mac.
+2. Informe PDF (una columna, ≤ 20 páginas, figuras y tablas numeradas y citadas).
+3. Anexo en Word con la herramienta de IA y los prompts (guardar los prompts de todas las sesiones).
+4. Guía de decisiones con diagramas para estudiar la sustentación.
+5. Pull request de `gus-cierre-funcional` a `main` (cuando el equipo lo decida).
+
+## Lo que hay que saber defender
+
+- **Por qué Python solo en la red:** el enunciado solo permite PyTorch y pykan en ese apartado; todo lo demás (incluidas las métricas de la red) se hace en R con herramientas de clase (D-54).
+- **Por qué nuestra regresión y no la del taller:** es el mismo modelo integral; frente a la versión del taller y a `fregre.basis.fr` da el mismo L² en prueba y mejor KGE (D-53).
+- **Por qué K = 8:** es el mínimo de la VCG; la aparente mejora en los picos con K mayor depende de la referencia (D-51).
+- **Por qué no se quitan años del satélite:** lo pidió el profesor (D-47); quitarlos solo se mide como sensibilidad (sección 5.6).
+- **Que no hay fuga de prueba:** la prueba 9 reemplaza validación y prueba por ruido y todo lo ajustado sale idéntico.
+- **La cabeza lineal es la regresión funcional:** demostración escrita y verificada (1,5e-14); la red cargada con los coeficientes de R da sus predicciones.
+- **La ventaja de KAN y MLP es pequeña** (L² 0,434 y 0,420 frente a 0,440) **y depende de la fase ENSO:** ayudan en años Niño, estorban en años Niña; la prueba no tiene años Niña (D-54).
+- **Las neuronas sueltas de la cabeza lineal no se interpretan** (se pueden rotar); lo estable es β(s,t), correlación 0,98–0,99 entre semillas (D-55).
+- **La corrección satura** (activaciones tanh) y **la altitud es la entrada más no lineal** (D-55).
+- **Los peores casos son de representatividad del píxel**, no del modelo: estaciones secas del fondo del valle del Cauca y del Dagua (D-55).
+
+## Dónde está cada cosa
+
+| Qué | Archivo |
+|---|---|
+| Resumen, feedback y decisiones para Jaco | `RESUMEN_PARA_JACO.md` |
+| Estado frente a la rúbrica, pendientes y qué defender | `CONTROL_RUBRICA.md` (este archivo) |
+| Cada decisión con su justificación (D-01 a D-55) y las preguntas abiertas (P-xx, §8) | `DECISIONES.md` |
+| Qué cambió en cada sesión, con su commit | `BITACORA_CAMBIOS.md` |
+| Estructura del repositorio y cómo se corre | `README.md` |
+| Resumen para retomar el trabajo | `CONTEXTO_EDA.md` |
+| Lectura de cada resultado | Bloques "QUÉ DICEN LOS DATOS" dentro de cada script |
 
 ## Reglas generales que hay que cuidar
 
-- Entrega: PDF llamado "Proyecto final AnalíticaDeDatos", más un único R y un único Python.
-- Sustentación de 40 minutos; el profesor puede preguntarle cualquier fase a cualquier integrante.
+- Entrega: PDF llamado "Proyecto final AnalíticaDeDatos", más un único R y un único Python (y el repositorio en zip o rar).
+- Sustentación de 40 minutos; el profesor puede preguntarle cualquier fase a cualquier integrante, y una respuesta mal dada resta 0,2.
 - Solo scripts, procedimientos y metodologías vistos en clase (`material_clase/`).
 
 ## Pendientes con el profesor
 
 Detalle en `DECISIONES.md`, §8.
 
-- ✅ P-8 y P-3: el satélite es CHIRP y se usa solo el entregado.
-- ✅ P-1: los 21 sin ubicar se descartan.
-- ✅ P-13: solo el Valle del Cauca.
-- ✅ P-4: no se eliminan años del satélite (D-47); falta aplicarlo en `funcional/`.
-- ✅ P-12, P-14, P-15, P-17 y P-18: fuentes del IDEAM, Univalle, tope de 200 mm (serie graficada), 29 de febrero y píxel de la estación, aceptados en la asesoría (D-47).
-- P-16 (definición del ONI anual) y P-19 (registros 1930–1979): siguen abiertas.
+- ✅ P-1, P-3, P-4, P-8, P-10, P-12 a P-15, P-17 y P-18 respondidas en la asesoría del 13-nov (D-47).
+- ✅ P-20 (K de las estaciones) cerrada por el equipo con datos (D-51).
+- ✅ P-16 (definición del ONI anual) y P-19 (registros 1930–1979), cerradas en D-56.
+- ⬜ Confirmar que no hace falta el CSV de estaciones reservadas que todavía menciona la fe de erratas en 4.4.

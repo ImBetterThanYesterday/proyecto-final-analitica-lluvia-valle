@@ -11,7 +11,7 @@
 #   5. Patrones sospechosos: totales mensuales, rachas de ceros, copias
 #   6. Climatología y coherencia espacial
 #   7. Experimento de huecos: ¿cuánta falta de datos aguanta una curva?
-#   8. Depuración (reglas D-36) y dataset final
+#   8. Depuración (reglas R0 a R7, D-36) y dataset final
 #   9. Satélite: lectura, estructura y fuente (D-43)
 #  10. Satélite: recorte al Valle, calendario de péntadas y mm/día
 #  11. Satélite: EDA
@@ -43,11 +43,18 @@
 # Librerías: data.table, ggplot2, readxl, sf y terra (EDA). La base B-spline del
 # experimento de huecos se programa sin librerías (recursión de Cox–de Boor),
 # como pide el curso para la construcción funcional.
-# Decisiones y su justificación: DECISIONES.md (D-01 a D-36).
+# Decisiones y su justificación: DECISIONES.md (D-01 a D-49).
 # =============================================================================
 
 
 # ---- 0. CONFIGURACIÓN -------------------------------------------------------
+# Locale: sin UTF-8 (LANG vacío en la Mac del grupo) las tildes del código no coinciden
+# con las de los datos. Se fija aquí, antes de cualquier cadena con tilde.
+if (!isTRUE(l10n_info()$`UTF-8`)) {
+  for (loc in c("en_US.UTF-8", "es_CO.UTF-8", "es_ES.UTF-8", "C.UTF-8"))
+    if (nzchar(suppressWarnings(Sys.setlocale("LC_CTYPE", loc)))) break
+  if (!isTRUE(l10n_info()$`UTF-8`)) stop("No hay un locale UTF-8 disponible; corra con LC_ALL=en_US.UTF-8 Rscript ...")
+}
 suppressPackageStartupMessages({
   library(data.table)
   library(ggplot2)
@@ -66,6 +73,10 @@ RADIO_VEC   <- 25                           # km: vecinas para cualquier contras
 COB_MIN     <- 0.90                         # R5: fracción mínima de días en el año
 HUECO_MAX   <- 15                           # R5: hueco máximo permitido (días)
 ANIOS_MIN   <- 7                            # R6: años válidos mínimos en entrenamiento
+# R0: máximo físico = récord mundial de lluvia en 24 h reconocido por la OMM: 1 825 mm,
+# Foc-Foc (La Reunión), 7-8 ene 1966, ciclón Denise (WMO Weather and Climate Extremes
+# Archive, https://wmo.asu.edu). Un dato diario por encima no puede ser lluvia real.
+P_MAX_FISICO <- 1825
 
 SALIDA <- "salidas_R_datos"
 dir.create(file.path(SALIDA, "tablas"), showWarnings = FALSE, recursive = TRUE)
@@ -165,6 +176,7 @@ vecinas <- function(cod) setdiff(names(which(DK[cod, ] <= RADIO_VEC)), cod)
 # ---- 2. ESTRUCTURA DE LOS ARCHIVOS CRUDOS ------------------------------------
 titulo("2. Estructura del archivo")
 d <- crudo[codigo %in% valle$codigo, .(codigo, anio = YEAR, mes = MONTH, dia_mes = DAY, P = as.numeric(VALUE))]
+crudo_r0 <- crudo[, .(codigo, P = as.numeric(VALUE))]   # solo para el conteo de R0
 rm(crudo); invisible(gc())
 d[, fecha := as.IDate(sprintf("%d-%02d-%02d", anio, mes, dia_mes))]
 estructura <- data.table(
@@ -175,6 +187,24 @@ estructura <- data.table(
   no_enteros = sum(d$P != round(d$P)), dias_29feb = d[mes == 2 & dia_mes == 29, .N],
   maximo = max(d$P))
 print(tabla(estructura, "2_estructura"))
+
+# R0. Valor físicamente imposible → faltante: P < 0 o P > P_MAX_FISICO (récord OMM 24 h).
+# La regla se aplica antes de todo lo demás y se cuenta aunque dé 0, para que quede
+# verificado en el código y no supuesto. Como referencia se cuenta también en el archivo
+# crudo completo (todas las estaciones, 1981-2003), donde sí aparecen valores imposibles.
+imposible <- function(P) !is.na(P) & (P < 0 | P > P_MAX_FISICO)
+m_r0 <- d[imposible(P), .(codigo, fecha, P, regla = "R0 valor imposible",
+                          detalle = fifelse(P < 0, "negativo", sprintf("> %d mm (récord OMM 24 h)", P_MAX_FISICO)))]
+r0_resumen <- data.table(
+  archivo = c("crudo completo (todas las estaciones)", "estaciones del Valle"),
+  negativos = c(sum(crudo_r0$P < 0), m_r0[P < 0, .N]),
+  sobre_maximo_fisico = c(sum(crudo_r0$P > P_MAX_FISICO), m_r0[P > P_MAX_FISICO, .N]),
+  estaciones_afectadas = c(uniqueN(crudo_r0[imposible(P), codigo]), uniqueN(m_r0$codigo)),
+  valor_maximo = c(max(crudo_r0$P), d[, max(P)]))
+print(tabla(r0_resumen, "2_R0_valores_imposibles"))
+rm(crudo_r0)
+d <- d[!imposible(P)]
+traza_r0 <- d[, .(estaciones = uniqueN(codigo), pares_estacion_anio = uniqueN(paste(codigo, anio)), dias_con_dato = .N)]
 
 # Los decimales vienen de las estaciones climatológicas (tipo 02/03 en los
 # dígitos 7-8 del código), que leen a 0,1 mm. No son error.
@@ -189,7 +219,8 @@ grafico(ggplot(d[P > 0 & P == round(P)], aes(factor(P %% 10))) + geom_bar() +
 
 # QUÉ DICEN LOS DATOS (H2)
 #   Un faltante es una FILA AUSENTE: no hay NA, negativos ni duplicados, y no
-#   aparece el valor imposible (859 375 mm) de otra estación. Hay 832 registros
+#   aparece el valor imposible (859 375 mm) de otra estación. R0 lo comprueba con
+#   un umbral citado (récord OMM, 1 825 mm en 24 h): en el Valle no quita nada. Hay 832 registros
 #   del 29-feb y 5 144 valores con decimales (estaciones climatológicas).
 
 
@@ -337,29 +368,50 @@ a_fecha <- function(k) as.IDate(sprintf("%d-01-01", k %/% 1000)) + (k %% 1000) -
 rz[, `:=`(ini = a_fecha(ini), fin = a_fecha(fin))]
 rz <- valle[, .(codigo, nombre, vertiente)][rz, on = "codigo"]
 tabla(rz, "5b_rachas_ceros_15d")
-print(rz[, .(rachas = .N, de_30_o_mas = sum(largo >= 30), sin_vecinas = sum(is.na(p_lluvia_vecinas)),
-             de_30_y_vecinas_llueven_40 = sum(largo >= 30 & p_lluvia_vecinas >= .4, na.rm = TRUE))])
-rachas_revisar <- rz[largo >= 30 & p_lluvia_vecinas >= .4]
-print(rachas_revisar)
+print(rz[, .(rachas = .N, de_30_o_mas = sum(largo >= 30), sin_vecinas = sum(is.na(p_lluvia_vecinas)))])
 grafico(ggplot(rz[!is.na(p_lluvia_vecinas)], aes(largo, p_lluvia_vecinas, colour = vertiente)) +
-          geom_point(alpha = .5) + scale_x_log10() + geom_hline(yintercept = .4, linetype = 2) +
+          geom_point(alpha = .5) + scale_x_log10() +
           labs(x = "Largo de la racha de ceros (días, log)", y = "Fracción de días-vecina con lluvia (≤25 km)",
                title = "Rachas ≥15 días de ceros: ¿las vecinas también estaban secas?"),
         "5b_rachas_ceros")
 
-# Revisión a mano de las rachas marcadas: en los mismos meses de otros años,
-# ¿cuánto llueve la estación? ¿Y la vecina más cercana durante la racha?
-revision <- rbindlist(lapply(seq_len(nrow(rachas_revisar)), function(i) {
-  cod <- rachas_revisar$codigo[i]; a <- rachas_revisar$ini[i]; b <- rachas_revisar$fin[i]
-  meses <- unique(month(seq(a, b, by = 1)))
-  cercana <- names(sort(DK[cod, vecinas(cod)]))[1]
-  data.table(codigo = cod, nombre = rachas_revisar$nombre[i], ini = a, fin = b, largo = rachas_revisar$largo[i],
-             pct_dias_lluvia_normal = round(100 * d[codigo == cod & month(fecha) %in% meses & !(fecha %between% c(a, b)), mean(P > 0)]),
-             vecina_cercana = valle[codigo == cercana, nombre], km = round(DK[cod, cercana], 1),
-             dias_lluvia_vecina = d[codigo == cercana & fecha %between% c(a, b), sum(P > 0)],
-             mm_vecina = d[codigo == cercana & fecha %between% c(a, b), sum(P)])
-}))
-print(tabla(revision, "5b_revision_rachas"))
+# Prueba de cada racha de ≥30 días en cero (R4). Si la estación de verdad estuvo
+# seca, su vecina más cercana también debió estar seca o casi. Se mide:
+#   k = días en que llovió la vecina más cercana con datos (≥80 % de la racha);
+#   q = P(llueve en la estación | llueve en la vecina), con los días de
+#       entrenamiento (1981–1995) en que ambas tienen dato (sin fuga);
+#   p = (1 - q)^k: probabilidad de que la estación marque 0 todos esos días.
+# Se hacen muchas pruebas a la vez, así que el umbral es 0,05 / número de rachas
+# (Bonferroni). Supone días independientes; como la lluvia viene en rachas, p
+# exagera lo raro, y por eso el umbral es exigente.
+R4_LARGO <- 30L
+ll_ent <- d[anio <= 1995 & !is.na(P), .(codigo, fecha, ll = P > 0)]; setkey(ll_ent, codigo, fecha)
+d_obs <- d[!is.na(P), .(codigo, fecha, P)]; setkey(d_obs, codigo, fecha)
+r4 <- rz[largo >= R4_LARGO]
+r4[, c("vecina", "km", "dias_vecina", "dias_lluvia_vecina", "q") := rbindlist(lapply(seq_len(.N), function(i) {
+  cod <- codigo[i]; desde <- ini[i]; hasta <- fin[i]   # copias locales: dentro de d_obs[...] "codigo" sería su columna
+  for (v in names(sort(DK[cod, vecinas(cod)]))) {
+    x <- d_obs[.(v)][fecha %between% c(desde, hasta)]
+    if (nrow(x) >= .8 * largo[i]) {
+      a <- merge(ll_ent[.(cod)], ll_ent[.(v)], by = "fecha")
+      return(data.table(v, round(DK[cod, v], 1), nrow(x), sum(x$P > 0), a[ll.y == TRUE, mean(ll.x)]))
+    }
+  }
+  data.table(NA_character_, NA_real_, NA_integer_, NA_integer_, NA_real_)
+}))]
+R4_UMBRAL <- 0.05 / nrow(r4)
+r4[, `:=`(p_azar = (1 - q)^dias_lluvia_vecina, nombre_vecina = valle[match(vecina, codigo), nombre])]
+r4[, falso := !is.na(p_azar) & p_azar < R4_UMBRAL]
+tabla(r4[order(p_azar)], "5b_rachas_ceros_prueba")
+cat(sprintf("Rachas de ≥%d días en 0: %d (%d sin vecina con datos). Umbral 0,05/%d = %.1e → %d rachas falsas en %d estaciones\n",
+            R4_LARGO, nrow(r4), r4[is.na(p_azar), .N], nrow(r4), R4_UMBRAL, r4[falso == TRUE, .N], r4[falso == TRUE, uniqueN(codigo)]))
+print(r4[order(p_azar)][1:12, .(nombre, ini, fin, largo, vecina = nombre_vecina, km, dias_lluvia_vecina, q = round(q, 2), p_azar = signif(p_azar, 2), falso)])
+grafico(ggplot(r4[!is.na(p_azar)], aes(dias_lluvia_vecina, pmax(p_azar, 1e-12), colour = falso)) + geom_point(alpha = .6) +
+          geom_hline(yintercept = R4_UMBRAL, linetype = 2) + scale_y_log10() +
+          scale_colour_manual(values = c(`TRUE` = "firebrick", `FALSE` = "grey50"), labels = c(`TRUE` = "Falsa → faltante", `FALSE` = "Se mantiene"), name = NULL) +
+          labs(x = "Días con lluvia en la vecina más cercana durante la racha", y = "p = (1 - q)^k (log)",
+               title = "R4: rachas de ≥30 días en 0 que la vecina no respalda", subtitle = sprintf("Línea: umbral 0,05 / %d rachas", nrow(r4))),
+        "5b_rachas_ceros_prueba")
 
 # 5c. Años idénticos entre estaciones (copias)
 huella <- d[, .(n = .N, h = paste(P, collapse = ",")), by = .(codigo, anio)][n >= 300]
@@ -375,8 +427,15 @@ rm(dr)
 
 # QUÉ DICEN LOS DATOS (H5–H7)
 #   19 meses con un solo día de lluvia > p99; en varios solo hay un día observado
-#   (se anotó el total mensual) → R3. De 918 rachas de ceros ≥30 días, solo 6
-#   tienen vecinas lloviendo ≥40 % (5 de Loboguerrero, 1 de La Despensa) → R4.
+#   (se anotó el total mensual) → R3. De 917 rachas de ceros ≥30 días, 30 (en
+#   27 estaciones) no tienen respaldo: su vecina más cercana llovió normal y la
+#   probabilidad de que la estación marcara 0 todos esos días es < 0,05/917 → R4.
+#   Ejemplo: Bella Vista 1982, 49 días en 0 mientras La Ceja (8,7 km) llovió 23
+#   días (p = 7e-10). La mayoría de las 917 son sequías reales: la vecina también
+#   estuvo seca (El Niño de 1997, temporadas secas). Loboguerrero oct–nov 1995,
+#   antes revisada a mano, no pasa el umbral (p = 2e-4): Dagua coincide con ella
+#   solo la mitad de los días de lluvia, y 12 días no alcanzan para descartar
+#   una sequía real en un enclave seco. Se mantiene como dato.
 #   No hay años copiados; lo más repetido son 11 días seguidos de 1 mm (llovizna).
 
 
@@ -595,19 +654,14 @@ m_mes <- d[meses_sosp[marcar == TRUE, .(codigo, anio, mes, dias_obs, p_lluvia_ve
       detalle = sprintf("%d días observados; vecinas llovieron %.0f %% de los días%s",
                         dias_obs, 100 * p_lluvia_vecinas, fifelse(mes_vacio, "; mes casi vacío", "")))]
 
-# R4. Rachas de ceros: no se borran por regla. Revisión a mano (tabla 5b):
-#     - Loboguerrero, oct–nov 1995 → faltante: temporada de lluvias, la estación
-#       suele llover el 41 % de esos días y Dagua (12 km, mismo cañón) tuvo 12
-#       días con lluvia (83 mm).
-#     - Las otras 5 (La Despensa ene–feb 1996; Loboguerrero 1982, 1982–83, 1989,
-#       1991) caen en temporada seca o en El Niño y la vecina del mismo cañón
-#       también estuvo casi seca → se mantienen.
-m_cero <- d[codigo == "5301500102" & fecha %between% as.IDate(c("1995-10-27", "1995-11-28")),
-            .(codigo, fecha, P, regla = "R4 racha de ceros revisada",
-              detalle = "33 días en 0 en temporada de lluvias; Dagua (12 km) 12 días con lluvia")]
-stopifnot(nrow(m_cero) == 33, all(m_cero$P == 0))
+# R4. Racha de ≥30 días en 0 que la vecina más cercana no respalda → faltante
+#     (prueba de la sección 5b, umbral 0,05 / número de rachas).
+m_cero <- r4[falso == TRUE][, d[codigo == .BY$codigo & fecha %between% c(ini, fin), .(fecha, P)], by = .(codigo, ini, fin, nombre_vecina, dias_lluvia_vecina, p_azar)][
+  , .(codigo, fecha, P, regla = "R4 racha de ceros sin respaldo",
+      detalle = sprintf("%s: llovió %d días; p = %.1e", nombre_vecina, dias_lluvia_vecina, p_azar))]
+stopifnot(all(m_cero$P == 0), nrow(m_cero) == r4[falso == TRUE, sum(largo)])
 
-marcas <- valle[, .(codigo, nombre)][rbind(m_ext, m_mes, m_cero), on = "codigo"]
+marcas <- valle[, .(codigo, nombre)][rbind(m_r0, m_ext, m_mes, m_cero), on = "codigo"]
 print(marcas[, .(dias = .N, estaciones = uniqueN(codigo)), by = regla])
 
 # Aplicar: un faltante es una fila ausente / NA en la rejilla (R7: no se imputa)
@@ -638,10 +692,11 @@ trazabilidad <- rbind(
              pares_estacion_anio = sum(cobertura_cruda$anios_con_dato), dias_con_dato = sum(cobertura_cruda$dias_con_dato)),
   data.table(paso = "1. Solo el Valle, con coordenada (D-34)", estaciones = nrow(valle),
              pares_estacion_anio = sum(valle$anios_con_dato), dias_con_dato = sum(valle$dias_con_dato)),
+  cbind(paso = "1b. R0: negativos y valores sobre el récord OMM (1 825 mm) a faltante", traza_r0),
   cbind(paso = "2. R1: sin 29 de febrero", cuenta(d)),
   cbind(paso = "3. R2: extremos sin respaldo a faltante", cuenta(d_r2)),
   cbind(paso = "4. R3: totales mensuales en un día a faltante", cuenta(d_r3)),
-  cbind(paso = "5. R4: racha de ceros revisada a faltante", cuenta(d_r4)),
+  cbind(paso = "5. R4: rachas de ceros sin respaldo de la vecina a faltante", cuenta(d_r4)),
   cbind(paso = "6. R5: años con ≥90 % de días y hueco ≤15", cuenta(diario_todo[!is.na(P)][anios[valido == TRUE, .(codigo, anio)], on = .(codigo, anio), nomatch = 0])),
   cbind(paso = "7. R6: estaciones con ≥7 años válidos en entrenamiento", cuenta(diario[!is.na(P)])))
 trazabilidad[, `:=`(estaciones_que_salen = c(NA, -diff(estaciones)), pares_que_salen = c(NA, -diff(pares_estacion_anio)),
@@ -650,10 +705,11 @@ print(tabla(trazabilidad, "8_trazabilidad"))
 rm(d_r2, d_r3, d_r4)
 
 reglas <- c(
+  R0 = "Valor imposible → faltante: P < 0 o P > 1 825 mm (récord mundial OMM en 24 h)",
   R1 = "Dominio 1–365: se quita el 29 de febrero",
   R2 = "Extremo > 3·p99 y ≥150 mm sin vecina (≤25 km, ±1 día) que supere P/3 → faltante",
   R3 = "Mes con un solo día de lluvia > p99 y (mes con <50 % de días o vecinas con lluvia ≥40 % de los días) → mes faltante",
-  R4 = "Rachas de ceros: no se borran por regla; revisión a mano: Loboguerrero oct–nov 1995 → faltante",
+  R4 = "Racha ≥30 días en 0 → faltante si la vecina más cercana llovió k días y (1 − q)^k < 0,05/rachas (q de entrenamiento)",
   R5 = "Año válido: ≥90 % de 365 días y hueco máximo ≤15 días",
   R6 = "Estación: ≥7 años válidos en entrenamiento (1981–1995)",
   R7 = "Sin imputación")
@@ -686,9 +742,13 @@ inv_sat <- data.table(archivo = arch_sat, anio = as.integer(substr(basename(arch
                       pentada = as.integer(substr(basename(arch_sat), 8, 9)))
 print(inv_sat[, .N, by = anio][, .(anios = .N, con_72_pentadas = sum(N == 72),
                                    incompletos = paste(anio[N != 72], N[N != 72], sep = ": ", collapse = "; "))])
-r_sat <- terra::rast(inv_sat$archivo)
-print(r_sat[[1]])
-S_todo <- terra::values(r_sat, mat = TRUE)          # píxel (fila) × péntada (columna)
+# Se lee por lotes de 200: abrir los 2 328 a la vez supera el límite de archivos
+# abiertos del sistema (1 024 en macOS) y terra se detiene. gc() cierra cada lote.
+lee_lote <- function(a) { v <- terra::values(terra::rast(a), mat = TRUE); invisible(gc()); v }
+S_todo <- do.call(cbind, lapply(split(inv_sat$archivo, ceiling(seq_len(nrow(inv_sat)) / 200)), lee_lote))  # píxel × péntada
+r_sat <- terra::rast(inv_sat$archivo[1])             # solo la geometría (todas comparten la rejilla)
+stopifnot(ncol(S_todo) == nrow(inv_sat), identical(colnames(S_todo), sub("\\.tif$", "", basename(inv_sat$archivo))))
+print(r_sat)
 storage.mode(S_todo) <- "double"
 estructura_sat <- data.table(
   archivos = ncol(S_todo), pixeles = nrow(S_todo), filas = terra::nrow(r_sat), columnas = terra::ncol(r_sat),
@@ -1077,6 +1137,8 @@ n_obs_Y <- rowSums(!is.na(Y)); hueco_Y <- apply(!is.na(Y), 1, hueco_mas_largo)
 prueba("Cada curva tiene ≥90 % de días", all(n_obs_Y >= COB_MIN * 365), paste("mínimo:", min(n_obs_Y)))
 prueba("Ninguna curva tiene un hueco > 15 días", all(hueco_Y <= HUECO_MAX), paste("máximo:", max(hueco_Y)))
 prueba("Sin duplicados estación-año", !anyDuplicated(id_est[, .(codigo, anio)]))
+prueba("R0: ningún valor negativo ni sobre el récord OMM de 24 h", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= P_MAX_FISICO,
+       sprintf("en el Valle R0 quitó %d valores; en el crudo completo habría quitado %d", nrow(m_r0), sum(r0_resumen[1, .(negativos, sobre_maximo_fisico)])))
 prueba("Valores entre 0 y el máximo crudo", min(Y, na.rm = TRUE) >= 0 && max(Y, na.rm = TRUE) <= estructura$maximo, paste("máximo:", max(Y, na.rm = TRUE)))
 
 # -- Estaciones: contra los archivos crudos, leídos de nuevo
